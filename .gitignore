@@ -1,0 +1,13 @@
+# Sourcecode not to commit
+appkey.c
+logindata.c
+
+# output
+build
+tmp
+
+#vim
+*.swp
+
+#osx
+.DS_Store
