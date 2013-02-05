@@ -18,6 +18,14 @@ static void loggedIn(sp_session* session, sp_error error);
 static void loggedOut(sp_session* session);
 static void rootPlaylistContainerLoaded(sp_playlistcontainer* pc, void* userdata);
 
+/**
+ * The loop running in the spotify thread.
+ *
+ * This functions first creates a spotify session, logs in and then loops.
+ *
+ * It waits for either "commands" (other classes wanting to execute libspotify API functions
+ * or orders to process sp_session_process_events from notifaMainThread
+ * **/
 static void* spotifyLoop(void* _spotifyService) {
 	SpotifyService* spotifyService = static_cast<SpotifyService*>(_spotifyService);
 	sp_error error;
@@ -75,8 +83,10 @@ static void* spotifyLoop(void* _spotifyService) {
 		}
 		pthread_mutex_unlock(&spotifyService->notifyMutex);
 
+		//Execute a callback from another class/thread
 		if(gCallback != 0) {
 			gCallback->call();
+			//The callback needs to be allocated with new, so we delete it after it is used
 			delete gCallback;
 			gCallback = 0;
 		}
@@ -93,7 +103,12 @@ static void* spotifyLoop(void* _spotifyService) {
 }
 
 
-/* ################################### CALLBACKS ####################################### */
+/* ################################### LIBSPOTIFY CALLBACKS ####################################### */
+/**
+ * Functions called by libspotify as callbacks.
+ *
+ * If a callback from libspotify needs to call a callback in nodeJS use uv_async_send and attach a callback to the async handle.
+ * **/
 
 static void notifyMainThread(sp_session* session) {
 	SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
@@ -111,7 +126,7 @@ static void loggedIn(sp_session* session, sp_error error) {
 		fprintf(stdout, "Service is logged in!\n");
 	}
 
-	//This is absolutely necessary here, otherwise following callbacks can crash.
+	//The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
 	sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
 	rootPlaylistContainerCallbacks.container_loaded = &rootPlaylistContainerLoaded;
 	sp_playlistcontainer *pc = sp_session_playlistcontainer(spotifyService->spotifySession);
@@ -132,6 +147,9 @@ SpotifyService::SpotifyService() {
 
 }
 
+/**
+ * Starts the spotify thread and logs in
+ * **/
 void SpotifyService::login(std::string username, std::string password) {
 	pthread_create(&spotifyThread, NULL, spotifyLoop, this);
 }
@@ -141,6 +159,10 @@ void SpotifyService::logout() {
 	fprintf(stdout, "Hallo vom Logout\n");
 }
 
+/**
+ * This executes a callback within the spotify loop. Used to call libspotify API functions from
+ * other threads
+ * **/
 void SpotifyService::executeSpotifyAPIcall(CallbackBase* callback) {
 	pthread_mutex_lock(&notifyMutex);
 	gCallback = callback;
