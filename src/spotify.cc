@@ -4,33 +4,27 @@
 #include <mach/clock.h>
 #include <mach/mach.h>
 
-extern "C" {
-	#include "SpotifyService.h"
-}
+#include "SpotifyService.h"
 
 using namespace v8;
 
 Handle<Value> login(const Arguments& args) {
 	HandleScope scope;
-	login();	
 	return scope.Close(Undefined());
 }
 
 Handle<Value> logout(const Arguments& args) {
 	HandleScope scope;
-	logout();
 	return Undefined();
 }
 
 Handle<Value> userName(const Arguments& args) {
 	HandleScope scope;
-	printUser();
 	return scope.Close(Undefined());
 }
 
 Handle<Value> printPlaylists(const Arguments& args) {
 	HandleScope scope;
-	printPlaylistnames();
 	return scope.Close(Undefined());
 }
 void init(Handle<Object> target) {
@@ -42,5 +36,9 @@ void init(Handle<Object> target) {
 			        FunctionTemplate::New(userName)->GetFunction());
 	  target->Set(String::NewSymbol("printPlaylists"),
 			        FunctionTemplate::New(printPlaylists)->GetFunction());
+	  SpotifyService* spotifyService = new SpotifyService();
+	  std::string user("USER");
+	  std::string password("PASSWORD");
+	  spotifyService->login(user, password);
 }
 NODE_MODULE(spotify, init)
