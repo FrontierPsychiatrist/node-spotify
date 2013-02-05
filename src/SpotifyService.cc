@@ -11,6 +11,7 @@ extern int spotifyAppkeySize;
 extern const char* username;
 extern const char* password;
 int notifyDo = 0;
+CallbackBase* gCallback;
 
 static void notifyMainThread(sp_session* session);
 static void loggedIn(sp_session* session, sp_error error);
@@ -67,12 +68,18 @@ static void* spotifyLoop(void* _spotifyService) {
 			ts.tv_sec = mts.tv_sec + nextTimeout / 1000;
 			ts.tv_nsec = mts.tv_nsec + (nextTimeout % 1000) * 1000;
 
-			while(!notifyDo) {
+			while(!notifyDo && gCallback == 0) {
 				if(pthread_cond_timedwait(&spotifyService->notifyCondition, &spotifyService->notifyMutex, &ts))
 					break;
 			}
 		}
 		pthread_mutex_unlock(&spotifyService->notifyMutex);
+
+		if(gCallback != 0) {
+			gCallback->call();
+			delete gCallback;
+			gCallback = 0;
+		}
 
 		do {
 			sp_session_process_events(session, &nextTimeout);
@@ -127,4 +134,16 @@ SpotifyService::SpotifyService() {
 
 void SpotifyService::login(std::string username, std::string password) {
 	pthread_create(&spotifyThread, NULL, spotifyLoop, this);
+}
+
+void SpotifyService::logout() {
+	//sp_session_logout(spotifySession);
+	fprintf(stdout, "Hallo vom Logout\n");
+}
+
+void SpotifyService::executeSpotifyAPIcall(CallbackBase* callback) {
+	pthread_mutex_lock(&notifyMutex);
+	gCallback = callback;
+	pthread_cond_signal(&notifyCondition);
+	pthread_mutex_unlock(&notifyMutex);
 }

@@ -40,5 +40,7 @@ void init(Handle<Object> target) {
 	  std::string user("USER");
 	  std::string password("PASSWORD");
 	  spotifyService->login(user, password);
+	  Callback<SpotifyService>* logoutCallback = new Callback<SpotifyService>(spotifyService, &SpotifyService::logout);
+	  spotifyService->executeSpotifyAPIcall(logoutCallback);
 }
 NODE_MODULE(spotify, init)

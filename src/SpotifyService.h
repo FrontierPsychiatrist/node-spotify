@@ -12,7 +12,9 @@ class SpotifyService {
 		SpotifyService();
 		~SpotifyService();
 		void login(std::string username, std::string password);
-		template<class T> void executeSpotifyAPIcall(Callback<T>* callback);
+		void logout();
+		void executeSpotifyAPIcall(CallbackBase* callback);
+
 		uv_async_t nodeCallbackNotifier;
 		pthread_mutex_t notifyMutex;
 		pthread_cond_t notifyCondition;
