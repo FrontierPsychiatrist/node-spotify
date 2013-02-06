@@ -34,6 +34,12 @@ Handle<Value> printPlaylists(const Arguments& args) {
 	HandleScope scope;
 	return scope.Close(Undefined());
 }
+
+void resolveCallback(uv_async_t* handle, int status) {
+	char* str = (char*)(handle->data);
+	fprintf(stdout, "BACKEND: received callback with data! %s\n", str);
+}
+
 void init(Handle<Object> target) {
 	  target->Set(String::NewSymbol("login"),
 			        FunctionTemplate::New(login)->GetFunction());
@@ -44,5 +50,7 @@ void init(Handle<Object> target) {
 	  target->Set(String::NewSymbol("printPlaylists"),
 			        FunctionTemplate::New(printPlaylists)->GetFunction());
 	  spotifyService = new SpotifyService();
+	  //Initialize waiting for callbacks from the spotify thread
+	  uv_async_init(uv_default_loop(), &spotifyService->callNodeThread, resolveCallback);
 }
 NODE_MODULE(spotify, init)

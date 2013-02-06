@@ -55,7 +55,7 @@ static void* spotifyLoop(void* _spotifyService) {
 	spotifyService->spotifySession = session;
 	
 	if(SP_ERROR_OK != error) {
-		fprintf(stderr, "Could not create Spotify session: %s\n", sp_error_message(error));
+		fprintf(stderr, "BACKEND: Could not create Spotify session: %s\n", sp_error_message(error));
 	}
 
 	sp_session_login(session, username, password, 0, NULL);
@@ -100,6 +100,7 @@ static void* spotifyLoop(void* _spotifyService) {
 	}
 
 	sp_session_release(session);
+	uv_close((uv_handle_t*)&spotifyService->callNodeThread, NULL);
 	return 0;
 }
 
@@ -122,10 +123,14 @@ static void notifyMainThread(sp_session* session) {
 static void loggedIn(sp_session* session, sp_error error) {
 	SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
 	if(SP_ERROR_OK != error) {
-		fprintf(stderr, "Error logging in: %s\n", sp_error_message(error));
+		fprintf(stderr, "BACKEND: Error logging in: %s\n", sp_error_message(error));
 	} else {
-		fprintf(stdout, "Service is logged in!\n");
+		fprintf(stdout, "BACKEND: Service is logged in!\n");
 	}
+	uv_async_t* handle = &spotifyService->callNodeThread;
+	const char* str = "Hi there from the spotify Thread!";
+	handle->data = (void*)str;
+	uv_async_send(handle);
 
 	//The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
 	sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
@@ -137,12 +142,12 @@ static void loggedIn(sp_session* session, sp_error error) {
 static void loggedOut(sp_session* session) {
 	SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
 	spotifyService->loggedOut = 1;
-	fprintf(stdout, "Service is logged out\n");
+	fprintf(stdout, "BACKEND: Service is logged out\n");
 }
 
 static void rootPlaylistContainerLoaded(sp_playlistcontainer* pc, void* userdata) {
 	int numPlaylists = sp_playlistcontainer_num_playlists(pc);
-	fprintf(stdout, "Root playlist synchronized, number of Playlists: %d\n", numPlaylists);
+	fprintf(stdout, "BACKEND: Root playlist synchronized, number of Playlists: %d\n", numPlaylists);
 }
 
 /* ################## MEMBER METHODS ################################ */

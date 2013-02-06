@@ -15,7 +15,7 @@ class SpotifyService {
 		void logout();
 		void executeSpotifyAPIcall(CallbackBase* callback);
 
-		uv_async_t nodeCallbackNotifier;
+		uv_async_t callNodeThread;
 		pthread_mutex_t notifyMutex;
 		pthread_cond_t notifyCondition;
 		pthread_t spotifyThread;
