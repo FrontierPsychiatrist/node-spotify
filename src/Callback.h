@@ -1,3 +1,5 @@
+#ifndef CALLBACK_H
+#define CALLBACK_H
 /**
  * Helper class for abstracting callbacks.
  *
@@ -40,3 +42,4 @@ class Callback : public CallbackBase {
 		T* object; //Object to call method on
 		void(T::*method)(); //Method to call
 };
+#endif

@@ -8,13 +8,20 @@
 
 using namespace v8;
 
+SpotifyService* spotifyService;
+
 Handle<Value> login(const Arguments& args) {
 	HandleScope scope;
+	std::string user("USER");
+	std::string password("PASSWORD");
+	spotifyService->login(user, password);
 	return scope.Close(Undefined());
 }
 
 Handle<Value> logout(const Arguments& args) {
 	HandleScope scope;
+	Callback<SpotifyService>* logoutCallback = new Callback<SpotifyService>(spotifyService, &SpotifyService::logout);
+	spotifyService->executeSpotifyAPIcall(logoutCallback);
 	return Undefined();
 }
 
@@ -36,11 +43,6 @@ void init(Handle<Object> target) {
 			        FunctionTemplate::New(userName)->GetFunction());
 	  target->Set(String::NewSymbol("printPlaylists"),
 			        FunctionTemplate::New(printPlaylists)->GetFunction());
-	  SpotifyService* spotifyService = new SpotifyService();
-	  std::string user("USER");
-	  std::string password("PASSWORD");
-	  spotifyService->login(user, password);
-	  Callback<SpotifyService>* logoutCallback = new Callback<SpotifyService>(spotifyService, &SpotifyService::logout);
-	  spotifyService->executeSpotifyAPIcall(logoutCallback);
+	  spotifyService = new SpotifyService();
 }
 NODE_MODULE(spotify, init)
