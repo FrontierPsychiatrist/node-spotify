@@ -10,13 +10,17 @@ extern int spotifyAppkeySize;
 /* Temporary hardcoded logindata, not to be commited */
 extern const char* username;
 extern const char* password;
-int notifyDo = 0;
+static int notifyDo = 0;
 CallbackBase* gCallback = 0;
 
 static void notifyMainThread(sp_session* session);
 static void loggedIn(sp_session* session, sp_error error);
 static void loggedOut(sp_session* session);
 static void rootPlaylistContainerLoaded(sp_playlistcontainer* pc, void* userdata);
+
+static sp_session_callbacks sessionCallbacks;
+static sp_session_config sessionConfig;
+static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
 
 /**
  * The loop running in the spotify thread.
@@ -36,12 +40,10 @@ static void* spotifyLoop(void* _spotifyService) {
 	pthread_mutex_init(&spotifyService->notifyMutex, NULL);
 	pthread_cond_init(&spotifyService->notifyCondition, NULL);
 
-	sp_session_callbacks sessionCallbacks;
 	sessionCallbacks.notify_main_thread = &notifyMainThread;
 	sessionCallbacks.logged_in = &loggedIn;
 	sessionCallbacks.logged_out = &loggedOut;
 
-	sp_session_config sessionConfig;
 	sessionConfig.api_version = SPOTIFY_API_VERSION;
 	sessionConfig.cache_location = "tmp";
 	sessionConfig.settings_location = "tmp";
@@ -133,7 +135,6 @@ static void loggedIn(sp_session* session, sp_error error) {
 	uv_async_send(handle);
 
 	//The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
-	sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
 	rootPlaylistContainerCallbacks.container_loaded = &rootPlaylistContainerLoaded;
 	sp_playlistcontainer *pc = sp_session_playlistcontainer(spotifyService->spotifySession);
 	sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, NULL);
