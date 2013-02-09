@@ -51,14 +51,16 @@ static void* spotifyLoop(void* _spotifyService) {
 	sessionConfig.application_key_size = spotifyAppkeySize;
 	sessionConfig.user_agent = "nodejs-spotify-adapter";
 	sessionConfig.callbacks = &sessionCallbacks;
+	//sessionConfig.tracefile = "spotify-tracefile";
 	sessionConfig.userdata = spotifyService;
 
 	error = sp_session_create(&sessionConfig, &session);
-	spotifyService->spotifySession = session;
 	
 	if(SP_ERROR_OK != error) {
 		fprintf(stderr, "BACKEND: Could not create Spotify session: %s\n", sp_error_message(error));
 	}
+
+	spotifyService->setSpotifySession(session);
 
 	sp_session_login(session, username, password, 0, NULL);
 
@@ -129,15 +131,17 @@ static void loggedIn(sp_session* session, sp_error error) {
 	} else {
 		fprintf(stdout, "BACKEND: Service is logged in!\n");
 	}
-	uv_async_t* handle = &spotifyService->callNodeThread;
+	/*uv_async_t* handle = &spotifyService->callNodeThread;
 	const char* str = "Hi there from the spotify Thread!";
 	handle->data = (void*)str;
-	uv_async_send(handle);
+	uv_async_send(handle);*/
 
 	//The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
 	rootPlaylistContainerCallbacks.container_loaded = &rootPlaylistContainerLoaded;
-	sp_playlistcontainer *pc = sp_session_playlistcontainer(spotifyService->spotifySession);
-	sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, NULL);
+	sp_playlistcontainer *pc = sp_session_playlistcontainer(session);
+	PlaylistContainer* playlistContainer = new PlaylistContainer(pc);
+	spotifyService->setPlaylistContainer(playlistContainer);
+	sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, playlistContainer);
 }
 
 static void loggedOut(sp_session* session) {
@@ -146,9 +150,19 @@ static void loggedOut(sp_session* session) {
 	fprintf(stdout, "BACKEND: Service is logged out\n");
 }
 
-static void rootPlaylistContainerLoaded(sp_playlistcontainer* pc, void* userdata) {
-	int numPlaylists = sp_playlistcontainer_num_playlists(pc);
-	fprintf(stdout, "BACKEND: Root playlist synchronized, number of Playlists: %d\n", numPlaylists);
+static void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
+	PlaylistContainer* playlistContainer = static_cast<PlaylistContainer*>(userdata);
+	int numPlaylists = sp_playlistcontainer_num_playlists(spPlaylistContainer);
+
+	for(int i = 0; i < numPlaylists; ++i) {
+		sp_playlist* spPlaylist = sp_playlistcontainer_playlist(spPlaylistContainer, i);
+		Playlist* playlist = new Playlist(spPlaylist);
+		playlist->name = std::string(sp_playlist_name(spPlaylist));
+		playlistContainer->addPlaylist(playlist);
+		//Add Callbacks
+		//Create new PlaylistObject
+		//Add PlaylistObject to Playlist Container
+	}
 }
 
 /* ################## MEMBER METHODS ################################ */
@@ -176,4 +190,16 @@ void SpotifyService::executeSpotifyAPIcall(CallbackBase* callback) {
 	gCallback = callback;
 	pthread_cond_signal(&notifyCondition);
 	pthread_mutex_unlock(&notifyMutex);
+}
+
+void SpotifyService::setPlaylistContainer(PlaylistContainer* playlistContainer) {
+	this->playlistContainer = playlistContainer;
+}
+
+PlaylistContainer*  SpotifyService::getPlaylistContainer() {
+	return this->playlistContainer;
+}
+
+void SpotifyService::setSpotifySession(sp_session* spotifySession) {
+	this->spotifySession = spotifySession;
 }

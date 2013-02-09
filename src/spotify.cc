@@ -1,9 +1,6 @@
 #include <node.h>
 #include <v8.h>
 
-#include <mach/clock.h>
-#include <mach/mach.h>
-
 #include "SpotifyService.h"
 
 using namespace v8;
@@ -30,9 +27,15 @@ Handle<Value> userName(const Arguments& args) {
 	return scope.Close(Undefined());
 }
 
-Handle<Value> printPlaylists(const Arguments& args) {
+Handle<Value> getPlaylists(const Arguments& args) {
 	HandleScope scope;
-	return scope.Close(Undefined());
+	std::vector<Playlist*> playlists = spotifyService->getPlaylistContainer()->getPlaylists();
+	Local<Array> nPlaylists = Array::New(playlists.size());
+	for(int i = 0; i < (int)playlists.size(); i++) {
+		nPlaylists->Set(Number::New(i), playlists[i]->getHandle());
+	}
+	//Handle<Value> p = playlists.front()->getHandle();
+	return scope.Close(nPlaylists);
 }
 
 void resolveCallback(uv_async_t* handle, int status) {
@@ -41,14 +44,15 @@ void resolveCallback(uv_async_t* handle, int status) {
 }
 
 void init(Handle<Object> target) {
+	Playlist::init(target);
 	  target->Set(String::NewSymbol("login"),
 			        FunctionTemplate::New(login)->GetFunction());
 	  target->Set(String::NewSymbol("logout"),
 			        FunctionTemplate::New(logout)->GetFunction());
 	  target->Set(String::NewSymbol("userName"),
 			        FunctionTemplate::New(userName)->GetFunction());
-	  target->Set(String::NewSymbol("printPlaylists"),
-			        FunctionTemplate::New(printPlaylists)->GetFunction());
+	  target->Set(String::NewSymbol("getPlaylists"),
+			        FunctionTemplate::New(getPlaylists)->GetFunction());
 	  spotifyService = new SpotifyService();
 	  //Initialize waiting for callbacks from the spotify thread
 	  uv_async_init(uv_default_loop(), &spotifyService->callNodeThread, resolveCallback);
