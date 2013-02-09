@@ -17,10 +17,12 @@ static void notifyMainThread(sp_session* session);
 static void loggedIn(sp_session* session, sp_error error);
 static void loggedOut(sp_session* session);
 static void rootPlaylistContainerLoaded(sp_playlistcontainer* pc, void* userdata);
+static void playlistStateChanged(sp_playlist* playlist, void* userdata);
 
 static sp_session_callbacks sessionCallbacks;
 static sp_session_config sessionConfig;
 static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
+static sp_playlist_callbacks playlistCallbacks;
 
 /**
  * The loop running in the spotify thread.
@@ -154,14 +156,20 @@ static void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContaine
 	PlaylistContainer* playlistContainer = static_cast<PlaylistContainer*>(userdata);
 	int numPlaylists = sp_playlistcontainer_num_playlists(spPlaylistContainer);
 
+	playlistCallbacks.playlist_state_changed = &playlistStateChanged;
+
 	for(int i = 0; i < numPlaylists; ++i) {
 		sp_playlist* spPlaylist = sp_playlistcontainer_playlist(spPlaylistContainer, i);
 		Playlist* playlist = new Playlist(spPlaylist);
-		playlist->name = std::string(sp_playlist_name(spPlaylist));
+		sp_playlist_add_callbacks(spPlaylist, &playlistCallbacks, playlist);
 		playlistContainer->addPlaylist(playlist);
-		//Add Callbacks
-		//Create new PlaylistObject
-		//Add PlaylistObject to Playlist Container
+	}
+}
+
+static void playlistStateChanged(sp_playlist* _playlist, void* userdata) {
+	Playlist* playlist = static_cast<Playlist*>(userdata);
+	if(sp_playlist_is_loaded(_playlist)) {
+		playlist->name = std::string(sp_playlist_name(_playlist));
 	}
 }
 
@@ -196,7 +204,7 @@ void SpotifyService::setPlaylistContainer(PlaylistContainer* playlistContainer) 
 	this->playlistContainer = playlistContainer;
 }
 
-PlaylistContainer*  SpotifyService::getPlaylistContainer() {
+PlaylistContainer* SpotifyService::getPlaylistContainer() {
 	return this->playlistContainer;
 }
 

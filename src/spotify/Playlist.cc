@@ -2,10 +2,6 @@
 
 Persistent<Function> Playlist::constructor;
 
-Playlist::~Playlist() {
-	fprintf(stdout, "%s to be destroyed\n", name.c_str());
-}
-
 void Playlist::setName(Local<String> property, Local<Value> value, const AccessorInfo& info) {
 	Playlist* playlist = node::ObjectWrap::Unwrap<Playlist>(info.Holder());
 	String::Utf8Value v8Str(value);
