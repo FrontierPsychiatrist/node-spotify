@@ -2,7 +2,6 @@
 #define SPOTIFY_SERVICE_H
 
 #include <uv.h>
-#include <v8.h>
 #include <string>
 #include <libspotify/api.h>
 #include "Callback.h"
@@ -26,7 +25,6 @@ class SpotifyService {
 		PlaylistContainer* getPlaylistContainer();
 		void setSpotifySession(sp_session* spotifySession);
 	private:
-		v8::Handle<v8::Value> nodeLoggedInCallback();
 		PlaylistContainer* playlistContainer;
 		sp_session* spotifySession;
 };
