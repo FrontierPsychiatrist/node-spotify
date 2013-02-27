@@ -39,8 +39,8 @@ Handle<Value> getPlaylists(const Arguments& args) {
 }
 
 void resolveCallback(uv_async_t* handle, int status) {
-	char* str = (char*)(handle->data);
-	fprintf(stdout, "BACKEND: received callback with data! %s\n", str);
+	CallbackBase* callback = (CallbackBase*)(handle->data);
+	callback->call();
 }
 
 void init(Handle<Object> target) {

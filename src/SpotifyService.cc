@@ -10,6 +10,7 @@ extern int spotifyAppkeySize;
 /* Temporary hardcoded logindata, not to be commited */
 extern const char* username;
 extern const char* password;
+uv_async_t* fuckYou;
 static int notifyDo = 0;
 CallbackBase* gCallback = 0;
 
@@ -126,6 +127,14 @@ static void notifyMainThread(sp_session* session) {
 	pthread_mutex_unlock(&spotifyService->notifyMutex);
 }
 
+static void playlistNameChange(sp_playlist* spPlaylist, void* userdata) {
+	Playlist* playlist = static_cast<Playlist*>(userdata);
+	playlist->name = std::string(sp_playlist_name(spPlaylist));
+	Callback<Playlist>* bla = new Callback<Playlist>(playlist, &Playlist::nameChange);
+	fuckYou->data  = (void*)bla;
+	uv_async_send(fuckYou);
+}
+
 static void loggedIn(sp_session* session, sp_error error) {
 	SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
 	if(SP_ERROR_OK != error) {
@@ -133,6 +142,7 @@ static void loggedIn(sp_session* session, sp_error error) {
 	} else {
 		fprintf(stdout, "BACKEND: Service is logged in!\n");
 	}
+	fuckYou = &spotifyService->callNodeThread;
 	/*uv_async_t* handle = &spotifyService->callNodeThread;
 	const char* str = "Hi there from the spotify Thread!";
 	handle->data = (void*)str;
@@ -157,6 +167,7 @@ static void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContaine
 	int numPlaylists = sp_playlistcontainer_num_playlists(spPlaylistContainer);
 
 	playlistCallbacks.playlist_state_changed = &playlistStateChanged;
+	playlistCallbacks.playlist_renamed = &playlistNameChange;
 
 	for(int i = 0; i < numPlaylists; ++i) {
 		sp_playlist* spPlaylist = sp_playlistcontainer_playlist(spPlaylistContainer, i);
