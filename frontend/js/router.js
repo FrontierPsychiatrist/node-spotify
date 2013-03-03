@@ -3,11 +3,16 @@ define([
 ], function(Backbone) {
     var AppRouter = Backbone.Router.extend({
         routes : {
-            '' : 'home'
+            '' : 'home',
+            'playlist/:id' : 'playlist'
         },
 
         home: function() {
             $('#content').append('Router correctly initialized<br/>');
+        },
+
+        playlist: function(id) {
+            $('#content').append('Switched to playlist ' + id + '<br/>');
         }
     });
 

@@ -15,4 +15,4 @@ tmp
 
 #IntelliJ
 *.iml
-idea
+.idea

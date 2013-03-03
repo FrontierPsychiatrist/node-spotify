@@ -2,11 +2,24 @@
 <html>
 <head>
     <title>Spotify</title>
-    <script data-main="js/main" src="js/libs/require.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" media="all">
+    <script data-main="js/main" src="require.js"></script>
 </head>
 <body>
 
-<div id="content"></div>
+<div class="container-fluid">
+<div class="row-fluid">
+    <div class="span2">
+        <ul class="nav nav-tabs nav-stacked">
+            <li><a href="#playlist/1">Playlist 1</a></li>
+            <li><a href="#playlist/2">Playlist 2</a></li>
+            <li><a href="#playlist/3">Playlist 3</a></li>
+            <li><a href="#playlist/4">Playlist 4</a></li>
+        </ul>
+    </div>
+    <div class="span10" id="content"></div>
+</div>
+</div>
 
 </body>
 </html>
