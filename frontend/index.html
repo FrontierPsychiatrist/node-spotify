@@ -10,16 +10,19 @@
 <div class="container-fluid">
 <div class="row-fluid">
     <div class="span2">
-        <ul class="nav nav-tabs nav-stacked">
-            <li><a href="#playlist/1">Playlist 1</a></li>
-            <li><a href="#playlist/2">Playlist 2</a></li>
-            <li><a href="#playlist/3">Playlist 3</a></li>
-            <li><a href="#playlist/4">Playlist 4</a></li>
+        <ul class="nav nav-tabs nav-stacked" id="playlists">
+
         </ul>
     </div>
     <div class="span10" id="content"></div>
 </div>
 </div>
+
+
+<!-- Templates -->
+<script type="text/template" id="playlist-menuEntry">
+    <a href="#playlist/<%= id %>"><%= name %></a>
+</script>
 
 </body>
 </html>
