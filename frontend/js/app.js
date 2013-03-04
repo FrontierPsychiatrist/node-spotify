@@ -1,7 +1,8 @@
 define([
     'jquery',
     'router',
-    'views/playlist/menu'
+    'views/playlist/menu',
+    'socket'
 ], function($, router, PlaylistMenuView) {
 
         var initialize = function() {

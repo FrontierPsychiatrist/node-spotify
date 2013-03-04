@@ -39,5 +39,5 @@ function serveStatic(req, res) {
 }
 
 io.sockets.on('connection', function(socket) {
-	console.log(socket);
+	socket.emit('init', { success: true });
 });

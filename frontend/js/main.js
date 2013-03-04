@@ -2,7 +2,8 @@ require.config( {
     paths: {
         'backbone' : 'libs/backbone',
         'underscore' : 'libs/underscore',
-        'jquery' : 'libs/jquery'
+        'jquery' : 'libs/jquery',
+		'io': '/socket.io/socket.io.js'
     },
     shim: {
         'backbone' : {
@@ -16,7 +17,11 @@ require.config( {
 
         'jquery' : {
             exports: '$'
-        }
+        },
+
+		'io' : {
+			exports: 'io'
+		}
     }
 });
 
