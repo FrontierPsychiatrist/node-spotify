@@ -11,6 +11,7 @@ class SpotifyService {
 	public:
 		SpotifyService();
 		~SpotifyService();
+
 		void login(std::string username, std::string password);
 		void logout();
 		void executeSpotifyAPIcall(CallbackBase* callback);
@@ -23,6 +24,7 @@ class SpotifyService {
 
 		void setPlaylistContainer(PlaylistContainer* playlistContainer);
 		PlaylistContainer* getPlaylistContainer();
+
 		void setSpotifySession(sp_session* spotifySession);
 	private:
 		PlaylistContainer* playlistContainer;

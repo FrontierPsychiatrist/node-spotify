@@ -4,26 +4,23 @@
 #include <mach/clock.h>
 #include <mach/mach.h>
 
+#include "SpotifyService/SpotifyService_PlaylistCallbacks.h"
+#include "SpotifyService/SpotifyService_SessionCallbacks.h"
+
+using namespace spotify;
+
 extern uint8_t spotifyAppkey[];
 extern int spotifyAppkeySize;
 
 /* Temporary hardcoded logindata, not to be commited */
 extern const char* username;
 extern const char* password;
-uv_async_t* fuckYou;
-static int notifyDo = 0;
+
+int notifyDo = 0;
 CallbackBase* gCallback = 0;
 
-static void notifyMainThread(sp_session* session);
-static void loggedIn(sp_session* session, sp_error error);
-static void loggedOut(sp_session* session);
-static void rootPlaylistContainerLoaded(sp_playlistcontainer* pc, void* userdata);
-static void playlistStateChanged(sp_playlist* playlist, void* userdata);
-
-static sp_session_callbacks sessionCallbacks;
 static sp_session_config sessionConfig;
-static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
-static sp_playlist_callbacks playlistCallbacks;
+static sp_session_callbacks sessionCallbacks;
 
 /**
  * The loop running in the spotify thread.
@@ -111,80 +108,6 @@ static void* spotifyLoop(void* _spotifyService) {
 	return 0;
 }
 
-
-/* ################################### LIBSPOTIFY CALLBACKS ####################################### */
-/**
- * Functions called by libspotify as callbacks.
- *
- * If a callback from libspotify needs to call a callback in nodeJS use uv_async_send and attach a callback to the async handle.
- * **/
-
-static void notifyMainThread(sp_session* session) {
-	SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
-	pthread_mutex_lock(&spotifyService->notifyMutex);
-	notifyDo = 1;
-	pthread_cond_signal(&spotifyService->notifyCondition);
-	pthread_mutex_unlock(&spotifyService->notifyMutex);
-}
-
-static void playlistNameChange(sp_playlist* spPlaylist, void* userdata) {
-	Playlist* playlist = static_cast<Playlist*>(userdata);
-	playlist->name = std::string(sp_playlist_name(spPlaylist));
-	Callback<Playlist>* bla = new Callback<Playlist>(playlist, &Playlist::nameChange);
-	fuckYou->data  = (void*)bla;
-	uv_async_send(fuckYou);
-}
-
-static void loggedIn(sp_session* session, sp_error error) {
-	SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
-	if(SP_ERROR_OK != error) {
-		fprintf(stderr, "BACKEND: Error logging in: %s\n", sp_error_message(error));
-	} else {
-		fprintf(stdout, "BACKEND: Service is logged in!\n");
-	}
-	fuckYou = &spotifyService->callNodeThread;
-	/*uv_async_t* handle = &spotifyService->callNodeThread;
-	const char* str = "Hi there from the spotify Thread!";
-	handle->data = (void*)str;
-	uv_async_send(handle);*/
-
-	//The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
-	rootPlaylistContainerCallbacks.container_loaded = &rootPlaylistContainerLoaded;
-	sp_playlistcontainer *pc = sp_session_playlistcontainer(session);
-	PlaylistContainer* playlistContainer = new PlaylistContainer(pc);
-	spotifyService->setPlaylistContainer(playlistContainer);
-	sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, playlistContainer);
-}
-
-static void loggedOut(sp_session* session) {
-	SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
-	spotifyService->loggedOut = 1;
-	fprintf(stdout, "BACKEND: Service is logged out\n");
-}
-
-static void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
-	PlaylistContainer* playlistContainer = static_cast<PlaylistContainer*>(userdata);
-	int numPlaylists = sp_playlistcontainer_num_playlists(spPlaylistContainer);
-
-	playlistCallbacks.playlist_state_changed = &playlistStateChanged;
-	playlistCallbacks.playlist_renamed = &playlistNameChange;
-
-	for(int i = 0; i < numPlaylists; ++i) {
-		sp_playlist* spPlaylist = sp_playlistcontainer_playlist(spPlaylistContainer, i);
-		Playlist* playlist = new Playlist(spPlaylist);
-		sp_playlist_add_callbacks(spPlaylist, &playlistCallbacks, playlist);
-		playlistContainer->addPlaylist(playlist);
-	}
-}
-
-static void playlistStateChanged(sp_playlist* _playlist, void* userdata) {
-	Playlist* playlist = static_cast<Playlist*>(userdata);
-	if(sp_playlist_is_loaded(_playlist)) {
-		playlist->name = std::string(sp_playlist_name(_playlist));
-	}
-}
-
-/* ################## MEMBER METHODS ################################ */
 SpotifyService::SpotifyService() {
 	loggedOut = 0;
 }
