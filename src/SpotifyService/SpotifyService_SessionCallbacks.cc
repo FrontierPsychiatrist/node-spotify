@@ -9,6 +9,7 @@
 
 //TODO!
 extern int notifyDo;
+extern SpotifyService* spotifyService;
 
 namespace spotify {
 
@@ -58,6 +59,10 @@ void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void
 		sp_playlist_add_callbacks(spPlaylist, &playlistCallbacks, playlist);
 		playlistContainer->addPlaylist(playlist);
 	}
+
+	Callback<PlaylistContainer>* nodeCallback = new Callback<PlaylistContainer>(playlistContainer, &PlaylistContainer::containerLoaded);
+	spotifyService->callNodeThread.data  = (void*)nodeCallback;
+	uv_async_send(&spotifyService->callNodeThread);
 }
 
 } //namespace

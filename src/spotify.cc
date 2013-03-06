@@ -27,6 +27,14 @@ Handle<Value> userName(const Arguments& args) {
 	return scope.Close(Undefined());
 }
 
+Handle<Value> playlistsLoaded(const Arguments& args) {
+	HandleScope scope;
+	Handle<Function> fun = Handle<Function>::Cast(args[0]);
+ 	Persistent<Function> p = Persistent<Function>::New(fun);
+	PlaylistContainer::setContainerLoadedCallback(p);
+	return scope.Close(Undefined());
+}
+
 Handle<Value> getPlaylists(const Arguments& args) {
 	HandleScope scope;
 	std::vector<Playlist*> playlists = spotifyService->getPlaylistContainer()->getPlaylists();
@@ -45,16 +53,16 @@ void resolveCallback(uv_async_t* handle, int status) {
 
 void init(Handle<Object> target) {
 	Playlist::init(target);
-	  target->Set(String::NewSymbol("login"),
+	target->Set(String::NewSymbol("login"),
 			        FunctionTemplate::New(login)->GetFunction());
-	  target->Set(String::NewSymbol("logout"),
+	target->Set(String::NewSymbol("logout"),
 			        FunctionTemplate::New(logout)->GetFunction());
-	  target->Set(String::NewSymbol("userName"),
-			        FunctionTemplate::New(userName)->GetFunction());
-	  target->Set(String::NewSymbol("getPlaylists"),
+	target->Set(String::NewSymbol("getPlaylists"),
 			        FunctionTemplate::New(getPlaylists)->GetFunction());
-	  spotifyService = new SpotifyService();
-	  //Initialize waiting for callbacks from the spotify thread
-	  uv_async_init(uv_default_loop(), &spotifyService->callNodeThread, resolveCallback);
+	target->Set(String::NewSymbol("playlistsLoaded"),
+			        FunctionTemplate::New(playlistsLoaded)->GetFunction());
+	spotifyService = new SpotifyService();
+	//Initialize waiting for callbacks from the spotify thread
+	uv_async_init(uv_default_loop(), &spotifyService->callNodeThread, resolveCallback);
 }
 NODE_MODULE(spotify, init)

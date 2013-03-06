@@ -19,7 +19,6 @@ class SpotifyService {
 		uv_async_t callNodeThread;
 		pthread_mutex_t notifyMutex;
 		pthread_cond_t notifyCondition;
-		pthread_t spotifyThread;
 		int loggedOut;
 
 		void setPlaylistContainer(PlaylistContainer* playlistContainer);
@@ -29,6 +28,7 @@ class SpotifyService {
 	private:
 		PlaylistContainer* playlistContainer;
 		sp_session* spotifySession;
+		pthread_t spotifyThread;
 };
 
 #endif
