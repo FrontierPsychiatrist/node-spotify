@@ -55,13 +55,12 @@ void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void
 
 	for(int i = 0; i < numPlaylists; ++i) {
 		sp_playlist* spPlaylist = sp_playlistcontainer_playlist(spPlaylistContainer, i);
-		Playlist* playlist = new Playlist(spPlaylist);
+		Playlist* playlist = new Playlist(spPlaylist, &spotifyService->callNodeThread);
 		sp_playlist_add_callbacks(spPlaylist, &playlistCallbacks, playlist);
 		playlistContainer->addPlaylist(playlist);
 	}
-
-	Callback<PlaylistContainer>* nodeCallback = new Callback<PlaylistContainer>(playlistContainer, &PlaylistContainer::containerLoaded);
-	spotifyService->callNodeThread.data  = (void*)nodeCallback;
+	
+	spotifyService->callNodeThread.data  = (void*)PlaylistContainer::getContainerLoadedCallback();
 	uv_async_send(&spotifyService->callNodeThread);
 }
 

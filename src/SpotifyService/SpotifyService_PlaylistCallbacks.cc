@@ -10,9 +10,7 @@ namespace spotify {
 void playlistNameChange(sp_playlist* spPlaylist, void* userdata) {
 	Playlist* playlist = static_cast<Playlist*>(userdata);
 	playlist->name = std::string(sp_playlist_name(spPlaylist));
-	Callback<Playlist>* nodeCallback = new Callback<Playlist>(playlist, &Playlist::nameChange);
-	spotifyService->callNodeThread.data  = (void*)nodeCallback;
-	uv_async_send(&spotifyService->callNodeThread);
+	playlist->call("renamed");
 }
 
 void playlistStateChanged(sp_playlist* _playlist, void* userdata) {

@@ -12,10 +12,8 @@ class PlaylistContainer {
 		void addPlaylist(Playlist* const playlist) { playlists.push_back(playlist); };
 		std::vector<Playlist*>& getPlaylists() { return playlists; };
 
-		static Persistent<Function> getContainerLoadedCallback() { return containerLoadedCallback; };
-		static void setContainerLoadedCallback( Persistent<Function>& callback ) { PlaylistContainer::containerLoadedCallback = callback; };
-
-		void containerLoaded();
+		static Persistent<Function>* getContainerLoadedCallback() { return &containerLoadedCallback; };
+		static void setContainerLoadedCallback( Persistent<Function> callback ) { PlaylistContainer::containerLoadedCallback = callback; };
 	private:
 		sp_playlistcontainer* playlistContainer;
 		std::vector<Playlist*> playlists;

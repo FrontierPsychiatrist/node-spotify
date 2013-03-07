@@ -5,16 +5,14 @@
 #include <string>
 #include <libspotify/api.h>
 
+#include "SpotifyWrapped.h"
+
 using namespace v8;
 
-class Playlist : public node::ObjectWrap {
+class Playlist : public SpotifyWrapped {
 	public:
-		Playlist(sp_playlist* _playlist) : playlist(_playlist) {};
-		Handle<Object> getHandle();
+		Playlist(sp_playlist* _playlist, uv_async_t* _handle) : SpotifyWrapped(_handle), playlist(_playlist) {};
 		std::string name;
-
-		//Callback methods
-		void nameChange();
 
 		//Method visible to nodeJS
 		static void setName(Local<String> property, Local<Value> value, const AccessorInfo& info);
@@ -25,7 +23,6 @@ class Playlist : public node::ObjectWrap {
 	private:
 		Persistent<Function> nameChangeCallback;
 		sp_playlist* playlist;
-		static Persistent<Function> constructor;
 };
 
 #endif
