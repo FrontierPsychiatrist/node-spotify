@@ -2,7 +2,7 @@
 #include "../NodeCallback.h"
 
 void V8Callable::on(std::string name, v8::Persistent<v8::Function> callback) {
-	callbacks.insert( std::pair<std::string, v8::Persistent<v8::Function> >( name, callback) );
+  callbacks[name] = callback;
 }
 
 void V8Callable::call(std::string name, v8::Handle<v8::Object>* object) {

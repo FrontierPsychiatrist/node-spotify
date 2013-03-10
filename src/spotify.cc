@@ -23,11 +23,6 @@ Handle<Value> logout(const Arguments& args) {
 	return Undefined();
 }
 
-Handle<Value> userName(const Arguments& args) {
-	HandleScope scope;
-	return scope.Close(Undefined());
-}
-
 Handle<Value> ready(const Arguments& args) {
 	HandleScope scope;
 	Handle<Function> fun = Handle<Function>::Cast(args[0]);
