@@ -4,8 +4,8 @@
 #include <mach/clock.h>
 #include <mach/mach.h>
 
-#include "SpotifyService/SpotifyService_PlaylistCallbacks.h"
-#include "SpotifyService/SpotifyService_SessionCallbacks.h"
+#include "PlaylistCallbacks.h"
+#include "SessionCallbacks.h"
 
 using namespace spotify;
 

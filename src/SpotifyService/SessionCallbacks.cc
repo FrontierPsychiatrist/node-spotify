@@ -1,10 +1,11 @@
-#include "SpotifyService_SessionCallbacks.h"
+#include "SessionCallbacks.h"
 
 //TODO!
-#include "SpotifyService_PlaylistCallbacks.h"
+#include "PlaylistCallbacks.h"
 
 #include "../Callback.h"
-#include "../SpotifyService.h"
+#include "../NodeCallback.h"
+#include "SpotifyService.h"
 #include <stdio.h>
 
 //TODO!
@@ -60,7 +61,9 @@ void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void
 		playlistContainer->addPlaylist(playlist);
 	}
 	
-	spotifyService->callNodeThread.data  = (void*)PlaylistContainer::getContainerLoadedCallback();
+  NodeCallback* nodeCallback = new NodeCallback();
+  nodeCallback->function = PlaylistContainer::getContainerLoadedCallback();
+	spotifyService->callNodeThread.data  = (void*)nodeCallback;
 	uv_async_send(&spotifyService->callNodeThread);
 }
 

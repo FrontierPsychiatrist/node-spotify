@@ -10,7 +10,8 @@
 class SpotifyWrapped : public V8Callable, public node::ObjectWrap {
 	public:
 		SpotifyWrapped(uv_async_t* _handle) : V8Callable(_handle) {}; 
-		v8::Handle<v8::Object> getV8Object();
+		v8::Handle<v8::Object>* getV8Object();
+    void call(std::string name);
 	protected:
 		static v8::Persistent<v8::Function> constructor;	
 };

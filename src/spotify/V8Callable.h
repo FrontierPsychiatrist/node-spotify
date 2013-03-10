@@ -24,7 +24,7 @@ class V8Callable {
 		 *
 		 *	Mainly used from within libspotify callbacks.
 		**/
-		void call(std::string name);
+		void call(std::string name, v8::Handle<v8::Object>* object);
 	private:
 		uv_async_t* asyncHandle;
 		std::map<std::string, v8::Persistent<v8::Function> > callbacks;

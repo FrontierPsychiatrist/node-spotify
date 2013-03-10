@@ -8,6 +8,7 @@ tmp
 
 #vim
 *.swp
+.clang_complete
 
 #osx
 .DS_Store

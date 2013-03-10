@@ -2,11 +2,11 @@
 	"targets": [
 	{
 		"target_name": "spotify",
-		"sources": ["src/spotify.cc", "src/appkey.c", "src/SpotifyService.cc", "src/logindata.c",
+		"sources": ["src/spotify.cc", "src/appkey.c", "src/SpotifyService/SpotifyService.cc", "src/logindata.c",
 			"src/spotify/V8Callable.cc", "src/spotify/SpotifyWrapped.cc",
 			"src/spotify/Playlist.cc", "src/spotify/PlaylistContainer.cc",
-			"src/SpotifyService/SpotifyService_PlaylistCallbacks.cc",
-			"src/SpotifyService/SpotifyService_SessionCallbacks.cc"
+			"src/SpotifyService/PlaylistCallbacks.cc",
+			"src/SpotifyService/SessionCallbacks.cc"
 		],
 		"link_settings" : {
 			"libraries": ["-lspotify"]

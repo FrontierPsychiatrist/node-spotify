@@ -1,7 +1,7 @@
-#include "SpotifyService_PlaylistCallbacks.h"
+#include "PlaylistCallbacks.h"
 #include "../spotify/Playlist.h"
 #include "../Callback.h"
-#include "../SpotifyService.h"
+#include "SpotifyService.h"
 
 extern SpotifyService* spotifyService;
 

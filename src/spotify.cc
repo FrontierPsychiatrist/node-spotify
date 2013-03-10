@@ -1,7 +1,8 @@
 #include <node.h>
 #include <v8.h>
 
-#include "SpotifyService.h"
+#include "SpotifyService/SpotifyService.h"
+#include "NodeCallback.h"
 
 using namespace v8;
 
@@ -40,21 +41,28 @@ Handle<Value> getPlaylists(const Arguments& args) {
 	std::vector<Playlist*> playlists = spotifyService->getPlaylistContainer()->getPlaylists();
 	Local<Array> nPlaylists = Array::New(playlists.size());
 	for(int i = 0; i < (int)playlists.size(); i++) {
-		nPlaylists->Set(Number::New(i), playlists[i]->getV8Object());
+		nPlaylists->Set(Number::New(i), *(playlists[i]->getV8Object()) );
 	}
 	return scope.Close(nPlaylists);
 }
 
+/**
+ * Handle a NodeCallback sent to this thread. 
+ * The handle should contain a NodeCallback struct
+ **/
 void resolveCallback(uv_async_t* handle, int status) {
-	//CallbackBase* callback = (CallbackBase*)(handle->data);
-	//callback->call();
-	//TODO: take the Javascript object into account
 	HandleScope scope;
-	Handle<Function>* fun = (Handle<Function>*)handle->data;
+  NodeCallback* nodeCallback = (NodeCallback*)handle->data;
+  Handle<Function>* fun = nodeCallback->function;
+
 	const unsigned int argc = 0;
 	Local<Value> argv[argc] = { };
 	if(!(*fun).IsEmpty() && (*fun)->IsCallable()) {
-		(*fun)->Call(Context::GetCurrent()->Global(), argc, argv);
+    //Check if an object is attached to the struct and if, use it as the scope.
+    if(nodeCallback->object == NULL)
+		  (*fun)->Call(Context::GetCurrent()->Global(), argc, argv);
+    else
+		  (*fun)->Call(*nodeCallback->object, argc, argv);
 	}
 	scope.Close(Undefined());
 }

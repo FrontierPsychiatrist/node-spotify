@@ -4,8 +4,8 @@
 #include <uv.h>
 #include <string>
 #include <libspotify/api.h>
-#include "Callback.h"
-#include "spotify/PlaylistContainer.h"
+#include "../Callback.h"
+#include "../spotify/PlaylistContainer.h"
 
 class SpotifyService {
 	public:
