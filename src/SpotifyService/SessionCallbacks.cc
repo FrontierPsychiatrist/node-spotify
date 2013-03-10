@@ -29,6 +29,7 @@ void loggedIn(sp_session* session, sp_error error) {
 	SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
 	if(SP_ERROR_OK != error) {
 		fprintf(stderr, "BACKEND: Error logging in: %s\n", sp_error_message(error));
+    spotifyService->loggedOut = 1;
 	} else {
 		fprintf(stdout, "BACKEND: Service is logged in!\n");
 	}

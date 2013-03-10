@@ -13,8 +13,8 @@ extern uint8_t spotifyAppkey[];
 extern int spotifyAppkeySize;
 
 /* Temporary hardcoded logindata, not to be commited */
-extern const char* username;
-extern const char* password;
+static std::string username;
+static std::string password;
 
 int notifyDo = 0;
 CallbackBase* gCallback = 0;
@@ -62,7 +62,7 @@ static void* spotifyLoop(void* _spotifyService) {
 
 	spotifyService->setSpotifySession(session);
 
-	sp_session_login(session, username, password, 0, NULL);
+	sp_session_login(session, username.c_str(), password.c_str(), 0, NULL);
 
 	pthread_mutex_lock(&spotifyService->notifyMutex);
 	while(!spotifyService->loggedOut) {
@@ -115,7 +115,9 @@ SpotifyService::SpotifyService() {
 /**
  * Starts the spotify thread and logs in
  * **/
-void SpotifyService::login(std::string username, std::string password) {
+void SpotifyService::login(std::string _username, std::string _password) {
+  username = _username;
+  password = _password;
 	pthread_create(&spotifyThread, NULL, spotifyLoop, this);
 }
 

@@ -10,8 +10,10 @@ SpotifyService* spotifyService;
 
 Handle<Value> login(const Arguments& args) {
 	HandleScope scope;
-	std::string user("USER");
-	std::string password("PASSWORD");
+  String::Utf8Value v8User(args[0]->ToString());
+  String::Utf8Value v8Password(args[1]->ToString());
+	std::string user(*v8User);
+	std::string password(*v8Password);
 	spotifyService->login(user, password);
 	return scope.Close(Undefined());
 }
