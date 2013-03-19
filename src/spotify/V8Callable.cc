@@ -4,7 +4,7 @@
 void V8Callable::on(std::string name, v8::Persistent<v8::Function> callback) {
   callbacks[name] = callback;
 }
-
+//Idee: Auch eine "Callme" Map, in der gespeichert wird, wenn noch ein Callback ansteht bevor es festgelegt wurde
 void V8Callable::call(std::string name, v8::Handle<v8::Object>* object) {
 	std::map< std::string, v8::Persistent<v8::Function> >::iterator it;
 	it = callbacks.find(name);

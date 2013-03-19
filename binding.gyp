@@ -11,7 +11,15 @@
 		"link_settings" : {
 			"libraries": ["-lspotify"]
 		},
-		"cflags": ["-g"]
+		"cflags": ["-g"],
+		"actions": [ {
+			"action_name": "generateEventsHeader",
+			"inputs": ["frontend/js/events.js"],
+			"outputs": ["src/events.h"],
+			"action": ["node", "preprocessor.js"],
+			"message": "Generating C++ events headerfile"
+			}
+		]
 
 	}
 	]

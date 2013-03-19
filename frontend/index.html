@@ -6,6 +6,12 @@
     <script data-main="js/main" src="require.js"></script>
 </head>
 <body>
+<div class="navbar nav-header navbar-fixed-top">
+    <div class="navbar-inner">
+        <span class="brand">node-spotify</span>
+        <button id="logoutButton" class="pull-right btn btn-warning">Logout</button>
+    </div>
+</div>
 
 <div class="container-fluid">
 <div class="row-fluid">
@@ -18,10 +24,47 @@
 </div>
 </div>
 
+<div id="modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+</div>
 
 <!-- Templates -->
 <script type="text/template" id="playlist-menuEntry">
     <a href="#playlist/<%= id %>"><%= name %></a>
+</script>
+
+<script type="text/template" id="loginform">
+    <form action="#" class="form-horizontal" id="loginForm">
+        <div class="control-group">
+            <label class="control-label" for="username">Username</label>
+            <div class="controls">
+                <input type="text" name="username" id="username"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="password">Password</label>
+            <div class="controls">
+                <input type="password" name="password" id="password"/>
+            </div>
+        </div>
+    </form>
+</script>
+
+<script type="text/template" id="modal-template">
+    <div class="modal-header">
+        <% if(closable) {%>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <% } %>
+        <h3 id="modalLabel"><%= label %></h3>
+    </div>
+    <div class="modal-body">
+        <%= body %>
+    </div>
+    <div class="modal-footer">
+        <% if(closable) { %>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <% } %>
+        <button id='modalConfirmButton' class="btn btn-primary"><%= buttonText %></button>
+    </div>
 </script>
 
 </body>

@@ -8,11 +8,9 @@ define([
         },
 
         home: function() {
-            $('#content').append('Router correctly initialized<br/>');
         },
 
         playlist: function(id) {
-            $('#content').append('Switched to playlist ' + id + '<br/>');
         }
     });
 

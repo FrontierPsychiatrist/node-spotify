@@ -3,7 +3,8 @@ require.config( {
         'backbone' : 'libs/backbone',
         'underscore' : 'libs/underscore',
         'jquery' : 'libs/jquery',
-		'io': '/socket.io/socket.io.js'
+		'io': '/socket.io/socket.io.js',
+        'bootstrap': 'libs/bootstrap'
     },
     shim: {
         'backbone' : {
@@ -21,7 +22,9 @@ require.config( {
 
 		'io' : {
 			exports: 'io'
-		}
+		},
+
+        'bootstrap': ['jquery']
     }
 });
 

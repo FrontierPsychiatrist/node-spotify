@@ -1,27 +1,40 @@
 define([
     'jquery',
     'router',
-    'views/playlist/menu',
-    'socket'
-], function($, router, PlaylistMenuView) {
+    'views/login',
+    'socket',
+    'events',
+    'bootstrap',
+    'views/playlist/menu'
+], function($, router, LoginView, socket, events, bootstrap, PlaylistMenuView) {
 
+        //TODO: refactor this.
         var initialize = function() {
-            $('#content').html('Require JS correctly loaded<br/>');
+            $('#logoutButton').on('click', function() {
+                socket.emit(events.logout);
+            })
             router.initialize();
 
-            var playlists  = [
-                {'name': 'best of', 'id': 0},
-                {'name': 'Beirut', 'id': 1},
-                {'name': 'GY!BE', 'id': 2},
-                {'name': 'Starred', 'id': 3},
-                {'name': 'JME', 'id': 4},
-                {'name': 'Jazz', 'id': 5}
-            ];
-            for (var i in playlists) {
-                var playlistMenuView = new PlaylistMenuView({ model: playlists[i] });
-                $('#playlists').append(playlistMenuView.render().el);
-            }
+            socket.on(events.logged_in, function(data) {
+                if(data.loggedIn) {
+                    //request initial data
+                    socket.emit(events.initial_data);
+                } else {
+                    var loginView = new LoginView();
+                    $('#modal').html( loginView.render().el ).modal({keyboard: false});
+                }
+            });
 
+            socket.on(events.initial_data, function (data) {
+                $('#modal').modal('hide');
+                for(var i = 0; i < data.length; i++) {
+                    var playlistMenuView = new PlaylistMenuView({ model: data[i] });
+                    $('#playlists').append(playlistMenuView.render().el);
+                }
+            });
+
+            //Asked the backend, if it is logged in
+            socket.emit(events.logged_in);
         };
 
         return {
