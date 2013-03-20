@@ -27,6 +27,7 @@ function serveStatic(req, res) {
 			fs.readFile(filePath, function(error, content) {
 				if(error) {
 					res.writeHead(500);
+					console.log(error);
 					res.end();
 				} else {
 					res.writeHead(200, {'Content-Type': contentType });

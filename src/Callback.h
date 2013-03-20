@@ -28,7 +28,8 @@
  * **/
 class CallbackBase {
 	public:
-		virtual void call();
+		virtual void call() = 0;
+		virtual ~CallbackBase() {};
 };
 
 template <class T>
@@ -38,6 +39,7 @@ class Callback : public CallbackBase {
 			(object->*method)();
 		};
 		Callback(T* _object, void(T::*_method)()) : object(_object), method(_method) {};
+		~Callback() {};
 	private:
 		T* object; //Object to call method on
 		void(T::*method)(); //Method to call
