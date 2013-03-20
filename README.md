@@ -29,28 +29,28 @@ installed libspotify as a framework you need to edit the binding.gyp file. Remov
 
 If your on Linux, src/SpotifyService/SpotifyService.cc needs to be changed slightly. Replace
 
-#include <mach/clock.h>
-#include <mach/mach.h>
+    #include <mach/clock.h>
+    #include <mach/mach.h>
 
 with
 
-#include <sys/time.h>
+    #include <sys/time.h>
 
 and
 
-clock_serv_t cclock;
-mach_timespec_t mts;
-host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
-clock_get_time(cclock, &mts);
-mach_port_deallocate(mach_task_self(), cclock);
-ts.tv_sec = mts.tv_sec + nextTimeout / 1000;
-ts.tv_nsec = mts.tv_nsec + (nextTimeout % 1000) * 1000;
+    clock_serv_t cclock;
+    mach_timespec_t mts;
+    host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+    clock_get_time(cclock, &mts);
+    mach_port_deallocate(mach_task_self(), cclock);
+    ts.tv_sec = mts.tv_sec + nextTimeout / 1000;
+    ts.tv_nsec = mts.tv_nsec + (nextTimeout % 1000) * 1000;
 
 with
 
-clock_gettime(CLOCK_REALTIME, &ts);
-ts.tv_sec = ts.tv_sec + nextTimeout / 1000;
-ts.tv_nsec = ts.tv_nsec + (nextTimeout % 1000) * 1000;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    ts.tv_sec = ts.tv_sec + nextTimeout / 1000;
+    ts.tv_nsec = ts.tv_nsec + (nextTimeout % 1000) * 1000;
 
 Yes, i am actually to lazy to write a preprocessor statement for this right now.
 
