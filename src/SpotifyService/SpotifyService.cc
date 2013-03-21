@@ -12,7 +12,7 @@ using namespace spotify;
 extern uint8_t spotifyAppkey[];
 extern int spotifyAppkeySize;
 
-/* Temporary hardcoded logindata, not to be commited */
+//global variables...
 static std::string username;
 static std::string password;
 
