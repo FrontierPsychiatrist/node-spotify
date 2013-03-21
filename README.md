@@ -8,7 +8,7 @@ The backend is obviously a nodeJS app.
 
 The frontend is a backbone.js app that communicates with the backend via websockets (sockets.io).
 
-A webpage for the project is here: http://mcsaccess.no-ip.org/node-spotify/index.html, put it is still being filled with content.
+A webpage for the project is here: http://www.node-spotify.com, put it is still being filled with content.
 
 Right now the only thing possible is to login and a list of the playlists for the user should be sent to the browser and be
 rendered.
