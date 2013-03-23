@@ -14,7 +14,7 @@ define([
         },
 
         render: function() {
-            this.$el.html( this.template( { label: 'Login', closable: false, buttonText: 'Login', body: $('#loginform').text() }));
+            this.$el.html( this.template( { label: 'Login', closable: false, buttonText: 'Login', body: $('#loginformTemplate').text() }));
             return this;
         },
 

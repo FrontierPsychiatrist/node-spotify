@@ -1,4 +1,4 @@
-backbone.js: 0.9.10
+backbone.js: 1.0.0
 jquery: 1.9.1
 require.js: 2.1.4
 underscore.js: 1.4.4

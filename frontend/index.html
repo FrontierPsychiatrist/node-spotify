@@ -6,7 +6,7 @@
     <script data-main="js/main" src="require.js"></script>
 </head>
 <body>
-<div class="navbar nav-header navbar-fixed-top">
+<div class="navbar nav-header">
     <div class="navbar-inner">
         <span class="brand">node-spotify</span>
         <button id="logoutButton" class="pull-right btn btn-warning">Logout</button>
@@ -15,12 +15,12 @@
 
 <div class="container-fluid">
 <div class="row-fluid">
-    <div class="span2">
+    <div class="span3">
         <ul class="nav nav-tabs nav-stacked" id="playlists">
 
         </ul>
     </div>
-    <div class="span10" id="content"></div>
+    <div class="span9" id="content"></div>
 </div>
 </div>
 
@@ -32,7 +32,7 @@
     <a href="#playlist/<%= id %>"><%= name %></a>
 </script>
 
-<script type="text/template" id="loginform">
+<script type="text/template" id="loginformTemplate">
     <form action="#" class="form-horizontal" id="loginForm">
         <div class="control-group">
             <label class="control-label" for="username">Username</label>
