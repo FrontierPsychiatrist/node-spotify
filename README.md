@@ -15,7 +15,7 @@ rendered.
 
 Running
 -------
-First, you need a spotify premium account to use node-spotify. Facebook login is not possible, if you login to spotify via Facebook you need to create a device login.
+First, you need a spotify premium account to use node-spotify.
 
 Compiling
 ---------
@@ -58,5 +58,5 @@ Almost done. Change into the main folder (where binding.gyp lies) and run node-g
 
 Hope it builds.
 
-Then switch to the backend folder. If this is the first time, run npm install socket.io . Then run node node-spotify-backend.js . Point your browser to http://localhost:25000.
+Then switch to the backend folder. If this is the first time, run npm install socket.io . Then run node node-spotify-backend.js . Point your browser to http://localhost:25000/index.html .
 Login with your password, the playlists should load. If the playlists do not show up completly, just reload. Pressing logout will log you out but will not be visible in the frontend.
