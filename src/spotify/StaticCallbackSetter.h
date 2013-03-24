@@ -9,8 +9,11 @@ template <class T>
 class StaticCallbackSetter : public node::ObjectWrap {
   public:
     static v8::Handle<v8::Value> on(const v8::Arguments& args) {
-      v8::HandleScope scope;
-      return scope.Close(v8::Undefined());
+        v8::HandleScope scope;
+        String::Utf8Value callbackName(args[0]->ToString());
+        v8::Handle<v8::Function> fun = v8::Handle<v8::Function>::Cast(args[1]);
+        T::staticCallbacks[*callbackName] = v8::Persistent<v8::Function>::New(fun);
+        return scope.Close(v8::Undefined());
     };
 
     static void init(v8::Handle<v8::Object> target, const char* name) {
