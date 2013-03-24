@@ -9,8 +9,7 @@ define([
 
         template: _.template( $('#playlist-menuEntry').html() ),
 
-        render: function() {
-            this.model.id = 0;//TODO: obviously garbage. Id is not implemented down to the native model yet.
+        render: function () {
             this.$el.html( this.template( this.model ));
             return this;
         }

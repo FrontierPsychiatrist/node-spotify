@@ -51,6 +51,10 @@ spotify.ready( function() {
     sendInitialData();
 });
 
+spotify.playlists.on(events.playlist_renamed, function () {
+    gSocket.emit(events.playlist_renamed, this);
+})
+
 io.sockets.on('connection', function(socket) {
     gSocket = socket;
 

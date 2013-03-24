@@ -30,6 +30,7 @@ void loggedIn(sp_session* session, sp_error error) {
 	if(SP_ERROR_OK != error) {
 		fprintf(stderr, "BACKEND: Error logging in: %s\n", sp_error_message(error));
     spotifyService->loggedOut = 1;
+    return;
 	} else {
 		fprintf(stdout, "BACKEND: Service is logged in!\n");
 	}
@@ -57,11 +58,12 @@ void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void
 
 	for(int i = 0; i < numPlaylists; ++i) {
 		sp_playlist* spPlaylist = sp_playlistcontainer_playlist(spPlaylistContainer, i);
-		Playlist* playlist = new Playlist(spPlaylist, &spotifyService->callNodeThread);
+		Playlist* playlist = new Playlist(spPlaylist, &spotifyService->callNodeThread, i);
 		sp_playlist_add_callbacks(spPlaylist, &playlistCallbacks, playlist);
 		playlistContainer->addPlaylist(playlist);
 	}
 	
+  //Trigger the login complete callback.
   NodeCallback* nodeCallback = new NodeCallback();
   nodeCallback->function = PlaylistContainer::getContainerLoadedCallback();
 	spotifyService->callNodeThread.data  = (void*)nodeCallback;
