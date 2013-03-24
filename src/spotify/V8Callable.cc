@@ -1,6 +1,8 @@
 #include "V8Callable.h"
 #include "../NodeCallback.h"
 
+std::map<std::string, v8::Persistent<v8::Function> > V8Callable::staticCallbacks;
+
 void V8Callable::on(std::string name, v8::Persistent<v8::Function> callback) {
   callbacks[name] = callback;
 }

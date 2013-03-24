@@ -5,6 +5,7 @@ void Playlist::setName(Local<String> property, Local<Value> value, const Accesso
 	String::Utf8Value v8Str(value);
 	playlist->name = *v8Str;
 }
+
 Handle<Value> Playlist::getName(Local<String> property, const AccessorInfo& info) {
 	Playlist* playlist = node::ObjectWrap::Unwrap<Playlist>(info.Holder());
 	return String::New(playlist->name.c_str());

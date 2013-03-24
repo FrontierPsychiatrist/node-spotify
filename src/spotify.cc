@@ -3,6 +3,7 @@
 
 #include "SpotifyService/SpotifyService.h"
 #include "NodeCallback.h"
+#include "spotify/StaticCallbackSetter.h"
 
 using namespace v8;
 
@@ -66,6 +67,7 @@ void resolveCallback(uv_async_t* handle, int status) {
 
 void init(Handle<Object> target) {
 	Playlist::init(target);
+  StaticCallbackSetter<Playlist>::init(target, "playlists");
 	target->Set(String::NewSymbol("login"),
 			        FunctionTemplate::New(login)->GetFunction());
 	target->Set(String::NewSymbol("logout"),
@@ -75,6 +77,7 @@ void init(Handle<Object> target) {
 	target->Set(String::NewSymbol("ready"),
 			        FunctionTemplate::New(ready)->GetFunction());
 	spotifyService = new SpotifyService();
+   
 	//Initialize waiting for callbacks from the spotify thread
 	uv_async_init(uv_default_loop(), &spotifyService->callNodeThread, resolveCallback);
 }

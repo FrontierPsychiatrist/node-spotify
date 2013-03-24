@@ -11,6 +11,7 @@
  * A base class for objects that want to expose Javascript callbacks to the node thread
  **/
 class V8Callable {
+  template <class T> friend class StaticCallbackSetter;
 	public:
 		V8Callable(uv_async_t* _asyncHandle) : asyncHandle(_asyncHandle) {};
 
@@ -28,6 +29,7 @@ class V8Callable {
 	private:
 		uv_async_t* asyncHandle;
 		std::map<std::string, v8::Persistent<v8::Function> > callbacks;
+		static std::map<std::string, v8::Persistent<v8::Function> > staticCallbacks;
 };
 
 #endif
