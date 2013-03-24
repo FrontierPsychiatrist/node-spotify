@@ -60,7 +60,7 @@ void resolveCallback(uv_async_t* handle, int status) {
     if(nodeCallback->object == NULL)
 		  (*fun)->Call(Context::GetCurrent()->Global(), argc, argv);
     else
-		  (*fun)->Call(*nodeCallback->object, argc, argv);
+		  (*fun)->Call(*nodeCallback->object->getV8Object(), argc, argv);
 	}
 	scope.Close(Undefined());
 }

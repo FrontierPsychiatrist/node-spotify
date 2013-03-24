@@ -4,7 +4,6 @@
 	var events = {
 		/* Playlists */
 		playlist_new: 'playlist_new',
-		playlist_name_change: 'playlist_name_change',
 		playlist_renamed: 'playlist_renamed',
 
 		/* general */
