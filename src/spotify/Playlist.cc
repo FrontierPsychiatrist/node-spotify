@@ -8,8 +8,6 @@
 
 extern SpotifyService* spotifyService;
 
-Persistent<Function> Playlist::constructor;  
-
 void Playlist::setName(Local<String> property, Local<Value> value, const AccessorInfo& info) {
   Playlist* playlist = node::ObjectWrap::Unwrap<Playlist>(info.Holder());
   String::Utf8Value v8Str(value);

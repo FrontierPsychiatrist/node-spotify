@@ -1,7 +1,5 @@
 #include "Track.h"
 
-Persistent<Function> Track::constructor;  
-
 Handle<Value> Track::getName(Local<String> property, const AccessorInfo& info) {
   Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
   return String::New(track->name.c_str());

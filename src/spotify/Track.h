@@ -7,7 +7,7 @@
 
 using namespace v8;
 
-class Track : public SpotifyWrapped {
+class Track : public SpotifyWrapped<Track> {
   public:
     Track(sp_track* _track, uv_async_t* _handle, std::string _name ) : SpotifyWrapped(_handle), spotifyTrack(_track), name(_name) {};
 
@@ -15,10 +15,7 @@ class Track : public SpotifyWrapped {
 
     static void init(Handle<Object> target);
 
-  protected:
-    Persistent<Function>& getConstructor() { return constructor; };
   private:
-    static v8::Persistent<v8::Function> constructor;  
     sp_track* spotifyTrack;
     std::string name;
 };

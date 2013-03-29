@@ -59,10 +59,10 @@ void resolveCallback(uv_async_t* handle, int status) {
   Local<Value> argv[argc] = { };
   if(!(*fun).IsEmpty() && (*fun)->IsCallable()) {
     //Check if an object is attached to the struct and if, use it as the scope.
-    if(nodeCallback->object == NULL)
+    if(nodeCallback->object.IsEmpty())
       (*fun)->Call(Context::GetCurrent()->Global(), argc, argv);
     else
-      (*fun)->Call(nodeCallback->object->getV8Object(), argc, argv);
+      (*fun)->Call(nodeCallback->object, argc, argv);
   }
   scope.Close(Undefined());
 }
