@@ -3,29 +3,41 @@
 
 #include <node.h>
 #include <string>
+#include <vector>
 #include <libspotify/api.h>
 
 #include "SpotifyWrapped.h"
+#include "Track.h"
 
 using namespace v8;
 
 class Playlist : public SpotifyWrapped {
-	public:
-		Playlist(sp_playlist* _playlist, uv_async_t* _handle, int _id) : SpotifyWrapped(_handle), id(_id), playlist(_playlist) {};
-		std::string name;
+  public:
+    Playlist(sp_playlist* _playlist, uv_async_t* _handle, int _id) : SpotifyWrapped(_handle), id(_id), playlist(_playlist) {};
+    std::string name;
 
-		//Method visible to nodeJS
-		static void setName(Local<String> property, Local<Value> value, const AccessorInfo& info);
-		static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
-		static void setId(Local<String> property, Local<Value> value, const AccessorInfo& info);
-		static Handle<Value> getId(Local<String> property, const AccessorInfo& info);
-		static Handle<Value> onNameChange(const Arguments& args);
+    //Methods for calling libspotify
+    void loadTracks();
 
-		static void init(Handle<Object> target);
-	private:
+    //Method visible to nodeJS
+    static void setName(Local<String> property, Local<Value> value, const AccessorInfo& info);
+    static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
+
+    static Handle<Value> getId(Local<String> property, const AccessorInfo& info);
+
+    static Handle<Value> getTracks(const Arguments& args);
+
+    static Handle<Value> onNameChange(const Arguments& args);
+
+    static void init(Handle<Object> target);
+  protected:
+    Persistent<Function>& getConstructor() { return constructor; };
+  private:
+    static v8::Persistent<v8::Function> constructor;  
     int id;
-		Persistent<Function> nameChangeCallback;
-		sp_playlist* playlist;
+    std::vector<Track> tracks;
+    sp_playlist* playlist;
+
 };
 
 #endif

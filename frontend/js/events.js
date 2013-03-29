@@ -5,6 +5,7 @@
 		/* Playlists */
 		playlist_new: 'playlist_new',
 		playlist_renamed: 'playlist_renamed',
+        playlist_tracks: 'playlist_tracks',
 
 		/* general */
 		initial_data: 'initial_data',

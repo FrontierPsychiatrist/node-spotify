@@ -34,8 +34,11 @@ define([
             });
 
             socket.on(events.playlist_renamed, function(playlist) {
-                console.log(playlist);
                 $('#playlist-menu-' + playlist.id).text(playlist.name);
+            });
+
+            socket.on(events.playlist_tracks, function(data) {
+                console.log(data);
             });
 
             //Asked the backend, if it is logged in

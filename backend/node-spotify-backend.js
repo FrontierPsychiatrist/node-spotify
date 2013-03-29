@@ -10,7 +10,7 @@ var baseFileUrl = '../frontend/';
 
 function serveStatic(req, res) {
 	var filePath = baseFileUrl + req.url;
-	
+
 	var contentType = 'text/html';
 	var extension = path.extname(filePath);
 	switch(extension) {
@@ -71,11 +71,22 @@ io.sockets.on('connection', function(socket) {
         spotify.logout();
     });
 
+    socket.on(events.playlist_tracks, function(data) {
+        var playlists = spotify.getPlaylists();
+        for (var i = 0; i < playlists.length; i++) {
+            var playlist = playlists[i];
+            if(playlist.id === data.id) {
+                socket.emit(events.playlist_tracks, {id: data.id, tracks: playlist.getTracks()});
+                return;
+            }
+        }
+    });
+
     //Client requests initial data
     socket.on(events.initial_data, sendInitialData);
 });
 
 function sendInitialData() {
-    playlists = spotify.getPlaylists();
+    var playlists = spotify.getPlaylists();
     gSocket.emit(events.initial_data, playlists);
 }

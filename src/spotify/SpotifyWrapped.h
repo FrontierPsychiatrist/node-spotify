@@ -13,9 +13,9 @@
 class SpotifyWrapped : public node::ObjectWrap {
   template <class T> friend class StaticCallbackSetter;
 
-	public:
-		SpotifyWrapped(uv_async_t* _handle) : asyncHandle(_handle) {}; 
-		v8::Handle<v8::Object>* getV8Object();
+  public:
+    SpotifyWrapped(uv_async_t* _handle) : asyncHandle(_handle) {}; 
+    v8::Handle<v8::Object>* getV8Object();
     /**
      * call a callback by name
      *
@@ -27,12 +27,16 @@ class SpotifyWrapped : public node::ObjectWrap {
     /**
      * Save a callback for this object
      */
-		void on(std::string name, v8::Persistent<v8::Function> callback);
-	protected:
-		static v8::Persistent<v8::Function> constructor;	
-		uv_async_t* asyncHandle;
-		std::map<std::string, v8::Persistent<v8::Function> > callbacks;
-		static std::map<std::string, v8::Persistent<v8::Function> > staticCallbacks;
+    void on(std::string name, v8::Persistent<v8::Function> callback);
+
+  protected:
+    virtual v8::Persistent<v8::Function>& getConstructor() = 0;
+
+    static void emptySetter(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
+    uv_async_t* asyncHandle;
+  private:
+    std::map<std::string, v8::Persistent<v8::Function> > callbacks;
+    static std::map<std::string, v8::Persistent<v8::Function> > staticCallbacks;
 };
 
 #endif
