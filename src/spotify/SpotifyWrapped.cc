@@ -1,15 +1,16 @@
 #include "SpotifyWrapped.h"
 #include "../NodeCallback.h"
-
+#include <iostream>
 std::map<std::string, v8::Persistent<v8::Function> > SpotifyWrapped::staticCallbacks;
 
-v8::Handle<v8::Object>* SpotifyWrapped::getV8Object() {
+v8::Handle<v8::Object> SpotifyWrapped::getV8Object() {
+  v8::HandleScope scope;
   //check if the handle from ObjectWrap has been initialized and if not wrap the object in a new JS instance
   if(handle_.IsEmpty()) {
-    v8::Local<v8::Object> o = getConstructor()->NewInstance();
+    v8::Persistent<v8::Object> o = v8::Persistent<v8::Object>::New(getConstructor()->NewInstance());
     this->Wrap(o);
   }
-  return &handle_;
+  return scope.Close(v8::Local<v8::Object>::New(handle_));
 }
 
 void SpotifyWrapped::emptySetter(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {

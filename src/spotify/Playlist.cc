@@ -37,7 +37,7 @@ Handle<Value> Playlist::getTracks(const Arguments& args) {
 
   Local<Array> nTracks = Array::New(playlist->tracks.size());
   for(int i = 0; i < (int)playlist->tracks.size(); i++) {
-    nTracks->Set(Number::New(i), *(playlist->tracks[i].getV8Object()) );
+    nTracks->Set(Number::New(i), playlist->tracks[i].getV8Object() );
   }
   return scope.Close(nTracks);
 }

@@ -41,7 +41,7 @@ Handle<Value> getPlaylists(const Arguments& args) {
   std::vector<Playlist*> playlists = spotifyService->getPlaylistContainer()->getPlaylists();
   Local<Array> nPlaylists = Array::New(playlists.size());
   for(int i = 0; i < (int)playlists.size(); i++) {
-    nPlaylists->Set(Number::New(i), *(playlists[i]->getV8Object()) );
+    nPlaylists->Set(Number::New(i), playlists[i]->getV8Object());
   }
   return scope.Close(nPlaylists);
 }
@@ -62,7 +62,7 @@ void resolveCallback(uv_async_t* handle, int status) {
     if(nodeCallback->object == NULL)
       (*fun)->Call(Context::GetCurrent()->Global(), argc, argv);
     else
-      (*fun)->Call(*nodeCallback->object->getV8Object(), argc, argv);
+      (*fun)->Call(nodeCallback->object->getV8Object(), argc, argv);
   }
   scope.Close(Undefined());
 }

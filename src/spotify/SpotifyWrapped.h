@@ -15,7 +15,7 @@ class SpotifyWrapped : public node::ObjectWrap {
 
   public:
     SpotifyWrapped(uv_async_t* _handle) : asyncHandle(_handle) {}; 
-    v8::Handle<v8::Object>* getV8Object();
+    v8::Handle<v8::Object> getV8Object();
     /**
      * call a callback by name
      *

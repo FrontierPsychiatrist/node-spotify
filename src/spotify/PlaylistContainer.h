@@ -10,7 +10,7 @@ class PlaylistContainer {
 	public:
 		PlaylistContainer(sp_playlistcontainer* _playlistContainer) : playlistContainer(_playlistContainer) {};
 		void addPlaylist(Playlist* const playlist) { playlists.push_back(playlist); };
-		std::vector<Playlist*>& getPlaylists() { return playlists; };
+		std::vector<Playlist*> getPlaylists() { return playlists; };
 
 		static Persistent<Function>* getContainerLoadedCallback() { return &containerLoadedCallback; };
 		static void setContainerLoadedCallback( Persistent<Function> callback ) { PlaylistContainer::containerLoadedCallback = callback; };
