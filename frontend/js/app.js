@@ -5,8 +5,9 @@ define([
     'socket',
     'events',
     'bootstrap',
-    'views/playlist/menu'
-], function($, router, LoginView, socket, events, bootstrap, PlaylistMenuView) {
+    'views/playlist/menu',
+    'views/tracks/trackRow'
+], function($, router, LoginView, socket, events, bootstrap, PlaylistMenuView, TrackRowView) {
 
         //TODO: refactor this.
         var initialize = function() {
@@ -38,6 +39,13 @@ define([
             });
 
             socket.on(events.playlist_tracks, function(data) {
+                $('#tracks tbody').html('');
+                for (var i = 0; i < data.tracks.length; i++) {
+                    var track = data.tracks[i];
+                    track.id = i;
+                    var trackView = new TrackRowView( { model: track});
+                    $('#tracks tbody').append(trackView.render().el);
+                }
                 console.log(data);
             });
 

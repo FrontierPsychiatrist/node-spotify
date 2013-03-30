@@ -20,7 +20,18 @@
 
         </ul>
     </div>
-    <div class="span9" id="content"></div>
+    <div class="span9" id="content">
+        <table id="tracks" class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 20px">Position</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
 </div>
 
@@ -30,6 +41,11 @@
 <!-- Templates -->
 <script type="text/template" id="playlist-menuEntry">
     <a id="playlist-menu-<%= id %>" href="#playlist/<%= id %>"><%= name %></a>
+</script>
+
+<script type="text/template" id="track-row">
+    <td><%= id %></td>
+    <td><%= name %></td>
 </script>
 
 <script type="text/template" id="loginformTemplate">
