@@ -35,7 +35,7 @@ Handle<Value> Playlist::getTracks(const Arguments& args) {
   }
   Local<Array> nTracks = Array::New(playlist->tracks.size());
   for(int i = 0; i < (int)playlist->tracks.size(); i++) {
-    nTracks->Set(Number::New(i), playlist->tracks[i].getV8Object() );
+    nTracks->Set(Number::New(i), playlist->tracks[i]->getV8Object() );
   }
   return scope.Close(nTracks);
 }
@@ -57,7 +57,7 @@ void Playlist::loadTracks() {
   for(int i = 0; i < sp_playlist_num_tracks(playlist); ++i) {
     sp_track* spTrack = sp_playlist_track(playlist, i);
     const char* trackName = sp_track_name(spTrack);
-    Track track(spTrack, asyncHandle, std::string(trackName));
+    Track* track = new Track(spTrack, asyncHandle, std::string(trackName));
     tracks.push_back(track);
   }
   done();

@@ -33,7 +33,7 @@ class Playlist : public SpotifyWrapped<Playlist> {
     static void init(Handle<Object> target);
   private:
     int id;
-    std::vector<Track> tracks;
+    std::vector<Track*> tracks;
     sp_playlist* playlist;
 };
 
