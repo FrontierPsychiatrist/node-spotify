@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <libspotify/api.h>
+#include <pthread.h>
 
 #include "SpotifyWrapped.h"
 #include "Track.h"

@@ -31,8 +31,8 @@ Handle<Value> Playlist::getTracks(const Arguments& args) {
   if(playlist->tracks.size() == 0) {
     Callback<Playlist>* loadTracksCallback = new Callback<Playlist>(playlist, &Playlist::loadTracks);
     spotifyService->executeSpotifyAPIcall(loadTracksCallback);
+    playlist->wait();
   }
-
   Local<Array> nTracks = Array::New(playlist->tracks.size());
   for(int i = 0; i < (int)playlist->tracks.size(); i++) {
     nTracks->Set(Number::New(i), playlist->tracks[i].getV8Object() );
@@ -60,4 +60,5 @@ void Playlist::loadTracks() {
     Track track(spTrack, asyncHandle, std::string(trackName));
     tracks.push_back(track);
   }
+  done();
 }

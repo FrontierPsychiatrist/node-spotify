@@ -17,7 +17,10 @@ class SpotifyWrapped : public node::ObjectWrap {
   template <class S> friend class StaticCallbackSetter;
 
   public:
-    SpotifyWrapped(uv_async_t* _handle) : asyncHandle(_handle) {}; 
+    SpotifyWrapped(uv_async_t* _handle) : asyncHandle(_handle) {
+      pthread_mutex_init(&mutex, NULL);
+      pthread_cond_init(&condition, NULL);
+    }; 
 
     v8::Handle<v8::Object> getV8Object() {
       //We cannot open a new HandleScope here, as this gets called in the spotify thread!
@@ -64,7 +67,19 @@ class SpotifyWrapped : public node::ObjectWrap {
       static void emptySetter(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {};
       uv_async_t* asyncHandle;
       static v8::Persistent<v8::Function> constructor;
+      void wait() {
+        pthread_mutex_lock(&mutex);
+        pthread_cond_wait(&condition, &mutex);
+        pthread_mutex_unlock(&mutex);
+      };
+      void done() {
+        pthread_mutex_lock(&mutex);
+        pthread_cond_signal(&condition);
+        pthread_mutex_unlock(&mutex);
+      };
     private:
+      pthread_mutex_t mutex;
+      pthread_cond_t condition;
       std::map<std::string, v8::Persistent<v8::Function> > callbacks;
       static std::map<std::string, v8::Persistent<v8::Function> > staticCallbacks;
 };
