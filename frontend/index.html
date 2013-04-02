@@ -46,7 +46,11 @@
 
 <script type="text/template" id="track-row">
     <td><%= id %></td>
-    <td><%= artist.name %></td>
+    <td>
+        <% for(var i = 0; i < artists.length; i++) { %>
+        <%= artists[i].name + ', ' %>
+        <% } %>
+    </td>
     <td><%= name %></td>
 </script>
 

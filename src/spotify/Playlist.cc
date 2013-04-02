@@ -5,6 +5,8 @@
 #include "../events.h"
 #include "../Callback.h"
 
+#include <vector>
+
 extern SpotifyService* spotifyService;
 
 void Playlist::setName(Local<String> property, Local<Value> value, const AccessorInfo& info) {
@@ -57,15 +59,20 @@ void Playlist::loadTracks() {
     sp_track* spTrack = sp_playlist_track(playlist, i);
     const char* trackName = sp_track_name(spTrack);
 
-    sp_artist* spArtist = sp_track_artist(spTrack, 0);
-    Artist* artist = Artist::getArtist(spArtist);
-    if(artist == 0) {
-      const char* artistName = sp_artist_name(spArtist);
-      artist = new Artist(std::string(artistName), spArtist);
-      Artist::putArtist(artist);
+    int numArtists = sp_track_num_artists(spTrack);
+    std::vector<Artist*> artists;
+    for(int i = 0; i < numArtists; i++) {
+      sp_artist* spArtist = sp_track_artist(spTrack, i);
+      Artist* artist = Artist::getArtist(spArtist);
+      if(artist == 0) {
+        const char* artistName = sp_artist_name(spArtist);
+        artist = new Artist(std::string(artistName), spArtist);
+        Artist::putArtist(artist);
+      }
+      artists.push_back(artist);
     }
 
-    Track* track = new Track(spTrack, asyncHandle, std::string(trackName), artist);
+    Track* track = new Track(spTrack, asyncHandle, std::string(trackName), artists);
     tracks.push_back(track);
   }
   done();
