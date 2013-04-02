@@ -1,10 +1,9 @@
 #include "Playlist.h"
-#include "../events.h"
-#include "../Callback.h"
+#include "Track.h"
 
 #include "../SpotifyService/SpotifyService.h"
-
-#include <iostream>
+#include "../events.h"
+#include "../Callback.h"
 
 extern SpotifyService* spotifyService;
 
@@ -46,8 +45,8 @@ void Playlist::init(Handle<Object> target) {
   constructorTemplate->SetClassName(String::NewSymbol("Playlist"));
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
 
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::New("name"), getName, setName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::New("id"), getId, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, setName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("id"), getId, emptySetter);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
@@ -57,7 +56,16 @@ void Playlist::loadTracks() {
   for(int i = 0; i < sp_playlist_num_tracks(playlist); ++i) {
     sp_track* spTrack = sp_playlist_track(playlist, i);
     const char* trackName = sp_track_name(spTrack);
-    Track* track = new Track(spTrack, asyncHandle, std::string(trackName));
+
+    sp_artist* spArtist = sp_track_artist(spTrack, 0);
+    Artist* artist = Artist::getArtist(spArtist);
+    if(artist == 0) {
+      const char* artistName = sp_artist_name(spArtist);
+      artist = new Artist(std::string(artistName), spArtist);
+      Artist::putArtist(artist);
+    }
+
+    Track* track = new Track(spTrack, asyncHandle, std::string(trackName), artist);
     tracks.push_back(track);
   }
   done();

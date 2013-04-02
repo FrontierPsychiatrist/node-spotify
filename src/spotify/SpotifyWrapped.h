@@ -9,6 +9,8 @@
 
 #include "../NodeCallback.h"
 
+#include <iostream>
+
 /**
  * A class used as a base class for wrapping libspotify types to V8 objects.
 **/
@@ -21,6 +23,10 @@ class SpotifyWrapped : public node::ObjectWrap {
       pthread_mutex_init(&mutex, NULL);
       pthread_cond_init(&condition, NULL);
     }; 
+
+    ~SpotifyWrapped() {
+      std::cout << "Destructor called! Please check!" << std::endl;
+    };
 
     v8::Handle<v8::Object> getV8Object() {
       //We cannot open a new HandleScope here, as this gets called in the spotify thread!

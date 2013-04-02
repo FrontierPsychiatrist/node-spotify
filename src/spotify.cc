@@ -70,6 +70,7 @@ void resolveCallback(uv_async_t* handle, int status) {
 void init(Handle<Object> target) {
   Playlist::init(target);
   Track::init(target);
+  Artist::init(target);
   StaticCallbackSetter<Playlist>::init(target, "playlists");
   target->Set(String::NewSymbol("login"),
               FunctionTemplate::New(login)->GetFunction());
