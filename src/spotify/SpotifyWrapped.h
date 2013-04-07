@@ -19,7 +19,7 @@ class SpotifyWrapped : public node::ObjectWrap {
   template <class S> friend class StaticCallbackSetter;
 
   public:
-    SpotifyWrapped(uv_async_t* _handle) : asyncHandle(_handle) {
+    SpotifyWrapped(uv_async_t* _handle) : asyncHandle(_handle), doneCondition(0) {
       pthread_mutex_init(&mutex, NULL);
       pthread_cond_init(&condition, NULL);
     }; 
@@ -75,15 +75,21 @@ class SpotifyWrapped : public node::ObjectWrap {
       static v8::Persistent<v8::Function> constructor;
       void wait() {
         pthread_mutex_lock(&mutex);
-        pthread_cond_wait(&condition, &mutex);
+        doneCondition = 0;
+        while(!doneCondition) {
+          pthread_cond_wait(&condition, &mutex);
+        }
+        doneCondition = 0;
         pthread_mutex_unlock(&mutex);
       };
       void done() {
         pthread_mutex_lock(&mutex);
+        doneCondition = 1;
         pthread_cond_signal(&condition);
         pthread_mutex_unlock(&mutex);
       };
     private:
+      int doneCondition;
       pthread_mutex_t mutex;
       pthread_cond_t condition;
       std::map<std::string, v8::Persistent<v8::Function> > callbacks;
