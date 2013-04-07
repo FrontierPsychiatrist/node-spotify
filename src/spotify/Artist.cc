@@ -18,7 +18,7 @@ void Artist::init(Handle<Object> target) {
 }
 
 Artist* Artist::getArtist(sp_artist* _spArtist) { 
-  auto it = Artist::artistCache.find(_spArtist);
+  std::map<sp_artist*, Artist*>::iterator it = Artist::artistCache.find(_spArtist);
   if(it != Artist::artistCache.end()) {
     return it->second;
   } else {
