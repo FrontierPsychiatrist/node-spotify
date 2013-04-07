@@ -75,7 +75,6 @@ class SpotifyWrapped : public node::ObjectWrap {
       static v8::Persistent<v8::Function> constructor;
       void wait() {
         pthread_mutex_lock(&mutex);
-        doneCondition = 0;
         while(!doneCondition) {
           pthread_cond_wait(&condition, &mutex);
         }
