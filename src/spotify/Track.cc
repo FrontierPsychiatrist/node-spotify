@@ -1,5 +1,10 @@
 #include "Track.h"
 
+#include "../SpotifyService/SpotifyService.h"
+#include "../Callback.h"
+
+extern SpotifyService* spotifyService;
+
 Handle<Value> Track::getName(Local<String> property, const AccessorInfo& info) {
   Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
   return String::New(track->name.c_str());
@@ -15,6 +20,19 @@ Handle<Value> Track::getArtists(Local<String> property, const AccessorInfo& info
   return scope.Close(jsArtists); 
 }
 
+Handle<Value> Track::play(const Arguments& args) {
+  HandleScope scope;
+  Track* track = node::ObjectWrap::Unwrap<Track>(args.This());
+  Callback<Track>* cb = new Callback<Track>(track, &Track::spotifyPlay);
+  spotifyService->executeSpotifyAPIcall(cb);
+  return scope.Close(Undefined());
+}
+
+void Track::spotifyPlay() {
+  sp_session_player_load(spotifyService->getSpotifySession(), this->spotifyTrack);
+  sp_session_player_play(spotifyService->getSpotifySession(), 1);
+}
+
 void Track::init(Handle<Object> target) {
   HandleScope scope;
   Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
@@ -23,6 +41,6 @@ void Track::init(Handle<Object> target) {
 
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artists"), getArtists, emptySetter);
-
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "play", play);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
 }

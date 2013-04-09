@@ -42,6 +42,7 @@ static void* spotifyLoop(void* _spotifyService) {
 	sessionCallbacks.notify_main_thread = &notifyMainThread;
 	sessionCallbacks.logged_in = &loggedIn;
 	sessionCallbacks.logged_out = &loggedOut;
+        sessionCallbacks.music_delivery = &music_delivery;
 
 	sessionConfig.api_version = SPOTIFY_API_VERSION;
 	sessionConfig.cache_location = "tmp";

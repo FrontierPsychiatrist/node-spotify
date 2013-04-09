@@ -25,6 +25,7 @@ class SpotifyService {
     PlaylistContainer* getPlaylistContainer();
 
     void setSpotifySession(sp_session* spotifySession);
+    sp_session* getSpotifySession() { return spotifySession; };
   private:
     PlaylistContainer* playlistContainer;
     sp_session* spotifySession;

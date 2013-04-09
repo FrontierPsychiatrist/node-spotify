@@ -10,7 +10,7 @@
       "src/SpotifyService/alsa-audio.c", "src/SpotifyService/audio.c"
 		],
 		"link_settings" : {
-			"libraries": ["-lspotify"]
+			"libraries": ["-lspotify", "-lasound"]
 		},
 		"cflags": ["-I/usr/include/alsa"],
 		"actions": [ {
