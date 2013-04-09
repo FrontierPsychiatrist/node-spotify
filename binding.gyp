@@ -6,12 +6,13 @@
 			"src/spotify/Track.cc", "src/spotify/Artist.cc",
 			"src/spotify/Playlist.cc", "src/spotify/PlaylistContainer.cc",
 			"src/SpotifyService/PlaylistCallbacks.cc",
-			"src/SpotifyService/SessionCallbacks.cc"
+			"src/SpotifyService/SessionCallbacks.cc",
+      "src/SpotifyService/alsa-audio.c", "src/SpotifyService/audio.c"
 		],
 		"link_settings" : {
 			"libraries": ["-lspotify"]
 		},
-		"cflags": ["-g"],
+		"cflags": ["-I/usr/include/alsa"],
 		"actions": [ {
 			"action_name": "generateEventsHeader",
 			"inputs": ["frontend/js/events.js"],

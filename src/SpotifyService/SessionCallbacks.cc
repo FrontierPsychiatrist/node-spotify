@@ -8,12 +8,19 @@
 #include "SpotifyService.h"
 #include <stdio.h>
 
+extern "C" {
+#include "audio.h"
+}
+
+#include <stdlib.h>
+#include <string.h>
+
 //TODO!
 extern int notifyDo;
 extern SpotifyService* spotifyService;
+audio_fifo_t g_audiofifo;
 
 namespace spotify {
-
 sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
 sp_playlist_callbacks playlistCallbacks;
 
@@ -68,6 +75,44 @@ void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void
   nodeCallback->function = PlaylistContainer::getContainerLoadedCallback();
   spotifyService->callNodeThread.data  = (void*)nodeCallback;
   uv_async_send(&spotifyService->callNodeThread);
+}
+
+int music_delivery(sp_session *sess, const sp_audioformat *format,
+                          const void *frames, int num_frames)
+{
+  audio_fifo_t *af = &g_audiofifo;
+  audio_fifo_data_t *afd;
+  size_t s;
+
+  if (num_frames == 0)
+    return 0; // Audio discontinuity, do nothing
+   
+  pthread_mutex_lock(&af->mutex);
+
+  /* Buffer one second of audio */
+  if (af->qlen > format->sample_rate) {
+    pthread_mutex_unlock(&af->mutex);
+
+    return 0;
+  }
+
+  s = num_frames * sizeof(int16_t) * format->channels;
+
+  afd = (audio_fifo_data_t*)malloc(sizeof(*afd) + s);
+  memcpy(afd->samples, frames, s);
+
+  afd->nsamples = num_frames;
+
+  afd->rate = format->sample_rate;
+  afd->channels = format->channels;
+
+  TAILQ_INSERT_TAIL(&af->q, afd, link);
+  af->qlen += num_frames;
+
+  pthread_cond_signal(&af->cond);
+  pthread_mutex_unlock(&af->mutex);
+
+  return num_frames;
 }
 
 } //namespace

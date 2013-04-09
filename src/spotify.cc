@@ -7,9 +7,14 @@
 #include "spotify/Playlist.h"
 #include "spotify/Track.h"
 
+extern "C" {
+#include "SpotifyService/audio.h"
+}
+
 using namespace v8;
 
 SpotifyService* spotifyService;
+extern audio_fifo_t g_audiofifo;
 
 Handle<Value> login(const Arguments& args) {
   HandleScope scope;
@@ -72,6 +77,7 @@ void init(Handle<Object> target) {
   Track::init(target);
   Artist::init(target);
   StaticCallbackSetter<Playlist>::init(target, "playlists");
+  audio_init(&g_audiofifo);
   target->Set(String::NewSymbol("login"),
               FunctionTemplate::New(login)->GetFunction());
   target->Set(String::NewSymbol("logout"),
