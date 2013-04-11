@@ -1,7 +1,13 @@
 #include "SpotifyService.h"
 #include <stdio.h>
 #include <pthread.h>
+
+#ifdef OS_LINUX
 #include <sys/time.h>
+#elif OS_OSX
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
 
 #include "PlaylistCallbacks.h"
 #include "SessionCallbacks.h"
@@ -42,7 +48,7 @@ static void* spotifyLoop(void* _spotifyService) {
 	sessionCallbacks.notify_main_thread = &notifyMainThread;
 	sessionCallbacks.logged_in = &loggedIn;
 	sessionCallbacks.logged_out = &loggedOut;
-        sessionCallbacks.music_delivery = &music_delivery;
+  sessionCallbacks.music_delivery = &music_delivery;
 
 	sessionConfig.api_version = SPOTIFY_API_VERSION;
 	sessionConfig.cache_location = "tmp";
@@ -72,9 +78,19 @@ static void* spotifyLoop(void* _spotifyService) {
 			}
 		} else {
 			struct timespec ts;
-                        clock_gettime(CLOCK_REALTIME, &ts);
-                        ts.tv_sec = ts.tv_sec + nextTimeout / 1000;
-                        ts.tv_nsec = ts.tv_nsec + (nextTimeout % 1000) * 1000;
+#ifdef OS_LINUX      
+      clock_gettime(CLOCK_REALTIME, &ts);
+      ts.tv_sec = ts.tv_sec + nextTimeout / 1000;
+      ts.tv_nsec = ts.tv_nsec + (nextTimeout % 1000) * 1000;
+#elif OS_OSX
+      clock_serv_t cclock;
+      mach_timespec_t mts;
+      host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+      clock_get_time(cclock, &mts);
+      mach_port_deallocate(mach_task_self(), cclock);
+      ts.tv_sec = mts.tv_sec + nextTimeout / 1000;
+      ts.tv_nsec = mts.tv_nsec + (nextTimeout % 1000) * 1000;
+#endif
 
 			while(!notifyDo && gCallback == 0) {
 				if(pthread_cond_timedwait(&spotifyService->notifyCondition, &spotifyService->notifyMutex, &ts))
