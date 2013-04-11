@@ -36,48 +36,48 @@ static sp_session_callbacks sessionCallbacks;
  * or orders to process sp_session_process_events from notifaMainThread
  * **/
 static void* spotifyLoop(void* _spotifyService) {
-	SpotifyService* spotifyService = static_cast<SpotifyService*>(_spotifyService);
-	sp_error error;
-	sp_session* session;
+  SpotifyService* spotifyService = static_cast<SpotifyService*>(_spotifyService);
+  sp_error error;
+  sp_session* session;
 
-	int nextTimeout = 0;
+  int nextTimeout = 0;
 
-	pthread_mutex_init(&spotifyService->notifyMutex, NULL);
-	pthread_cond_init(&spotifyService->notifyCondition, NULL);
+  pthread_mutex_init(&spotifyService->notifyMutex, NULL);
+  pthread_cond_init(&spotifyService->notifyCondition, NULL);
 
-	sessionCallbacks.notify_main_thread = &notifyMainThread;
-	sessionCallbacks.logged_in = &loggedIn;
-	sessionCallbacks.logged_out = &loggedOut;
+  sessionCallbacks.notify_main_thread = &notifyMainThread;
+  sessionCallbacks.logged_in = &loggedIn;
+  sessionCallbacks.logged_out = &loggedOut;
   sessionCallbacks.music_delivery = &music_delivery;
 
-	sessionConfig.api_version = SPOTIFY_API_VERSION;
-	sessionConfig.cache_location = "tmp";
-	sessionConfig.settings_location = "tmp";
-	sessionConfig.application_key = spotifyAppkey;
-	sessionConfig.application_key_size = spotifyAppkeySize;
-	sessionConfig.user_agent = "nodejs-spotify-adapter";
-	sessionConfig.callbacks = &sessionCallbacks;
-	//sessionConfig.tracefile = "spotify-tracefile";
-	sessionConfig.userdata = spotifyService;
+  sessionConfig.api_version = SPOTIFY_API_VERSION;
+  sessionConfig.cache_location = "tmp";
+  sessionConfig.settings_location = "tmp";
+  sessionConfig.application_key = spotifyAppkey;
+  sessionConfig.application_key_size = spotifyAppkeySize;
+  sessionConfig.user_agent = "nodejs-spotify-adapter";
+  sessionConfig.callbacks = &sessionCallbacks;
+  //sessionConfig.tracefile = "spotify-tracefile";
+  sessionConfig.userdata = spotifyService;
 
-	error = sp_session_create(&sessionConfig, &session);
-	
-	if(SP_ERROR_OK != error) {
-		fprintf(stderr, "BACKEND: Could not create Spotify session: %s\n", sp_error_message(error));
-	}
+  error = sp_session_create(&sessionConfig, &session);
+  
+  if(SP_ERROR_OK != error) {
+    fprintf(stderr, "BACKEND: Could not create Spotify session: %s\n", sp_error_message(error));
+  }
 
-	spotifyService->setSpotifySession(session);
+  spotifyService->setSpotifySession(session);
 
-	sp_session_login(session, username.c_str(), password.c_str(), 0, NULL);
+  sp_session_login(session, username.c_str(), password.c_str(), 0, NULL);
 
-	pthread_mutex_lock(&spotifyService->notifyMutex);
-	while(!spotifyService->loggedOut) {
-		if(nextTimeout == 0) {
-			while(notifyDo == 0) {
-				pthread_cond_wait(&spotifyService->notifyCondition, &spotifyService->notifyMutex);
-			}
-		} else {
-			struct timespec ts;
+  pthread_mutex_lock(&spotifyService->notifyMutex);
+  while(!spotifyService->loggedOut) {
+    if(nextTimeout == 0) {
+      while(notifyDo == 0) {
+        pthread_cond_wait(&spotifyService->notifyCondition, &spotifyService->notifyMutex);
+      }
+    } else {
+      struct timespec ts;
 #ifdef OS_LINUX      
       clock_gettime(CLOCK_REALTIME, &ts);
       ts.tv_sec = ts.tv_sec + nextTimeout / 1000;
@@ -92,32 +92,32 @@ static void* spotifyLoop(void* _spotifyService) {
       ts.tv_nsec = mts.tv_nsec + (nextTimeout % 1000) * 1000;
 #endif
 
-			while(!notifyDo && gCallback == 0) {
-				if(pthread_cond_timedwait(&spotifyService->notifyCondition, &spotifyService->notifyMutex, &ts))
-					break;
-			}
-		}
-		pthread_mutex_unlock(&spotifyService->notifyMutex);
-		notifyDo = 0;
+      while(!notifyDo && gCallback == 0) {
+        if(pthread_cond_timedwait(&spotifyService->notifyCondition, &spotifyService->notifyMutex, &ts))
+          break;
+      }
+    }
+    pthread_mutex_unlock(&spotifyService->notifyMutex);
+    notifyDo = 0;
 
-		//Execute a callback from another class/thread
-		if(gCallback != 0) {
-			gCallback->call();
-			//The callback needs to be allocated with new, so we delete it after it is used
-			delete gCallback;
-			gCallback = 0;
-		}
+    //Execute a callback from another class/thread
+    if(gCallback != 0) {
+      gCallback->call();
+      //The callback needs to be allocated with new, so we delete it after it is used
+      delete gCallback;
+      gCallback = 0;
+    }
 
-		do {
-			sp_session_process_events(session, &nextTimeout);
-		} while(nextTimeout == 0);
-		pthread_mutex_lock(&spotifyService->notifyMutex);
+    do {
+      sp_session_process_events(session, &nextTimeout);
+    } while(nextTimeout == 0);
+    pthread_mutex_lock(&spotifyService->notifyMutex);
 
-	}
+  }
 
-	sp_session_release(session);
-	uv_close((uv_handle_t*)&spotifyService->callNodeThread, NULL);
-	return 0;
+  sp_session_release(session);
+  uv_close((uv_handle_t*)&spotifyService->callNodeThread, NULL);
+  return 0;
 }
 
 SpotifyService::SpotifyService() {
