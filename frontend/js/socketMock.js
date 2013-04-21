@@ -17,15 +17,18 @@ define(['events'], function(events) {
                     {id: 1, name: 'Classical'},
                     {id: 2, name: 'Rock'}
                 ];
+                for (var i = 3; i < 40; i++) data.push( {id: i, name: 'Playlist ' + i});
             } else if(event === events.playlist_tracks) {
                 var beirut = {'name': 'Beirut'};
                 var qotsa = {'name': 'Queens of the Stone Age'}
                 if(inData.id === 0) {
-                    data['tracks'] = [
+                    var tracks = [
                         {'artists': [beirut], name: 'Mount Wroclai (idle days)'},
                         {'artists': [beirut], name: 'Gulag Orkestar'},
                         {'artists': [qotsa], name: 'First It Giveth'}
-                    ]
+                    ];
+                    for(var j = 3; j<100; j++) tracks.push( {'artists': [qotsa], 'name': 'Qotsa Track ' + j});
+                    data['tracks'] = tracks;
                 } else if (inData.id === 1) {
                     data['tracks'] = [
                         {'artists': [{'name': 'Wolfgang Amadeus Mozart'}], name: 'Klarinettenkonzert'},

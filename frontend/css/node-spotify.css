@@ -1,0 +1,25 @@
+body {
+    padding-top: 59px;
+}
+
+#playlist-menu {
+    border: 1px black solid;
+    overflow: auto;
+    height: 450px;
+}
+
+#playlist-menu a {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+#content {
+    border: 1px black solid;
+    overflow: auto;
+    height: 700px;
+}
+
+#now-playing {
+    border: 1px black solid;
+    height: 250px;
+}
