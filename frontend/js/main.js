@@ -4,7 +4,8 @@ require.config( {
         'underscore' : 'libs/underscore',
         'jquery' : 'libs/jquery',
 		'io': '/socket.io/socket.io.js',
-        'bootstrap': 'libs/bootstrap'
+        'bootstrap': 'libs/bootstrap',
+        'socket' : 'socketMock'
     },
     shim: {
         'backbone' : {
