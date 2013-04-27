@@ -1,9 +1,9 @@
-var server = require('http').createServer(serveStatic),
-	fs = require('fs'),
-	path = require('path'),
-	io = require('socket.io').listen(server),
-    spotify = require('../build/Debug/spotify'),
-    events = require('../frontend/js/events');
+var server = require('http').createServer(serveStatic);
+var fs = require('fs');
+var	path = require('path');
+var io = require('socket.io').listen(server);
+var spotify = require('../build/Debug/spotify');
+var events = require('../frontend/js/events');
 
 server.listen(25000);
 var baseFileUrl = '../frontend/';
