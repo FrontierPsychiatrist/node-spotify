@@ -6,9 +6,10 @@
 #include "spotify/StaticCallbackSetter.h"
 #include "spotify/Playlist.h"
 #include "spotify/Track.h"
+#include "spotify/Player.h"
 
 extern "C" {
-#include "SpotifyService/audio.h"
+#include "audio/audio.h"
 }
 
 using namespace v8;
@@ -30,7 +31,7 @@ Handle<Value> logout(const Arguments& args) {
   HandleScope scope;
   Callback<SpotifyService>* logoutCallback = new Callback<SpotifyService>(spotifyService, &SpotifyService::logout);
   spotifyService->executeSpotifyAPIcall(logoutCallback);
-  return Undefined();
+  return scope.Close(Undefined());
 }
 
 Handle<Value> ready(const Arguments& args) {
@@ -76,8 +77,11 @@ void init(Handle<Object> target) {
   Playlist::init(target);
   Track::init(target);
   Artist::init(target);
+  Player::init(target);
   StaticCallbackSetter<Playlist>::init(target, "playlists");
   audio_init(&g_audiofifo);
+  spotifyService = new SpotifyService();
+  Player* player = new Player(&spotifyService->callNodeThread);
   target->Set(String::NewSymbol("login"),
               FunctionTemplate::New(login)->GetFunction());
   target->Set(String::NewSymbol("logout"),
@@ -86,7 +90,7 @@ void init(Handle<Object> target) {
               FunctionTemplate::New(getPlaylists)->GetFunction());
   target->Set(String::NewSymbol("ready"),
               FunctionTemplate::New(ready)->GetFunction());
-  spotifyService = new SpotifyService();
+  target->Set(String::NewSymbol("player"), player->getV8Object());
    
   //Initialize waiting for callbacks from the spotify thread
   uv_async_init(uv_default_loop(), &spotifyService->callNodeThread, resolveCallback);

@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 extern "C" {
-#include "audio.h"
+#include "../audio/audio.h"
 }
 
 #include <stdlib.h>
