@@ -1,6 +1,7 @@
 #include "SessionCallbacks.h"
 
 //TODO!
+//Maybe with extern instead of import?
 #include "PlaylistCallbacks.h"
 
 #include "../Callback.h"
@@ -18,6 +19,7 @@ extern "C" {
 //TODO!
 extern int notifyDo;
 extern SpotifyService* spotifyService;
+PlaylistContainer* playlistContainer;
 audio_fifo_t g_audiofifo;
 
 namespace spotify {
@@ -45,8 +47,7 @@ void loggedIn(sp_session* session, sp_error error) {
   //The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
   rootPlaylistContainerCallbacks.container_loaded = &rootPlaylistContainerLoaded;
   sp_playlistcontainer *pc = sp_session_playlistcontainer(session);
-  PlaylistContainer* playlistContainer = new PlaylistContainer(pc);
-  spotifyService->setPlaylistContainer(playlistContainer);
+  playlistContainer = new PlaylistContainer(pc);
   sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, playlistContainer);
 }
 
@@ -58,17 +59,7 @@ void loggedOut(sp_session* session) {
 
 void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
   PlaylistContainer* playlistContainer = static_cast<PlaylistContainer*>(userdata);
-  int numPlaylists = sp_playlistcontainer_num_playlists(spPlaylistContainer);
-
-  playlistCallbacks.playlist_state_changed = &playlistStateChanged;
-  playlistCallbacks.playlist_renamed = &playlistNameChange;
-
-  for(int i = 0; i < numPlaylists; ++i) {
-    sp_playlist* spPlaylist = sp_playlistcontainer_playlist(spPlaylistContainer, i);
-    Playlist* playlist = new Playlist(spPlaylist, &spotifyService->callNodeThread, i);
-    sp_playlist_add_callbacks(spPlaylist, &playlistCallbacks, playlist);
-    playlistContainer->addPlaylist(playlist);
-  }
+  playlistContainer->loadPlaylists();
   
   //Trigger the login complete callback.
   NodeCallback* nodeCallback = new NodeCallback();

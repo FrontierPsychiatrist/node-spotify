@@ -3,6 +3,7 @@
 #include "../SpotifyService/SpotifyService.h"
 
 extern SpotifyService* spotifyService;
+extern PlaylistContainer* playlistContainer;
 
 Handle<Value> Player::pause(const Arguments& args) {
 	return Player::simpleCall(args, &Player::spotifyPause);
@@ -50,7 +51,7 @@ void Player::spotifyPlay() {
 }
 
 void Playlist::internAddTracks(int playlistId, int trackId) {
-	std::vector<Playlist*> playlists = spotifyService->getPlaylistContainer()->getPlaylists();
+	std::vector<Playlist*> playlists = playlistContainer->getPlaylists();
 	Playlist* playlist = playlists[playlistId];
 	std::vector<Track*> tracks = playlist->getTracks();
 	playQueue.insert(playQueue.begin() + currentTrackPosition, tracks.begin() + trackId, tracks.end());	

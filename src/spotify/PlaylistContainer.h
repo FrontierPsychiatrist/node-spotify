@@ -9,7 +9,11 @@
 class PlaylistContainer {
   public:
     PlaylistContainer(sp_playlistcontainer* _playlistContainer) : playlistContainer(_playlistContainer) {};
-    void addPlaylist(Playlist* const playlist) { playlists.push_back(playlist); };
+    /**
+     * Load all playlists into the vector.
+     * Needs to be invoked in the spotify thread!
+     **/
+    void loadPlaylists();
     std::vector<Playlist*> getPlaylists() { return playlists; };
 
     static Persistent<Function>* getContainerLoadedCallback() { return &containerLoadedCallback; };

@@ -15,6 +15,7 @@ extern "C" {
 using namespace v8;
 
 SpotifyService* spotifyService;
+extern PlaylistContainer* playlistContainer;
 extern audio_fifo_t g_audiofifo;
 
 Handle<Value> login(const Arguments& args) {
@@ -44,7 +45,7 @@ Handle<Value> ready(const Arguments& args) {
 
 Handle<Value> getPlaylists(const Arguments& args) {
   HandleScope scope;
-  std::vector<Playlist*> playlists = spotifyService->getPlaylistContainer()->getPlaylists();
+  std::vector<Playlist*> playlists = playlistContainer->getPlaylists();
   Local<Array> nPlaylists = Array::New(playlists.size());
   for(int i = 0; i < (int)playlists.size(); i++) {
     nPlaylists->Set(Number::New(i), playlists[i]->getV8Object());

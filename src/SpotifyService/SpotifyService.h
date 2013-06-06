@@ -5,7 +5,6 @@
 #include <string>
 #include <libspotify/api.h>
 #include "../Callback.h"
-#include "../spotify/PlaylistContainer.h"
 
 class SpotifyService {
   public:
@@ -21,13 +20,9 @@ class SpotifyService {
     pthread_cond_t notifyCondition;
     int loggedOut;
 
-    void setPlaylistContainer(PlaylistContainer* playlistContainer);
-    PlaylistContainer* getPlaylistContainer();
-
     void setSpotifySession(sp_session* spotifySession);
     sp_session* getSpotifySession() { return spotifySession; };
   private:
-    PlaylistContainer* playlistContainer;
     sp_session* spotifySession;
     pthread_t spotifyThread;
 };

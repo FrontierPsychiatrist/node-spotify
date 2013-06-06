@@ -3,13 +3,15 @@
 
 #include <string>
 #include <map>
+#include <iostream>
 
 #include <uv.h>
 #include <node.h>
 
 #include "../NodeCallback.h"
+#include "../SpotifyService/SpotifyService.h"
 
-#include <iostream>
+extern SpotifyService* spotifyService;
 
 /**
  * A class used as a base class for wrapping libspotify types to V8 objects.
@@ -114,13 +116,13 @@ class SpotifyWrapped : public node::ObjectWrap {
         pthread_mutex_unlock(&waitingMutex);
       };
       
-      /*static v8::Handle<v8::Value> simpleCall(const v8::Arguments& args, SimpleMethod method) {
+      static v8::Handle<v8::Value> simpleCall(const v8::Arguments& args, SimpleMethod method) {
         v8::HandleScope scope;
         T* obj = node::ObjectWrap::Unwrap<T>(args.This());
         Callback<T>* cb = new Callback<T>(obj, method);
         spotifyService->executeSpotifyAPIcall(cb);
         return scope.Close(v8::Undefined());
-      }*/
+      }
     private:
       int doneCondition;
       pthread_mutex_t waitingMutex;

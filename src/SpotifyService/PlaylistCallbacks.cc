@@ -1,10 +1,7 @@
 #include "PlaylistCallbacks.h"
 #include "../spotify/Playlist.h"
 #include "../Callback.h"
-#include "SpotifyService.h"
 #include "../events.h"
-
-extern SpotifyService* spotifyService;
 
 namespace spotify {
 

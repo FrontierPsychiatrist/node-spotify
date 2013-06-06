@@ -9,7 +9,6 @@
 #include <mach/mach.h>
 #endif
 
-#include "PlaylistCallbacks.h"
 #include "SessionCallbacks.h"
 
 using namespace spotify;
@@ -146,14 +145,6 @@ void SpotifyService::executeSpotifyAPIcall(CallbackBase* callback) {
   gCallback = callback;
   pthread_cond_signal(&notifyCondition);
   pthread_mutex_unlock(&notifyMutex);
-}
-
-void SpotifyService::setPlaylistContainer(PlaylistContainer* playlistContainer) {
-  this->playlistContainer = playlistContainer;
-}
-
-PlaylistContainer* SpotifyService::getPlaylistContainer() {
-  return this->playlistContainer;
 }
 
 void SpotifyService::setSpotifySession(sp_session* spotifySession) {

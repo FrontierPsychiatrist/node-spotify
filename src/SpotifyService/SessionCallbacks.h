@@ -6,13 +6,11 @@
 
 namespace spotify {
 
-extern sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
-extern sp_playlist_callbacks playlistCallbacks;
-
 void notifyMainThread(sp_session* session); 
 void loggedIn(sp_session* session, sp_error error);
 void loggedOut(sp_session* session);
 void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata);
 int music_delivery(sp_session *sess, const sp_audioformat *format, const void *frames, int num_frames);
+
 }
 #endif
