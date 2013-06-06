@@ -1,5 +1,7 @@
 #include <libspotify/api.h>
-#include "../Playlist.h"
+#include "Player.h"
+#include "Playlist.h"
+#include "PlaylistContainer.h"
 #include "../SpotifyService/SpotifyService.h"
 
 extern SpotifyService* spotifyService;
@@ -25,7 +27,7 @@ Handle<Value> Player::play(const Arguments& args) {
 Handle<Value> Player::addTracks(const Arguments& args) {
 	HandleScope scope;
 	Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
-	player->internAddTracks( args[0]->ToInteger().Value(), arg[1]->ToInteger().Value());
+	player->internAddTracks( args[0]->ToInteger()->Value(), args[1]->ToInteger()->Value());
 	return scope.Close(Undefined());
 }
 
@@ -47,10 +49,10 @@ void Player::spotifyStop() {
 
 void Player::spotifyPlay() {
   if(playQueue.size() > 1)
-    sp_session_player_load(spotifyService->getSpotifySession(), playQueue[0]);
+    sp_session_player_load(spotifyService->getSpotifySession(), 0);
 }
 
-void Playlist::internAddTracks(int playlistId, int trackId) {
+void Player::internAddTracks(int playlistId, int trackId) {
 	std::vector<Playlist*> playlists = playlistContainer->getPlaylists();
 	Playlist* playlist = playlists[playlistId];
 	std::vector<Track*> tracks = playlist->getTracks();
@@ -61,7 +63,7 @@ void Player::init(Handle<Object> target) {
 	HandleScope scope;
 	Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
 	constructorTemplate->SetClassName(String::NewSymbol("Player"));
-	constructorTemplate->InstanceTemplate->SetInternalFieldCount(1);
+	constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
 	
 	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "play", play);
 	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);
@@ -69,5 +71,5 @@ void Player::init(Handle<Object> target) {
 	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
-  scope.Close();
+  scope.Close(Undefined());
 }

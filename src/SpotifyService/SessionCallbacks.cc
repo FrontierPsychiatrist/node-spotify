@@ -7,7 +7,7 @@
 #include "../Callback.h"
 #include "../NodeCallback.h"
 #include "SpotifyService.h"
-#include <stdio.h>
+#include "../spotify/PlaylistContainer.h"
 
 extern "C" {
 #include "../audio/audio.h"
@@ -15,6 +15,7 @@ extern "C" {
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 //TODO!
 extern int notifyDo;

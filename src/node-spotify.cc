@@ -4,6 +4,7 @@
 #include "SpotifyService/SpotifyService.h"
 #include "NodeCallback.h"
 #include "spotify/StaticCallbackSetter.h"
+#include "spotify/PlaylistContainer.h"
 #include "spotify/Playlist.h"
 #include "spotify/Track.h"
 #include "spotify/Player.h"
