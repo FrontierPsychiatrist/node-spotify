@@ -15,7 +15,7 @@ extern "C" {
 using namespace v8;
 
 SpotifyService* spotifyService;
-extern PlaylistContainer* playlistContainer;
+extern PlaylistContainer* playlistContainer; //defined in SessionCallbacks.cc
 extern audio_fifo_t g_audiofifo;
 
 Handle<Value> login(const Arguments& args) {

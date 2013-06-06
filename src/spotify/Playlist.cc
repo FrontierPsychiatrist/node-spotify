@@ -79,7 +79,7 @@ void Playlist::loadTracks() {
     for(int i = 0; i < numArtists; i++) {
       sp_artist* spArtist = sp_track_artist(spTrack, i);
       Artist* artist = Artist::getArtist(spArtist);
-      if(artist == 0) {
+      if(artist == 0) {//TODO: refactor this mess
         const char* artistName = sp_artist_name(spArtist);
         artist = new Artist(std::string(artistName), spArtist);
         Artist::putArtist(artist);
