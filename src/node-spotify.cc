@@ -16,6 +16,7 @@ extern "C" {
 using namespace v8;
 
 SpotifyService* spotifyService;
+Player* player;
 extern PlaylistContainer* playlistContainer; //defined in SessionCallbacks.cc
 extern audio_fifo_t g_audiofifo;
 
@@ -83,7 +84,7 @@ void init(Handle<Object> target) {
   StaticCallbackSetter<Playlist>::init(target, "playlists");
   audio_init(&g_audiofifo);
   spotifyService = new SpotifyService();
-  Player* player = new Player(&spotifyService->callNodeThread);
+  player = new Player(&spotifyService->callNodeThread);
   target->Set(String::NewSymbol("login"),
               FunctionTemplate::New(login)->GetFunction());
   target->Set(String::NewSymbol("logout"),

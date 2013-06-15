@@ -11,6 +11,6 @@ void loggedIn(sp_session* session, sp_error error);
 void loggedOut(sp_session* session);
 void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata);
 int music_delivery(sp_session *sess, const sp_audioformat *format, const void *frames, int num_frames);
-
+void end_of_track(sp_session* session);
 }
 #endif

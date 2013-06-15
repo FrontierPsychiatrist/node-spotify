@@ -8,6 +8,7 @@
 #include "../NodeCallback.h"
 #include "SpotifyService.h"
 #include "../spotify/PlaylistContainer.h"
+#include "../spotify/Player.h"
 
 extern "C" {
 #include "../audio/audio.h"
@@ -20,6 +21,7 @@ extern "C" {
 //TODO!
 extern int notifyDo;
 extern SpotifyService* spotifyService;
+extern Player* player;
 PlaylistContainer* playlistContainer;
 audio_fifo_t g_audiofifo;
 
@@ -67,6 +69,10 @@ void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void
   nodeCallback->function = PlaylistContainer::getContainerLoadedCallback();
   spotifyService->callNodeThread.data  = (void*)nodeCallback;
   uv_async_send(&spotifyService->callNodeThread);
+}
+
+void end_of_track(sp_session* session) {
+  player->nextTrack();
 }
 
 int music_delivery(sp_session *sess, const sp_audioformat *format,

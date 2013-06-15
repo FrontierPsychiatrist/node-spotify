@@ -1,6 +1,6 @@
 #include <libspotify/api.h>
 #include "Player.h"
-#include "Playlist.h"
+#include "Track.h"
 #include "PlaylistContainer.h"
 #include "../SpotifyService/SpotifyService.h"
 
@@ -23,10 +23,9 @@ Handle<Value> Player::play(const Arguments& args) {
 	Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
 
 	int playlistId = args[0]->ToInteger()->Value();
-	int trackId = args[1]->ToInteger()->Value();
+	player->currentTrack = args[1]->ToInteger()->Value();
 
-  Playlist* playlist = playlistContainer->getPlaylists()[playlistId];
-	player->track = playlist->getTracks()[trackId];
+  player->playlist = playlistContainer->getPlaylists()[playlistId];
 	return Player::simpleCall(args, &Player::spotifyPlay);
 }
 
@@ -47,10 +46,24 @@ void Player::spotifyStop() {
 }
 
 void Player::spotifyPlay() {
-  if(track != 0) {
+  if(playlist != 0) {
+  	Track* track = playlist->getTracks()[currentTrack];
+  	sp_session_player_unload(spotifyService->getSpotifySession());
     sp_session_player_load(spotifyService->getSpotifySession(), track->spotifyTrack);
     sp_session_player_play(spotifyService->getSpotifySession(), 1);
   }
+}
+
+void Player::nextTrack() {
+	if(playlist != 0) {
+		currentTrack++;
+		Track* track = playlist->getTracks()[currentTrack];
+		if( currentTrack < (int)playlist->getTracks().size()) {
+			sp_session_player_unload(spotifyService->getSpotifySession());
+			sp_session_player_load(spotifyService->getSpotifySession(), track->spotifyTrack);
+    	sp_session_player_play(spotifyService->getSpotifySession(), 1);
+		}
+	}
 }
 
 void Player::init(Handle<Object> target) {

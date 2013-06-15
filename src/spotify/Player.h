@@ -5,13 +5,14 @@
 
 #include "SpotifyWrapped.h"
 #include "../Callback.h"
-#include "Track.h"
+#include "Playlist.h"
 
 using namespace v8;
 
 class Player : public SpotifyWrapped<Player> {
 	private:
-		Track* track;
+		Playlist* playlist;
+		int currentTrack;
 		bool isPaused;
 		
 		void spotifyPause();
@@ -26,7 +27,9 @@ class Player : public SpotifyWrapped<Player> {
 		static Handle<Value> pause(const Arguments& args);
 		static Handle<Value> resume(const Arguments& args);
 		static Handle<Value> play(const Arguments& args);
-		
+		static Handle<Value> nextTrack(const Arguments& args);
+
+		void nextTrack();
 		/**
 		*	Callback track finished playing:
 		*		- remove track from queue
