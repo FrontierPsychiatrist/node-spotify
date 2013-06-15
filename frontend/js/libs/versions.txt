@@ -1,5 +1,0 @@
-backbone.js: 1.0.0
-jquery: 2.0.0
-require.js: 2.1.4
-underscore.js: 1.4.4
-bootstrap: 2.3.1
