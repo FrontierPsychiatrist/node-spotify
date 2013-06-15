@@ -1,5 +1,5 @@
 //Writes the events to a header file for usage in C/C++
-var events = require('./frontend/js/events');
+var events = require('./frontend/app/scripts/services/events');
 var fs = require('fs');
 
 var writeStream = fs.createWriteStream('src/events.h', { flags: 'w'});

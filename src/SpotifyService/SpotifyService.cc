@@ -40,7 +40,7 @@ static void* spotifyLoop(void* _spotifyService) {
   sp_session* session;
 
   int nextTimeout = 0;
-
+  spotifyService->loggedOut = 0;
   pthread_mutex_init(&spotifyService->notifyMutex, NULL);
   pthread_cond_init(&spotifyService->notifyCondition, NULL);
 
@@ -115,7 +115,10 @@ static void* spotifyLoop(void* _spotifyService) {
   }
 
   sp_session_release(session);
-  uv_close((uv_handle_t*)&spotifyService->callNodeThread, NULL);
+  pthread_mutex_destroy(&spotifyService->notifyMutex);
+  pthread_cond_destroy(&spotifyService->notifyCondition);
+  //TODO: this causes a crash when logging in a second time. why?
+  //uv_close((uv_handle_t*)&spotifyService->callNodeThread, NULL);
   return 0;
 }
 
