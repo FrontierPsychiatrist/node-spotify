@@ -10,6 +10,7 @@
 using namespace v8;
 
 class Track : public SpotifyWrapped<Track> {
+  friend class Player;
   public:
     Track(sp_track* _track, uv_async_t* _handle, std::string _name, std::vector<Artist*> _artists) : 
       SpotifyWrapped(_handle), spotifyTrack(_track), name(_name), artists(_artists) {};

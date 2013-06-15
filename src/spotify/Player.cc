@@ -20,15 +20,14 @@ Handle<Value> Player::resume(const Arguments& args) {
 }
 
 Handle<Value> Player::play(const Arguments& args) {
-  //TODO: check if args contains an integer and if so try to play from that track on
-	return Player::simpleCall(args, &Player::spotifyPlay);
-}
-
-Handle<Value> Player::addTracks(const Arguments& args) {
-	HandleScope scope;
 	Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
-	player->internAddTracks( args[0]->ToInteger()->Value(), args[1]->ToInteger()->Value());
-	return scope.Close(Undefined());
+
+	int playlistId = args[0]->ToInteger()->Value();
+	int trackId = args[1]->ToInteger()->Value();
+
+  Playlist* playlist = playlistContainer->getPlaylists()[playlistId];
+	player->track = playlist->getTracks()[trackId];
+	return Player::simpleCall(args, &Player::spotifyPlay);
 }
 
 void Player::spotifyPause() {
@@ -48,15 +47,10 @@ void Player::spotifyStop() {
 }
 
 void Player::spotifyPlay() {
-  if(playQueue.size() > 1)
-    sp_session_player_load(spotifyService->getSpotifySession(), 0);
-}
-
-void Player::internAddTracks(int playlistId, int trackId) {
-	std::vector<Playlist*> playlists = playlistContainer->getPlaylists();
-	Playlist* playlist = playlists[playlistId];
-	std::vector<Track*> tracks = playlist->getTracks();
-	playQueue.insert(playQueue.begin() + currentTrackPosition, tracks.begin() + trackId, tracks.end());	
+  if(track != 0) {
+    sp_session_player_load(spotifyService->getSpotifySession(), track->spotifyTrack);
+    sp_session_player_play(spotifyService->getSpotifySession(), 1);
+  }
 }
 
 void Player::init(Handle<Object> target) {
@@ -69,7 +63,6 @@ void Player::init(Handle<Object> target) {
 	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);
 	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
 	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }
