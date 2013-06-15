@@ -1,8 +1,16 @@
 'use strict';
-
+/* jshint camelcase: false */
 angular.module('node-spotify')
-  .controller('MainCtrl', ['$scope', function ($scope) {
+  .controller('MainCtrl', function ($scope, socket, events) {
     $scope.logout = function() {
-      console.log('Logging out');
+      socket.emit(events.logout);
     };
-  }]);
+    socket.on(events.logged_in, function(data) {
+      if(data.loggedIn) {
+        socket.emit(events.initial_data);
+      } else {
+
+      }
+    });
+    socket.emit(events.logged_in);
+  });

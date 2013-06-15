@@ -9,5 +9,4 @@ angular.module('node-spotify')
     $scope.loadPlaylist = function(playlistId) {
       socket.emit(events.playlist_tracks, {id: playlistId});
     };
-    socket.emit(events.initial_data);
   });
