@@ -73,7 +73,34 @@
       </div>
     </div>
 
+    <div id="modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <h3 id="modalLabel">Login</h3>
+      </div>
+      <div class="modal-body">
+        <form action="#" class="form-horizontal" id="loginForm">
+          <div class="control-group">
+            <label class="control-label" for="username">Username</label>
+            <div class="controls">
+              <input type="text" name="username" id="username" ng-model="username"/>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="password">Password</label>
+            <div class="controls">
+              <input type="password" name="password" id="password" ng-model="password"/>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="login(username, password)">Login</button>
+      </div>
+    </div>
+
     <script src="components/angular/angular.js"></script>
+    <script src="components/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="components/bootstrap-javascript/bootstrap.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <!-- build:js scripts/scripts.js -->
     <script src="scripts/app.js"></script>
