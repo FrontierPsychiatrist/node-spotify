@@ -6,7 +6,7 @@ nodeJS was chosen as the backend, so it includes a native nodeJS module to inter
 
 The backend is obviously a nodeJS app.
 
-The frontend is a backbone.js app that communicates with the backend via websockets (sockets.io).
+The frontend is a angular.js app that communicates with the backend via websockets (sockets.io).
 
 A webpage for the project is here: http://www.node-spotify.com, put it is still being filled with content.
 
