@@ -9,6 +9,7 @@
 #include "SpotifyService.h"
 #include "../spotify/PlaylistContainer.h"
 #include "../spotify/Player.h"
+#include "../events.h"
 
 extern "C" {
 #include "../audio/audio.h"

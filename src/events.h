@@ -8,4 +8,6 @@
 #define LOGIN "login"
 #define LOGOUT "logout"
 #define MESSAGE "message"
+#define PLAY "play"
+#define NEXT_TRACK "next_track"
 #endif

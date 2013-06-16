@@ -13,7 +13,11 @@
       logged_in: 'logged_in',
       login: 'login',
       logout: 'logout',
-      message: 'message'
+      message: 'message',
+
+      /* player */
+      play: 'play',
+      next_track: 'next_track'
     };
 
     return events;
