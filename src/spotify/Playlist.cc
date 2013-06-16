@@ -1,5 +1,6 @@
 #include "Playlist.h"
 #include "Track.h"
+#include "Album.h"
 
 #include "../events.h"
 #include "../SpotifyService/SpotifyService.h"
@@ -73,6 +74,14 @@ void Playlist::loadTracks() {
   for(int i = 0; i < sp_playlist_num_tracks(playlist); ++i) {
     sp_track* spTrack = sp_playlist_track(playlist, i);
     const char* trackName = sp_track_name(spTrack);
+    
+    sp_album* spAlbum = sp_track_album(spTrack);
+    Album* album = Album::getAlbum(spAlbum);
+    if(album == 0) {
+      const char* albumName = sp_album_name(spAlbum);
+      album = new Album(spAlbum, std::string(albumName), asyncHandle);
+      Album::putAlbum(album);
+    }
 
     int numArtists = sp_track_num_artists(spTrack);
     std::vector<Artist*> artists;
@@ -87,7 +96,7 @@ void Playlist::loadTracks() {
       artists.push_back(artist);
     }
 
-    Track* track = new Track(spTrack, asyncHandle, std::string(trackName), artists);
+    Track* track = new Track(spTrack, asyncHandle, std::string(trackName), artists, album);
     tracks.push_back(track);
   }
   tracksLoaded = true;

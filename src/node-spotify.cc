@@ -8,6 +8,7 @@
 #include "spotify/Playlist.h"
 #include "spotify/Track.h"
 #include "spotify/Player.h"
+#include "spotify/Album.h"
 
 extern "C" {
 #include "audio/audio.h"
@@ -85,6 +86,7 @@ void init(Handle<Object> target) {
   Track::init(target);
   Artist::init(target);
   Player::init(target);
+  Album::init(target);
   StaticCallbackSetter<Playlist>::init(target, "playlists");
   LOG(INFO) << "Initializing audio";
   audio_init(&g_audiofifo);

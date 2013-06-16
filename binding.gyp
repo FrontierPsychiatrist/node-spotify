@@ -5,7 +5,7 @@
     "sources": ["src/node-spotify.cc", "src/appkey.c", "src/SpotifyService/SpotifyService.cc",
       "src/spotify/Track.cc", "src/spotify/Artist.cc",
       "src/spotify/Playlist.cc", "src/spotify/PlaylistContainer.cc",
-      "src/spotify/Player.cc",
+      "src/spotify/Player.cc", "src/spotify/Album.cc",
       "src/SpotifyService/PlaylistCallbacks.cc",
       "src/SpotifyService/SessionCallbacks.cc",
       "src/audio/audio.c"

@@ -20,6 +20,12 @@ Handle<Value> Track::getArtists(Local<String> property, const AccessorInfo& info
   return scope.Close(jsArtists); 
 }
 
+Handle<Value> Track::getAlbum(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
+  return scope.Close(track->album->getV8Object());
+}
+
 Handle<Value> Track::play(const Arguments& args) {
   HandleScope scope;
   Track* track = node::ObjectWrap::Unwrap<Track>(args.This());
@@ -41,6 +47,7 @@ void Track::init(Handle<Object> target) {
 
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artists"), getArtists, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("album"), getAlbum, emptySetter);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "play", play);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
 }

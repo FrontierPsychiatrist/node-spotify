@@ -15,6 +15,7 @@ void Artist::init(Handle<Object> target) {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
+  scope.Close(Undefined());
 }
 
 Artist* Artist::getArtist(sp_artist* _spArtist) { 
