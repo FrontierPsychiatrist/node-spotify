@@ -3,8 +3,6 @@
 #include "../SpotifyService/SpotifyService.h"
 #include "../Callback.h"
 
-extern SpotifyService* spotifyService;
-
 Handle<Value> Track::getName(Local<String> property, const AccessorInfo& info) {
   Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
   return String::New(track->name.c_str());
@@ -35,8 +33,8 @@ Handle<Value> Track::play(const Arguments& args) {
 }
 
 void Track::spotifyPlay() {
-  sp_session_player_load(spotifyService->getSpotifySession(), this->spotifyTrack);
-  sp_session_player_play(spotifyService->getSpotifySession(), 1);
+  sp_session_player_load(spotifyService->spotifySession, this->spotifyTrack);
+  sp_session_player_play(spotifyService->spotifySession, 1);
 }
 
 void Track::init(Handle<Object> target) {

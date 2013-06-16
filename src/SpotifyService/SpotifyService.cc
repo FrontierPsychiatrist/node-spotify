@@ -67,7 +67,7 @@ static void* spotifyLoop(void* _spotifyService) {
     LOG(WARNING) << "Could not create spotify session: " << sp_error_message(error);
   }
 
-  spotifyService->setSpotifySession(session);
+  spotifyService->spotifySession = session;
 
   sp_session_login(session, username.c_str(), password.c_str(), 0, NULL);
 
@@ -150,8 +150,4 @@ void SpotifyService::executeSpotifyAPIcall(CallbackBase* callback) {
   gCallback = callback;
   pthread_cond_signal(&notifyCondition);
   pthread_mutex_unlock(&notifyMutex);
-}
-
-void SpotifyService::setSpotifySession(sp_session* spotifySession) {
-  this->spotifySession = spotifySession;
 }

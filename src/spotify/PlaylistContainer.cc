@@ -16,7 +16,7 @@ void PlaylistContainer::loadPlaylists() {
 
   for(int i = 0; i < numPlaylists; ++i) {
     sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
-    Playlist* playlist = new Playlist(spPlaylist, &spotifyService->callNodeThread, i);
+    Playlist* playlist = new Playlist(spPlaylist, i);
     sp_playlist_add_callbacks(spPlaylist, &playlistCallbacks, playlist);
     playlists.push_back(playlist);
   }

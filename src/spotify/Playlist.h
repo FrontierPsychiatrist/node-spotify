@@ -16,7 +16,7 @@ using namespace v8;
 class Playlist : public SpotifyWrapped<Playlist> {
   friend class Callback<Playlist>;
   public:
-    Playlist(sp_playlist* _playlist, uv_async_t* _handle, int _id) : SpotifyWrapped(_handle), id(_id), playlist(_playlist), tracksLoaded(0) {};
+    Playlist(sp_playlist* _playlist, int _id) : SpotifyWrapped(), id(_id), playlist(_playlist), tracksLoaded(0) {};
     std::string name;
 	
     std::vector<Track*> getTracks();

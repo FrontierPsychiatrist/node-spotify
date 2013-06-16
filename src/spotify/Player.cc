@@ -32,27 +32,27 @@ Handle<Value> Player::play(const Arguments& args) {
 }
 
 void Player::spotifyPause() {
-	sp_session_player_play(spotifyService->getSpotifySession(), 0);
+	sp_session_player_play(spotifyService->spotifySession, 0);
 	isPaused = true;
 }
 
 void Player::spotifyResume() {
 	if(isPaused) {
-		sp_session_player_play(spotifyService->getSpotifySession(), 1);
+		sp_session_player_play(spotifyService->spotifySession, 1);
 		isPaused = false;
 	}
 }
 
 void Player::spotifyStop() {
-	sp_session_player_unload(spotifyService->getSpotifySession());
+	sp_session_player_unload(spotifyService->spotifySession);
 }
 
 void Player::spotifyPlay() {
   if(playlist != 0) {
   	Track* track = playlist->getTracks()[currentTrack];
-  	sp_session_player_unload(spotifyService->getSpotifySession());
-    sp_session_player_load(spotifyService->getSpotifySession(), track->spotifyTrack);
-    sp_session_player_play(spotifyService->getSpotifySession(), 1);
+  	sp_session_player_unload(spotifyService->spotifySession);
+    sp_session_player_load(spotifyService->spotifySession, track->spotifyTrack);
+    sp_session_player_play(spotifyService->spotifySession, 1);
   }
 }
 
@@ -61,9 +61,9 @@ void Player::nextTrack() {
 		currentTrack++;
 		Track* track = playlist->getTracks()[currentTrack];
 		if( currentTrack < (int)playlist->getTracks().size()) {
-			sp_session_player_unload(spotifyService->getSpotifySession());
-			sp_session_player_load(spotifyService->getSpotifySession(), track->spotifyTrack);
-    	sp_session_player_play(spotifyService->getSpotifySession(), 1);
+			sp_session_player_unload(spotifyService->spotifySession);
+			sp_session_player_load(spotifyService->spotifySession, track->spotifyTrack);
+    	sp_session_player_play(spotifyService->spotifySession, 1);
 		}
 	}
 }

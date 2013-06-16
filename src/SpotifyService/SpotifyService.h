@@ -20,10 +20,8 @@ class SpotifyService {
     pthread_cond_t notifyCondition;
     int loggedOut;
 
-    void setSpotifySession(sp_session* spotifySession);
-    sp_session* getSpotifySession() { return spotifySession; };
-  private:
     sp_session* spotifySession;
+  private:
     pthread_t spotifyThread;
 };
 

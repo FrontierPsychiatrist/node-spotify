@@ -10,8 +10,7 @@ using namespace v8;
 
 class Album : public SpotifyWrapped<Album> {
   public:
-    Album(sp_album* _album, std::string _name, uv_async_t* _handle) :
-      SpotifyWrapped(_handle), name(_name),spAlbum(_album) {};
+    Album(sp_album* _album, std::string _name) : SpotifyWrapped(), name(_name), spAlbum(_album) {};
     static void init(Handle<Object> target);
     static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
     

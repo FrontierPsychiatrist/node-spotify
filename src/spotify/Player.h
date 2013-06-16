@@ -21,7 +21,7 @@ class Player : public SpotifyWrapped<Player> {
 		void spotifyPlay();
 		
   public:
-    Player(uv_async_t* _handle) : SpotifyWrapped(_handle) {};
+    Player() : SpotifyWrapped() {};
 		//NodeJS visible methods
 		static Handle<Value> stop(const Arguments& args);
 		static Handle<Value> pause(const Arguments& args);

@@ -91,7 +91,7 @@ void init(Handle<Object> target) {
   LOG(INFO) << "Initializing audio";
   audio_init(&g_audiofifo);
   spotifyService = new SpotifyService();
-  player = new Player(&spotifyService->callNodeThread);
+  player = new Player();
   target->Set(String::NewSymbol("login"),
               FunctionTemplate::New(login)->GetFunction());
   target->Set(String::NewSymbol("logout"),

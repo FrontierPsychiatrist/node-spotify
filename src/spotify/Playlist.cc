@@ -7,8 +7,6 @@
 
 #include <vector>
 
-extern SpotifyService* spotifyService;
-
 std::vector<Track*> Playlist::getTracks() {
   pthread_mutex_lock(&lockingMutex);
   if(!tracksLoaded) {
@@ -79,7 +77,7 @@ void Playlist::loadTracks() {
     Album* album = Album::getAlbum(spAlbum);
     if(album == 0) {
       const char* albumName = sp_album_name(spAlbum);
-      album = new Album(spAlbum, std::string(albumName), asyncHandle);
+      album = new Album(spAlbum, std::string(albumName));
       Album::putAlbum(album);
     }
 
@@ -96,7 +94,7 @@ void Playlist::loadTracks() {
       artists.push_back(artist);
     }
 
-    Track* track = new Track(spTrack, asyncHandle, std::string(trackName), artists, album);
+    Track* track = new Track(spTrack, std::string(trackName), artists, album);
     tracks.push_back(track);
   }
   tracksLoaded = true;

@@ -23,7 +23,7 @@ class SpotifyWrapped : public node::ObjectWrap {
   typedef void (T::*SimpleMethod)();
 
   public:
-    SpotifyWrapped(uv_async_t* _handle) : asyncHandle(_handle), doneCondition(0) {
+    SpotifyWrapped() : asyncHandle(&spotifyService->callNodeThread), doneCondition(0) {
       pthread_mutex_init(&waitingMutex, NULL);
       pthread_mutex_init(&lockingMutex, NULL);
       pthread_cond_init(&waitingCondition, NULL);

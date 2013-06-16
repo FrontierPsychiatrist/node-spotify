@@ -13,14 +13,14 @@ using namespace v8;
 class Track : public SpotifyWrapped<Track> {
   friend class Player;
   public:
-    Track(sp_track* _track, uv_async_t* _handle, std::string _name, std::vector<Artist*> _artists, Album* _album) : 
-      SpotifyWrapped(_handle), spotifyTrack(_track), name(_name), artists(_artists), album(_album) {};
+    Track(sp_track* _track, std::string _name, std::vector<Artist*> _artists, Album* _album) : 
+      SpotifyWrapped(), spotifyTrack(_track), name(_name), artists(_artists), album(_album) {};
 
     static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
     static Handle<Value> getArtists(Local<String> property, const AccessorInfo& info);
 
     static Handle<Value> getAlbum(Local<String> property, const AccessorInfo& info);
-    
+
     static Handle<Value> play(const Arguments& args);    
 
     static void init(Handle<Object> target);

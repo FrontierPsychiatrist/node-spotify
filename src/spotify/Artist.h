@@ -11,7 +11,7 @@ using namespace v8;
 
 class Artist : public SpotifyWrapped<Artist> {
   public:
-    Artist(std::string _name, sp_artist* _spArtist) : SpotifyWrapped(0), name(_name), spArtist(_spArtist) {};
+    Artist(std::string _name, sp_artist* _spArtist) : SpotifyWrapped(), name(_name), spArtist(_spArtist) {};
     static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
     static void init(Handle<Object> target);
 
