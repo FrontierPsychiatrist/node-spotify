@@ -86,6 +86,7 @@ void init(Handle<Object> target) {
   Artist::init(target);
   Player::init(target);
   StaticCallbackSetter<Playlist>::init(target, "playlists");
+  LOG(INFO) << "Initializing audio";
   audio_init(&g_audiofifo);
   spotifyService = new SpotifyService();
   player = new Player(&spotifyService->callNodeThread);
@@ -101,5 +102,6 @@ void init(Handle<Object> target) {
    
   //Initialize waiting for callbacks from the spotify thread
   uv_async_init(uv_default_loop(), &spotifyService->callNodeThread, resolveCallback);
+  LOG(INFO) << "node.js module initialized";
 }
 NODE_MODULE(spotify, init)

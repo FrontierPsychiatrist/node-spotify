@@ -1,5 +1,4 @@
 #include "SpotifyService.h"
-#include <stdio.h>
 #include <pthread.h>
 
 #ifdef OS_LINUX
@@ -10,6 +9,8 @@
 #endif
 
 #include "SessionCallbacks.h"
+
+#include <glog/logging.h>
 
 using namespace spotify;
 
@@ -63,7 +64,7 @@ static void* spotifyLoop(void* _spotifyService) {
   error = sp_session_create(&sessionConfig, &session);
   
   if(SP_ERROR_OK != error) {
-    fprintf(stderr, "BACKEND: Could not create Spotify session: %s\n", sp_error_message(error));
+    LOG(WARNING) << "Could not create spotify session: " << sp_error_message(error);
   }
 
   spotifyService->setSpotifySession(session);

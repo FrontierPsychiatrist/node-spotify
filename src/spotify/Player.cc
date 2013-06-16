@@ -4,6 +4,8 @@
 #include "PlaylistContainer.h"
 #include "../SpotifyService/SpotifyService.h"
 
+#include <glog/logging.h>
+
 extern SpotifyService* spotifyService;
 extern PlaylistContainer* playlistContainer;
 
