@@ -14,11 +14,6 @@
     <link rel="stylesheet" href="styles/bootstrap.css">
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
-    <style>
-      body {
-        padding-top: 59px;
-      } 
-    </style>
   </head>
   <body ng-controller="MainCtrl">
     <!--[if lt IE 7]>
@@ -40,12 +35,12 @@
     
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span3">
+        <div class="span3" id="playlist-menu">
            <div class="container-fluid">
               <div class="row-fluid">
-                <div class="span12" id="playlist-menu" ng-controller="MenuCtrl">
+                <div class="span12" ng-controller="MenuCtrl">
                   <ul class="nav nav-tabs nav-stacked" id="playlists">
-                    <li ng-repeat="playlist in playlists">
+                    <li class="playlist-menu-entry" ng-repeat="playlist in playlists">
                       <a ng-click="loadPlaylist(playlist.id)">{{playlist.name}}</a>
                     </li>
                   </ul>
@@ -58,12 +53,12 @@
               </div>
             </div>
         </div>
-        <div class="span9" ng-controller="PlaylistCtrl">
+        <div class="span9" ng-controller="PlaylistCtrl" id="playlist">
           <h2>{{playlist.name}}</h2>
-          <table class="table table-striped">
+          <table class="table table-striped table-condensed">
               <tr><th>Play</th><th style="width: 20px">Position</th><th>Artist</th><th>Name</th></tr>
               <tr ng-repeat="track in playlist.tracks">
-                <td><div ng-click="play(playlist.id, $index)">&gt;</div></td>
+                <td><a ng-click="play(playlist.id, $index)">&gt;</a></td>
                 <td>{{$index}}</td>
                 <td>
                   <span ng-repeat="artist in track.artists">{{artist.name}},</span>
@@ -106,10 +101,10 @@
     <!-- build:js scripts/scripts.js -->
     <script src="scripts/app.js"></script>
     <script src="scripts/services/events.js"></script>
-    <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/Main.js"></script>
     <script src="scripts/controllers/Menu.js"></script>
     <script src="scripts/controllers/Playlist.js"></script>
-    <script src="scripts/services/Socket.js"></script>
+    <script src="scripts/services/socket.js"></script>
     <script src="scripts/controllers/NowPlaying.js"></script>
     <!-- endbuild -->
   </body>

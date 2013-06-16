@@ -1,1 +1,29 @@
 /* Will be compiled down to a single stylesheet with your sass files */
+html, body, .container-fluid, .row-fluid {
+    height: 100%;
+
+}
+body {
+    overflow: hidden;
+    padding-top: 59px;
+}
+
+.playlist-menu-entry {
+    font-size: .9em;
+}
+
+#playlist-menu {
+    overflow: auto;
+    height: 60%;
+    font-size: 1.1em;
+}
+
+#playlist-menu a {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+#playlist {
+    overflow: auto;
+    height: 80%;
+}

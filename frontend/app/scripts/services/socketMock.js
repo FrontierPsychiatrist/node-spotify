@@ -2,7 +2,7 @@
 /* jshint camelcase: false */
 angular.module('node-spotify')
   .factory('socket', function(events) {
-    var eventFunctions = {};
+    var eventFunctions = { login: angular.noop };
     var playlistNames = ['best of', 'Classical', 'Rock'];
     return {
 
@@ -13,7 +13,9 @@ angular.module('node-spotify')
         emit: function(event, inData) {
             var data = {};
             if(event === events.logged_in) {
-              data.loggedIn = true;
+              data.loggedIn = false;
+            } else if(event === events.login) {
+              eventFunctions.logged_in( {loggedIn: true});
             } else if(event === events.initial_data) {
               data = [
                 {id: 0, name: 'best of'},
