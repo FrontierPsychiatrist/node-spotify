@@ -13,13 +13,17 @@ class Album : public SpotifyWrapped<Album> {
     Album(sp_album* _album, std::string _name) : SpotifyWrapped(), name(_name), spAlbum(_album) {};
     static void init(Handle<Object> target);
     static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
-    
+    static Handle<Value> getBase64Cover(const Arguments& args);
     static Album* getAlbum(sp_album* _spAlbum);
-    static void putAlbum(Album* album); 
+    static void putAlbum(Album* album);
+
+    char* screenshot;
   private:
     static std::map<sp_album*, Album*> albumCache;
     std::string name;
     sp_album* spAlbum;
+
+    void spLoadScreenshot();
 };
 
 #endif

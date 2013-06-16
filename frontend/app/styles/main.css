@@ -1,7 +1,6 @@
 /* Will be compiled down to a single stylesheet with your sass files */
 html, body, .container-fluid, .row-fluid {
     height: 100%;
-
 }
 body {
     overflow: hidden;

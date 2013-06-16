@@ -21,11 +21,8 @@ class Track : public SpotifyWrapped<Track> {
 
     static Handle<Value> getAlbum(Local<String> property, const AccessorInfo& info);
 
-    static Handle<Value> play(const Arguments& args);    
-
     static void init(Handle<Object> target);
   private:
-    void spotifyPlay();
     sp_track* spotifyTrack;
     std::string name;
     std::vector<Artist*> artists;

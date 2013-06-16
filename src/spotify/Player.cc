@@ -31,6 +31,12 @@ Handle<Value> Player::play(const Arguments& args) {
 	return Player::simpleCall(args, &Player::spotifyPlay);
 }
 
+Handle<Value> Player::getCurrentTrack(const Arguments& args) {
+  HandleScope scope;
+  Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
+  return scope.Close(player->playlist->getTracks()[player->currentTrack]->getV8Object());
+}
+
 void Player::spotifyPause() {
 	sp_session_player_play(spotifyService->spotifySession, 0);
 	isPaused = true;
@@ -78,6 +84,7 @@ void Player::init(Handle<Object> target) {
 	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);
 	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
 	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentTrack", getCurrentTrack);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }
