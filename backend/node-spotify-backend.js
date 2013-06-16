@@ -18,6 +18,7 @@ var loggedIn = false;
 //The callback that is called when login is complete
 spotify.ready( function() {
     loggedIn = true;
+    playlists = spotify.getPlaylists();
     sendInitialData();
 });
 
@@ -42,14 +43,9 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on(events.playlist_tracks, function(data) {
-        var playlists = spotify.getPlaylists();
-        for (var i = 0; i < playlists.length; i++) {
-            var playlist = playlists[i];
-            if(playlist.id === data.id) {
-                socket.emit(events.playlist_tracks, {id: data.id, tracks: playlist.getTracks()});
-                return;
-            }
-        }
+        var playlist = playlists[data.id];
+        playlist.tracks = playlist.getTracks();
+        socket.emit(events.playlist_tracks, playlist);
     });
 
     socket.on(events.play, function(data) {
@@ -61,6 +57,5 @@ io.sockets.on('connection', function(socket) {
 });
 
 function sendInitialData() {
-    var playlists = spotify.getPlaylists();
     gSocket.emit(events.initial_data, playlists);
 }

@@ -5,7 +5,13 @@ angular.module('node-spotify')
     $scope.playlist = {name: 'Choose a playlist'};
 
     socket.on(events.playlist_tracks, function(data) {
-      $scope.playlist = {name: data.name, tracks: data.tracks, id: data.id};
+      $scope.playlist = data;
+    });
+
+    socket.on(events.playlist_renamed, function(data) {
+      if($scope.playlist.id === data.id) {
+        $scope.playlist.name = data.name;
+      }
     });
 
     $scope.play = function(playlistId, trackId) {

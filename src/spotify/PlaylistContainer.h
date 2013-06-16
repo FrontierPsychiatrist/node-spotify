@@ -8,7 +8,7 @@
 
 class PlaylistContainer {
   public:
-    PlaylistContainer(sp_playlistcontainer* _playlistContainer) : playlistContainer(_playlistContainer), highestPlaylistId(0) {};
+    PlaylistContainer(sp_playlistcontainer* _playlistContainer) : playlistContainer(_playlistContainer) {};
     /**
      * Load all playlists into the vector.
      * Needs to be invoked in the spotify thread!
@@ -20,7 +20,6 @@ class PlaylistContainer {
     static void setContainerLoadedCallback( Persistent<Function> callback ) { PlaylistContainer::containerLoadedCallback = callback; };
   private:
     sp_playlistcontainer* playlistContainer;
-    int highestPlaylistId;
     std::vector<Playlist*> playlists;
     
     static Persistent<Function> containerLoadedCallback;

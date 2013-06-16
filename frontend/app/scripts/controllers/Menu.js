@@ -6,6 +6,10 @@ angular.module('node-spotify')
       $scope.playlists = playlists;
     });
 
+    socket.on(events.playlist_renamed, function (playlist) {
+      $scope.playlists[playlist.id].name = playlist.name;
+    });
+
     $scope.loadPlaylist = function(playlistId) {
       socket.emit(events.playlist_tracks, {id: playlistId});
     };

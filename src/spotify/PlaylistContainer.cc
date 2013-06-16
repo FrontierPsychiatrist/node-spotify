@@ -15,10 +15,9 @@ void PlaylistContainer::loadPlaylists() {
   playlistCallbacks.playlist_renamed = &playlistNameChange;
 
   for(int i = 0; i < numPlaylists; ++i) {
-    sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, highestPlaylistId);
+    sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
     Playlist* playlist = new Playlist(spPlaylist, &spotifyService->callNodeThread, i);
     sp_playlist_add_callbacks(spPlaylist, &playlistCallbacks, playlist);
     playlists.push_back(playlist);
-    highestPlaylistId++;
   }
 }
