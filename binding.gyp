@@ -11,7 +11,7 @@
       "src/audio/audio.c"
     ],
     "link_settings" : {
-      "libraries": ["-lspotify"]
+      "libraries": ["-lspotify", "-lglog"]
     },
     "actions": [ {
       "action_name": "generateEventsHeader",

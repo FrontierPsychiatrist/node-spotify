@@ -13,6 +13,8 @@ extern "C" {
 #include "audio/audio.h"
 }
 
+#include <glog/logging.h>
+
 using namespace v8;
 
 SpotifyService* spotifyService;
@@ -77,6 +79,8 @@ void resolveCallback(uv_async_t* handle, int status) {
 }
 
 void init(Handle<Object> target) {
+  google::InitGoogleLogging("node-spotify");
+  LOG(INFO) << "Initializing node.js module";
   Playlist::init(target);
   Track::init(target);
   Artist::init(target);
