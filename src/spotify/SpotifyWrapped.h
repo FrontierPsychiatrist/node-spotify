@@ -88,48 +88,48 @@ class SpotifyWrapped : public node::ObjectWrap, V8Wrapped {
         uv_async_send(asyncHandle);
       }
     };
-    protected:
-      static void emptySetter(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {};
-      uv_async_t* asyncHandle;
-      pthread_mutex_t lockingMutex;
-      static v8::Persistent<v8::Function> constructor;
+    pthread_mutex_t lockingMutex;
+  protected:
+    static void emptySetter(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {};
+    uv_async_t* asyncHandle;
+    static v8::Persistent<v8::Function> constructor;
       
-      /**
-       * A method to wait for another method in this object to complete, e.g. if it is called in another thread
-       * This method locks an object wide mutex, so it can only be called one at a time.
-      **/
-      void wait() {
-        pthread_mutex_lock(&waitingMutex);
-        while(!doneCondition) {
-          pthread_cond_wait(&waitingCondition, &waitingMutex);
-        }
-        doneCondition = 0;
-        pthread_mutex_unlock(&waitingMutex);
-      };
-      
-      /**
-       * Signal the SpotifyWrapped::wait() method that some action is complete.
-      **/
-      void done() {
-        pthread_mutex_lock(&waitingMutex);
-        doneCondition = 1;
-        pthread_cond_signal(&waitingCondition);
-        pthread_mutex_unlock(&waitingMutex);
-      };
-      
-      static v8::Handle<v8::Value> simpleCall(const v8::Arguments& args, SimpleMethod method) {
-        v8::HandleScope scope;
-        T* obj = node::ObjectWrap::Unwrap<T>(args.This());
-        Callback<T>* cb = new Callback<T>(obj, method);
-        spotifyService->executeSpotifyAPIcall(cb);
-        return scope.Close(v8::Undefined());
+    /**
+     * A method to wait for another method in this object to complete, e.g. if it is called in another thread
+     * This method locks an object wide mutex, so it can only be called one at a time.
+    **/
+    void wait() {
+      pthread_mutex_lock(&waitingMutex);
+      while(!doneCondition) {
+        pthread_cond_wait(&waitingCondition, &waitingMutex);
       }
-    private:
-      int doneCondition;
-      pthread_mutex_t waitingMutex;
-      pthread_cond_t waitingCondition;
-      std::map<std::string, v8::Persistent<v8::Function> > callbacks;
-      static std::map<std::string, v8::Persistent<v8::Function> > staticCallbacks;
+      doneCondition = 0;
+      pthread_mutex_unlock(&waitingMutex);
+    };
+      
+    /**
+     * Signal the SpotifyWrapped::wait() method that some action is complete.
+    **/
+    void done() {
+      pthread_mutex_lock(&waitingMutex);
+      doneCondition = 1;
+      pthread_cond_signal(&waitingCondition);
+      pthread_mutex_unlock(&waitingMutex);
+    };
+      
+    static v8::Handle<v8::Value> simpleCall(const v8::Arguments& args, SimpleMethod method) {
+      v8::HandleScope scope;
+      T* obj = node::ObjectWrap::Unwrap<T>(args.This());
+      Callback<T>* cb = new Callback<T>(obj, method);
+      spotifyService->executeSpotifyAPIcall(cb);
+      return scope.Close(v8::Undefined());
+    }
+  private:
+    int doneCondition;
+    pthread_mutex_t waitingMutex;
+    pthread_cond_t waitingCondition;
+    std::map<std::string, v8::Persistent<v8::Function> > callbacks;
+    static std::map<std::string, v8::Persistent<v8::Function> > staticCallbacks;
 };
 
 template <class T> std::map<std::string, v8::Persistent<v8::Function> > SpotifyWrapped<T>::staticCallbacks;

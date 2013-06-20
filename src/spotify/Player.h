@@ -24,7 +24,7 @@ class Player : public SpotifyWrapped<Player> {
 		
 		void changeAndPlayTrack();
   public:
-    Player() : SpotifyWrapped() {};
+    Player() : SpotifyWrapped(), currentAlbumCoverBase64(0) {};
 		//NodeJS visible methods
 		static Handle<Value> stop(const Arguments& args);
 		static Handle<Value> pause(const Arguments& args);

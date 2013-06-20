@@ -5,6 +5,7 @@
 #include "base64.h"
 #include "../events.h"
 
+#include <pthread.h>
 #include <glog/logging.h>
 
 extern SpotifyService* spotifyService;
@@ -39,25 +40,32 @@ Handle<Value> Player::play(const Arguments& args) {
 void Player::changeAndPlayTrack() {
   currentTrack = currentPlaylist->getTracks()[currentTrackPosition];
   const byte* coverId = sp_album_cover(currentTrack->album->spAlbum, SP_IMAGE_SIZE_NORMAL);
-  sp_image* image = sp_image_create(spotifyService->spotifySession, coverId);
   
-  if(sp_image_is_loaded(image)) {
-    DLOG(INFO) << "Image for new track is already loaded";
-    processImage(image);
-    sp_image_release(image);
-  } else {
-    DLOG(INFO) << "Need to load image";
-    sp_image_add_load_callback(image, &imageLoadedCallback, this);
+  if(coverId != 0) {
+    sp_image* image = sp_image_create(spotifyService->spotifySession, coverId);
+    if(sp_image_is_loaded(image)) {
+      DLOG(INFO) << "Image for new track is already loaded";
+      processImage(image);
+      sp_image_release(image);
+    } else {
+      DLOG(INFO) << "Need to load image";
+      sp_image_add_load_callback(image, &imageLoadedCallback, this);
+    }
   }
   //getCurrentTrackName
   //...
+  this->call(NOW_PLAYING_DATA_CHANGED);
   spotifyPlay();
 }
 
 void imageLoadedCallback(sp_image* image, void* userdata) {
-  ((Player*)userdata)->processImage(image);
+  Player* player = (Player*)userdata;
+  pthread_mutex_lock(&player->lockingMutex);
+  player->processImage(image);
+  player->call(NOW_PLAYING_DATA_CHANGED);
   sp_image_remove_load_callback(image, &imageLoadedCallback, userdata);
   sp_image_release(image);
+  pthread_mutex_unlock(&player->lockingMutex);
 }
 
 /**
@@ -70,7 +78,6 @@ void Player::processImage(sp_image* image) {
   int base64Size;
   const void* imageData = sp_image_data(image, &imageSize);
   this->currentAlbumCoverBase64 = base64(imageData, (int)imageSize, &base64Size);
-  this->call(NOW_PLAYING_DATA_CHANGED);
 }
 
 Handle<Value> Player::getCurrentTrack(const Arguments& args) {
@@ -121,7 +128,13 @@ Handle<Value> Player::staticOn(const Arguments& args) {
 Handle<Value> Player::getCurrentlyPlayingData(const Arguments& args) {
   HandleScope scope;
   Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
-  return scope.Close(String::New(player->currentAlbumCoverBase64));
+  pthread_mutex_lock(&player->lockingMutex);
+  Handle<Object> data = Object::New();
+  if(player->currentAlbumCoverBase64 != 0)
+    data->Set(String::New("image"), String::New(player->currentAlbumCoverBase64));
+  data->Set(String::New("trackName"), String::New(player->currentTrack->name.c_str()));
+  pthread_mutex_unlock(&player->lockingMutex);
+  return scope.Close(data);
 }
 
 void Player::init(Handle<Object> target) {
