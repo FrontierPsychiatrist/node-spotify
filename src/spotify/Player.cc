@@ -54,12 +54,10 @@ void Player::spotifyStop() {
 }
 
 void Player::spotifyPlay() {
-  if(playlist != 0) {
-  	Track* track = playlist->getTracks()[currentTrack];
-  	sp_session_player_unload(spotifyService->spotifySession);
-    sp_session_player_load(spotifyService->spotifySession, track->spotifyTrack);
-    sp_session_player_play(spotifyService->spotifySession, 1);
-  }
+  sp_session_player_unload(spotifyService->spotifySession);
+  Track* track = playlist->getTracks()[currentTrack];
+  sp_session_player_load(spotifyService->spotifySession, track->spotifyTrack);
+  sp_session_player_play(spotifyService->spotifySession, 1);
 }
 
 void Player::nextTrack() {
