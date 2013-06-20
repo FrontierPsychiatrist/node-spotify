@@ -1,7 +1,7 @@
 {
   "targets": [
   {
-    "target_name": "node-spotify",
+    "target_name": "spotify",
     "sources": ["src/node-spotify.cc", "src/appkey.c", "src/SpotifyService/SpotifyService.cc",
       "src/spotify/Track.cc", "src/spotify/Artist.cc",
       "src/spotify/Playlist.cc", "src/spotify/PlaylistContainer.cc",

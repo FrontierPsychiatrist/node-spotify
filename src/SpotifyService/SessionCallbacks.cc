@@ -4,12 +4,10 @@
 //Maybe with extern instead of import?
 #include "PlaylistCallbacks.h"
 
-#include "../Callback.h"
 #include "../NodeCallback.h"
 #include "SpotifyService.h"
 #include "../spotify/PlaylistContainer.h"
 #include "../spotify/Player.h"
-#include "../events.h"
 
 extern "C" {
 #include "../audio/audio.h"

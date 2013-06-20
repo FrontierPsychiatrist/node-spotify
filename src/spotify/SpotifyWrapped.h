@@ -9,6 +9,7 @@
 #include <node.h>
 
 #include "../NodeCallback.h"
+#include "V8Wrapped.h"
 #include "../SpotifyService/SpotifyService.h"
 
 extern SpotifyService* spotifyService;
@@ -17,7 +18,7 @@ extern SpotifyService* spotifyService;
  * A class used as a base class for wrapping libspotify types to V8 objects.
 **/
 template <class T>
-class SpotifyWrapped : public node::ObjectWrap {
+class SpotifyWrapped : public node::ObjectWrap, V8Wrapped {
   template <class S> friend class StaticCallbackSetter;
   //friend class Callback<T>;
   typedef void (T::*SimpleMethod)();
@@ -81,7 +82,7 @@ class SpotifyWrapped : public node::ObjectWrap {
       if(fun != 0) {
         //Trigger the nodeJS eventloop
         NodeCallback* nodeCallback = new NodeCallback();
-        nodeCallback->object = this->getV8Object();
+        nodeCallback->object = this;
         nodeCallback->function = fun;
         asyncHandle->data  = (void*)nodeCallback;
         uv_async_send(asyncHandle);

@@ -3,8 +3,10 @@
 
 #include <v8.h>
 
+class V8Wrapped;
+
 struct NodeCallback {
-  v8::Handle<v8::Object> object;
+  V8Wrapped* object;
   v8::Persistent<v8::Function>* function;
 };
 
