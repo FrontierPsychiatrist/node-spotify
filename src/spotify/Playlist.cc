@@ -1,11 +1,4 @@
 #include "Playlist.h"
-#include "Track.h"
-#include "Album.h"
-
-#include "../events.h"
-#include "../SpotifyService/SpotifyService.h"
-
-#include <vector>
 
 std::vector<Track*> Playlist::getTracks() {
   pthread_mutex_lock(&lockingMutex);
@@ -71,30 +64,7 @@ void Playlist::init(Handle<Object> target) {
 void Playlist::loadTracks() {
   for(int i = 0; i < sp_playlist_num_tracks(playlist); ++i) {
     sp_track* spTrack = sp_playlist_track(playlist, i);
-    const char* trackName = sp_track_name(spTrack);
-    
-    sp_album* spAlbum = sp_track_album(spTrack);
-    Album* album = Album::getAlbum(spAlbum);
-    if(album == 0) {
-      const char* albumName = sp_album_name(spAlbum);
-      album = new Album(spAlbum, std::string(albumName));
-      Album::putAlbum(album);
-    }
-
-    int numArtists = sp_track_num_artists(spTrack);
-    std::vector<Artist*> artists;
-    for(int i = 0; i < numArtists; i++) {
-      sp_artist* spArtist = sp_track_artist(spTrack, i);
-      Artist* artist = Artist::getArtist(spArtist);
-      if(artist == 0) {//TODO: refactor this mess
-        const char* artistName = sp_artist_name(spArtist);
-        artist = new Artist(std::string(artistName), spArtist);
-        Artist::putArtist(artist);
-      }
-      artists.push_back(artist);
-    }
-
-    Track* track = new Track(spTrack, std::string(trackName), artists, album);
+    Track* track = new Track(spTrack);
     tracks.push_back(track);
   }
   tracksLoaded = true;

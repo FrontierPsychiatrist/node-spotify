@@ -1,7 +1,6 @@
 #ifndef _ARTIST_H
 #define _ARTIST_H
 
-#include <v8.h>
 #include <string>
 #include <map>
 #include <libspotify/api.h>
@@ -11,7 +10,10 @@ using namespace v8;
 
 class Artist : public SpotifyWrapped<Artist> {
   public:
-    Artist(std::string _name, sp_artist* _spArtist) : SpotifyWrapped(), name(_name), spArtist(_spArtist) {};
+    Artist(sp_artist* _spArtist) : SpotifyWrapped(), spArtist(_spArtist) {
+      name = std::string(sp_artist_name(spArtist));
+    };
+
     static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
     static void init(Handle<Object> target);
 
