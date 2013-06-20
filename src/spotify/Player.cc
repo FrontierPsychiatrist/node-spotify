@@ -22,13 +22,13 @@ Handle<Value> Player::resume(const Arguments& args) {
 }
 
 Handle<Value> Player::play(const Arguments& args) {
-	Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
+  Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
 
-	int playlistId = args[0]->ToInteger()->Value();
-	player->currentTrack = args[1]->ToInteger()->Value();
+  int playlistId = args[0]->ToInteger()->Value();
+  player->currentTrack = args[1]->ToInteger()->Value();
 
   player->playlist = playlistContainer->getPlaylists()[playlistId];
-	return Player::simpleCall(args, &Player::spotifyPlay);
+  return Player::simpleCall(args, &Player::spotifyPlay);
 }
 
 Handle<Value> Player::getCurrentTrack(const Arguments& args) {
@@ -38,19 +38,19 @@ Handle<Value> Player::getCurrentTrack(const Arguments& args) {
 }
 
 void Player::spotifyPause() {
-	sp_session_player_play(spotifyService->spotifySession, 0);
-	isPaused = true;
+  sp_session_player_play(spotifyService->spotifySession, 0);
+  isPaused = true;
 }
 
 void Player::spotifyResume() {
-	if(isPaused) {
-		sp_session_player_play(spotifyService->spotifySession, 1);
-		isPaused = false;
-	}
+  if(isPaused) {
+    sp_session_player_play(spotifyService->spotifySession, 1);
+	isPaused = false;
+  }
 }
 
 void Player::spotifyStop() {
-	sp_session_player_unload(spotifyService->spotifySession);
+  sp_session_player_unload(spotifyService->spotifySession);
 }
 
 void Player::spotifyPlay() {
@@ -61,27 +61,25 @@ void Player::spotifyPlay() {
 }
 
 void Player::nextTrack() {
-	if(playlist != 0) {
-		currentTrack++;
-		Track* track = playlist->getTracks()[currentTrack];
-		if( currentTrack < (int)playlist->getTracks().size()) {
-			sp_session_player_unload(spotifyService->spotifySession);
-			sp_session_player_load(spotifyService->spotifySession, track->spotifyTrack);
-    	sp_session_player_play(spotifyService->spotifySession, 1);
-		}
-	}
+  currentTrack++;
+  Track* track = playlist->getTracks()[currentTrack];
+  if( currentTrack < (int)playlist->getTracks().size()) {
+    sp_session_player_unload(spotifyService->spotifySession);
+    sp_session_player_load(spotifyService->spotifySession, track->spotifyTrack);
+    sp_session_player_play(spotifyService->spotifySession, 1);
+  }
 }
 
 void Player::init(Handle<Object> target) {
-	HandleScope scope;
-	Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
-	constructorTemplate->SetClassName(String::NewSymbol("Player"));
-	constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+  HandleScope scope;
+  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
+  constructorTemplate->SetClassName(String::NewSymbol("Player"));
+  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
 	
-	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "play", play);
-	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);
-	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
-	NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "play", play);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentTrack", getCurrentTrack);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
