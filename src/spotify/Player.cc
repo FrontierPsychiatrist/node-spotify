@@ -80,12 +80,6 @@ void Player::processImage(sp_image* image) {
   this->currentAlbumCoverBase64 = base64(imageData, (int)imageSize, &base64Size);
 }
 
-Handle<Value> Player::getCurrentTrack(const Arguments& args) {
-  HandleScope scope;
-  Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
-  return scope.Close(player->currentTrack->getV8Object());
-}
-
 void Player::spotifyPause() {
   sp_session_player_play(spotifyService->spotifySession, 0);
   isPaused = true;
@@ -147,7 +141,6 @@ void Player::init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentTrack", getCurrentTrack);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", staticOn);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentlyPlayingData", getCurrentlyPlayingData);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
