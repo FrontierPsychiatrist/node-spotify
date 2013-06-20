@@ -3,6 +3,7 @@
 #include "PlaylistContainer.h"
 #include "../SpotifyService/SpotifyService.h"
 #include "base64.h"
+#include "../events.h"
 
 #include <glog/logging.h>
 
@@ -39,6 +40,7 @@ void Player::changeAndPlayTrack() {
   currentTrack = currentPlaylist->getTracks()[currentTrackPosition];
   const byte* coverId = sp_album_cover(currentTrack->album->spAlbum, SP_IMAGE_SIZE_NORMAL);
   sp_image* image = sp_image_create(spotifyService->spotifySession, coverId);
+  
   if(sp_image_is_loaded(image)) {
     DLOG(INFO) << "Image for new track is already loaded";
     processImage(image);
@@ -49,7 +51,6 @@ void Player::changeAndPlayTrack() {
   }
   //getCurrentTrackName
   //...
-  //this->call(PLAYER_DATA_CHANGED)
   spotifyPlay();
 }
 
@@ -69,7 +70,7 @@ void Player::processImage(sp_image* image) {
   int base64Size;
   const void* imageData = sp_image_data(image, &imageSize);
   this->currentAlbumCoverBase64 = base64(imageData, (int)imageSize, &base64Size);
-  //this->call(PLAYER_DATA_CHANGED)
+  this->call(NOW_PLAYING_DATA_CHANGED);
 }
 
 Handle<Value> Player::getCurrentTrack(const Arguments& args) {
@@ -107,6 +108,22 @@ void Player::nextTrack() {
   }
 }
 
+//TODO: generic refactoring for NodeWrapped!
+Handle<Value> Player::staticOn(const Arguments& args) {
+  HandleScope scope;
+  Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
+  String::Utf8Value callbackName(args[0]->ToString());
+  Handle<Function> fun = Handle<Function>::Cast(args[1]);
+  player->on( *callbackName, Persistent<Function>::New(fun));
+  return scope.Close(Undefined());
+}
+
+Handle<Value> Player::getCurrentlyPlayingData(const Arguments& args) {
+  HandleScope scope;
+  Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
+  return scope.Close(String::New(player->currentAlbumCoverBase64));
+}
+
 void Player::init(Handle<Object> target) {
   HandleScope scope;
   Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
@@ -118,6 +135,8 @@ void Player::init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentTrack", getCurrentTrack);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", staticOn);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentlyPlayingData", getCurrentlyPlayingData);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }

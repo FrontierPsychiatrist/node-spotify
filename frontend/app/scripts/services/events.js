@@ -17,7 +17,8 @@
 
       /* player */
       play: 'play',
-      next_track: 'next_track'
+      next_track: 'next_track',
+      now_playing_data_changed: 'now_playing_data_changed'
     };
 
     return events;

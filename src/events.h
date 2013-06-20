@@ -10,4 +10,5 @@
 #define MESSAGE "message"
 #define PLAY "play"
 #define NEXT_TRACK "next_track"
+#define NOW_PLAYING_DATA_CHANGED "now_playing_data_changed"
 #endif

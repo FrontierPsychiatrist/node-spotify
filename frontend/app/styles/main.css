@@ -26,3 +26,9 @@ body {
     overflow: auto;
     height: 80%;
 }
+
+#now-playing {
+    width: 300px;
+    height: 300px;
+    border: 1px solid black;
+}

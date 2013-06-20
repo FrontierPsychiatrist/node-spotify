@@ -32,6 +32,8 @@ class Player : public SpotifyWrapped<Player> {
 		static Handle<Value> play(const Arguments& args);
 		static Handle<Value> nextTrack(const Arguments& args);
 		static Handle<Value> getCurrentTrack(const Arguments& args);
+		static Handle<Value> staticOn(const Arguments& args);
+		static Handle<Value> getCurrentlyPlayingData(const Arguments& args);
 
 		void nextTrack();
 		void processImage(sp_image* image);
