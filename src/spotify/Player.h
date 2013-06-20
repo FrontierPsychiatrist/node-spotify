@@ -1,7 +1,7 @@
 #ifndef _PLAYER_H
 #define _PLAYER_H
 
-#include <node.h>
+#include <libspotify/api.h>
 
 #include "SpotifyWrapped.h"
 #include "../Callback.h"
@@ -11,15 +11,18 @@ using namespace v8;
 
 class Player : public SpotifyWrapped<Player> {
 	private:
-		Playlist* playlist;
-		int currentTrack;
+		Playlist* currentPlaylist;
+		int currentTrackPosition;
+		Track* currentTrack;
 		bool isPaused;
+		char* currentAlbumCoverBase64;
 		
 		void spotifyPause();
 		void spotifyStop();
 		void spotifyResume();
 		void spotifyPlay();
 		
+		void changeAndPlayTrack();
   public:
     Player() : SpotifyWrapped() {};
 		//NodeJS visible methods
@@ -31,6 +34,7 @@ class Player : public SpotifyWrapped<Player> {
 		static Handle<Value> getCurrentTrack(const Arguments& args);
 
 		void nextTrack();
+		void processImage(sp_image* image);
 		/**
 		*	Callback track finished playing:
 		*		- remove track from queue
@@ -38,11 +42,6 @@ class Player : public SpotifyWrapped<Player> {
 		*		- update currentTrackPosition if necessary
 		**/
 		
-		
-		/**
-		*	Communication with frontend:
-		*		-
-		**/
 		static void init(Handle<Object> target);
 };
 
