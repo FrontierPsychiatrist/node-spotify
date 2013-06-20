@@ -1,5 +1,4 @@
 #include "SpotifyService.h"
-#include <pthread.h>
 
 #ifdef OS_LINUX
 #include <sys/time.h>

@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "Track.h"
 #include "PlaylistContainer.h"
 #include "../SpotifyService/SpotifyService.h"
 #include "base64.h"
@@ -60,12 +59,10 @@ void Player::changeAndPlayTrack() {
 
 void imageLoadedCallback(sp_image* image, void* userdata) {
   Player* player = (Player*)userdata;
-  pthread_mutex_lock(&player->lockingMutex);
   player->processImage(image);
   player->call(NOW_PLAYING_DATA_CHANGED);
   sp_image_remove_load_callback(image, &imageLoadedCallback, userdata);
   sp_image_release(image);
-  pthread_mutex_unlock(&player->lockingMutex);
 }
 
 /**
@@ -73,11 +70,13 @@ void imageLoadedCallback(sp_image* image, void* userdata) {
  * May only be called from the spotify thread
  **/
 void Player::processImage(sp_image* image) {
+  pthread_mutex_lock(&lockingMutex);
   DLOG(INFO) << "Processing image data";
   size_t imageSize;
   int base64Size;
   const void* imageData = sp_image_data(image, &imageSize);
   this->currentAlbumCoverBase64 = base64(imageData, (int)imageSize, &base64Size);
+  pthread_mutex_unlock(&lockingMutex);
 }
 
 void Player::spotifyPause() {

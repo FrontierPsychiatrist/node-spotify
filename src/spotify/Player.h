@@ -3,13 +3,14 @@
 
 #include <libspotify/api.h>
 
-#include "SpotifyWrapped.h"
+#include "NodeWrapped.h"
 #include "../Callback.h"
 #include "Playlist.h"
+#include "Track.h"
 
 using namespace v8;
 
-class Player : public SpotifyWrapped<Player> {
+class Player : public NodeWrapped<Player> {
 	private:
 		Playlist* currentPlaylist;
 		int currentTrackPosition;
@@ -24,7 +25,7 @@ class Player : public SpotifyWrapped<Player> {
 		
 		void changeAndPlayTrack();
   public:
-    Player() : SpotifyWrapped(), currentAlbumCoverBase64(0) {};
+    Player() : NodeWrapped(), currentAlbumCoverBase64(0) {};
 		//NodeJS visible methods
 		static Handle<Value> stop(const Arguments& args);
 		static Handle<Value> pause(const Arguments& args);

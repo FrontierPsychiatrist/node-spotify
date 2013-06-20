@@ -3,10 +3,12 @@
 
 #include <uv.h>
 #include <string>
+#include <pthread.h>
 #include <libspotify/api.h>
 #include "../Callback.h"
 
 class SpotifyService {
+    template<class T> friend class SpotifyWrapped;
   public:
     SpotifyService();
     ~SpotifyService();
