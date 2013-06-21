@@ -15,7 +15,10 @@ using namespace v8;
 
 class Playlist : public SpotifyWrapped<Playlist> {
   public:
-    Playlist(sp_playlist* _playlist, int _id) : SpotifyWrapped(), id(_id), playlist(_playlist), tracksLoaded(0) {};
+    Playlist(sp_playlist* _playlist, int _id) : SpotifyWrapped(), id(_id), playlist(_playlist), tracksLoaded(0) {
+      sp_playlist_add_ref(playlist);
+      name = std::string(sp_playlist_name(playlist));
+    };
     std::string name;
 	
     std::vector<Track*> getTracks();

@@ -11,6 +11,7 @@ using namespace v8;
 class Artist : public SpotifyWrapped<Artist> {
   public:
     Artist(sp_artist* _spArtist) : SpotifyWrapped(), spArtist(_spArtist) {
+      sp_artist_add_ref(spArtist);
       name = std::string(sp_artist_name(spArtist));
     };
 

@@ -12,6 +12,7 @@ class Album : public SpotifyWrapped<Album> {
   friend class Player;
   public:
     Album(sp_album* _album) : SpotifyWrapped(), spAlbum(_album) {
+      sp_album_add_ref(spAlbum);
       name = std::string(sp_album_name(spAlbum));
     };
 

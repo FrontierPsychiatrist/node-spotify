@@ -15,6 +15,7 @@ class Track : public SpotifyWrapped<Track> {
   friend class Player;
   public:
     Track(sp_track* _track) : SpotifyWrapped(), spotifyTrack(_track) {
+      sp_track_add_ref(spotifyTrack);
       name = std::string(sp_track_name(spotifyTrack));
       for(int i = 0; i < sp_track_num_artists(spotifyTrack); i++) {
         sp_artist* spArtist = sp_track_artist(spotifyTrack, i);
