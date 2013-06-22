@@ -12,6 +12,7 @@ extern PlaylistContainer* playlistContainer;
 void imageLoadedCallback(sp_image* image, void* userdata);
 
 Handle<Value> Player::pause(const Arguments& args) {
+  DLOG(INFO) << "Player pausing";
 	return Player::simpleCall(args, &Player::spotifyPause);
 }
 
@@ -20,6 +21,7 @@ Handle<Value> Player::stop(const Arguments& args) {
 }
 
 Handle<Value> Player::resume(const Arguments& args) {
+  DLOG(INFO) << "Player resuming";
 	return Player::simpleCall(args, &Player::spotifyResume);
 }
 
@@ -30,6 +32,11 @@ Handle<Value> Player::play(const Arguments& args) {
   player->currentPlaylist = playlistContainer->getPlaylists()[playlistId];
   DLOG(INFO) << "Will play track " << player->currentTrackPosition << " on playlist " << playlistId;
   return Player::simpleCall(args, &Player::changeAndPlayTrack);
+}
+
+Handle<Value> Player::nextTrack(const Arguments& args) {
+  DLOG(INFO) << "Player switching to next track";
+  return Player::simpleCall(args, &Player::nextTrack);
 }
 
 /**

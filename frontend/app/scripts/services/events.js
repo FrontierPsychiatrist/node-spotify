@@ -17,7 +17,10 @@
 
       /* player */
       play: 'play',
-      next_track: 'next_track',
+      player_pause: 'player_pause',
+      player_resume: 'player_resume',
+      player_forward: 'player_forward',
+      player_back: 'player_back',
       now_playing_data_changed: 'now_playing_data_changed'
     };
 

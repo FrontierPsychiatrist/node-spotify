@@ -9,6 +9,9 @@
 #define LOGOUT "logout"
 #define MESSAGE "message"
 #define PLAY "play"
-#define NEXT_TRACK "next_track"
+#define PLAYER_PAUSE "player_pause"
+#define PLAYER_RESUME "player_resume"
+#define PLAYER_FORWARD "player_forward"
+#define PLAYER_BACK "player_back"
 #define NOW_PLAYING_DATA_CHANGED "now_playing_data_changed"
 #endif

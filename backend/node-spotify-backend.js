@@ -52,6 +52,22 @@ io.sockets.on('connection', function(socket) {
         spotify.player.play(data.playlistId, data.trackId);   
     });
 
+    socket.on(events.player_pause, function() {
+        spotify.player.pause();
+    });
+
+    socket.on(events.player_resume, function() {
+        spotify.player.resume();
+    });
+
+    socket.on(events.player_back, function() {
+        //spotify.player.pause();
+    });
+
+    socket.on(events.player_forward, function() {
+        spotify.player.nextTrack();
+    });
+    
     spotify.player.on(events.now_playing_data_changed, function() {
         socket.emit(events.now_playing_data_changed, this.getCurrentlyPlayingData());
     });
