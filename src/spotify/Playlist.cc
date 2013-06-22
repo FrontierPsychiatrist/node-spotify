@@ -1,4 +1,5 @@
 #include "Playlist.h"
+#include "../events.h"
 
 std::vector<Track*> Playlist::getTracks() {
   pthread_mutex_lock(&lockingMutex);
@@ -9,6 +10,11 @@ std::vector<Track*> Playlist::getTracks() {
 	}
   pthread_mutex_unlock(&lockingMutex);
 	return tracks;
+}
+
+void Playlist::setName(std::string _name) {
+  this->name = _name;
+  call(PLAYLIST_RENAMED);
 }
 
 void Playlist::setName(Local<String> property, Local<Value> value, const AccessorInfo& info) {
