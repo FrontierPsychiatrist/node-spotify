@@ -90,7 +90,6 @@ int music_delivery(sp_session *sess, const sp_audioformat *format,
   /* Buffer one second of audio */
   if (af->qlen > format->sample_rate) {
     pthread_mutex_unlock(&af->mutex);
-
     return 0;
   }
 

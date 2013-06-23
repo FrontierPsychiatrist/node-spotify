@@ -66,7 +66,7 @@ static void* audio_start(void *aux)
 	ALCcontext *context = NULL;
 	ALuint buffers[NUM_BUFFERS];
 	ALuint source;
-	ALint processed;
+	ALint processed, status;
 	ALenum error;
 	ALint rate;
 	ALint channels;
@@ -84,7 +84,6 @@ static void* audio_start(void *aux)
 	queue_buffer(source, af, buffers[1]);
 	queue_buffer(source, af, buffers[2]);
 	for (;;) {
-      
 		alSourcePlay(source);
 		for (;;) {
 			/* Wait for some audio to play */
@@ -94,24 +93,28 @@ static void* audio_start(void *aux)
 			} while (!processed);
 			
 			/* Remove old audio from the queue.. */
-			alSourceUnqueueBuffers(source, 1, &buffers[frame % 3]);
+			alSourceUnqueueBuffers(source, 1, &buffers[frame % NUM_BUFFERS]);
 			
 			/* and queue some more audio */
 			afd = audio_get(af);
-			alGetBufferi(buffers[frame % 3], AL_FREQUENCY, &rate);
-			alGetBufferi(buffers[frame % 3], AL_CHANNELS, &channels);
+			alGetSourcei(source, AL_SOURCE_STATE, &status);
+			if(status != AL_PLAYING)
+				alSourcePlay(source);
+			
+			alGetBufferi(buffers[frame % NUM_BUFFERS], AL_FREQUENCY, &rate);
+			alGetBufferi(buffers[frame % NUM_BUFFERS], AL_CHANNELS, &channels);
 			if (afd->rate != rate || afd->channels != channels) {
 				printf("rate or channel count changed, resetting\n");
                                 free(afd);
 				break;
 			}
-			alBufferData(buffers[frame % 3], 
+			alBufferData(buffers[frame % NUM_BUFFERS], 
 						 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, 
 						 afd->samples, 
 						 afd->nsamples * afd->channels * sizeof(short), 
 						 afd->rate);
-                        free(afd);
-			alSourceQueueBuffers(source, 1, &buffers[frame % 3]);
+			free(afd);
+			alSourceQueueBuffers(source, 1, &buffers[frame % NUM_BUFFERS]);
 			
 			if ((error = alcGetError(device)) != AL_NO_ERROR) {
 				printf("openal al error: %d\n", error);

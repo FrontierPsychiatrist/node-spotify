@@ -4,11 +4,16 @@
 #include "base64.h"
 #include "../events.h"
 
+extern "C" {
+#include "../audio/audio.h"
+}
+
 #include <pthread.h>
 #include <glog/logging.h>
 
 extern SpotifyService* spotifyService;
 extern PlaylistContainer* playlistContainer;
+extern audio_fifo_t g_audiofifo;
 void imageLoadedCallback(sp_image* image, void* userdata);
 
 Handle<Value> Player::pause(const Arguments& args) {
@@ -88,6 +93,7 @@ void Player::processImage(sp_image* image) {
 
 void Player::spotifyPause() {
   sp_session_player_play(spotifyService->spotifySession, 0);
+  audio_fifo_flush(&g_audiofifo);
   isPaused = true;
 }
 
@@ -148,6 +154,7 @@ void Player::init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", staticOn);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "nextTrack", nextTrack);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentlyPlayingData", getCurrentlyPlayingData);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
