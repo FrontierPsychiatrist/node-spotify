@@ -65,9 +65,14 @@
           </div>
         </div>
       </div>
-      <div class="row-fluid">
+      <div class="row-fluid" ng-controller="PlayerCtrl">
         <div class="span12" id="player-controls">
-          <div id="player-buttons"></div>
+          <div id="player-buttons">
+            <i class="icon-backward"></i>
+            <i class="icon-pause" ng-click="pause()"></i>
+            <i class="icon-play" ng-click="resume()"></i>
+            <i class="icon-forward"></i>
+          </div>
           <div id="player-volume"></div>
           <div id="player-seekbar"></div>
         </div>
@@ -109,8 +114,9 @@
     <script src="scripts/controllers/Main.js"></script>
     <script src="scripts/controllers/Menu.js"></script>
     <script src="scripts/controllers/Playlist.js"></script>
-    <script src="scripts/services/socketMock.js"></script>
+    <script src="scripts/services/socket.js"></script>
     <script src="scripts/controllers/NowPlaying.js"></script>
+    <script src="scripts/controllers/player.js"></script>
     <!-- endbuild -->
   </body>
 </html>
