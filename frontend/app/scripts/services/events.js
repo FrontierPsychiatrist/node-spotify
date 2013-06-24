@@ -21,6 +21,7 @@
       player_resume: 'player_resume',
       player_forward: 'player_forward',
       player_back: 'player_back',
+      player_second_in_song: 'player_second_in_song',
       now_playing_data_changed: 'now_playing_data_changed'
     };
 

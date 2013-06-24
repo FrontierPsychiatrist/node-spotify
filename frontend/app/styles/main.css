@@ -11,8 +11,14 @@ body {
     font-size: .9em;
 }
 
+#header {
+    margin-bottom: 2px;
+}
+
 #sidebar {
     height: 100%;
+    max-width: 220px;
+    width: 19.4043%
 }
 
 #playlist-menu {
@@ -24,6 +30,7 @@ body {
 #playlist-menu a {
     padding-top: 2px;
     padding-bottom: 2px;
+    font-size: 0.9em;
 }
 
 #now-playing {
@@ -38,6 +45,7 @@ body {
 
 #content {
     height: 100%;
+    width: 78.4681%;
 }
 
 #playlist {
@@ -47,11 +55,4 @@ body {
 
 #playlist td {
     line-height: 15px;
-}
-
-span.no-selection {
-    -webkit-user-select: none; // webkit (safari, chrome) browsers
-    -moz-user-select: none; // mozilla browsers
-    -khtml-user-select: none; // webkit (konqueror) browsers
-    -ms-user-select: none; // IE10+
 }

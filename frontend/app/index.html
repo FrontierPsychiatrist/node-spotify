@@ -13,6 +13,7 @@
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/bootstrap.css">
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/slider.css">
     <!-- endbuild -->
   </head>
   <body ng-controller="MainCtrl">
@@ -27,7 +28,7 @@
 
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="navbar navbar-header">
+        <div class="navbar navbar-header" id="header">
           <div class="navbar-inner">
             <span class="brand">node-spotify</span>
             <button id="logoutButton" class="pull-right btn btn-warning" ng-click="logout()">Logout</button>
@@ -44,7 +45,7 @@
             </ul>
           </div>
           <div id="now-playing" ng-controller="NowPlayingCtrl">
-            <img ng-src="data:image/jpeg;base64,{{image}}"/>
+            <img ng-src="{{image}}"/>
           </div>
         </div>
         <div class="span9" id="content">
@@ -65,16 +66,16 @@
           </div>
         </div>
       </div>
-      <div class="row-fluid" ng-controller="PlayerCtrl">
-        <div class="span12" id="player-controls">
-          <div id="player-buttons">
-            <i class="icon-backward"></i>
-            <i class="icon-pause" ng-click="pause()"></i>
-            <i class="icon-play" ng-click="resume()"></i>
-            <i class="icon-forward" ng-click="forward()"></i>
-          </div>
-          <div id="player-volume"></div>
-          <div id="player-seekbar"></div>
+      <div class="row-fluid" ng-controller="PlayerCtrl" id="player-controls">
+        <div class="span2" id="player-buttons">
+          <i class="icon-backward"></i>
+          <i class="icon-pause" ng-click="pause()"></i>
+          <i class="icon-play" ng-click="resume()"></i>
+          <i class="icon-forward" ng-click="forward()"></i>
+        </div>
+        <div class="span1" id="player-volume"></div>
+        <div class="span9" id="player-seekbar">
+          <input type="text" id="seekbar"/>
         </div>
       </div>
     </div>
@@ -107,8 +108,10 @@
     <script src="components/angular/angular.js"></script>
     <script src="components/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="components/bootstrap-javascript/bootstrap.min.js"></script>
+    <script src="customComponents/bootstrap-slider.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <!-- build:js scripts/scripts.js -->
+    <script src="customComponents/layoutInit.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/services/events.js"></script>
     <script src="scripts/controllers/Main.js"></script>
