@@ -17,6 +17,7 @@ class Player : public NodeWrapped<Player> {
 		Track* currentTrack;
 		bool isPaused;
 		char* currentAlbumCoverBase64;
+		int currentSecond;
 		
 		void spotifyPause();
 		void spotifyStop();
@@ -33,10 +34,12 @@ class Player : public NodeWrapped<Player> {
 		static Handle<Value> play(const Arguments& args);
 		static Handle<Value> nextTrack(const Arguments& args);
 		static Handle<Value> staticOn(const Arguments& args);
+		static Handle<Value> getCurrentSecond(Local<String> property, const AccessorInfo& info);
 		static Handle<Value> getCurrentlyPlayingData(const Arguments& args);
 
 		void nextTrack();
 		void processImage(sp_image* image);
+		void setCurrentSecond(int _currentSecond);
 		/**
 		*	Callback track finished playing:
 		*		- remove track from queue

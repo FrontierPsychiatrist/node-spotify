@@ -17,6 +17,7 @@ class Track : public SpotifyWrapped<Track> {
     Track(sp_track* _track) : SpotifyWrapped(), spotifyTrack(_track) {
       sp_track_add_ref(spotifyTrack);
       name = std::string(sp_track_name(spotifyTrack));
+      duration = sp_track_duration(spotifyTrack);
       for(int i = 0; i < sp_track_num_artists(spotifyTrack); i++) {
         sp_artist* spArtist = sp_track_artist(spotifyTrack, i);
         Artist* artist = Artist::getArtist(spArtist);
@@ -38,7 +39,7 @@ class Track : public SpotifyWrapped<Track> {
 
     static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
     static Handle<Value> getArtists(Local<String> property, const AccessorInfo& info);
-
+    static Handle<Value> getDuration(Local<String> property, const AccessorInfo& info);
     static Handle<Value> getAlbum(Local<String> property, const AccessorInfo& info);
 
     static void init(Handle<Object> target);
@@ -47,6 +48,7 @@ class Track : public SpotifyWrapped<Track> {
     std::string name;
     std::vector<Artist*> artists;
     Album* album;
+    int duration;
 };
 
 #endif

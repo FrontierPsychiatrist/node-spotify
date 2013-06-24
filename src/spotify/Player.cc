@@ -14,6 +14,13 @@ extern "C" {
 extern SpotifyService* spotifyService;
 extern PlaylistContainer* playlistContainer;
 extern audio_fifo_t g_audiofifo;
+
+/* REMOVE ME */
+namespace spotify {
+extern int framesReceived;
+extern int currentSecond;
+}
+
 void imageLoadedCallback(sp_image* image, void* userdata);
 
 Handle<Value> Player::pause(const Arguments& args) {
@@ -49,6 +56,8 @@ Handle<Value> Player::nextTrack(const Arguments& args) {
  * May only be called from the spotify thread
  **/
 void Player::changeAndPlayTrack() {
+  spotify::framesReceived = 0;
+  spotify::currentSecond = 0;
   currentTrack = currentPlaylist->getTracks()[currentTrackPosition];
   const byte* coverId = sp_album_cover(currentTrack->album->spAlbum, SP_IMAGE_SIZE_NORMAL);
   
@@ -121,6 +130,11 @@ void Player::nextTrack() {
   }
 }
 
+void Player::setCurrentSecond(int _currentSecond) {
+  currentSecond = _currentSecond;
+  call(PLAYER_SECOND_IN_SONG);
+}
+
 //TODO: generic refactoring for NodeWrapped!
 Handle<Value> Player::staticOn(const Arguments& args) {
   HandleScope scope;
@@ -131,14 +145,20 @@ Handle<Value> Player::staticOn(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
+Handle<Value> Player::getCurrentSecond(Local<String> property, const AccessorInfo& info) {
+  Player* player = node::ObjectWrap::Unwrap<Player>(info.Holder());
+  return Integer::New(player->currentSecond);
+}
+
 Handle<Value> Player::getCurrentlyPlayingData(const Arguments& args) {
   HandleScope scope;
   Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
   pthread_mutex_lock(&player->lockingMutex);
   Handle<Object> data = Object::New();
-  if(player->currentAlbumCoverBase64 != 0)
+  if(player->currentAlbumCoverBase64 != 0) {
     data->Set(String::New("image"), String::New(player->currentAlbumCoverBase64));
-  data->Set(String::New("trackName"), String::New(player->currentTrack->name.c_str()));
+  }
+  data->Set(String::New("track"), player->currentTrack->getV8Object());
   pthread_mutex_unlock(&player->lockingMutex);
   return scope.Close(data);
 }
@@ -156,6 +176,7 @@ void Player::init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", staticOn);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "nextTrack", nextTrack);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentlyPlayingData", getCurrentlyPlayingData);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("currentSecond"), &getCurrentSecond, emptySetter);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }

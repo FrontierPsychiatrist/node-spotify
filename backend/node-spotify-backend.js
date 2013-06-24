@@ -72,6 +72,10 @@ io.sockets.on('connection', function(socket) {
         socket.emit(events.now_playing_data_changed, this.getCurrentlyPlayingData());
     });
 
+    spotify.player.on(events.player_second_in_song, function() {
+        socket.emit(events.player_second_in_song, this.currentSecond);
+    });
+
     //Client requests initial data
     socket.on(events.initial_data, sendInitialData);
 });

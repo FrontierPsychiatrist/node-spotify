@@ -5,9 +5,16 @@ angular.module('node-spotify')
   .controller('PlayerCtrl', function ($scope, socket, events) {
     var currentSecond = 0;
     var songLengthInSeconds = 239;
+    var $seekbar;
 
     socket.on(events.player_second_in_song, function(data) {
       currentSecond = data;
+      $seekbar.slider('setValue', currentSecond * 100 / songLengthInSeconds);
+    });
+
+    socket.on(events.now_playing_data_changed, function(data) {
+      console.log(data);
+      songLengthInSeconds = data.track.duration;
     });
 
     $scope.pause = function() {
@@ -27,7 +34,7 @@ angular.module('node-spotify')
     };
 
     /* jquery init seekbar */
-    var $seekbar = $('#seekbar');
+    $seekbar = $('#seekbar');
     $seekbar.slider({
         min: 0,
         max: 100,

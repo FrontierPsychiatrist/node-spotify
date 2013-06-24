@@ -5,7 +5,6 @@
 #include <uv.h>
 
 namespace spotify {
-
 void notifyMainThread(sp_session* session); 
 void loggedIn(sp_session* session, sp_error error);
 void loggedOut(sp_session* session);

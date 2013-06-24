@@ -13,5 +13,6 @@
 #define PLAYER_RESUME "player_resume"
 #define PLAYER_FORWARD "player_forward"
 #define PLAYER_BACK "player_back"
+#define PLAYER_SECOND_IN_SONG "player_second_in_song"
 #define NOW_PLAYING_DATA_CHANGED "now_playing_data_changed"
 #endif

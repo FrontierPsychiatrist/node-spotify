@@ -5,7 +5,7 @@ angular.module('node-spotify')
     $scope.image = 'img/noalbumcover.png';
 
     socket.on(events.now_playing_data_changed, function(data) {
-      console.log('Now playing:' + data.trackName);
+      console.log('Now playing:' + data.track);
       $scope.image = 'data:image/jpeg;base64,' + data.image;
     });
   });

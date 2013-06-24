@@ -26,6 +26,10 @@ PlaylistContainer* playlistContainer;
 audio_fifo_t g_audiofifo;
 
 namespace spotify {
+//TODO
+int framesReceived = 0;
+int currentSecond = 0;
+
 sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
 sp_playlist_callbacks playlistCallbacks;
 
@@ -72,7 +76,16 @@ void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void
 }
 
 void end_of_track(sp_session* session) {
+  framesReceived = 0;
+  currentSecond = 0;
   player->nextTrack();
+}
+
+void sendTimer(int sample_rate) {
+  if( currentSecond < framesReceived / sample_rate) {
+    currentSecond++;
+    player->setCurrentSecond(currentSecond);
+  }
 }
 
 int music_delivery(sp_session *sess, const sp_audioformat *format,
@@ -109,6 +122,8 @@ int music_delivery(sp_session *sess, const sp_audioformat *format,
   pthread_cond_signal(&af->cond);
   pthread_mutex_unlock(&af->mutex);
 
+  framesReceived += num_frames;
+  sendTimer(format->sample_rate);
   return num_frames;
 }
 
