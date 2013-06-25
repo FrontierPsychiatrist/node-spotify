@@ -35,7 +35,7 @@ If you use OSX and have installed libspotify as a framework you need to edit the
 Almost done. Change into the main folder (where binding.gyp lies) and run node-gyp configure && node-gyp build --debug (debug switch is needed right now as
 the include in the nodeJS app is hardcoded to the debug folder).
 
-In the frontend folder, run grunt to install the required dependencies.
+In the frontend folder, run bower install to install the required dependencies.
 
 Then switch to the backend folder. If this is the first time, run npm install. Then run ./start.sh . Point your browser to http://localhost:25000.
 Login with your password and your playlists should load.
