@@ -14,6 +14,8 @@ app.configure(function() {
 var gSocket;
 var playlists;
 var loggedIn = false;
+var currentTrack;
+var currentPlaylist;
 
 //The callback that is called when login is complete
 spotify.ready( function() {
@@ -49,7 +51,9 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on(events.play, function(data) {
-        spotify.player.play(data.playlistId, data.trackId);   
+        currentTrack = data.trackId;
+        currentPlaylist = playlists[data.playlistId];
+        play();
     });
 
     socket.on(events.player_pause, function() {
@@ -65,19 +69,27 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on(events.player_forward, function() {
-        spotify.player.nextTrack();
-    });
-    
-    spotify.player.on(events.now_playing_data_changed, function() {
-        socket.emit(events.now_playing_data_changed, this.getCurrentlyPlayingData());
+       currentTrack++;
+       play();
     });
 
     spotify.player.on(events.player_second_in_song, function() {
         socket.emit(events.player_second_in_song, this.currentSecond);
     });
 
+    spotify.player.on(events.player_end_of_track, function() {
+        currentTrack++;
+        play();
+    });
+
     //Client requests initial data
     socket.on(events.initial_data, sendInitialData);
+
+    function play() {
+        spotify.player.play(currentPlaylist.getTracks()[currentTrack]); 
+        socket.emit(events.now_playing_data_changed, spotify.player.getCurrentlyPlayingData());
+        socket.emit(events.now_playing_picture_changed, currentPlaylist.getTracks()[currentTrack].album.getCoverBase64());
+    }
 });
 
 function sendInitialData() {

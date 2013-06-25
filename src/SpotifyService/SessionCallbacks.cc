@@ -8,6 +8,7 @@
 #include "SpotifyService.h"
 #include "../spotify/PlaylistContainer.h"
 #include "../spotify/Player.h"
+#include "../events.h"
 
 extern "C" {
 #include "../audio/audio.h"
@@ -78,7 +79,7 @@ void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void
 void end_of_track(sp_session* session) {
   framesReceived = 0;
   currentSecond = 0;
-  player->nextTrack();
+  player->call(PLAYER_END_OF_TRACK);
 }
 
 void sendTimer(int sample_rate) {
