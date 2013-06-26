@@ -9,8 +9,6 @@
 
 #include "SessionCallbacks.h"
 
-#include <glog/logging.h>
-
 using namespace spotify;
 
 extern uint8_t spotifyAppkey[];
@@ -63,7 +61,7 @@ static void* spotifyLoop(void* _spotifyService) {
   error = sp_session_create(&sessionConfig, &session);
   
   if(SP_ERROR_OK != error) {
-    LOG(WARNING) << "Could not create spotify session: " << sp_error_message(error);
+    //LOG(WARNING) << "Could not create spotify session: " << sp_error_message(error);
   }
 
   spotifyService->spotifySession = session;

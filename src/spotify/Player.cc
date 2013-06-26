@@ -7,7 +7,6 @@ extern "C" {
 }
 
 #include <pthread.h>
-#include <glog/logging.h>
 
 extern SpotifyService* spotifyService;
 extern audio_fifo_t g_audiofifo;
@@ -21,7 +20,7 @@ extern int currentSecond;
 void imageLoadedCallback(sp_image* image, void* userdata);
 
 Handle<Value> Player::pause(const Arguments& args) {
-  DLOG(INFO) << "Player pausing";
+  //DLOG(INFO) << "Player pausing";
   Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
   auto cb = [=] () { 
     sp_session_player_play(spotifyService->spotifySession, 0);
@@ -33,7 +32,7 @@ Handle<Value> Player::pause(const Arguments& args) {
 }
 
 Handle<Value> Player::stop(const Arguments& args) {
-	DLOG(INFO) << "Player stopping";
+	//DLOG(INFO) << "Player stopping";
   auto cb = [=] () { 
     sp_session_player_unload(spotifyService->spotifySession);
   };
@@ -42,7 +41,7 @@ Handle<Value> Player::stop(const Arguments& args) {
 }
 
 Handle<Value> Player::resume(const Arguments& args) {
-  DLOG(INFO) << "Player resuming";
+  //DLOG(INFO) << "Player resuming";
   Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
 	auto cb = [=] () { 
     if(player->isPaused) {
@@ -57,7 +56,7 @@ Handle<Value> Player::resume(const Arguments& args) {
 Handle<Value> Player::play(const Arguments& args) {
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
-  DLOG(INFO) << "Player starting playing";
+  //DLOG(INFO) << "Player starting playing";
   Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
   Track* track = node::ObjectWrap::Unwrap<Track>(args[0]->ToObject());
   auto cb = [=] () {

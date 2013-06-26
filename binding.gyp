@@ -1,7 +1,4 @@
 {
-  "make_global_settings" : [
-    ["CXX", "/usr/local/bin/g++-4.8"]
-  ],
   "targets": [
   {
     "target_name": "spotify",
@@ -14,7 +11,7 @@
       "src/audio/audio.c"
     ],
     "link_settings" : {
-      "libraries": ["-lspotify", "-lglog"]
+      "libraries": ["-lspotify"]
     },
     "actions": [ {
       "action_name": "generateEventsHeader",
@@ -27,7 +24,8 @@
     "conditions": [
       ["OS=='mac'", {
         "xcode_settings": {
-          "OTHER_CPLUSPLUSFLAGS" : ["-std=c++11"],
+          "OTHER_CPLUSPLUSFLAGS" : ["-std=c++11", "-stdlib=libc++"],
+          "MACOSX_DEPLOYMENT_TARGET" : "10.8"
         },
         "sources": ["src/audio/openal-audio.c"],
         "defines": ["OS_OSX"],
@@ -37,6 +35,7 @@
       ["OS=='linux'", {
         "sources": ["src/audio/alsa-audio.c"],
         "cflags": ["-I/usr/include/alsa"],
+        "ccflags": ["-std=c++11"],
         "defines": ["OS_LINUX"],
         "link_settings" : { "libraries" : ["-lasound"] }
       }]

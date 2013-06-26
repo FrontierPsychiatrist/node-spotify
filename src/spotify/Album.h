@@ -6,8 +6,6 @@
 
 #include "SpotifyWrapped.h"
 
-#include <glog/logging.h>
-
 using namespace v8;
 
 void imageLoadedCallback(sp_image* image, void* userdata);
@@ -23,11 +21,9 @@ class Album : public SpotifyWrapped<Album> {
       if(coverId != 0) {
         sp_image* image = sp_image_create(spotifyService->spotifySession, coverId);
         if(sp_image_is_loaded(image)) {
-          DLOG(INFO) << "Image for album is already loaded";
           processImage(image);
           sp_image_release(image);
         } else {
-          DLOG(INFO) << "Need to load image";
           sp_image_add_load_callback(image, &imageLoadedCallback, this);
         }
       }

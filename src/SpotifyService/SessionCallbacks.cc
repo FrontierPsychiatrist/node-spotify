@@ -17,8 +17,6 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 
-#include <glog/logging.h>
-
 //TODO!
 extern int notifyDo;
 extern SpotifyService* spotifyService;
@@ -45,11 +43,11 @@ void notifyMainThread(sp_session* session) {
 void loggedIn(sp_session* session, sp_error error) {
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   if(SP_ERROR_OK != error) {
-    LOG(WARNING) << "Error logging in: " << sp_error_message(error);
+    //LOG(WARNING) << "Error logging in: " << sp_error_message(error);
     spotifyService->loggedOut = 1;
     return;
   } else {
-    LOG(INFO) << "Logged in";
+    //LOG(INFO) << "Logged in";
   }
 
   //The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
@@ -62,7 +60,7 @@ void loggedIn(sp_session* session, sp_error error) {
 void loggedOut(sp_session* session) {
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   spotifyService->loggedOut = 1;
-  LOG(INFO) << "Logged out";
+  //LOG(INFO) << "Logged out";
 }
 
 void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {

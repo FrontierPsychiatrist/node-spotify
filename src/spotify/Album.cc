@@ -42,7 +42,6 @@ Handle<Value> Album::getCoverBase64(const Arguments& args) {
 
 void Album::processImage(sp_image* image) {
   pthread_mutex_lock(&lockingMutex);
-  DLOG(INFO) << "Processing image data";
   size_t imageSize;
   int base64Size;
   const void* imageData = sp_image_data(image, &imageSize);

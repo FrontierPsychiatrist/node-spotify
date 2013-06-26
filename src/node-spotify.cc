@@ -14,8 +14,6 @@ extern "C" {
 #include "audio/audio.h"
 }
 
-#include <glog/logging.h>
-
 using namespace v8;
 
 SpotifyService* spotifyService;
@@ -81,15 +79,14 @@ void resolveCallback(uv_async_t* handle, int status) {
 }
 
 void init(Handle<Object> target) {
-  google::InitGoogleLogging("node-spotify");
-  LOG(INFO) << "Initializing node.js module";
+  //google::InitGoogleLogging("node-spotify");
+  //LOG(INFO) << "Initializing node.js module";
   Playlist::init(target);
   Track::init(target);
   Artist::init(target);
   Player::init(target);
   Album::init(target);
   StaticCallbackSetter<Playlist>::init(target, "playlists");
-  LOG(INFO) << "Initializing audio";
   audio_init(&g_audiofifo);
   spotifyService = new SpotifyService();
   player = new Player();
@@ -105,6 +102,5 @@ void init(Handle<Object> target) {
    
   //Initialize waiting for callbacks from the spotify thread
   uv_async_init(uv_default_loop(), &spotifyService->callNodeThread, resolveCallback);
-  LOG(INFO) << "node.js module initialized";
 }
 NODE_MODULE(spotify, init)
