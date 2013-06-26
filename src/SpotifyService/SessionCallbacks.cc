@@ -16,6 +16,7 @@ extern "C" {
 
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
 
 //TODO!
 extern int notifyDo;
@@ -41,9 +42,11 @@ void notifyMainThread(sp_session* session) {
 }
 
 void loggedIn(sp_session* session, sp_error error) {
+  std::cout << "Login callback" << std::endl;
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   if(SP_ERROR_OK != error) {
-    //LOG(WARNING) << "Error logging in: " << sp_error_message(error);
+    //LOG(WARNING)
+    std::cout << "Error logging in: " << sp_error_message(error) << std::endl;
     spotifyService->loggedOut = 1;
     return;
   } else {

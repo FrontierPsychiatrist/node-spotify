@@ -25,9 +25,11 @@ Handle<Value> login(const Arguments& args) {
   HandleScope scope;
   String::Utf8Value v8User(args[0]->ToString());
   String::Utf8Value v8Password(args[1]->ToString());
+  bool rememberMe = args[2]->ToBoolean()->Value();
+  bool withRemembered = args[3]->ToBoolean()->Value();
   std::string user(*v8User);
   std::string password(*v8Password);
-  spotifyService->login(user, password);
+  spotifyService->login(user, password, rememberMe, withRemembered);
   return scope.Close(Undefined());
 }
 
@@ -78,6 +80,15 @@ void resolveCallback(uv_async_t* handle, int status) {
   scope.Close(Undefined());
 }
 
+Handle<Value> rememberedUser(const Arguments& args) {
+  HandleScope scope;
+  if(spotifyService->rememberedUser != 0) {
+    return scope.Close(String::New(spotifyService->rememberedUser));
+  } else {
+    return scope.Close(Undefined());
+  }
+}
+
 void init(Handle<Object> target) {
   //google::InitGoogleLogging("node-spotify");
   //LOG(INFO) << "Initializing node.js module";
@@ -99,6 +110,8 @@ void init(Handle<Object> target) {
   target->Set(String::NewSymbol("ready"),
               FunctionTemplate::New(ready)->GetFunction());
   target->Set(String::NewSymbol("player"), player->getV8Object());
+  target->Set(String::NewSymbol("rememberedUser"),
+              FunctionTemplate::New(rememberedUser)->GetFunction());
    
   //Initialize waiting for callbacks from the spotify thread
   uv_async_init(uv_default_loop(), &spotifyService->callNodeThread, resolveCallback);

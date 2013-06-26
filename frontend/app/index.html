@@ -85,6 +85,7 @@
         <h3 id="modalLabel">Login</h3>
       </div>
       <div class="modal-body">
+        {{rememberedUser}}
         <form action="#" class="form-horizontal" id="loginForm">
           <div class="control-group">
             <label class="control-label" for="username">Username</label>
@@ -98,10 +99,17 @@
               <input type="password" name="password" id="password" ng-model="password"/>
             </div>
           </div>
+          <div class="control-group">
+            <div class="controls">
+              <label class="checkbox">
+                <input type="checkbox" ng-model="rememberMe"/> Remember me
+              </label>
+            </div>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="login(username, password)">Login</button>
+        <button class="btn btn-primary" ng-click="login(username, password, rememberMe)">Login</button>
       </div>
     </div>
 

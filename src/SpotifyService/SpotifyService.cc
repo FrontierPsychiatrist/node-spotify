@@ -8,15 +8,11 @@
 #endif
 
 #include "SessionCallbacks.h"
-
+#include <iostream>
 using namespace spotify;
 
 extern uint8_t spotifyAppkey[];
 extern int spotifyAppkeySize;
-
-//global variables...
-static std::string username;
-static std::string password;
 
 int notifyDo = 0;
 std::function<void()> gFun;
@@ -66,10 +62,17 @@ static void* spotifyLoop(void* _spotifyService) {
 
   spotifyService->spotifySession = session;
 
-  sp_session_login(session, username.c_str(), password.c_str(), 0, NULL);
+  size_t maxUsernameLength = 255;
+  char rememberedUser[maxUsernameLength];
+  int usernameLength = sp_session_remembered_user(session, rememberedUser, maxUsernameLength);
+  if(usernameLength != -1) {
+    spotifyService->rememberedUser = rememberedUser;
+  }
+
+  bool beforeLogin = true;
 
   pthread_mutex_lock(&spotifyService->notifyMutex);
-  while(!spotifyService->loggedOut) {
+  while(beforeLogin || !spotifyService->loggedOut) {
     if(nextTimeout == 0) {
       while(notifyDo == 0) {
         pthread_cond_wait(&spotifyService->notifyCondition, &spotifyService->notifyMutex);
@@ -121,15 +124,22 @@ static void* spotifyLoop(void* _spotifyService) {
 
 SpotifyService::SpotifyService() {
   loggedOut = 0;
+  rememberedUser = 0;
+  pthread_create(&spotifyThread, NULL, spotifyLoop, this);
 }
 
 /**
  * Starts the spotify thread and logs in
  * **/
-void SpotifyService::login(std::string _username, std::string _password) {
-  username = _username;
-  password = _password;
-  pthread_create(&spotifyThread, NULL, spotifyLoop, this);
+void SpotifyService::login(std::string username, std::string password, bool rememberMe, bool withRemembered) {
+  auto cb = [=] () {
+    if(withRemembered) {
+      sp_session_relogin(spotifySession);
+    } else {
+      sp_session_login(spotifySession, username.c_str(), password.c_str(), rememberMe, NULL);
+    }
+  };
+  executeSpotifyAPIcall(cb);
 }
 
 void SpotifyService::logout() {

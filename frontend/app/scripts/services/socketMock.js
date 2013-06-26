@@ -15,6 +15,7 @@ angular.module('node-spotify')
             if(event === events.logged_in) {
               data.loggedIn = false;
             } else if(event === events.login) {
+              console.log(inData);
               eventFunctions.logged_in( {loggedIn: true});
             } else if(event === events.initial_data) {
               data = [

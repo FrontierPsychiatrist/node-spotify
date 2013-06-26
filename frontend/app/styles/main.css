@@ -18,7 +18,12 @@ body {
 #sidebar {
     height: 100%;
     max-width: 220px;
-    width: 19.4043%
+    width: 19.4043%;
+    font-size: 0.85em;
+}
+
+#sidebar a {
+    padding: 2px;
 }
 
 #playlist-menu {

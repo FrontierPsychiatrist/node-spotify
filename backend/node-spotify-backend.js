@@ -32,11 +32,13 @@ io.sockets.on('connection', function(socket) {
     gSocket = socket;
 
     //Client wants to know if the service is logged in
-    socket.on(events.logged_in, function() { socket.emit(events.logged_in, {'loggedIn': loggedIn})});
+    socket.on(events.logged_in, function() {
+        socket.emit(events.logged_in, {'loggedIn': loggedIn, 'rememberedUser': spotify.rememberedUser()})
+    });
 
     //Client wants to login
     socket.on(events.login, function(data) {
-        spotify.login(data.username, data.password);
+        spotify.login(data.username, data.password, data.rememberMe, data.withRemembered);
     });
 
     //Client wants to logout
