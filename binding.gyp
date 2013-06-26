@@ -35,7 +35,7 @@
       ["OS=='linux'", {
         "sources": ["src/audio/alsa-audio.c"],
         "cflags": ["-I/usr/include/alsa"],
-        "ccflags": ["-std=c++11"],
+        "cflags_cc": ["-std=c++11"],
         "defines": ["OS_LINUX"],
         "link_settings" : { "libraries" : ["-lasound"] }
       }]
