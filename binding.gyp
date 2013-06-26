@@ -1,4 +1,7 @@
 {
+  "make_global_settings" : [
+    ["CXX", "/usr/local/bin/g++-4.8"]
+  ],
   "targets": [
   {
     "target_name": "spotify",
@@ -23,6 +26,9 @@
     ],
     "conditions": [
       ["OS=='mac'", {
+        "xcode_settings": {
+          "OTHER_CPLUSPLUSFLAGS" : ["-std=c++11"],
+        },
         "sources": ["src/audio/openal-audio.c"],
         "defines": ["OS_OSX"],
         "link_settings" : { "libraries" : ["-framework", "OpenAL"] }

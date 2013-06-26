@@ -35,8 +35,9 @@ Handle<Value> login(const Arguments& args) {
 
 Handle<Value> logout(const Arguments& args) {
   HandleScope scope;
-  Callback<SpotifyService>* logoutCallback = new Callback<SpotifyService>(spotifyService, &SpotifyService::logout);
-  spotifyService->executeSpotifyAPIcall(logoutCallback);
+  //TODO: spotifyservice method
+  auto callback = [] () { spotifyService->logout(); };
+  spotifyService->executeSpotifyAPIcall(callback);
   return scope.Close(Undefined());
 }
 

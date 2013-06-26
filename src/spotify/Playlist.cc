@@ -4,8 +4,8 @@
 std::vector<Track*> Playlist::getTracks() {
   pthread_mutex_lock(&lockingMutex);
   if(!tracksLoaded) {
-    Callback<Playlist>* loadTracksCallback = new Callback<Playlist>(this, &Playlist::loadTracks);
-    spotifyService->executeSpotifyAPIcall(loadTracksCallback);
+    auto cb = [&] () { loadTracks(); };
+    spotifyService->executeSpotifyAPIcall(cb);
     this->wait();
 	}
   pthread_mutex_unlock(&lockingMutex);
@@ -41,8 +41,8 @@ Handle<Value> Playlist::getTracks(const Arguments& args) {
   
   pthread_mutex_lock(&playlist->lockingMutex);
   if(!playlist->tracksLoaded) {
-    Callback<Playlist>* loadTracksCallback = new Callback<Playlist>(playlist, &Playlist::loadTracks);
-    spotifyService->executeSpotifyAPIcall(loadTracksCallback);
+    auto cb = [=] () { playlist->loadTracks(); };
+    spotifyService->executeSpotifyAPIcall(cb);
     playlist->wait();
   }
   pthread_mutex_unlock(&playlist->lockingMutex);

@@ -10,10 +10,6 @@ using namespace v8;
 
 class Player : public NodeWrapped<Player> {
 	private:
-		void spotifyPause();
-		void spotifyStop();
-		void spotifyResume();
-		void spotifyPlay();
 		Track* track;
 		int currentSecond;
 		bool isPaused;

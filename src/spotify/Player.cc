@@ -22,47 +22,51 @@ void imageLoadedCallback(sp_image* image, void* userdata);
 
 Handle<Value> Player::pause(const Arguments& args) {
   DLOG(INFO) << "Player pausing";
-	return Player::simpleCall(args, &Player::spotifyPause);
+  Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
+  auto cb = [=] () { 
+    sp_session_player_play(spotifyService->spotifySession, 0);
+    audio_fifo_flush(&g_audiofifo);
+    player->isPaused = true;
+  };
+  spotifyService->executeSpotifyAPIcall(cb);
+	return Undefined();
 }
 
 Handle<Value> Player::stop(const Arguments& args) {
-	return Player::simpleCall(args, &Player::spotifyStop);
+	DLOG(INFO) << "Player stopping";
+  auto cb = [=] () { 
+    sp_session_player_unload(spotifyService->spotifySession);
+  };
+  spotifyService->executeSpotifyAPIcall(cb);
+  return Undefined();
 }
 
 Handle<Value> Player::resume(const Arguments& args) {
   DLOG(INFO) << "Player resuming";
-	return Player::simpleCall(args, &Player::spotifyResume);
+  Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
+	auto cb = [=] () { 
+    if(player->isPaused) {
+      sp_session_player_play(spotifyService->spotifySession, 1);
+      player->isPaused = false;
+    }
+  };
+  spotifyService->executeSpotifyAPIcall(cb);
+  return Undefined();
 }
 
 Handle<Value> Player::play(const Arguments& args) {
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
+  DLOG(INFO) << "Player starting playing";
   Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
   Track* track = node::ObjectWrap::Unwrap<Track>(args[0]->ToObject());
-  player->track = track;
-  return Player::simpleCall(args, &Player::spotifyPlay);
-}
-
-void Player::spotifyPause() {
-  sp_session_player_play(spotifyService->spotifySession, 0);
-  audio_fifo_flush(&g_audiofifo);
-  isPaused = true;
-}
-
-void Player::spotifyResume() {
-  if(isPaused) {
+  auto cb = [=] () {
+    sp_session_player_load(spotifyService->spotifySession, track->spotifyTrack);
     sp_session_player_play(spotifyService->spotifySession, 1);
-	  isPaused = false;
-  }
-}
-
-void Player::spotifyStop() {
-  sp_session_player_unload(spotifyService->spotifySession);
-}
-
-void Player::spotifyPlay() {
-  sp_session_player_load(spotifyService->spotifySession, track->spotifyTrack);
-  sp_session_player_play(spotifyService->spotifySession, 1);
+  };
+  player->track = track;
+  spotifyService->executeSpotifyAPIcall(cb);
+  return Undefined();
 }
 
 void Player::setCurrentSecond(int _currentSecond) {

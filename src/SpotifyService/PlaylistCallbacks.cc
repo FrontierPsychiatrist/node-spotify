@@ -1,6 +1,5 @@
 #include "PlaylistCallbacks.h"
 #include "../spotify/Playlist.h"
-#include "../Callback.h"
 #include "../events.h"
 
 namespace spotify {

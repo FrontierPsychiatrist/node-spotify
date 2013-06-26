@@ -3,9 +3,9 @@
 
 #include <uv.h>
 #include <string>
+#include <functional>
 #include <pthread.h>
 #include <libspotify/api.h>
-#include "../Callback.h"
 
 class SpotifyService {
     template<class T> friend class SpotifyWrapped;
@@ -15,7 +15,7 @@ class SpotifyService {
 
     void login(std::string username, std::string password);
     void logout();
-    void executeSpotifyAPIcall(CallbackBase* callback);
+    void executeSpotifyAPIcall(std::function<void()> fun);
 
     uv_async_t callNodeThread;
     pthread_mutex_t notifyMutex;

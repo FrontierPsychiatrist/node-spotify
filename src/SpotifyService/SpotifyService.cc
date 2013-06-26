@@ -21,7 +21,7 @@ static std::string username;
 static std::string password;
 
 int notifyDo = 0;
-CallbackBase* gCallback = 0;
+std::function<void()> gFun;
 
 static sp_session_config sessionConfig;
 static sp_session_callbacks sessionCallbacks;
@@ -92,7 +92,7 @@ static void* spotifyLoop(void* _spotifyService) {
       ts.tv_nsec = mts.tv_nsec + (nextTimeout % 1000) * 1000;
 #endif
 
-      while(!notifyDo && gCallback == 0) {
+      while(!notifyDo && !gFun) {
         if(pthread_cond_timedwait(&spotifyService->notifyCondition, &spotifyService->notifyMutex, &ts))
           break;
       }
@@ -101,11 +101,9 @@ static void* spotifyLoop(void* _spotifyService) {
     notifyDo = 0;
 
     //Execute a callback from another class/thread
-    if(gCallback != 0) {
-      gCallback->call();
-      //The callback needs to be allocated with new, so we delete it after it is used
-      delete gCallback;
-      gCallback = 0;
+    if(gFun) {
+      gFun();
+      gFun = nullptr;
     }
 
     do {
@@ -144,9 +142,9 @@ void SpotifyService::logout() {
  * This executes a callback within the spotify loop. Used to call libspotify API functions from
  * other threads
  * **/
-void SpotifyService::executeSpotifyAPIcall(CallbackBase* callback) {
+void SpotifyService::executeSpotifyAPIcall(std::function<void()> fun) {
   pthread_mutex_lock(&notifyMutex);
-  gCallback = callback;
+  gFun = fun;
   pthread_cond_signal(&notifyCondition);
   pthread_mutex_unlock(&notifyMutex);
 }

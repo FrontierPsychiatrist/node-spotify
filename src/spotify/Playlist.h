@@ -9,7 +9,6 @@
 
 #include "SpotifyWrapped.h"
 #include "Track.h"
-#include "../Callback.h"
 
 using namespace v8;
 
