@@ -42,7 +42,6 @@ void notifyMainThread(sp_session* session) {
 }
 
 void loggedIn(sp_session* session, sp_error error) {
-  std::cout << "Login callback" << std::endl;
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   if(SP_ERROR_OK != error) {
     //LOG(WARNING)

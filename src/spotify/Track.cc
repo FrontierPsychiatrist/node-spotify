@@ -1,7 +1,5 @@
 #include "Track.h"
 
-#include "../SpotifyService/SpotifyService.h"
-
 Handle<Value> Track::getName(Local<String> property, const AccessorInfo& info) {
   Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
   return String::New(track->name.c_str());
@@ -28,6 +26,22 @@ Handle<Value> Track::getAlbum(Local<String> property, const AccessorInfo& info) 
   return scope.Close(track->album->getV8Object());
 }
 
+Handle<Value> Track::getStarred(Local<String> property, const AccessorInfo& info) {
+  Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
+  return Boolean::New(track->starred);
+}
+
+void Track::setStarred(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
+  track->starred = value->ToBoolean()->Value();
+  auto cb = [=] {
+    sp_track_set_starred(spotifyService->spotifySession, (sp_track* const*)track->spotifyTrack, 1, true);
+  };
+  spotifyService->executeSpotifyAPIcall(cb);
+  scope.Close(Undefined());
+}
+
 void Track::init(Handle<Object> target) {
   HandleScope scope;
   Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
@@ -38,5 +52,6 @@ void Track::init(Handle<Object> target) {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("duration"), getDuration, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artists"), getArtists, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("album"), getAlbum, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("starred"), getStarred, setStarred);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
 }

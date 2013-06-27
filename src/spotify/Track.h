@@ -8,6 +8,9 @@
 #include "SpotifyWrapped.h"
 #include "Artist.h"
 #include "Album.h"
+#include "../SpotifyService/SpotifyService.h"
+
+extern SpotifyService* spotifyService;
 
 using namespace v8;
 
@@ -16,6 +19,7 @@ class Track : public SpotifyWrapped<Track> {
   public:
     Track(sp_track* _track) : SpotifyWrapped(), spotifyTrack(_track) {
       sp_track_add_ref(spotifyTrack);
+      starred = sp_track_is_starred(spotifyService->spotifySession, spotifyTrack);
       name = std::string(sp_track_name(spotifyTrack));
       duration = sp_track_duration(spotifyTrack);
       for(int i = 0; i < sp_track_num_artists(spotifyTrack); i++) {
@@ -41,6 +45,8 @@ class Track : public SpotifyWrapped<Track> {
     static Handle<Value> getArtists(Local<String> property, const AccessorInfo& info);
     static Handle<Value> getDuration(Local<String> property, const AccessorInfo& info);
     static Handle<Value> getAlbum(Local<String> property, const AccessorInfo& info);
+    static Handle<Value> getStarred(Local<String> property, const AccessorInfo& info);
+    static void setStarred(Local<String> property, Local<Value> value, const AccessorInfo& info);
 
     static void init(Handle<Object> target);
   private:
@@ -49,6 +55,7 @@ class Track : public SpotifyWrapped<Track> {
     std::vector<Artist*> artists;
     Album* album;
     int duration;
+    bool starred;
 };
 
 #endif
