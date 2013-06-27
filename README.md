@@ -21,7 +21,9 @@ Dependencies
 ------------
 The following tools are required for building: node-gyp, bower, grunt-cli
 
-The following libraries are required for building: libspotify, libglog
+Yout compiler must be able to translate C++11 lambdas (G++ 4.7 or Clang 3.2 should do).
+
+The following libraries are required for building: libspotify.
 
 Compiling
 ---------
