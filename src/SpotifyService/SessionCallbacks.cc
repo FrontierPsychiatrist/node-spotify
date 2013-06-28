@@ -1,9 +1,5 @@
 #include "SessionCallbacks.h"
 
-//TODO!
-//Maybe with extern instead of import?
-#include "PlaylistCallbacks.h"
-
 #include "../NodeCallback.h"
 #include "SpotifyService.h"
 #include "../spotify/PlaylistContainer.h"
@@ -29,11 +25,11 @@ namespace spotify {
 //TODO
 int framesReceived = 0;
 int currentSecond = 0;
+}
 
-sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
-sp_playlist_callbacks playlistCallbacks;
+static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
 
-void notifyMainThread(sp_session* session) {
+void SessionCallbacks::notifyMainThread(sp_session* session) {
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   pthread_mutex_lock(&spotifyService->notifyMutex);
   notifyDo = 1;
@@ -41,7 +37,7 @@ void notifyMainThread(sp_session* session) {
   pthread_mutex_unlock(&spotifyService->notifyMutex);
 }
 
-void loggedIn(sp_session* session, sp_error error) {
+void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   if(SP_ERROR_OK != error) {
     //LOG(WARNING)
@@ -59,13 +55,13 @@ void loggedIn(sp_session* session, sp_error error) {
   sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, playlistContainer);
 }
 
-void loggedOut(sp_session* session) {
+void SessionCallbacks::loggedOut(sp_session* session) {
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   spotifyService->loggedOut = 1;
   //LOG(INFO) << "Logged out";
 }
 
-void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
+void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
   PlaylistContainer* playlistContainer = static_cast<PlaylistContainer*>(userdata);
   playlistContainer->loadPlaylists();
   
@@ -76,20 +72,20 @@ void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void
   uv_async_send(&spotifyService->callNodeThread);
 }
 
-void end_of_track(sp_session* session) {
-  framesReceived = 0;
-  currentSecond = 0;
+void SessionCallbacks::end_of_track(sp_session* session) {
+  spotify::framesReceived = 0;
+  spotify::currentSecond = 0;
   player->call(PLAYER_END_OF_TRACK);
 }
 
-void sendTimer(int sample_rate) {
-  if( currentSecond < framesReceived / sample_rate) {
-    currentSecond++;
-    player->setCurrentSecond(currentSecond);
+static void sendTimer(int sample_rate) {
+  if( spotify::currentSecond < spotify::framesReceived / sample_rate) {
+    spotify::currentSecond++;
+    player->setCurrentSecond(spotify::currentSecond);
   }
 }
 
-int music_delivery(sp_session *sess, const sp_audioformat *format,
+int SessionCallbacks::music_delivery(sp_session *sess, const sp_audioformat *format,
                           const void *frames, int num_frames)
 {
   audio_fifo_t *af = &g_audiofifo;
@@ -123,9 +119,7 @@ int music_delivery(sp_session *sess, const sp_audioformat *format,
   pthread_cond_signal(&af->cond);
   pthread_mutex_unlock(&af->mutex);
 
-  framesReceived += num_frames;
+  spotify::framesReceived += num_frames;
   sendTimer(format->sample_rate);
   return num_frames;
 }
-
-} //namespace

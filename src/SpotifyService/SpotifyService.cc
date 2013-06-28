@@ -9,7 +9,6 @@
 
 #include "SessionCallbacks.h"
 #include <iostream>
-using namespace spotify;
 
 extern uint8_t spotifyAppkey[];
 extern int spotifyAppkeySize;
@@ -38,11 +37,11 @@ static void* spotifyLoop(void* _spotifyService) {
   pthread_mutex_init(&spotifyService->notifyMutex, NULL);
   pthread_cond_init(&spotifyService->notifyCondition, NULL);
 
-  sessionCallbacks.notify_main_thread = &notifyMainThread;
-  sessionCallbacks.logged_in = &loggedIn;
-  sessionCallbacks.logged_out = &loggedOut;
-  sessionCallbacks.music_delivery = &music_delivery;
-  sessionCallbacks.end_of_track = &end_of_track;
+  sessionCallbacks.notify_main_thread = &SessionCallbacks::notifyMainThread;
+  sessionCallbacks.logged_in = &SessionCallbacks::loggedIn;
+  sessionCallbacks.logged_out = &SessionCallbacks::loggedOut;
+  sessionCallbacks.music_delivery = &SessionCallbacks::music_delivery;
+  sessionCallbacks.end_of_track = &SessionCallbacks::end_of_track;
 
   sessionConfig.api_version = SPOTIFY_API_VERSION;
   sessionConfig.cache_location = "tmp";

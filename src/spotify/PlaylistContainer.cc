@@ -1,8 +1,6 @@
 #include "PlaylistContainer.h"
 #include "../SpotifyService/PlaylistCallbacks.h"
 
-using namespace spotify;
-
 Persistent<Function> PlaylistContainer::containerLoadedCallback;
 
 //TODO: this can't be a local variable, but this here is shit too
@@ -11,10 +9,10 @@ sp_playlist_callbacks playlistCallbacks;
 void PlaylistContainer::loadPlaylists() {
   int numPlaylists = sp_playlistcontainer_num_playlists(playlistContainer);
 
-  playlistCallbacks.playlist_state_changed = &playlistStateChanged;
-  playlistCallbacks.playlist_renamed = &playlistNameChange;
-  playlistCallbacks.tracks_added = &tracks_added;
-  playlistCallbacks.tracks_moved = &tracks_moved;
+  playlistCallbacks.playlist_state_changed = &PlaylistCallbacks::playlistStateChanged;
+  playlistCallbacks.playlist_renamed = &PlaylistCallbacks::playlistNameChange;
+  playlistCallbacks.tracks_added = &PlaylistCallbacks::tracks_added;
+  playlistCallbacks.tracks_moved = &PlaylistCallbacks::tracks_moved;
   /*playlistCallbacks.playlist_update_in_progress = &playlist_update_in_progress;
   playlistCallbacks.track_created_changed = &track_created_changed;*/
 
