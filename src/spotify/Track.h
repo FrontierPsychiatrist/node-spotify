@@ -21,6 +21,7 @@ class Track : public SpotifyWrapped<Track> {
       sp_track_add_ref(spotifyTrack);
       starred = sp_track_is_starred(spotifyService->spotifySession, spotifyTrack);
       name = std::string(sp_track_name(spotifyTrack));
+      popularity = sp_track_popularity(spotifyTrack);
       duration = sp_track_duration(spotifyTrack);
       for(int i = 0; i < sp_track_num_artists(spotifyTrack); i++) {
         sp_artist* spArtist = sp_track_artist(spotifyTrack, i);
@@ -46,6 +47,7 @@ class Track : public SpotifyWrapped<Track> {
     static Handle<Value> getDuration(Local<String> property, const AccessorInfo& info);
     static Handle<Value> getAlbum(Local<String> property, const AccessorInfo& info);
     static Handle<Value> getStarred(Local<String> property, const AccessorInfo& info);
+    static Handle<Value> getPopularity(Local<String> property, const AccessorInfo& info);
     static void setStarred(Local<String> property, Local<Value> value, const AccessorInfo& info);
 
     static void init(Handle<Object> target);
@@ -56,6 +58,7 @@ class Track : public SpotifyWrapped<Track> {
     Album* album;
     int duration;
     bool starred;
+    int popularity;
 };
 
 #endif

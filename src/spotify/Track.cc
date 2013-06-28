@@ -10,6 +10,11 @@ Handle<Value> Track::getDuration(Local<String> property, const AccessorInfo& inf
   return Integer::New(track->duration/1000);
 }
 
+Handle<Value> Track::getPopularity(Local<String> property, const AccessorInfo& info) {
+  Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
+  return Integer::New(track->popularity);
+}
+
 Handle<Value> Track::getArtists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
@@ -54,5 +59,6 @@ void Track::init(Handle<Object> target) {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artists"), getArtists, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("album"), getAlbum, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("starred"), getStarred, setStarred);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("popularity"), getPopularity, emptySetter);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
 }
