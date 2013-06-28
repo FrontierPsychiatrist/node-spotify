@@ -10,7 +10,10 @@ void PlaylistCallbacks::playlistNameChange(sp_playlist* spPlaylist, void* userda
 void PlaylistCallbacks::playlistStateChanged(sp_playlist* _playlist, void* userdata) {
   Playlist* playlist = static_cast<Playlist*>(userdata);
   if(sp_playlist_is_loaded(_playlist)) {
-    playlist->setName(std::string(sp_playlist_name(_playlist)));
+    const char* name = sp_playlist_name(_playlist);
+    if(name != 0) {//we need this check for the starred playlist
+      playlist->setName(std::string(name));
+    }
   }
 }
 

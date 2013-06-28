@@ -24,6 +24,7 @@ void PlaylistContainer::loadPlaylists() {
   }
   sp_playlist* spPlaylist = sp_session_starred_create(spotifyService->spotifySession);
   Playlist* playlist = new Playlist(spPlaylist, numPlaylists);
+  playlist->name = std::string("Starred");
   sp_playlist_add_callbacks(spPlaylist, &playlistCallbacks, playlist);
   playlists.push_back(playlist);
 }
