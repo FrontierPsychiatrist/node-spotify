@@ -84,6 +84,10 @@ io.sockets.on('connection', function(socket) {
         play();
     });
 
+    socket.on(events.track_set_starred, function(data){
+        playlists[data.playlistId].getTracks()[data.trackId].starred = data.starred;
+    });
+
     //Client requests initial data
     socket.on(events.initial_data, sendInitialData);
 

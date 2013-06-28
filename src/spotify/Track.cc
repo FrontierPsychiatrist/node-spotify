@@ -35,8 +35,9 @@ void Track::setStarred(Local<String> property, Local<Value> value, const Accesso
   HandleScope scope;
   Track* track = node::ObjectWrap::Unwrap<Track>(info.Holder());
   track->starred = value->ToBoolean()->Value();
-  auto cb = [=] {
-    sp_track_set_starred(spotifyService->spotifySession, (sp_track* const*)track->spotifyTrack, 1, true);
+  auto cb = [=] () {
+    //This takes an array of pointers to tracks, so we need to tack the adress of the saved spotifyTrack pointer.
+    sp_track_set_starred(spotifyService->spotifySession, (sp_track* const*)&track->spotifyTrack, 1, track->starred);
   };
   spotifyService->executeSpotifyAPIcall(cb);
   scope.Close(Undefined());

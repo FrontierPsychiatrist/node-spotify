@@ -17,4 +17,8 @@ angular.module('node-spotify')
     $scope.play = function(playlistId, trackId) {
       socket.emit(events.play, {playlistId: playlistId, trackId: trackId});
     };
+
+    $scope.star = function(trackId, playlistId, starred) {
+      socket.emit(events.track_set_starred, {trackId: trackId, playlistId: playlistId, starred: starred});
+    };
   });

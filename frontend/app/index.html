@@ -54,7 +54,7 @@
             <table class="table table-striped table-condensed">
               <tr><th style="width: 10px"></th><th style="width: 10px"></th><th style="width: 10px"></th><th>Track</th><th>Artist</th></tr>
               <tr ng-repeat="track in playlist.tracks">
-                <td>{{track.starred}}</td>
+                <td ng-click="star($index, playlist.id, !track.starred)">{{track.starred}}</td>
                 <td><a ng-click="play(playlist.id, $index)">&gt;</a></td>
                 <td><span class="no-selection">{{$index}}</span></td>
                 <td><span class="no-selection">{{track.name}}</span></td>

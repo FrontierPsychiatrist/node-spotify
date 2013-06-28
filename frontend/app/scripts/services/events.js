@@ -8,6 +8,9 @@
       playlist_renamed: 'playlist_renamed',
       playlist_tracks: 'playlist_tracks',
 
+      /* Tracks */
+      track_set_starred: 'track_set_starred',
+
       /* general */
       initial_data: 'initial_data',
       logged_in: 'logged_in',
@@ -16,7 +19,7 @@
       message: 'message',
 
       /* player */
-      play: 'play',
+      player_play: 'player_play',
       player_pause: 'player_pause',
       player_resume: 'player_resume',
       player_forward: 'player_forward',
