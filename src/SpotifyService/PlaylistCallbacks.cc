@@ -2,6 +2,8 @@
 #include "../spotify/Playlist.h"
 #include "../events.h"
 
+#include <vector>
+
 void PlaylistCallbacks::playlistNameChange(sp_playlist* spPlaylist, void* userdata) {
   Playlist* playlist = static_cast<Playlist*>(userdata);
   playlist->setName(std::string(sp_playlist_name(spPlaylist)));
@@ -9,16 +11,19 @@ void PlaylistCallbacks::playlistNameChange(sp_playlist* spPlaylist, void* userda
 
 void PlaylistCallbacks::playlistStateChanged(sp_playlist* _playlist, void* userdata) {
   Playlist* playlist = static_cast<Playlist*>(userdata);
-  if(sp_playlist_is_loaded(_playlist)) {
-    const char* name = sp_playlist_name(_playlist);
-    if(name != 0) {//we need this check for the starred playlist
-      playlist->setName(std::string(name));
-    }
-  }
 }
 
-void PlaylistCallbacks::tracks_added(sp_playlist* playlist, sp_track *const *tracks, int num_tracks, int position, void *userdata) {
-  
+void PlaylistCallbacks::tracks_added(sp_playlist* spPlaylist, sp_track *const *tracks, int num_tracks, int position, void *userdata) {
+  Playlist* playlist  = static_cast<Playlist*>(userdata);
+
+  if(playlist->tracksLoaded) {
+    Track* newTracks[num_tracks];
+    for(int i = 0; i < num_tracks; i++) {
+      newTracks[i] = new Track(tracks[i]);
+    }
+
+    playlist->tracks.insert(playlist->tracks.begin() + position, newTracks, newTracks + num_tracks);
+  }
 }
 
 void PlaylistCallbacks::tracks_moved(sp_playlist* playlist, const int *tracks, int num_tracks, int new_position, void *userdata) {

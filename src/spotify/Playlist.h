@@ -14,6 +14,7 @@ using namespace v8;
 
 class Playlist : public SpotifyWrapped<Playlist> {
   friend class PlaylistContainer;
+  friend class PlaylistCallbacks;
   public:
     Playlist(sp_playlist* _playlist, int _id) : SpotifyWrapped(), id(_id), playlist(_playlist), tracksLoaded(0) {
       sp_playlist_add_ref(playlist);
