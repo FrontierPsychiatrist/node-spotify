@@ -20,7 +20,6 @@ class Player : public NodeWrapped<Player> {
 		static Handle<Value> pause(const Arguments& args);
 		static Handle<Value> resume(const Arguments& args);
 		static Handle<Value> play(const Arguments& args);
-		static Handle<Value> staticOn(const Arguments& args);
 		static Handle<Value> getCurrentSecond(Local<String> property, const AccessorInfo& info);
 		static Handle<Value> getCurrentlyPlayingData(const Arguments& args);
 

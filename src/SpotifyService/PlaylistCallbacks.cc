@@ -23,6 +23,10 @@ void PlaylistCallbacks::tracks_added(sp_playlist* spPlaylist, sp_track *const *t
     }
 
     playlist->tracks.insert(playlist->tracks.begin() + position, newTracks, newTracks + num_tracks);
+    playlist->call(PLAYLIST_TRACKS_CHANGED);
+    //TODO: call some playback in the playlist to notify the change
+    //This should be a callback specific to this one playlist
+    //Also, a "off" method for callbacks should be implemented
   }
 }
 

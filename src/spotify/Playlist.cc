@@ -55,9 +55,7 @@ Handle<Value> Playlist::getTracks(const Arguments& args) {
 
 void Playlist::init(Handle<Object> target) {
   HandleScope scope;
-  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
-  constructorTemplate->SetClassName(String::NewSymbol("Playlist"));
-  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Playlist");
 
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, setName);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("id"), getId, emptySetter);

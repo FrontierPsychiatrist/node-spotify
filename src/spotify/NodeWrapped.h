@@ -58,8 +58,13 @@ class NodeWrapped : public node::ObjectWrap, V8Wrapped {
     /**
      * Save a Javascript callback under a certain name.
      **/
-    void on(std::string name, v8::Persistent<v8::Function> callback) {
-      callbacks[name] = callback;
+    static v8::Handle<v8::Value> on(const v8::Arguments& args) {
+      v8::HandleScope scope;
+      T* object = node::ObjectWrap::Unwrap<T>(args.This());
+      v8::String::Utf8Value callbackName(args[0]->ToString());
+      v8::Handle<v8::Function> fun = v8::Handle<v8::Function>::Cast(args[1]);
+      object->callbacks[*callbackName] = v8::Persistent<v8::Function>::New(fun);
+      return scope.Close(v8::Undefined());
     }
 
     /**
@@ -124,6 +129,17 @@ class NodeWrapped : public node::ObjectWrap, V8Wrapped {
     };
     
     pthread_mutex_t lockingMutex;
+
+    /**
+     * Basic init method for a wrapped node object. Provides a callback setter "on" and sets the classname.
+     */
+    static v8::Handle<v8::FunctionTemplate> init(const char* className) {
+      v8::Local<v8::FunctionTemplate> constructorTemplate = v8::FunctionTemplate::New();
+      constructorTemplate->SetClassName(v8::String::NewSymbol(className));
+      constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+      NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
+      return constructorTemplate;
+    }
   private:
     int doneCondition;
     pthread_mutex_t waitingMutex;

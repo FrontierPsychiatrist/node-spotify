@@ -8,12 +8,9 @@ Handle<Value> Artist::getName(Local<String> property, const AccessorInfo& info) 
 
 void Artist::init(Handle<Object> target) {
   HandleScope scope;
-  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
-  constructorTemplate->SetClassName(String::NewSymbol("Artist"));
-  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-
+  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Artist");
+  
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
-
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }

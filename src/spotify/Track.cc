@@ -50,10 +50,7 @@ void Track::setStarred(Local<String> property, Local<Value> value, const Accesso
 
 void Track::init(Handle<Object> target) {
   HandleScope scope;
-  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
-  constructorTemplate->SetClassName(String::NewSymbol("Track"));
-  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-
+  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("duration"), getDuration, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artists"), getArtists, emptySetter);
