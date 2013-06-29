@@ -3,6 +3,7 @@
 #include "../events.h"
 
 #include <vector>
+#include <pthread.h>
 
 void PlaylistCallbacks::playlistNameChange(sp_playlist* spPlaylist, void* userdata) {
   Playlist* playlist = static_cast<Playlist*>(userdata);
@@ -21,17 +22,28 @@ void PlaylistCallbacks::tracks_added(sp_playlist* spPlaylist, sp_track *const *t
     for(int i = 0; i < num_tracks; i++) {
       newTracks[i] = new Track(tracks[i]);
     }
-
+    pthread_mutex_lock(&playlist->lockingMutex);
     playlist->tracks.insert(playlist->tracks.begin() + position, newTracks, newTracks + num_tracks);
+    pthread_mutex_unlock(&playlist->lockingMutex);
     playlist->call(PLAYLIST_TRACKS_CHANGED);
-    //TODO: call some playback in the playlist to notify the change
-    //This should be a callback specific to this one playlist
-    //Also, a "off" method for callbacks should be implemented
   }
 }
 
 void PlaylistCallbacks::tracks_moved(sp_playlist* playlist, const int *tracks, int num_tracks, int new_position, void *userdata) {
   
+}
+
+void PlaylistCallbacks::tracks_removed(sp_playlist* spPlaylist, const int *tracks, int num_tracks, void *userdata) {
+  Playlist* playlist  = static_cast<Playlist*>(userdata);
+  if(playlist->tracksLoaded) {
+    pthread_mutex_lock(&playlist->lockingMutex);
+    auto it = playlist->tracks.begin();
+    for(int i = 0; i < num_tracks; i++) {
+      playlist->tracks.erase(it + tracks[i]);
+    }
+    pthread_mutex_unlock(&playlist->lockingMutex);
+    playlist->call(PLAYLIST_TRACKS_CHANGED);
+  }
 }
 
 /*void playlist_update_in_progress(sp_playlist *pl, bool done, void *userdata) {
