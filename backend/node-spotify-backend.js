@@ -14,8 +14,9 @@ app.configure(function() {
 var gSocket;
 var playlists;
 var loggedIn = false;
-var currentTrack;
-var currentPlaylist;
+var currentlyPlayingTrack;
+var currentlyPlayingPlaylist;
+var currentlyDisplayedPlaylist;
 
 //The callback that is called when login is complete
 spotify.ready( function() {
@@ -47,14 +48,22 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on(events.playlist_tracks, function(data) {
-        var playlist = playlists[data.id];
-        playlist.tracks = playlist.getTracks();
-        socket.emit(events.playlist_tracks, playlist);
+        if(currentlyDisplayedPlaylist) {
+            currentlyDisplayedPlaylist.off(events.playlist_tracks_changed);
+        }
+        currentlyDisplayedPlaylist = playlists[data.id];
+        //If tracks change for the currently displayed playlist, update them
+        currentlyDisplayedPlaylist.on(events.playlist_tracks_changed, function() {
+            currentlyDisplayedPlaylist.tracks = currentlyDisplayedPlaylist.getTracks();
+            socket.emit(events.playlist_tracks, currentlyDisplayedPlaylist);
+        });
+        currentlyDisplayedPlaylist.tracks = currentlyDisplayedPlaylist.getTracks();
+        socket.emit(events.playlist_tracks, currentlyDisplayedPlaylist);
     });
 
     socket.on(events.play, function(data) {
-        currentTrack = data.trackId;
-        currentPlaylist = playlists[data.playlistId];
+        currentlyPlayingTrack = data.trackId;
+        currentlyPlayingPlaylist = playlists[data.playlistId];
         play();
     });
 
@@ -71,7 +80,7 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on(events.player_forward, function() {
-       currentTrack++;
+       currentlyPlayingTrack++;
        play();
     });
 
@@ -80,7 +89,7 @@ io.sockets.on('connection', function(socket) {
     });
 
     spotify.player.on(events.player_end_of_track, function() {
-        currentTrack++;
+        currentlyPlayingTrack++;
         play();
     });
 
@@ -92,9 +101,9 @@ io.sockets.on('connection', function(socket) {
     socket.on(events.initial_data, sendInitialData);
 
     function play() {
-        spotify.player.play(currentPlaylist.getTracks()[currentTrack]); 
+        spotify.player.play(currentlyPlayingPlaylist.getTracks()[currentlyPlayingTrack]); 
         socket.emit(events.now_playing_data_changed, spotify.player.getCurrentlyPlayingData());
-        socket.emit(events.now_playing_picture_changed, currentPlaylist.getTracks()[currentTrack].album.getCoverBase64());
+        socket.emit(events.now_playing_picture_changed, currentlyPlayingPlaylist.getTracks()[currentlyPlayingTrack].album.getCoverBase64());
     }
 });
 

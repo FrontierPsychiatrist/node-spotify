@@ -68,6 +68,17 @@ class NodeWrapped : public node::ObjectWrap, V8Wrapped {
     }
 
     /**
+     * Deletes all callbacks that are saved under a name.
+     **/
+    static v8::Handle<v8::Value> off(const v8::Arguments& args) {
+      v8::HandleScope scope;
+      T* object = node::ObjectWrap::Unwrap<T>(args.This());
+      v8::String::Utf8Value callbackName(args[0]->ToString());
+      int deleted = object->callbacks.erase(*callbackName);
+      return scope.Close(v8::Integer::New(deleted));
+    }
+
+    /**
      * Call a Javascript callback by name. The callback will be executed in the nodeJS thread.
      * First, object wide callbacks will be searched, then, class wide callbacks.
      * If no callback is found, nothing happens.
@@ -138,6 +149,7 @@ class NodeWrapped : public node::ObjectWrap, V8Wrapped {
       constructorTemplate->SetClassName(v8::String::NewSymbol(className));
       constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
       NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
+      NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
       return constructorTemplate;
     }
   private:

@@ -45,7 +45,8 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
     spotifyService->loggedOut = 1;
     return;
   } else {
-    //LOG(INFO) << "Logged in";
+    //LOG(INFO) 
+    std::cout << "Logged in" << std::endl;
   }
 
   //The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
@@ -58,7 +59,8 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
 void SessionCallbacks::loggedOut(sp_session* session) {
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   spotifyService->loggedOut = 1;
-  //LOG(INFO) << "Logged out";
+  //LOG(INFO) 
+  std::cout << "Logged out" << std::endl;
 }
 
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
