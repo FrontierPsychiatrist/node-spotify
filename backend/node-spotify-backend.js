@@ -80,8 +80,7 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on(events.player_forward, function() {
-       currentlyPlayingTrack++;
-       play();
+       playNextTrack();
     });
 
     spotify.player.on(events.player_second_in_song, function() {
@@ -89,9 +88,15 @@ io.sockets.on('connection', function(socket) {
     });
 
     spotify.player.on(events.player_end_of_track, function() {
-        currentlyPlayingTrack++;
-        play();
+        playNextTrack();
     });
+
+    function playNextTrack() {
+        currentlyPlayingTrack++;
+        if(currentlyPlayingTrack < currentlyPlayingPlaylist.tracks.length) {
+            play();
+        }
+    }
 
     socket.on(events.track_set_starred, function(data){
         playlists[data.playlistId].getTracks()[data.trackId].starred = data.starred;
