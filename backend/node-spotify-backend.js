@@ -59,6 +59,7 @@ io.sockets.on('connection', function(socket) {
         });
         currentlyDisplayedPlaylist.tracks = currentlyDisplayedPlaylist.getTracks();
         socket.emit(events.playlist_tracks, currentlyDisplayedPlaylist);
+        socket.emit(events.playlist_image, currentlyDisplayedPlaylist.getImageBase64());
     });
 
     socket.on(events.play, function(data) {

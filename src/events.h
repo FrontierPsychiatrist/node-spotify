@@ -4,6 +4,7 @@
 #define PLAYLIST_RENAMED "playlist_renamed"
 #define PLAYLIST_TRACKS "playlist_tracks"
 #define PLAYLIST_TRACKS_CHANGED "playlist_tracks_changed"
+#define PLAYLIST_IMAGE "playlist_image"
 #define TRACK_SET_STARRED "track_set_starred"
 #define INITIAL_DATA "initial_data"
 #define LOGGED_IN "logged_in"

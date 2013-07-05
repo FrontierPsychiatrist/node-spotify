@@ -53,6 +53,14 @@ Handle<Value> Playlist::getTracks(const Arguments& args) {
   return scope.Close(nTracks);
 }
 
+Handle<Value> Playlist::getImageBase64(const Arguments& args) {
+  Playlist* playlist = node::ObjectWrap::Unwrap<Playlist>(args.This());
+  if(playlist->playlistImageBase64 != 0) {
+    return String::New(playlist->playlistImageBase64);
+  }
+  return Undefined();
+}
+
 void Playlist::init(Handle<Object> target) {
   HandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Playlist");
@@ -60,6 +68,7 @@ void Playlist::init(Handle<Object> target) {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, setName);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("id"), getId, emptySetter);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getImageBase64", getImageBase64);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
