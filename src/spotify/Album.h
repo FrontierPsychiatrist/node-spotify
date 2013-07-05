@@ -5,6 +5,7 @@
 #include <string>
 
 #include "SpotifyWrapped.h"
+#include "../utils/ImageUtils.h"
 
 using namespace v8;
 
@@ -21,10 +22,10 @@ class Album : public SpotifyWrapped<Album> {
       if(coverId != 0) {
         sp_image* image = sp_image_create(spotifyService->spotifySession, coverId);
         if(sp_image_is_loaded(image)) {
-          processImage(image);
+          coverBase64 = ImageUtils::convertImageToBase64(image);
           sp_image_release(image);
         } else {
-          sp_image_add_load_callback(image, &imageLoadedCallback, this);
+          sp_image_add_load_callback(image, &ImageUtils::imageLoadedCallback, &this->coverBase64);
         }
       }
     };
@@ -34,8 +35,6 @@ class Album : public SpotifyWrapped<Album> {
     static Handle<Value> getCoverBase64(const Arguments& args);
     static Album* getAlbum(sp_album* _spAlbum);
     static void putAlbum(Album* album);
-
-    void processImage(sp_image* image);
   private:
     static std::map<sp_album*, Album*> albumCache;
     std::string name;

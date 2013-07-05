@@ -1,5 +1,4 @@
 #include "Album.h"
-#include "base64.h"
 
 std::map<sp_album*, Album*> Album::albumCache;
 
@@ -36,21 +35,4 @@ Handle<Value> Album::getCoverBase64(const Arguments& args) {
     return String::New(album->coverBase64);
   }
   return Undefined();
-}
-
-void Album::processImage(sp_image* image) {
-  pthread_mutex_lock(&lockingMutex);
-  size_t imageSize;
-  int base64Size;
-  const void* imageData = sp_image_data(image, &imageSize);
-  this->coverBase64 = base64(imageData, (int)imageSize, &base64Size);
-  pthread_mutex_unlock(&lockingMutex);
-}
-
-void imageLoadedCallback(sp_image* image, void* userdata) {
-  Album* album = static_cast<Album*>(userdata);
-  album->processImage(image);
-  //player->call(NOW_PLAYING_DATA_CHANGED);
-  sp_image_remove_load_callback(image, &imageLoadedCallback, userdata);
-  sp_image_release(image);
 }

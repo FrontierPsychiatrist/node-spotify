@@ -8,7 +8,7 @@
       "src/spotify/Player.cc", "src/spotify/Album.cc",
       "src/SpotifyService/PlaylistCallbacks.cc",
       "src/SpotifyService/SessionCallbacks.cc",
-      "src/audio/audio.c"
+      "src/audio/audio.c", "src/utils/ImageUtils.cc"
     ],
     "link_settings" : {
       "libraries": ["-lspotify"]
