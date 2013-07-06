@@ -81,8 +81,9 @@ void SessionCallbacks::end_of_track(sp_session* session) {
 }
 
 static void sendTimer(int sample_rate) {
-  if( spotify::currentSecond < spotify::framesReceived / sample_rate) {
+  if( spotify::framesReceived / sample_rate > 0) {
     spotify::currentSecond++;
+    spotify::framesReceived = spotify::framesReceived - sample_rate;
     player->setCurrentSecond(spotify::currentSecond);
   }
 }

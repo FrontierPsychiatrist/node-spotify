@@ -88,6 +88,17 @@ Handle<Value> Player::getCurrentlyPlayingData(const Arguments& args) {
   return scope.Close(data);
 }
 
+Handle<Value> Player::seek(const Arguments& args) {
+  HandleScope scope;
+  int second = args[0]->ToInteger()->Value();
+  auto cb = [=] () {
+    sp_session_player_seek(spotifyService->spotifySession, second*1000);
+  };
+  spotifyService->executeSpotifyAPIcall(cb);
+  spotify::currentSecond = second;
+  return scope.Close(Undefined());
+}
+
 void Player::init(Handle<Object> target) {
   HandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Player");
@@ -96,6 +107,7 @@ void Player::init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentlyPlayingData", getCurrentlyPlayingData);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "seek", seek);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("currentSecond"), &getCurrentSecond, emptySetter);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());

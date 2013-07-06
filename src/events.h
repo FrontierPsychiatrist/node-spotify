@@ -19,4 +19,5 @@
 #define PLAYER_SECOND_IN_SONG "player_second_in_song"
 #define PLAYER_END_OF_TRACK "player_end_of_track"
 #define NOW_PLAYING_PICTURE_CHANGED "now_playing_picture_changed"
+#define PLAYER_SEEK "player_seek"
 #endif

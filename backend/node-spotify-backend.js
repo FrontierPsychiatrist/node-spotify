@@ -88,6 +88,10 @@ io.sockets.on('connection', function(socket) {
         socket.emit(events.player_second_in_song, this.currentSecond);
     });
 
+    socket.on(events.player_seek, function(second) {
+        spotify.player.seek(second);
+    });
+
     spotify.player.on(events.player_end_of_track, function() {
         playNextTrack();
     });
