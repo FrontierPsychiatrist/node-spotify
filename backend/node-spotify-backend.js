@@ -15,7 +15,7 @@ function Player(socket, spotify, events) {
     var socket = socket;
     var spotify = spotify;
     var currentTrack = {};
-    var queue = [];
+    var queue = []; //TODO: this does not work when the playlist gets updated while playing
 
     spotify.player.on(events.player_end_of_track, function() {
         playNextTrack();
@@ -110,7 +110,6 @@ io.sockets.on('connection', function(socket) {
         function generateTrackIds(tracks) {
             for(var i=0;i<tracks.length;i++) {
                 tracks[i].id = i;
-                //TODO: does this propagate to the player?
             }
         }
 
