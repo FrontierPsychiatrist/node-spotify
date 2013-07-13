@@ -78,16 +78,6 @@ Handle<Value> Player::getCurrentSecond(Local<String> property, const AccessorInf
   return Integer::New(player->currentSecond);
 }
 
-Handle<Value> Player::getCurrentlyPlayingData(const Arguments& args) {
-  HandleScope scope;
-  Player* player = node::ObjectWrap::Unwrap<Player>(args.This());
-  pthread_mutex_lock(&player->lockingMutex);
-  Handle<Object> data = Object::New();
-  data->Set(String::New("track"), player->track->getV8Object());
-  pthread_mutex_unlock(&player->lockingMutex);
-  return scope.Close(data);
-}
-
 Handle<Value> Player::seek(const Arguments& args) {
   HandleScope scope;
   int second = args[0]->ToInteger()->Value();
@@ -106,7 +96,6 @@ void Player::init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCurrentlyPlayingData", getCurrentlyPlayingData);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "seek", seek);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("currentSecond"), &getCurrentSecond, emptySetter);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());

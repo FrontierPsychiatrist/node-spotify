@@ -22,7 +22,6 @@ class Player : public NodeWrapped<Player> {
 		static Handle<Value> play(const Arguments& args);
 		static Handle<Value> seek(const Arguments& args);
 		static Handle<Value> getCurrentSecond(Local<String> property, const AccessorInfo& info);
-		static Handle<Value> getCurrentlyPlayingData(const Arguments& args);
 
 		void setCurrentSecond(int _currentSecond);
 			
