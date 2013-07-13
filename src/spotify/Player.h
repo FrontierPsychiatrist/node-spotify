@@ -24,16 +24,8 @@ class Player : public NodeWrapped<Player> {
 		static Handle<Value> getCurrentSecond(Local<String> property, const AccessorInfo& info);
 		static Handle<Value> getCurrentlyPlayingData(const Arguments& args);
 
-		
-		//void processImage(sp_image* image);
 		void setCurrentSecond(int _currentSecond);
-		/**
-		*	Callback track finished playing:
-		*		- remove track from queue
-		*		- play next track
-		*		- update currentTrackPosition if necessary
-		**/
-		
+			
 		static void init(Handle<Object> target);
 };
 
