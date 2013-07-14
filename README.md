@@ -32,7 +32,8 @@ Compiling was tested on Raspbian and OSX.
 To compile from source you need an appkey from spotify. You can obtain one here: https://developer.spotify.com/technologies/libspotify/#application-keys.
 Download the C implementation of the appkey and paste it into the variables in src/example_appkey.c. Rename it to src/appkey.c
 
-If you use OSX and have installed libspotify as a framework you need to edit the binding.gyp file. Remove "-lspotify" and replace it with "-framework", "libspotify" (with the comma).
+If you use OSX and have installed libspotify as a framework you need to edit the binding.gyp file. Remove "-lspotify" and write instead as one link option:
+"-framework OpenAL -framework libspotify". This is due to a bug in node-gyp that will eliminate a duplicate "-framework" entry from the link settings.
 
 Almost done. Change into the main folder (where binding.gyp lies) and run node-gyp configure && node-gyp build --debug (debug switch is needed right now as
 the include in the nodeJS app is hardcoded to the debug folder).
