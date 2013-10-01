@@ -11,6 +11,7 @@ extern "C" {
   #include "../audio/audio.h"
 }
 
+#include <uv.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>

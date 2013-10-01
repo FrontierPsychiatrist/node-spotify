@@ -37,6 +37,15 @@ public:
   }
 
   /**
+   * To set a callback from within C++
+  **/
+  void on(std::string name, v8::Handle<v8::Function> callback) {
+    v8::HandleScope scope;
+    this->callbacks[name] = v8::Persistent<v8::Function>::New(callback);
+    scope.Close(v8::Undefined());
+  }
+
+  /**
    * Save a Javascript callback under a certain name.
    **/
   static v8::Handle<v8::Value> on(const v8::Arguments& args) {
