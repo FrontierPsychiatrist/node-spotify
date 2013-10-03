@@ -2,6 +2,8 @@
 #define _ARTIST_H
 
 #include <string>
+#include <map>
+#include <memory>
 #include <libspotify/api.h>
 
 class Artist {
@@ -17,9 +19,11 @@ public:
   ~Artist() {
     sp_artist_release(artist);
   };
+  static std::shared_ptr<Artist> fromCache(sp_artist* artist);
 private:
   std::string name;
   sp_artist* artist;
+  static std::map<sp_artist*, std::shared_ptr<Artist>> cache;
 };
 
 #endif

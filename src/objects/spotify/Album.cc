@@ -1,6 +1,8 @@
 #include "Album.h"
 #include "base64.h"
 
+std::map<sp_album*, std::shared_ptr<Album>> Album::cache;
+
 void Album::processImage(sp_image* image) {
   size_t imageSize;
   int base64Size;
@@ -13,4 +15,15 @@ void imageLoadedCallback(sp_image* image, void* userdata) {
   album->processImage(image);
   sp_image_remove_load_callback(image, &imageLoadedCallback, userdata);
   sp_image_release(image);
+}
+
+std::shared_ptr<Album> Album::fromCache(sp_album* album) {
+  auto it = Album::cache.find(album);
+  if( it != Album::cache.end()) {
+    return it->second;
+  } else {
+    std::shared_ptr<Album> albumPointer(new Album(album));
+    Album::cache[album] = albumPointer;
+    return albumPointer;
+  }
 }

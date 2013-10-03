@@ -130,7 +130,7 @@ io.sockets.on('connection', function(socket) {
         });
 
         loadAttachAndSendTracks(displayedPlaylist);
-        socket.emit(events.playlist_image, displayedPlaylist.getImageBase64());
+        //socket.emit(events.playlist_image, displayedPlaylist.getImageBase64());
     });
 
     socket.on(events.track_set_starred, function(data){

@@ -3,6 +3,8 @@
 
 #include <libspotify/api.h>
 #include <string>
+#include <map>
+#include <memory>
 
 #include "../../Application.h"
 
@@ -35,10 +37,12 @@ public:
     sp_album_add_ref(album);
   };
   void processImage(sp_image* image);
+  static std::shared_ptr<Album> fromCache(sp_album* album);
 private:
   std::string name;
   sp_album* album;
   char* coverBase64;
+  static std::map<sp_album*, std::shared_ptr<Album>> cache;
 };
 
 #endif

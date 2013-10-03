@@ -25,11 +25,11 @@ public:
     duration = sp_track_duration(track);
     for(int i = 0; i < sp_track_num_artists(track); i++) {
       sp_artist* spArtist = sp_track_artist(track, i);
-      std::shared_ptr<Artist> artist = std::shared_ptr<Artist>(new Artist(spArtist));
+      std::shared_ptr<Artist> artist = Artist::fromCache(spArtist);
       artists.push_back(artist);
     }
     sp_album* spAlbum = sp_track_album(track);
-    album = std::shared_ptr<Album>(new Album(spAlbum));
+    album = Album::fromCache(spAlbum);
   };
   Track(const Track& other) : track(other.track), name(other.name), artists(other.artists),
       album(other.album), duration(other.duration), starred(other.starred), popularity(other.popularity) {
