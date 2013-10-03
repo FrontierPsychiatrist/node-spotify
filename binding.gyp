@@ -2,13 +2,19 @@
   "targets": [
   {
     "target_name": "spotify",
-    "sources": ["src/node-spotify.cc", "src/appkey.c", "src/SpotifyService/SpotifyService.cc",
-      "src/spotify/Track.cc", "src/spotify/Artist.cc",
-      "src/spotify/Playlist.cc", "src/spotify/PlaylistContainer.cc",
-      "src/spotify/Player.cc", "src/spotify/Album.cc",
+    "sources": [
+      "src/node-spotify.cc", "src/appkey.c", "src/audio/audio.c",
+      "src/SpotifyService/SpotifyService.cc",
       "src/SpotifyService/PlaylistCallbacks.cc",
       "src/SpotifyService/SessionCallbacks.cc",
-      "src/audio/audio.c"
+
+      "src/objects/spotify/Track.cc", "src/objects/spotify/Artist.cc",
+      "src/objects/spotify/Playlist.cc", "src/objects/spotify/PlaylistContainer.cc",
+      "src/objects/spotify/Album.cc",
+
+      "src/objects/node/NodeTrack.cc", "src/objects/node/NodeArtist.cc",
+      "src/objects/node/NodePlaylist.cc", "src/objects/node/NodeAlbum.cc",
+      "src/objects/node/NodePlayer.cc"
     ],
     "link_settings" : {
       "libraries": ["-lspotify"]

@@ -1,0 +1,29 @@
+#include "PlaylistContainer.h"
+#include "../../SpotifyService/PlaylistCallbacks.h"
+#include "../../SpotifyService/SpotifyService.h"
+#include "../../Application.h"
+
+extern Application* application;
+
+void PlaylistContainer::loadPlaylists() {
+  int numPlaylists = sp_playlistcontainer_num_playlists(playlistContainer);
+
+  Playlist::playlistCallbacks.playlist_state_changed = &PlaylistCallbacks::playlistStateChanged;
+  Playlist::playlistCallbacks.playlist_renamed = &PlaylistCallbacks::playlistNameChange;
+  //Playlist::playlistCallbacks.tracks_added = &PlaylistCallbacks::tracks_added;
+  //Playlist::playlistCallbacks.tracks_moved = &PlaylistCallbacks::tracks_moved;
+  /*playlistCallbacks.playlist_update_in_progress = &playlist_update_in_progress;
+  playlistCallbacks.track_created_changed = &track_created_changed;*/
+
+  for(int i = 0; i < numPlaylists; ++i) {
+    sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
+    std::shared_ptr<Playlist> playlist = std::shared_ptr<Playlist>(new Playlist(spPlaylist, i));
+    sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, playlist.get());
+    playlists.push_back(playlist);
+  }
+  sp_playlist* spPlaylist = sp_session_starred_create(application->session);
+  std::shared_ptr<Playlist> playlist = std::shared_ptr<Playlist>(new Playlist(spPlaylist, numPlaylists));
+  playlist->name = std::string("Starred");
+  sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, playlist.get());
+  playlists.push_back(playlist);
+}

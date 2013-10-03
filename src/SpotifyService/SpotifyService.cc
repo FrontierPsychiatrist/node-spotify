@@ -19,6 +19,8 @@ std::function<void()> gFun;
 static sp_session_config sessionConfig;
 static sp_session_callbacks sessionCallbacks;
 
+#include "../Application.h"
+extern Application* application;
 /**
  * The loop running in the spotify thread.
  *
@@ -60,7 +62,7 @@ static void* spotifyLoop(void* _spotifyService) {
   }
 
   spotifyService->spotifySession = session;
-
+  application->session = session;
   size_t maxUsernameLength = 255;
   char rememberedUser[maxUsernameLength];
   int usernameLength = sp_session_remembered_user(session, rememberedUser, maxUsernameLength);
