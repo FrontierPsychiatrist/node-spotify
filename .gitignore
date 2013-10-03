@@ -9,6 +9,7 @@ tmp
 #vim
 *.swp
 .clang_complete
+.ycm_extra_conf.*
 
 #osx
 .DS_Store

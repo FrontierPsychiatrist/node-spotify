@@ -56,6 +56,7 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
 void SessionCallbacks::loggedOut(sp_session* session) {
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   spotifyService->loggedOut = 1;
+  std::cout << "Logged out" << std::endl;
 }
 
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
@@ -76,8 +77,9 @@ void SessionCallbacks::end_of_track(sp_session* session) {
 }
 
 static void sendTimer(int sample_rate) {
-  if( spotify::currentSecond < spotify::framesReceived / sample_rate) {
+  if( spotify::framesReceived / sample_rate > 0) {
     spotify::currentSecond++;
+    spotify::framesReceived = spotify::framesReceived - sample_rate;
     application->nodePlayer->setCurrentSecond(spotify::currentSecond);
   }
 }

@@ -11,51 +11,31 @@ app.configure(function() {
 	app.use(express.static(__dirname + '/../frontend/dist'));
 });
 
-var gSocket;
-var playlists;
-var loggedIn = false;
-var currentTrack;
-var currentPlaylist;
+function Player(socket, spotify, events) {
+    var socket = socket;
+    var spotify = spotify;
+    var currentTrack = {};
+    var queue = []; //TODO: this does not work when the playlist gets updated while playing
 
-//The callback that is called when login is complete
-spotify.ready( function() {
-    loggedIn = true;
-    playlists = spotify.getPlaylists();
-    sendInitialData();
-});
-
-spotify.playlists.on(events.playlist_renamed, function () {
-    gSocket.emit(events.playlist_renamed, this);
-});
-
-io.sockets.on('connection', function(socket) {
-    gSocket = socket;
-
-    //Client wants to know if the service is logged in
-    socket.on(events.logged_in, function() {
-        socket.emit(events.logged_in, {'loggedIn': loggedIn, 'rememberedUser': spotify.rememberedUser()})
+    spotify.player.on(events.player_end_of_track, function() {
+        playNextTrack();
     });
 
-    //Client wants to login
-    socket.on(events.login, function(data) {
-        spotify.login(data.username, data.password, data.rememberMe, data.withRemembered);
+    spotify.player.on(events.player_second_in_song, function() {
+        socket.emit(events.player_second_in_song, this.currentSecond);
     });
 
-    //Client wants to logout
-    socket.on(events.logout, function(data) {
-        spotify.logout();
-    });
-
-    socket.on(events.playlist_tracks, function(data) {
-        var playlist = playlists[data.id];
-        playlist.tracks = playlist.getTracks();
-        socket.emit(events.playlist_tracks, playlist);
+    socket.on(events.player_seek, function(second) {
+        spotify.player.seek(second);
     });
 
     socket.on(events.play, function(data) {
-        currentTrack = data.trackId;
-        currentPlaylist = playlists[data.playlistId];
-        play();
+        queue = playlists[data.playlistId].getTracks();
+        currentTrack = queue.filter( 
+            function(track) { 
+                return track.id == data.trackId 
+            })[0];;
+        internPlay();
     });
 
     socket.on(events.player_pause, function() {
@@ -71,17 +51,86 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on(events.player_forward, function() {
-       currentTrack++;
-       play();
+       playNextTrack();
     });
 
-    spotify.player.on(events.player_second_in_song, function() {
-        socket.emit(events.player_second_in_song, this.currentSecond);
+    function internPlay() {
+        if(currentTrack) {
+            spotify.player.play(currentTrack); 
+            socket.emit(events.now_playing_data_changed, currentTrack);
+            socket.emit(events.now_playing_picture_changed, currentTrack.album.getCoverBase64());
+        }
+    }
+
+    function playNextTrack() {
+        var currentTrackPosition = queue.indexOf( currentTrack );
+        if(currentTrackPosition < queue.length - 1) {
+            currentTrack = queue[currentTrackPosition + 1];
+            internPlay();
+        }
+    }
+}
+
+//variables for ALL sockets
+var playlists;
+var loggedIn = false;
+
+
+io.sockets.on('connection', function(socket) {
+    //variables per socket
+    var player = new Player(socket, spotify, events);
+    var displayedPlaylist;    
+    
+    //Client wants to know if the service is logged in
+    socket.on(events.logged_in, function() {
+        socket.emit(events.logged_in, {'loggedIn': loggedIn, 'rememberedUser': spotify.rememberedUser()})
     });
 
-    spotify.player.on(events.player_end_of_track, function() {
-        currentTrack++;
-        play();
+    //Client wants to login
+    socket.on(events.login, function(data) {
+        spotify.login(data.username, data.password, data.rememberMe, data.withRemembered);
+    });
+
+    spotify.ready( function() {
+        loggedIn = true;
+        playlists = spotify.getPlaylists();
+        sendInitialData();
+    });
+
+    spotify.playlists.on(events.playlist_renamed, function () {
+        socket.emit(events.playlist_renamed, this);
+    });
+
+    //Client wants to logout
+    socket.on(events.logout, function(data) {
+        spotify.logout();
+    });
+
+    socket.on(events.playlist_tracks, function(data) {
+        function generateTrackIds(tracks) {
+            for(var i=0;i<tracks.length;i++) {
+                tracks[i].id = i;
+            }
+        }
+
+        function loadAttachAndSendTracks(playlist) {
+            playlist.tracks = playlist.getTracks();
+            generateTrackIds(playlist.tracks);
+            socket.emit(events.playlist_tracks, playlist);
+        }
+
+        if(displayedPlaylist) {
+            displayedPlaylist.off(events.playlist_tracks_changed);
+        }
+
+        displayedPlaylist = playlists[data.id];
+        //If tracks change for the currently displayed playlist, update them
+        displayedPlaylist.on(events.playlist_tracks_changed, function() {
+            loadAttachAndSendTracks(displayedPlaylist);
+        });
+
+        loadAttachAndSendTracks(displayedPlaylist);
+        socket.emit(events.playlist_image, displayedPlaylist.getImageBase64());
     });
 
     socket.on(events.track_set_starred, function(data){
@@ -91,13 +140,7 @@ io.sockets.on('connection', function(socket) {
     //Client requests initial data
     socket.on(events.initial_data, sendInitialData);
 
-    function play() {
-        spotify.player.play(currentPlaylist.getTracks()[currentTrack]); 
-        socket.emit(events.now_playing_data_changed, spotify.player.getCurrentlyPlayingData());
-        socket.emit(events.now_playing_picture_changed, currentPlaylist.getTracks()[currentTrack].album.getCoverBase64());
+    function sendInitialData() {
+        socket.emit(events.initial_data, playlists);
     }
 });
-
-function sendInitialData() {
-    gSocket.emit(events.initial_data, playlists);
-}
