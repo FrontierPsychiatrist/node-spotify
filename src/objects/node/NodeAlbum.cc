@@ -16,9 +16,7 @@ Handle<Value> NodeAlbum::getCoverBase64(const Arguments& args) {
 
 void NodeAlbum::init() {
   HandleScope scope;
-  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
-  constructorTemplate->SetClassName(String::NewSymbol("Album"));
-  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Album");
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCoverBase64", getCoverBase64);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());

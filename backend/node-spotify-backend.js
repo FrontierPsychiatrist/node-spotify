@@ -2,7 +2,7 @@ var express = require('express'),
     app = express();
   var server = require('http').createServer(app);
   var io = require('socket.io').listen(server);
-  var spotify = require('../build/Debug/spotify');
+  var spotify = require('../build/Release/spotify');
   var events = require('../frontend/app/scripts/services/events.js');
 
 server.listen(25000);

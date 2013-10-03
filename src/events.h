@@ -3,6 +3,8 @@
 #define PLAYLIST_NEW "playlist_new"
 #define PLAYLIST_RENAMED "playlist_renamed"
 #define PLAYLIST_TRACKS "playlist_tracks"
+#define PLAYLIST_TRACKS_CHANGED "playlist_tracks_changed"
+#define PLAYLIST_IMAGE "playlist_image"
 #define TRACK_SET_STARRED "track_set_starred"
 #define INITIAL_DATA "initial_data"
 #define LOGGED_IN "logged_in"
@@ -17,4 +19,6 @@
 #define PLAYER_SECOND_IN_SONG "player_second_in_song"
 #define PLAYER_END_OF_TRACK "player_end_of_track"
 #define NOW_PLAYING_PICTURE_CHANGED "now_playing_picture_changed"
+#define NOW_PLAYING_DATA_CHANGED "now_playing_data_changed"
+#define PLAYER_SEEK "player_seek"
 #endif

@@ -70,16 +70,6 @@ void NodePlayer::setCurrentSecond(int _currentSecond) {
   call(PLAYER_SECOND_IN_SONG);
 }
 
-//TODO: generic refactoring for NodeWrapped!
-Handle<Value> NodePlayer::staticOn(const Arguments& args) {
-  HandleScope scope;
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
-  String::Utf8Value callbackName(args[0]->ToString());
-  Handle<Function> fun = Handle<Function>::Cast(args[1]);
-  nodePlayer->on( *callbackName, Persistent<Function>::New(fun));
-  return scope.Close(Undefined());
-}
-
 Handle<Value> NodePlayer::getCurrentSecond(Local<String> property, const AccessorInfo& info) {
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.Holder());
   return Integer::New(nodePlayer->currentSecond);
@@ -87,15 +77,12 @@ Handle<Value> NodePlayer::getCurrentSecond(Local<String> property, const Accesso
 
 void NodePlayer::init() {
   HandleScope scope;
-  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
-  constructorTemplate->SetClassName(String::NewSymbol("Player"));
-  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Player");
     
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "play", play);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", staticOn);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("currentSecond"), &getCurrentSecond, emptySetter);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());

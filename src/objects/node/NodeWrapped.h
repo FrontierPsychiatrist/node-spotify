@@ -38,8 +38,24 @@ public:
   /**
    * Save a Javascript callback under a certain name.
    **/
-  void on(std::string name, v8::Persistent<v8::Function> callback) {
-    callbacks[name] = callback;
+  static v8::Handle<v8::Value> on(const v8::Arguments& args) {
+    v8::HandleScope scope;
+    T* object = node::ObjectWrap::Unwrap<T>(args.This());
+    v8::String::Utf8Value callbackName(args[0]->ToString());
+    v8::Handle<v8::Function> fun = v8::Handle<v8::Function>::Cast(args[1]);
+    object->callbacks[*callbackName] = v8::Persistent<v8::Function>::New(fun);
+    return scope.Close(v8::Undefined());
+  }
+
+  /**
+  * Deletes all callbacks that are saved under a name.
+  **/
+  static v8::Handle<v8::Value> off(const v8::Arguments& args) {
+    v8::HandleScope scope;
+    T* object = node::ObjectWrap::Unwrap<T>(args.This());
+    v8::String::Utf8Value callbackName(args[0]->ToString());
+    int deleted = object->callbacks.erase(*callbackName);
+    return scope.Close(v8::Integer::New(deleted));
   }
 
   /**
@@ -78,6 +94,17 @@ public:
 protected:
   static void emptySetter(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {};
   static v8::Persistent<v8::Function> constructor;
+  /**
+   * Basic init method for a wrapped node object. Provides a callback setter "on" and sets the classname.
+   */
+  static v8::Handle<v8::FunctionTemplate> init(const char* className) {
+    v8::Local<v8::FunctionTemplate> constructorTemplate = v8::FunctionTemplate::New();
+    constructorTemplate->SetClassName(v8::String::NewSymbol(className));
+    constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+    NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
+    NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
+    return constructorTemplate;
+  }
 private:
   std::map<std::string, v8::Persistent<v8::Function> > callbacks;
   static std::map<std::string, v8::Persistent<v8::Function> > staticCallbacks;

@@ -7,9 +7,7 @@ Handle<Value> NodeArtist::getName(Local<String> property, const AccessorInfo& in
 
 void NodeArtist::init() {
   HandleScope scope;
-  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
-  constructorTemplate->SetClassName(String::NewSymbol("Artist"));
-  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Artist");
 
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
 
