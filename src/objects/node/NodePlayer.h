@@ -16,6 +16,7 @@ public:
   static Handle<Value> play(const Arguments& args);
   static Handle<Value> staticOn(const Arguments& args);
   static Handle<Value> getCurrentSecond(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> seek(const Arguments& args);
 
   void setCurrentSecond(int currentSecond);
   /**

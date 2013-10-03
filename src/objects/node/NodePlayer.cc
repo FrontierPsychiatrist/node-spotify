@@ -65,6 +65,18 @@ Handle<Value> NodePlayer::play(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
+Handle<Value> NodePlayer::seek(const Arguments& args) {
+  HandleScope scope;
+  int second = args[0]->ToInteger()->Value();
+  auto cb = [=] () {
+    sp_session_player_seek(application->session, second*1000);
+  };
+  application->spotifyService->executeSpotifyAPIcall(cb);
+  spotify::currentSecond = second;
+  return scope.Close(Undefined());
+}
+
+
 void NodePlayer::setCurrentSecond(int _currentSecond) {
   currentSecond = _currentSecond;
   call(PLAYER_SECOND_IN_SONG);
@@ -83,6 +95,7 @@ void NodePlayer::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "seek", seek);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("currentSecond"), &getCurrentSecond, emptySetter);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
