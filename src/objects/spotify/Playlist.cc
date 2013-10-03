@@ -1,6 +1,5 @@
 #include "Playlist.h"
 #include <future>
-#include <memory>
 #include "../../SpotifyService/SpotifyService.h"
 #include "../../Application.h"
 

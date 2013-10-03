@@ -17,6 +17,7 @@ public:
     searchResult = _searchResult;
   }
   static Handle<Value> didYouMean(const Arguments& args);
+  static Handle<Value> getTracks(const Arguments& args);
   static void init();
 };
 

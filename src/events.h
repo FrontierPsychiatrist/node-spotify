@@ -11,6 +11,7 @@
 #define LOGIN "login"
 #define LOGOUT "logout"
 #define MESSAGE "message"
+#define SEARCH_COMPLETE "search_complete"
 #define PLAYER_PLAY "player_play"
 #define PLAYER_PAUSE "player_pause"
 #define PLAYER_RESUME "player_resume"

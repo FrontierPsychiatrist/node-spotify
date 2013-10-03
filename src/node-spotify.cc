@@ -5,6 +5,7 @@
 #include "SpotifyService/SpotifyService.h"
 #include "SpotifyService/SearchCallbacks.h"
 #include "NodeCallback.h"
+#include "events.h"
 
 #include "objects/node/StaticCallbackSetter.h"
 #include "objects/spotify/PlaylistContainer.h"
@@ -57,7 +58,7 @@ Handle<Value> search(const Arguments& args) {
   const char* searchStringChar = *searchString;
   Persistent<Function> fun = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
   NodeSearchResult* searchResult = new NodeSearchResult();
-  searchResult->on("SEARCH_COMPLETE", fun);
+  searchResult->on(SEARCH_COMPLETE, fun);
   auto search = [=] () {
     sp_search_create(application->session,
                     searchStringChar,

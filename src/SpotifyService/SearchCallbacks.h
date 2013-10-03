@@ -5,7 +5,7 @@
 
 class SearchCallbacks {
 public:
-	static void searchComplete(sp_search* spSearch, void* userdata);
+  static void searchComplete(sp_search* spSearch, void* userdata);
 };
 
 #endif
