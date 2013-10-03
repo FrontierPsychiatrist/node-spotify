@@ -22,17 +22,18 @@ template <class T>
 class NodeWrapped : public node::ObjectWrap, V8Wrapped {
 template <class S> friend class StaticCallbackSetter;
 public:
+  ~NodeWrapped() {}
   /**
    * Get a V8 handle with the Javascript object inside.
    **/
   v8::Handle<v8::Object> getV8Object() {
-    //We cannot open a new HandleScope here, as this gets called in the spotify thread!
+    v8::HandleScope scope;
     //check if the handle from ObjectWrap has been initialized and if not wrap the object in a new JS instance
     if(handle_.IsEmpty()) {
-      v8::Persistent<v8::Object> o = v8::Persistent<v8::Object>::New(constructor->NewInstance());
+      v8::Local<v8::Object> o = v8::Local<v8::Object>::New(constructor->NewInstance());
       this->Wrap(o);
     }
-    return handle_;
+    return scope.Close(handle_);
   }
 
   /**
