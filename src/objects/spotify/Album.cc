@@ -22,7 +22,7 @@ std::shared_ptr<Album> Album::fromCache(sp_album* album) {
   if( it != Album::cache.end()) {
     return it->second;
   } else {
-    std::shared_ptr<Album> albumPointer(new Album(album));
+    auto albumPointer = std::make_shared<Album>(album);
     Album::cache[album] = albumPointer;
     return albumPointer;
   }

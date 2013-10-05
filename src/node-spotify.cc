@@ -125,7 +125,7 @@ void init(Handle<Object> target) {
   NodeSearchResult::init();
   StaticCallbackSetter<NodePlaylist>::init(target, "playlists");
   application = new Application();
-  application->spotifyService = std::shared_ptr<SpotifyService>(new SpotifyService());
+  application->spotifyService = std::unique_ptr<SpotifyService>(new SpotifyService());
   application->nodePlayer = std::unique_ptr<NodePlayer>(new NodePlayer());
   audio_init(&application->audio_fifo);
 

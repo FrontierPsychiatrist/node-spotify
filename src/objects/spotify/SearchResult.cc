@@ -10,10 +10,9 @@ extern Application* application;
 std::vector<std::shared_ptr<Track>> SearchResult::getTracks() {
   std::promise<std::vector<std::shared_ptr<Track>>> pr; 
   auto cb = [&] () {
-    std::vector<std::shared_ptr<Track>> tracks;
-    for(int i = 0; i < sp_search_num_tracks(search); ++i) {
-      std::shared_ptr<Track> trackPointer(new Track(sp_search_track(search, i)));
-      tracks.push_back(trackPointer);
+    std::vector<std::shared_ptr<Track>> tracks(sp_search_num_tracks(search));
+    for(int i = 0; i < (int)tracks.size() ; ++i) {
+      tracks[i] = std::make_shared<Track>(sp_search_track(search, i));
     }
     pr.set_value(tracks);
   };

@@ -19,7 +19,7 @@ struct Application {
   audio_fifo_t audio_fifo;
   uv_async_t asyncHandle;
   std::shared_ptr<PlaylistContainer> playlistContainer;
-  std::shared_ptr<SpotifyService> spotifyService;
+  std::unique_ptr<SpotifyService> spotifyService;
   std::unique_ptr<NodePlayer> nodePlayer;
 
   //TODO not the best place...

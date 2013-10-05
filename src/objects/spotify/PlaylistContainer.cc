@@ -7,6 +7,7 @@ extern Application* application;
 
 void PlaylistContainer::loadPlaylists() {
   int numPlaylists = sp_playlistcontainer_num_playlists(playlistContainer);
+  playlists.resize(numPlaylists + 1);
 
   Playlist::playlistCallbacks.playlist_state_changed = &PlaylistCallbacks::playlistStateChanged;
   Playlist::playlistCallbacks.playlist_renamed = &PlaylistCallbacks::playlistNameChange;
@@ -17,13 +18,11 @@ void PlaylistContainer::loadPlaylists() {
 
   for(int i = 0; i < numPlaylists; ++i) {
     sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
-    std::shared_ptr<Playlist> playlist = std::shared_ptr<Playlist>(new Playlist(spPlaylist, i));
-    sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, playlist.get());
-    playlists.push_back(playlist);
+    playlists[i] = std::make_shared<Playlist>(spPlaylist, i);
+    sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, playlists[i].get());
   }
   sp_playlist* spPlaylist = sp_session_starred_create(application->session);
-  std::shared_ptr<Playlist> playlist = std::shared_ptr<Playlist>(new Playlist(spPlaylist, numPlaylists));
-  playlist->name = std::string("Starred");
-  sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, playlist.get());
-  playlists.push_back(playlist);
+  playlists[numPlaylists] = std::make_shared<Playlist>(spPlaylist, numPlaylists);
+  playlists[numPlaylists]->name = std::string("Starred");
+  sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, playlists[numPlaylists].get());
 }

@@ -50,7 +50,7 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   //The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
   rootPlaylistContainerCallbacks.container_loaded = &rootPlaylistContainerLoaded;
   sp_playlistcontainer *pc = sp_session_playlistcontainer(session);
-  application->playlistContainer = std::shared_ptr<PlaylistContainer>(new PlaylistContainer(pc));
+  application->playlistContainer = std::make_shared<PlaylistContainer>(pc);
   sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, application->playlistContainer.get());
 }
 

@@ -8,10 +8,9 @@ extern Application* application;
 std::vector<std::shared_ptr<Track>> Playlist::getTracks() {
   std::promise<std::vector<std::shared_ptr<Track>>> pr; 
   auto cb = [&] () {
-    std::vector<std::shared_ptr<Track>> tracks;
-    for(int i = 0; i < sp_playlist_num_tracks(playlist); ++i) {
-      std::shared_ptr<Track> trackPointer(new Track(sp_playlist_track(playlist, i)));
-      tracks.push_back(trackPointer);
+    std::vector<std::shared_ptr<Track>> tracks(sp_playlist_num_tracks(playlist));
+    for(int i = 0; i < (int)tracks.size(); ++i) {
+      tracks[i] = std::make_shared<Track>(sp_playlist_track(playlist, i));
     }
     pr.set_value(tracks);
   };

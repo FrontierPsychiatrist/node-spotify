@@ -7,7 +7,7 @@ std::shared_ptr<Artist> Artist::fromCache(sp_artist* artist) {
   if(it != Artist::cache.end()) {
     return it->second;
   } else {
-    std::shared_ptr<Artist> artistPointer(new Artist(artist));
+    auto artistPointer = std::make_shared<Artist>(artist);
     Artist::cache[artist] = artistPointer;
     return artistPointer;
   }

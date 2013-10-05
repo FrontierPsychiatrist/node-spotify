@@ -6,7 +6,7 @@
 
 void SearchCallbacks::searchComplete(sp_search* spSearch, void* userdata) {
   NodeSearchResult* nodeSearchResult = static_cast<NodeSearchResult*>(userdata);
-  std::shared_ptr<SearchResult> searchResult = std::shared_ptr<SearchResult>(new SearchResult(spSearch));
+  auto searchResult = std::make_shared<SearchResult>(spSearch);
   nodeSearchResult->setSearchResult(searchResult);
   nodeSearchResult->call(SEARCH_COMPLETE);
 }
