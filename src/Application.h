@@ -5,14 +5,12 @@
 #include <uv.h>
 #include <v8.h>
 #include <memory>
+#include "SpotifyService/SpotifyService.h"
+#include "objects/spotify/PlaylistContainer.h"
 
 extern "C" {
   #include "audio/audio.h"
 }
-
-class PlaylistContainer;
-class SpotifyService;
-class NodePlayer;
 
 struct Application {
   sp_session* session;
@@ -20,7 +18,6 @@ struct Application {
   uv_async_t asyncHandle;
   std::shared_ptr<PlaylistContainer> playlistContainer;
   std::unique_ptr<SpotifyService> spotifyService;
-  std::unique_ptr<NodePlayer> nodePlayer;
 
   //TODO not the best place...
   v8::Persistent<v8::Function> loginCallback;

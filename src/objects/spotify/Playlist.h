@@ -13,14 +13,7 @@ friend class NodePlaylist;
 friend class PlaylistContainer;
 friend class PlaylistCallbacks;
 public:
-  Playlist(sp_playlist* _playlist, int _id) : id(_id), playlist(_playlist) {
-    sp_playlist_add_ref(playlist);
-    if(!sp_playlist_is_loaded(playlist)) {
-      name = std::string("Loading...");
-    } else {
-      name = std::string(sp_playlist_name(playlist));  
-    }
-  };
+  Playlist(sp_playlist* _playlist, int _id);
   ~Playlist() {
     sp_playlist_release(playlist);
   };

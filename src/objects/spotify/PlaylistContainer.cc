@@ -1,6 +1,5 @@
 #include "PlaylistContainer.h"
 #include "../../SpotifyService/PlaylistCallbacks.h"
-#include "../../SpotifyService/SpotifyService.h"
 #include "../../Application.h"
 
 extern Application* application;

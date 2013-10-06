@@ -1,7 +1,6 @@
 #include "SearchResult.h"
 
 #include <future>
-#include "../../SpotifyService/SpotifyService.h"
 
 #include "../../Application.h"
 

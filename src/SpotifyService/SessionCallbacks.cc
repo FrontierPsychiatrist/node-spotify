@@ -30,7 +30,6 @@ int currentSecond = 0;
 static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
 
 void SessionCallbacks::notifyMainThread(sp_session* session) {
-  SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   pthread_mutex_lock(&application->spotifyService->notifyMutex);
   notifyDo = 1;
   pthread_cond_signal(&application->spotifyService->notifyCondition);
@@ -74,14 +73,14 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlayl
 void SessionCallbacks::end_of_track(sp_session* session) {
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
-  application->nodePlayer->call(PLAYER_END_OF_TRACK);
+  NodePlayer::getInstance().call(PLAYER_END_OF_TRACK);
 }
 
 static void sendTimer(int sample_rate) {
   if( spotify::framesReceived / sample_rate > 0) {
     spotify::currentSecond++;
     spotify::framesReceived = spotify::framesReceived - sample_rate;
-    application->nodePlayer->setCurrentSecond(spotify::currentSecond);
+    NodePlayer::getInstance().setCurrentSecond(spotify::currentSecond);
   }
 }
 

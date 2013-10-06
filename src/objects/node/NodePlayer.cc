@@ -3,7 +3,6 @@
 
 #include "../../events.h"
 #include "../../Application.h"
-#include "../../SpotifyService/SpotifyService.h"
 
 extern "C" {
   #include "../../audio/audio.h"
@@ -55,7 +54,6 @@ Handle<Value> NodePlayer::play(const Arguments& args) {
   HandleScope scope;
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args[0]->ToObject());
   auto cb = [=] () {
     sp_session_player_load(application->session, nodeTrack->track->track);
@@ -100,3 +98,9 @@ void NodePlayer::init() {
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }
+
+NodePlayer& NodePlayer::getInstance() {
+  return *instance.get();
+}
+
+std::unique_ptr<NodePlayer> NodePlayer::instance = std::unique_ptr<NodePlayer>(new NodePlayer());

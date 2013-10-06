@@ -116,10 +116,10 @@ protected:
     return constructorTemplate;
   }
 private:
-  std::map<std::string, v8::Persistent<v8::Function> > callbacks;
-  static std::map<std::string, v8::Persistent<v8::Function> > staticCallbacks;
+  std::map<std::string, v8::Persistent<v8::Function>> callbacks;
+  static std::map<std::string, v8::Persistent<v8::Function>> staticCallbacks;
 };
 
-template <class T> std::map<std::string, v8::Persistent<v8::Function> > NodeWrapped<T>::staticCallbacks;
+template <class T> std::map<std::string, v8::Persistent<v8::Function>> NodeWrapped<T>::staticCallbacks;
 template <class T> v8::Persistent<v8::Function> NodeWrapped<T>::constructor;
 #endif

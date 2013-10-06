@@ -126,7 +126,6 @@ void init(Handle<Object> target) {
   StaticCallbackSetter<NodePlaylist>::init(target, "playlists");
   application = new Application();
   application->spotifyService = std::unique_ptr<SpotifyService>(new SpotifyService());
-  application->nodePlayer = std::unique_ptr<NodePlayer>(new NodePlayer());
   audio_init(&application->audio_fifo);
 
   target->Set(String::NewSymbol("login"),
@@ -137,7 +136,7 @@ void init(Handle<Object> target) {
               FunctionTemplate::New(getPlaylists)->GetFunction());
   target->Set(String::NewSymbol("ready"),
               FunctionTemplate::New(ready)->GetFunction());
-  target->Set(String::NewSymbol("player"), application->nodePlayer->getV8Object());
+  target->Set(String::NewSymbol("player"), NodePlayer::getInstance().getV8Object());
   target->Set(String::NewSymbol("rememberedUser"),
               FunctionTemplate::New(rememberedUser)->GetFunction());
   target->Set(String::NewSymbol("search"),

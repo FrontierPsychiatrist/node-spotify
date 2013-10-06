@@ -11,7 +11,7 @@ void PlaylistCallbacks::playlistNameChange(sp_playlist* spPlaylist, void* userda
 }
 
 void PlaylistCallbacks::playlistStateChanged(sp_playlist* _playlist, void* userdata) {
-  Playlist* playlist = static_cast<Playlist*>(userdata);
+  //Playlist* playlist = static_cast<Playlist*>(userdata);
 }
 
 /*void PlaylistCallbacks::tracks_added(sp_playlist* spPlaylist, sp_track *const *tracks, int num_tracks, int position, void *userdata) {

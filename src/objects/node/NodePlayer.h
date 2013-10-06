@@ -2,6 +2,7 @@
 #define _NODE_PLAYER_H
 
 #include "NodeWrapped.h"
+#include <memory>
 
 using namespace v8;
 
@@ -9,6 +10,7 @@ class NodePlayer : public NodeWrapped<NodePlayer> {
 private:
   int currentSecond;
   bool isPaused;
+  static std::unique_ptr<NodePlayer> instance;
 public:
   static Handle<Value> stop(const Arguments& args);
   static Handle<Value> pause(const Arguments& args);
@@ -27,6 +29,7 @@ public:
   **/
 
   static void init();
+  static NodePlayer& getInstance();
 };
 
 #endif

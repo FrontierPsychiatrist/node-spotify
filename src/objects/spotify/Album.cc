@@ -1,7 +1,28 @@
 #include "Album.h"
 #include "base64.h"
+#include "../../Application.h"
+
+extern Application* application;
+
+static void imageLoadedCallback(sp_image* image, void* userdata);
 
 std::map<sp_album*, std::shared_ptr<Album>> Album::cache;
+
+Album::Album(sp_album* _album) : album(_album), coverBase64(0) {
+  sp_album_add_ref(album);
+  name = std::string(sp_album_name(album));
+  const byte* coverId = sp_album_cover(album, SP_IMAGE_SIZE_NORMAL);
+
+  if(coverId != 0) {
+    sp_image* image = sp_image_create(application->session, coverId);
+    if(sp_image_is_loaded(image)) {
+      processImage(image);
+      sp_image_release(image);
+    } else {
+      sp_image_add_load_callback(image, &imageLoadedCallback, this);
+    }
+  }
+};
 
 void Album::processImage(sp_image* image) {
   size_t imageSize;
@@ -10,7 +31,7 @@ void Album::processImage(sp_image* image) {
   this->coverBase64 = base64(imageData, (int)imageSize, &base64Size);
 }
 
-void imageLoadedCallback(sp_image* image, void* userdata) {
+static void imageLoadedCallback(sp_image* image, void* userdata) {
   Album* album = static_cast<Album*>(userdata);
   album->processImage(image);
   sp_image_remove_load_callback(image, &imageLoadedCallback, userdata);

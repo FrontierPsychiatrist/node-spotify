@@ -6,30 +6,10 @@
 #include <map>
 #include <memory>
 
-#include "../../Application.h"
-
-extern Application* application;
-
-void imageLoadedCallback(sp_image* image, void* userdata);
-
 class Album {
 friend class NodeAlbum;
 public:
-  Album(sp_album* _album) : album(_album), coverBase64(0) {
-    sp_album_add_ref(album);
-    name = std::string(sp_album_name(album));
-    const byte* coverId = sp_album_cover(album, SP_IMAGE_SIZE_NORMAL);
-
-    if(coverId != 0) {
-      sp_image* image = sp_image_create(application->session, coverId);
-      if(sp_image_is_loaded(image)) {
-        processImage(image);
-        sp_image_release(image);
-      } else {
-        sp_image_add_load_callback(image, &imageLoadedCallback, this);
-      }
-    }
-  };
+  Album(sp_album* _album);
   ~Album() {
     sp_album_release(album);
   };
