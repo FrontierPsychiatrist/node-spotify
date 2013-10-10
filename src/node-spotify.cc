@@ -86,6 +86,12 @@ Handle<Value> getPlaylists(const Arguments& args) {
   return scope.Close(nPlaylists);
 }
 
+Handle<Value> getStarred(const Arguments& args) {
+  HandleScope scope;
+  NodePlaylist* starredPlaylist = new NodePlaylist(application->playlistContainer->starredPlaylist);
+  return scope.Close(starredPlaylist->getV8Object());
+}
+
 /**
  * Handle a NodeCallback sent to this thread. 
  * The handle should contain a NodeCallback struct
@@ -134,6 +140,8 @@ void init(Handle<Object> target) {
               FunctionTemplate::New(logout)->GetFunction());
   target->Set(String::NewSymbol("getPlaylists"),
               FunctionTemplate::New(getPlaylists)->GetFunction());
+  target->Set(String::NewSymbol("getStarred"),
+              FunctionTemplate::New(getStarred)->GetFunction());
   target->Set(String::NewSymbol("ready"),
               FunctionTemplate::New(ready)->GetFunction());
   target->Set(String::NewSymbol("player"), NodePlayer::getInstance().getV8Object());

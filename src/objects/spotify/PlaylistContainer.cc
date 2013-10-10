@@ -20,8 +20,9 @@ void PlaylistContainer::loadPlaylists() {
     playlists[i] = std::make_shared<Playlist>(spPlaylist, i);
     sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, playlists[i].get());
   }
+
   sp_playlist* spPlaylist = sp_session_starred_create(application->session);
-  playlists[numPlaylists] = std::make_shared<Playlist>(spPlaylist, numPlaylists);
-  playlists[numPlaylists]->name = std::string("Starred");
-  sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, playlists[numPlaylists].get());
+  starredPlaylist = std::make_shared<Playlist>(spPlaylist, numPlaylists);
+  starredPlaylist->name = std::string("Starred");
+  sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, starredPlaylist.get());
 }
