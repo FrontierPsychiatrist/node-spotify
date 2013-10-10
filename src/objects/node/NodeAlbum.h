@@ -15,6 +15,7 @@ public:
   NodeAlbum(std::shared_ptr<Album> _album) : album(_album) {};
   static void init();
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getCoverBase64(const Arguments& args);
 };
 

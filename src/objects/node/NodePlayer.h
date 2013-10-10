@@ -11,8 +11,8 @@ private:
   int currentSecond;
   bool isPaused;
   static std::unique_ptr<NodePlayer> instance;
-  NodePlayer();
-  NodePlayer(const NodePlayer& other);
+  NodePlayer() {};
+  NodePlayer(const NodePlayer& other) {};
 public:
   static Handle<Value> stop(const Arguments& args);
   static Handle<Value> pause(const Arguments& args);

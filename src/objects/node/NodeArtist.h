@@ -13,6 +13,7 @@ private:
 public:
   NodeArtist(std::shared_ptr<Artist> _artist) : artist(_artist) {};
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static void init();
 };
 
