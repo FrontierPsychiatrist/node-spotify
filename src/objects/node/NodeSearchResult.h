@@ -18,6 +18,7 @@ public:
   }
   static Handle<Value> didYouMean(const Arguments& args);
   static Handle<Value> getTracks(const Arguments& args);
+  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static void init();
 };
 

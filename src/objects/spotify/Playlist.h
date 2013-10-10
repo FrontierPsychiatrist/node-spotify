@@ -17,7 +17,7 @@ public:
   ~Playlist() {
     sp_playlist_release(playlist);
   };
-  Playlist(const Playlist& other) : id(other.id), tracks(other.tracks), playlist(other.playlist), name(other.name) {
+  Playlist(const Playlist& other) : id(other.id), tracks(other.tracks), playlist(other.playlist), name(other.name), link(other.link) {
     sp_playlist_add_ref(playlist);
   }
 
@@ -27,6 +27,7 @@ private:
   std::vector<std::shared_ptr<Track>> tracks;
   sp_playlist* playlist;
   std::string name;
+  std::string link;
   static sp_playlist_callbacks playlistCallbacks;
 };
 

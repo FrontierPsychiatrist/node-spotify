@@ -15,6 +15,7 @@ private:
 public:
   NodeTrack(std::shared_ptr<Track> _track) : track(_track) {};
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getArtists(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getDuration(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getAlbum(Local<String> property, const AccessorInfo& info);

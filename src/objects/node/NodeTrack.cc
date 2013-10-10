@@ -7,6 +7,11 @@ Handle<Value> NodeTrack::getName(Local<String> property, const AccessorInfo& inf
   return String::New(nodeTrack->track->name.c_str());
 }
 
+Handle<Value> NodeTrack::getLink(Local<String> property, const AccessorInfo& info) {
+  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.Holder());
+  return String::New(nodeTrack->track->link.c_str());
+}
+
 Handle<Value> NodeTrack::getDuration(Local<String> property, const AccessorInfo& info) {
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.Holder());
   return Integer::New(nodeTrack->track->duration/1000);
@@ -52,6 +57,7 @@ void NodeTrack::init() {
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
 
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("duration"), getDuration, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artists"), getArtists, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("album"), getAlbum, emptySetter);

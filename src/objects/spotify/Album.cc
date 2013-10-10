@@ -25,7 +25,7 @@ Album::Album(sp_album* _album) : album(_album), coverBase64(0) {
   char linkChar[256];
   sp_link* spLink = sp_link_create_from_album(album);
   sp_link_as_string(spLink, linkChar, 256);
-  link = linkChar;
+  link = std::string(linkChar);
   sp_link_release(spLink);
 };
 

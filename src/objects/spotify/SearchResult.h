@@ -4,16 +4,14 @@
 #include <libspotify/api.h>
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "Track.h"
 
 class SearchResult {
 friend class NodeSearchResult;
 public:
-  SearchResult(sp_search* _search) : search(_search) {
-    sp_search_add_ref(search);
-    didYouMeanText = sp_search_did_you_mean(search);
-  };
+  SearchResult(sp_search* _search);
   SearchResult(const SearchResult& other) : search(other.search), didYouMeanText(other.didYouMeanText) {
     sp_search_add_ref(search);
   };
@@ -23,7 +21,8 @@ public:
   std::vector<std::shared_ptr<Track>> getTracks();
 private:
   sp_search* search;
-  const char* didYouMeanText;
+  std::string didYouMeanText;
+  std::string link;
 };
 
 #endif

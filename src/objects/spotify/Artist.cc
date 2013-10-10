@@ -9,7 +9,7 @@ Artist::Artist(sp_artist* _artist) : artist(_artist) {
   sp_link* spLink = sp_link_create_from_artist(artist);
   char linkChar[256];
   sp_link_as_string(spLink, linkChar, 256);
-  link = linkChar;
+  link = std::string(linkChar);
   sp_link_release(spLink);
 };
 

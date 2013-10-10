@@ -4,7 +4,12 @@
 Handle<Value> NodeSearchResult::didYouMean(const Arguments& args) {
     HandleScope scope;
     NodeSearchResult* nodeSearchResult = node::ObjectWrap::Unwrap<NodeSearchResult>(args.This());
-    return scope.Close(String::New(nodeSearchResult->searchResult->didYouMeanText));
+    return scope.Close(String::New(nodeSearchResult->searchResult->didYouMeanText.c_str()));
+}
+
+Handle<Value> NodeSearchResult::getLink(Local<String> property, const AccessorInfo& info) {
+  NodeSearchResult* nodeSearchResult = node::ObjectWrap::Unwrap<NodeSearchResult>(info.Holder());
+  return String::New(nodeSearchResult->searchResult->link.c_str());
 }
 
 Handle<Value> NodeSearchResult::getTracks(const Arguments& args) {
@@ -22,6 +27,7 @@ Handle<Value> NodeSearchResult::getTracks(const Arguments& args) {
 void NodeSearchResult::init() {
   HandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("SearchResult");
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "didYouMean", didYouMean);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());

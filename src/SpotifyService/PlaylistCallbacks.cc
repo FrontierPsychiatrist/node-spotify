@@ -5,13 +5,22 @@
 #include <vector>
 #include <pthread.h>
 
-void PlaylistCallbacks::playlistNameChange(sp_playlist* spPlaylist, void* userdata) {
+void PlaylistCallbacks::playlistNameChange(sp_playlist* _playlist, void* userdata) {
   Playlist* playlist = static_cast<Playlist*>(userdata);
-  playlist->name = std::string(sp_playlist_name(spPlaylist));
+  playlist->name = std::string(sp_playlist_name(_playlist));
 }
 
 void PlaylistCallbacks::playlistStateChanged(sp_playlist* _playlist, void* userdata) {
-  //Playlist* playlist = static_cast<Playlist*>(userdata);
+  Playlist* playlist = static_cast<Playlist*>(userdata);
+
+  
+  sp_link* spLink = sp_link_create_from_playlist(_playlist);
+  if(spLink != nullptr) {
+    char linkChar[256];
+    sp_link_as_string(spLink, linkChar, 256);
+    playlist->link = std::string(linkChar);
+    sp_link_release(spLink);
+  }
 }
 
 /*void PlaylistCallbacks::tracks_added(sp_playlist* spPlaylist, sp_track *const *tracks, int num_tracks, int position, void *userdata) {

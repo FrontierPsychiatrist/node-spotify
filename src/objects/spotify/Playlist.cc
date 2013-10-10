@@ -11,6 +11,14 @@ Playlist::Playlist(sp_playlist* _playlist, int _id) : id(_id), playlist(_playlis
   } else {
     name = std::string(sp_playlist_name(playlist));  
   }
+
+  sp_link* spLink = sp_link_create_from_playlist(playlist);
+  if(spLink != nullptr) {
+    char linkChar[256];
+    sp_link_as_string(spLink, linkChar, 256);
+    link = std::string(linkChar);
+    sp_link_release(spLink);
+  }
 };
 
 std::vector<std::shared_ptr<Track>> Playlist::getTracks() {

@@ -6,6 +6,17 @@
 
 extern Application* application;
 
+SearchResult::SearchResult(sp_search* _search) : search(_search) {
+  sp_search_add_ref(search);
+  didYouMeanText = std::string(sp_search_did_you_mean(search));
+
+  sp_link* spLink = sp_link_create_from_search(search);
+  char linkChar[256];
+  sp_link_as_string(spLink, linkChar, 256);
+  link = std::string(linkChar);
+  sp_link_release(spLink);
+}
+
 std::vector<std::shared_ptr<Track>> SearchResult::getTracks() {
   std::promise<std::vector<std::shared_ptr<Track>>> pr; 
   auto cb = [&] () {

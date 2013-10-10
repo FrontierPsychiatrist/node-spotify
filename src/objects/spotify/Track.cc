@@ -16,6 +16,12 @@ Track::Track(sp_track* _track) : track(_track) {
   }
   sp_album* spAlbum = sp_track_album(track);
   album = Album::fromCache(spAlbum);
+
+  sp_link* spLink = sp_link_create_from_track(track, 0);
+  char linkChar[256];
+  sp_link_as_string(spLink, linkChar, 256);
+  link = std::string(linkChar);
+  sp_link_release(spLink);
 };
 
 void Track::setStarred(bool starred) {
