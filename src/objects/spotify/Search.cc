@@ -30,6 +30,48 @@ std::vector<std::shared_ptr<Track>> Search::getTracks() {
   return pr.get_future().get();
 }
 
+std::vector<std::shared_ptr<Album>> Search::getAlbums() {
+  std::promise<std::vector<std::shared_ptr<Album>>> pr; 
+  auto cb = [&] () {
+    std::vector<std::shared_ptr<Album>> albums(sp_search_num_albums(search));
+    for(int i = 0; i < (int)albums.size() ; ++i) {
+      albums[i] = Album::fromCache(sp_search_album(search, i));
+    }
+    pr.set_value(albums);
+  };
+  application->spotifyService->executeSpotifyAPIcall(cb);
+  pr.get_future().wait();
+  return pr.get_future().get();
+}
+
+std::vector<std::shared_ptr<Artist>> Search::getArtists() {
+  std::promise<std::vector<std::shared_ptr<Artist>>> pr; 
+  auto cb = [&] () {
+    std::vector<std::shared_ptr<Artist>> artists(sp_search_num_artists(search));
+    for(int i = 0; i < (int)artists.size() ; ++i) {
+      artists[i] = Artist::fromCache(sp_search_artist(search, i));
+    }
+    pr.set_value(artists);
+  };
+  application->spotifyService->executeSpotifyAPIcall(cb);
+  pr.get_future().wait();
+  return pr.get_future().get();
+}
+
+std::vector<std::shared_ptr<Playlist>> Search::getPlaylists() {
+  std::promise<std::vector<std::shared_ptr<Playlist>>> pr; 
+  auto cb = [&] () {
+    std::vector<std::shared_ptr<Playlist>> playlists(sp_search_num_playlists(search));
+    for(int i = 0; i < (int)playlists.size() ; ++i) {
+      playlists[i] = std::make_shared<Playlist>(sp_search_playlist(search, i), -1);
+    }
+    pr.set_value(playlists);
+  };
+  application->spotifyService->executeSpotifyAPIcall(cb);
+  pr.get_future().wait();
+  return pr.get_future().get();
+}
+
 void Search::execute(std::string query, int trackOffset, int trackLimit,
     int albumOffset, int albumLimit,
     int artistOffset, int artistLimit,

@@ -39,6 +39,9 @@ public:
   static Handle<Value> New(const Arguments& args);
   static Handle<Value> execute(const Arguments& args);
   static Handle<Value> getTracks(const Arguments& args);
+  static Handle<Value> getAlbums(const Arguments& args);
+  static Handle<Value> getArtists(const Arguments& args);
+  static Handle<Value> getPlaylists(const Arguments& args);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static void init(Handle<Object> exports);
 };

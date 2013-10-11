@@ -1,5 +1,8 @@
 #include "NodeSearch.h"
 #include "NodeTrack.h"
+#include "NodeAlbum.h"
+#include "NodeArtist.h"
+#include "NodePlaylist.h"
 #include "../../SpotifyService/SearchCallbacks.h"
 #include "../../events.h"
 #include "../../Application.h"
@@ -193,6 +196,42 @@ Handle<Value> NodeSearch::getTracks(const Arguments& args) {
   return scope.Close(outArray);
 }
 
+Handle<Value> NodeSearch::getAlbums(const Arguments& args) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  std::vector<std::shared_ptr<Album>> albums = nodeSearch->search->getAlbums();
+  Local<Array> outArray = Array::New(albums.size());
+  for(int i = 0; i < (int)albums.size(); i++) {
+    NodeAlbum* nodeAlbum = new NodeAlbum(albums[i]);
+    outArray->Set(Number::New(i), nodeAlbum->getV8Object());
+  }
+  return scope.Close(outArray);
+}
+
+Handle<Value> NodeSearch::getArtists(const Arguments& args) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  std::vector<std::shared_ptr<Artist>> artists = nodeSearch->search->getArtists();
+  Local<Array> outArray = Array::New(artists.size());
+  for(int i = 0; i < (int)artists.size(); i++) {
+    NodeArtist* nodeArtist = new NodeArtist(artists[i]);
+    outArray->Set(Number::New(i), nodeArtist->getV8Object());
+  }
+  return scope.Close(outArray);
+}
+
+Handle<Value> NodeSearch::getPlaylists(const Arguments& args) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  std::vector<std::shared_ptr<Playlist>> playlists = nodeSearch->search->getPlaylists();
+  Local<Array> outArray = Array::New(playlists.size());
+  for(int i = 0; i < (int)playlists.size(); i++) {
+    NodePlaylist* nodePlaylist = new NodePlaylist(playlists[i]);
+    outArray->Set(Number::New(i), nodePlaylist->getV8Object());
+  }
+  return scope.Close(outArray);
+}
+
 void NodeSearch::init(Handle<Object> exports) {
 HandleScope scope;
   Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New(New);
@@ -210,6 +249,9 @@ HandleScope scope;
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("didYouMean"), didYouMean, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getAlbums", getAlbums);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getArtists", getArtists);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   exports->Set(String::NewSymbol("Search"), constructor);
   scope.Close(Undefined());
