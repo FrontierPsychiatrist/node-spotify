@@ -10,16 +10,37 @@ using namespace v8;
 class NodeSearch : public NodeWrapped<NodeSearch> {
 private:
   std::shared_ptr<Search> search;
+  std::string searchQuery;
+  int trackOffset, albumOffset, artistOffset, playlistOffset;
+  int trackLimit, albumLimit, artistLimit, playlistLimit;
 public:
-  NodeSearch(std::shared_ptr<Search> _search) : search(_search) {};
-  NodeSearch() {};
-  void setSearch(std::shared_ptr<Search> _search) {
-    search = _search;
-  }
-  static Handle<Value> didYouMean(const Arguments& args);
+  NodeSearch(const char* _query);
+  NodeSearch(const char* _query, int offset);
+  NodeSearch(const char* _query, int offset, int limit);
+  void setSearch(std::shared_ptr<Search> _search);
+
+  static Handle<Value> getTrackOffset(Local<String> property, const AccessorInfo& info);
+  static void setTrackOffset(Local<String> property, Local<Value> value,  const AccessorInfo& info);
+  static Handle<Value> getAlbumOffset(Local<String> property, const AccessorInfo& info);
+  static void setAlbumOffset(Local<String> property, Local<Value> value,  const AccessorInfo& info);
+  static Handle<Value> getArtistOffset(Local<String> property, const AccessorInfo& info);
+  static void setArtistOffset(Local<String> property, Local<Value> value,  const AccessorInfo& info);
+  static Handle<Value> getPlaylistOffset(Local<String> property, const AccessorInfo& info);
+  static void setPlaylistOffset(Local<String> property, Local<Value> value,  const AccessorInfo& info);
+  static Handle<Value> getTrackLimit(Local<String> property, const AccessorInfo& info);
+  static void setTrackLimit(Local<String> property, Local<Value> value,  const AccessorInfo& info);
+  static Handle<Value> getAlbumLimit(Local<String> property, const AccessorInfo& info);
+  static void setAlbumLimit(Local<String> property, Local<Value> value,  const AccessorInfo& info);
+  static Handle<Value> getArtistLimit(Local<String> property, const AccessorInfo& info);
+  static void setArtistLimit(Local<String> property, Local<Value> value,  const AccessorInfo& info);
+  static Handle<Value> getPlaylistLimit(Local<String> property, const AccessorInfo& info);
+  static void setPlaylistLimit(Local<String> property, Local<Value> value,  const AccessorInfo& info);
+  static Handle<Value> didYouMean(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> New(const Arguments& args);
+  static Handle<Value> execute(const Arguments& args);
   static Handle<Value> getTracks(const Arguments& args);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static void init();
+  static void init(Handle<Object> exports);
 };
 
 #endif

@@ -1,9 +1,178 @@
 #include "NodeSearch.h"
 #include "NodeTrack.h"
+#include "../../SpotifyService/SearchCallbacks.h"
+#include "../../events.h"
+#include "../../Application.h"
 
-Handle<Value> NodeSearch::didYouMean(const Arguments& args) {
+extern Application* application;
+
+NodeSearch::NodeSearch(const char* _searchQuery) : searchQuery(_searchQuery), trackOffset(0), albumOffset(0), artistOffset(0), playlistOffset(0),
+  trackLimit(10), albumLimit(10), artistLimit(10), playlistLimit(10) {
+  
+}
+
+NodeSearch::NodeSearch(const char* _searchQuery, int offset) : searchQuery(_searchQuery), trackOffset(offset), albumOffset(offset), artistOffset(offset), playlistOffset(offset),
+  trackLimit(10), albumLimit(10), artistLimit(10), playlistLimit(10) {
+  
+}
+
+NodeSearch::NodeSearch(const char* _searchQuery, int offset, int limit) : searchQuery(_searchQuery), trackOffset(offset), albumOffset(offset), artistOffset(offset), playlistOffset(offset),
+  trackLimit(limit), albumLimit(limit), artistLimit(limit), playlistLimit(limit) {
+  
+}
+
+void NodeSearch::setSearch(std::shared_ptr<Search> _search) {
+  this->search = _search;
+}
+
+Handle<Value> NodeSearch::execute(const Arguments& args) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
+  nodeSearch->on(SEARCH_COMPLETE, callback);
+  auto searchFun = [=] () {
+     sp_search_create(application->session,
+                    nodeSearch->searchQuery.c_str(),
+                    nodeSearch->trackOffset, nodeSearch->trackLimit,
+                    nodeSearch->albumOffset, nodeSearch->albumLimit,
+                    nodeSearch->artistOffset, nodeSearch->artistLimit,
+                    nodeSearch->playlistOffset, nodeSearch->playlistLimit,
+                    SP_SEARCH_STANDARD, //?
+                    SearchCallbacks::searchComplete,
+                    nodeSearch
+                    );
+  };
+  application->spotifyService->executeSpotifyAPIcall(searchFun);
+  return scope.Close(Undefined());
+}
+  
+Handle<Value> NodeSearch::getTrackOffset(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->trackOffset));
+}
+
+void NodeSearch::setTrackOffset(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  nodeSearch->trackOffset = value->ToInteger()->Value();
+  scope.Close(Undefined());
+}
+
+Handle<Value> NodeSearch::getAlbumOffset(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->albumOffset));
+}
+
+void NodeSearch::setAlbumOffset(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  nodeSearch->albumOffset = value->ToInteger()->Value();
+  scope.Close(Undefined());
+}
+
+Handle<Value> NodeSearch::getArtistOffset(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->artistOffset));
+}
+
+void NodeSearch::setArtistOffset(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  nodeSearch->artistOffset = value->ToInteger()->Value();
+  scope.Close(Undefined());
+}
+
+Handle<Value> NodeSearch::getPlaylistOffset(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->playlistOffset));
+}
+
+void NodeSearch::setPlaylistOffset(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  nodeSearch->playlistOffset = value->ToInteger()->Value();
+  scope.Close(Undefined());
+}
+
+Handle<Value> NodeSearch::getTrackLimit(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->trackLimit));
+}
+
+void NodeSearch::setTrackLimit(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  nodeSearch->trackLimit = value->ToInteger()->Value();
+  scope.Close(Undefined());
+}
+
+Handle<Value> NodeSearch::getAlbumLimit(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->albumLimit));
+}
+
+void NodeSearch::setAlbumLimit(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  nodeSearch->albumLimit = value->ToInteger()->Value();
+  scope.Close(Undefined());
+}
+
+Handle<Value> NodeSearch::getArtistLimit(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->artistLimit));
+}
+
+void NodeSearch::setArtistLimit(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  nodeSearch->artistLimit = value->ToInteger()->Value();
+  scope.Close(Undefined());
+}
+
+Handle<Value> NodeSearch::getPlaylistLimit(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->playlistLimit));
+}
+
+void NodeSearch::setPlaylistLimit(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  nodeSearch->playlistLimit = value->ToInteger()->Value();
+  scope.Close(Undefined());
+}
+
+Handle<Value> NodeSearch::New(const Arguments& args) {
+  HandleScope scope;
+  NodeSearch* search;
+  String::Utf8Value searchQuery(args[0]->ToString());
+  if(args.Length() == 1) {
+    search = new NodeSearch(*searchQuery);
+  } else if(args.Length() == 2) {
+    int offset = args[1]->ToInteger()->Value();
+    search = new NodeSearch(*searchQuery, offset);
+  } else if(args.Length() == 3) {
+    int offset = args[1]->ToInteger()->Value();
+    int limit = args[2]->ToInteger()->Value();
+    search = new NodeSearch(*searchQuery, offset, limit);
+  } else {
+    return scope.Close(ThrowException(Exception::Error(String::New("Wrong arguments to search"))));
+  }
+  search->Wrap(args.This());
+  return scope.Close(args.This());
+}
+
+Handle<Value> NodeSearch::didYouMean(Local<String> property, const AccessorInfo& info) {
     HandleScope scope;
-    NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+    NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
     return scope.Close(String::New(nodeSearch->search->didYouMeanText.c_str()));
 }
 
@@ -24,12 +193,24 @@ Handle<Value> NodeSearch::getTracks(const Arguments& args) {
   return scope.Close(outArray);
 }
 
-void NodeSearch::init() {
-  HandleScope scope;
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Search");
+void NodeSearch::init(Handle<Object> exports) {
+HandleScope scope;
+  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New(New);
+  constructorTemplate->SetClassName(String::NewSymbol("Search"));
+  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "execute", execute);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("trackOffset"), getTrackOffset, setTrackOffset);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("trackLimit"), getTrackLimit, setTrackLimit);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("albumOffset"), getAlbumOffset, setAlbumOffset);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("albumLimit"), getAlbumLimit, setAlbumLimit);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artistOffset"), getArtistOffset, setArtistOffset);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artistLimit"), getArtistLimit, setArtistLimit);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistOffset"), getPlaylistOffset, setPlaylistOffset);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistLimit"), getPlaylistLimit, setPlaylistLimit);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("didYouMean"), didYouMean, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "didYouMean", didYouMean);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
+  exports->Set(String::NewSymbol("Search"), constructor);
   scope.Close(Undefined());
 }

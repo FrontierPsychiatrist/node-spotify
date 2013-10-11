@@ -9,7 +9,6 @@ extern Application* application;
 Search::Search(sp_search* _search) : search(_search) {
   sp_search_add_ref(search);
   didYouMeanText = std::string(sp_search_did_you_mean(search));
-
   sp_link* spLink = sp_link_create_from_search(search);
   char linkChar[256];
   sp_link_as_string(spLink, linkChar, 256);
@@ -29,4 +28,11 @@ std::vector<std::shared_ptr<Track>> Search::getTracks() {
   application->spotifyService->executeSpotifyAPIcall(cb);
   pr.get_future().wait();
   return pr.get_future().get();
+}
+
+void Search::execute(std::string query, int trackOffset, int trackLimit,
+    int albumOffset, int albumLimit,
+    int artistOffset, int artistLimit,
+    int playlistOffset, int playlistLimit) {
+  //TODO: implement search here
 }

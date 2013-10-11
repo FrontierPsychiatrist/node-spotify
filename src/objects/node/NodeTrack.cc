@@ -64,4 +64,5 @@ void NodeTrack::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("starred"), getStarred, setStarred);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("popularity"), getPopularity, emptySetter);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
+  scope.Close(Undefined());
 }
