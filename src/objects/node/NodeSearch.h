@@ -36,6 +36,10 @@ public:
   static Handle<Value> getPlaylistLimit(Local<String> property, const AccessorInfo& info);
   static void setPlaylistLimit(Local<String> property, Local<Value> value,  const AccessorInfo& info);
   static Handle<Value> didYouMean(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getTotalTracks(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getTotalAlbums(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getTotalArtists(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getTotalPlaylists(Local<String> property, const AccessorInfo& info);
   static Handle<Value> New(const Arguments& args);
   static Handle<Value> execute(const Arguments& args);
   static Handle<Value> getTracks(const Arguments& args);

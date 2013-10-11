@@ -232,6 +232,30 @@ Handle<Value> NodeSearch::getPlaylists(const Arguments& args) {
   return scope.Close(outArray);
 }
 
+Handle<Value> NodeSearch::getTotalTracks(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->search->totalTracks));
+}
+
+Handle<Value> NodeSearch::getTotalAlbums(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->search->totalAlbums));
+}
+
+Handle<Value> NodeSearch::getTotalArtists(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->search->totalArtists));
+}
+
+Handle<Value> NodeSearch::getTotalPlaylists(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->search->totalPlaylists));
+}
+
 void NodeSearch::init(Handle<Object> exports) {
 HandleScope scope;
   Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New(New);
@@ -248,6 +272,10 @@ HandleScope scope;
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistLimit"), getPlaylistLimit, setPlaylistLimit);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("didYouMean"), didYouMean, emptySetter);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("totalTracks"), getTotalTracks, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("totalAlbums"), getTotalAlbums, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("totalArtists"), getTotalArtists, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("totalPlaylists"), getTotalPlaylists, emptySetter);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getAlbums", getAlbums);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getArtists", getArtists);

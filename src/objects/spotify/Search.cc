@@ -8,6 +8,10 @@ extern Application* application;
 
 Search::Search(sp_search* _search) : search(_search) {
   sp_search_add_ref(search);
+  totalTracks = sp_search_total_tracks(search);
+  totalAlbums = sp_search_total_albums(search);
+  totalArtists = sp_search_total_artists(search);
+  totalPlaylists = sp_search_total_playlists(search);
   didYouMeanText = std::string(sp_search_did_you_mean(search));
   sp_link* spLink = sp_link_create_from_search(search);
   char linkChar[256];

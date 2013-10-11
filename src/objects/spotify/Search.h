@@ -15,7 +15,9 @@ class Search {
 friend class NodeSearch;
 public:
   Search(sp_search* _search);
-  Search(const Search& other) : search(other.search), didYouMeanText(other.didYouMeanText), link(other.link) {
+  Search(const Search& other) : search(other.search), didYouMeanText(other.didYouMeanText), link(other.link),
+    totalTracks(other.totalTracks), totalAlbums(other.totalAlbums), totalArtists(other.totalArtists),
+    totalPlaylists(other.totalPlaylists) {
     sp_search_add_ref(search);
   };
   ~Search() {
@@ -33,6 +35,10 @@ private:
   sp_search* search;
   std::string didYouMeanText;
   std::string link;
+  int totalTracks;
+  int totalAlbums;
+  int totalArtists;
+  int totalPlaylists;
 };
 
 #endif
