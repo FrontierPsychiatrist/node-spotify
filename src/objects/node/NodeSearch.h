@@ -3,18 +3,18 @@
 
 #include <memory>
 #include "NodeWrapped.h"
-#include "../spotify/SearchResult.h"
+#include "../spotify/Search.h"
 
 using namespace v8;
 
-class NodeSearchResult : public NodeWrapped<NodeSearchResult> {
+class NodeSearch : public NodeWrapped<NodeSearch> {
 private:
-  std::shared_ptr<SearchResult> searchResult;
+  std::shared_ptr<Search> search;
 public:
-  NodeSearchResult(std::shared_ptr<SearchResult> _searchResult) : searchResult(_searchResult) {};
-  NodeSearchResult() {};
-  void setSearchResult(std::shared_ptr<SearchResult> _searchResult) {
-    searchResult = _searchResult;
+  NodeSearch(std::shared_ptr<Search> _search) : search(_search) {};
+  NodeSearch() {};
+  void setSearch(std::shared_ptr<Search> _search) {
+    search = _search;
   }
   static Handle<Value> didYouMean(const Arguments& args);
   static Handle<Value> getTracks(const Arguments& args);

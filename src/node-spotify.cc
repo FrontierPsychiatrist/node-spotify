@@ -14,7 +14,7 @@
 #include "objects/node/NodePlayer.h"
 #include "objects/node/NodeAlbum.h"
 #include "objects/node/NodeArtist.h"
-#include "objects/node/NodeSearchResult.h"
+#include "objects/node/NodeSearch.h"
 
 extern "C" {
   #include "audio/audio.h"
@@ -57,9 +57,9 @@ Handle<Value> search(const Arguments& args) {
   String::Utf8Value searchString(args[0]->ToString());
   const char* searchStringChar = *searchString;
   Persistent<Function> fun = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
-  NodeSearchResult* searchResult = new NodeSearchResult();
-  searchResult->on(SEARCH_COMPLETE, fun);
-  auto search = [=] () {
+  NodeSearch* search = new NodeSearch();
+  search->on(SEARCH_COMPLETE, fun);
+  auto searchFun = [=] () {
     sp_search_create(application->session,
                     searchStringChar,
                     0, 20, //track offset + count      
@@ -68,10 +68,10 @@ Handle<Value> search(const Arguments& args) {
                     0, 1, //playlist offset + count
                     SP_SEARCH_STANDARD, //?
                     SearchCallbacks::searchComplete,
-                    searchResult
+                    search
                     );
   };
-  application->spotifyService->executeSpotifyAPIcall(search);
+  application->spotifyService->executeSpotifyAPIcall(searchFun);
   return scope.Close(Undefined());
 }
 
@@ -128,7 +128,7 @@ void init(Handle<Object> target) {
   NodeArtist::init();
   NodePlayer::init();
   NodeAlbum::init();
-  NodeSearchResult::init();
+  NodeSearch::init();
   StaticCallbackSetter<NodePlaylist>::init(target, "playlists");
   application = new Application();
   application->spotifyService = std::unique_ptr<SpotifyService>(new SpotifyService());

@@ -1,4 +1,4 @@
-#include "SearchResult.h"
+#include "Search.h"
 
 #include <future>
 
@@ -6,7 +6,7 @@
 
 extern Application* application;
 
-SearchResult::SearchResult(sp_search* _search) : search(_search) {
+Search::Search(sp_search* _search) : search(_search) {
   sp_search_add_ref(search);
   didYouMeanText = std::string(sp_search_did_you_mean(search));
 
@@ -17,7 +17,7 @@ SearchResult::SearchResult(sp_search* _search) : search(_search) {
   sp_link_release(spLink);
 }
 
-std::vector<std::shared_ptr<Track>> SearchResult::getTracks() {
+std::vector<std::shared_ptr<Track>> Search::getTracks() {
   std::promise<std::vector<std::shared_ptr<Track>>> pr; 
   auto cb = [&] () {
     std::vector<std::shared_ptr<Track>> tracks(sp_search_num_tracks(search));

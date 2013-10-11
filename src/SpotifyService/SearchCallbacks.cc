@@ -1,12 +1,12 @@
 #include "SearchCallbacks.h"
 
 #include "../events.h"
-#include "../objects/spotify/SearchResult.h"
-#include "../objects/node/NodeSearchResult.h"
+#include "../objects/spotify/Search.h"
+#include "../objects/node/NodeSearch.h"
 
 void SearchCallbacks::searchComplete(sp_search* spSearch, void* userdata) {
-  NodeSearchResult* nodeSearchResult = static_cast<NodeSearchResult*>(userdata);
-  auto searchResult = std::make_shared<SearchResult>(spSearch);
-  nodeSearchResult->setSearchResult(searchResult);
-  nodeSearchResult->call(SEARCH_COMPLETE);
+  NodeSearch* nodeSearch = static_cast<NodeSearch*>(userdata);
+  auto search = std::make_shared<Search>(spSearch);
+  nodeSearch->setSearch(search);
+  nodeSearch->call(SEARCH_COMPLETE);
 }

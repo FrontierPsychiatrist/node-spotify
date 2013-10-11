@@ -11,11 +11,11 @@
 
       "src/objects/spotify/Track.cc", "src/objects/spotify/Artist.cc",
       "src/objects/spotify/Playlist.cc", "src/objects/spotify/PlaylistContainer.cc",
-      "src/objects/spotify/Album.cc", "src/objects/spotify/SearchResult.cc",
+      "src/objects/spotify/Album.cc", "src/objects/spotify/Search.cc",
 
       "src/objects/node/NodeTrack.cc", "src/objects/node/NodeArtist.cc",
       "src/objects/node/NodePlaylist.cc", "src/objects/node/NodeAlbum.cc",
-      "src/objects/node/NodePlayer.cc", "src/objects/node/NodeSearchResult.cc"
+      "src/objects/node/NodePlayer.cc", "src/objects/node/NodeSearch.cc"
     ],
     "link_settings" : {
       "libraries": ["-lspotify"]

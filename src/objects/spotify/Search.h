@@ -8,14 +8,14 @@
 
 #include "Track.h"
 
-class SearchResult {
-friend class NodeSearchResult;
+class Search {
+friend class NodeSearch;
 public:
-  SearchResult(sp_search* _search);
-  SearchResult(const SearchResult& other) : search(other.search), didYouMeanText(other.didYouMeanText) {
+  Search(sp_search* _search);
+  Search(const Search& other) : search(other.search), didYouMeanText(other.didYouMeanText) {
     sp_search_add_ref(search);
   };
-  ~SearchResult() {
+  ~Search() {
     sp_search_release(search);
   };
   std::vector<std::shared_ptr<Track>> getTracks();
