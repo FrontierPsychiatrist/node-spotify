@@ -8,6 +8,9 @@
 void PlaylistCallbacks::playlistNameChange(sp_playlist* _playlist, void* userdata) {
   Playlist* playlist = static_cast<Playlist*>(userdata);
   playlist->name = std::string(sp_playlist_name(_playlist));
+  if(playlist->nodeObject != nullptr) {
+    playlist->nodeObject->call(PLAYLIST_RENAMED);
+  }
 }
 
 void PlaylistCallbacks::playlistStateChanged(sp_playlist* _playlist, void* userdata) {

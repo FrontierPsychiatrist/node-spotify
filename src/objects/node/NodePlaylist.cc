@@ -7,7 +7,6 @@ void NodePlaylist::setName(Local<String> property, Local<Value> value, const Acc
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
   String::Utf8Value v8Str(value);
   nodePlaylist->playlist->name = *v8Str;
-  nodePlaylist->call(PLAYLIST_RENAMED);
 }
 
 Handle<Value> NodePlaylist::getName(Local<String> property, const AccessorInfo& info) {

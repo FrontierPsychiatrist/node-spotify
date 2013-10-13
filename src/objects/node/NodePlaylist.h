@@ -12,7 +12,9 @@ class NodePlaylist : public NodeWrappedWithCallbacks<NodePlaylist> {
 private:
   std::shared_ptr<Playlist> playlist;
 public:
-  NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist) {};
+  NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist) {
+    playlist->nodeObject = this;
+  };
   static void setName(Local<String> property, Local<Value> value, const AccessorInfo& info);
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);

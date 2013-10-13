@@ -6,6 +6,8 @@
 #include <memory>
 #include <libspotify/api.h>
 
+#include "../node/V8Callable.h"
+
 #include "Track.h"
 
 class Playlist {
@@ -29,6 +31,7 @@ private:
   std::string name;
   std::string link;
   static sp_playlist_callbacks playlistCallbacks;
+  V8Callable* nodeObject;//TODO: what if this is deleted?
 };
 
 #endif
