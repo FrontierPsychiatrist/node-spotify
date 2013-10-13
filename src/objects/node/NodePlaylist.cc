@@ -39,7 +39,7 @@ Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
 
 void NodePlaylist::init() {
   HandleScope scope;
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Playlist");
+  Handle<FunctionTemplate> constructorTemplate = NodeWrappedWithCallbacks::init("Playlist");
 
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, setName);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);

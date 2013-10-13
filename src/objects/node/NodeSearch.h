@@ -2,12 +2,12 @@
 #define _NODE_SEARCH_RESULT_H
 
 #include <memory>
-#include "NodeWrapped.h"
+#include "NodeWrappedWithCallbacks.h"
 #include "../spotify/Search.h"
 
 using namespace v8;
 
-class NodeSearch : public NodeWrapped<NodeSearch> {
+class NodeSearch : public NodeWrappedWithCallbacks<NodeSearch> {
 private:
   std::shared_ptr<Search> search;
   std::string searchQuery;

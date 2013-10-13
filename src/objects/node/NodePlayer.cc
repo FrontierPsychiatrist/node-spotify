@@ -87,7 +87,7 @@ Handle<Value> NodePlayer::getCurrentSecond(Local<String> property, const Accesso
 
 void NodePlayer::init() {
   HandleScope scope;
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Player");
+  Handle<FunctionTemplate> constructorTemplate = NodeWrappedWithCallbacks::init("Player");
     
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "play", play);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);

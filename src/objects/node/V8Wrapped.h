@@ -1,5 +1,5 @@
-#ifndef _V8_WRAPPED
-#define _V8_WRAPPED
+#ifndef _V8_WRAPPED_H
+#define _V8_WRAPPED_H
 
 #include <v8.h>
 

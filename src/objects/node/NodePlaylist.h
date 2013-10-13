@@ -1,14 +1,14 @@
 #ifndef _NODE_PLAYLIST_H
 #define _NODE_PLAYLIST_H
 
-#include "NodeWrapped.h"
+#include "NodeWrappedWithCallbacks.h"
 #include "../spotify/Playlist.h"
 
 #include <memory>
 
 using namespace v8;
 
-class NodePlaylist : public NodeWrapped<NodePlaylist> {
+class NodePlaylist : public NodeWrappedWithCallbacks<NodePlaylist> {
 private:
   std::shared_ptr<Playlist> playlist;
 public:

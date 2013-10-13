@@ -1,12 +1,12 @@
 #ifndef _NODE_PLAYER_H
 #define _NODE_PLAYER_H
 
-#include "NodeWrapped.h"
+#include "NodeWrappedWithCallbacks.h"
 #include <memory>
 
 using namespace v8;
 
-class NodePlayer : public NodeWrapped<NodePlayer> {
+class NodePlayer : public NodeWrappedWithCallbacks<NodePlayer> {
 private:
   int currentSecond;
   bool isPaused;
