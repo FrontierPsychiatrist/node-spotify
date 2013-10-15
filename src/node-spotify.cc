@@ -72,17 +72,28 @@ Handle<Value> getStarred(const Arguments& args) {
  **/
 void resolveCallback(uv_async_t* handle, int status) {
   HandleScope scope;
-  NodeCallback* nodeCallback = (NodeCallback*)handle->data;
-  Handle<Function>* fun = nodeCallback->function;
+  NodeCallback* callbackStruct = (NodeCallback*)handle->data;
+  Handle<Function>* callback = callbackStruct->function;
 
-  const unsigned int argc = 0;
-  Local<Value> argv[argc] = { };
-  if(!(*fun).IsEmpty() && (*fun)->IsCallable()) {
-    //Check if an object is attached to the struct and if, use it as the scope.
-    if(nodeCallback->object == 0 || nodeCallback->object->getV8Object().IsEmpty())
-      (*fun)->Call(Context::GetCurrent()->Global(), argc, argv);
-    else
-      (*fun)->Call(nodeCallback->object->getV8Object(), argc, argv);
+  //only execute if a callback is attached
+  if(!(*callback).IsEmpty() && (*callback)->IsCallable()) {
+    unsigned int argc;
+    Handle<Value>* argv;
+    //if the callback has a V8 object attach use it as the second argument for the callback
+    //TODO: atm error is constantly undefined.
+    if(callbackStruct->object != nullptr && !callbackStruct->object->getV8Object().IsEmpty()) {
+      argc = 2;
+      argv = new Handle<Value>[2];
+      argv[0] = Undefined();
+      argv[1] = callbackStruct->object->getV8Object();
+    } else {
+      argc = 1;
+      argv = new Handle<Value>[1];
+      argv[0] = Undefined();
+    }
+    
+    (*callback)->Call(Context::GetCurrent()->Global(), argc, argv);
+    delete[] argv;
   }
   scope.Close(Undefined());
 }
