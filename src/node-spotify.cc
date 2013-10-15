@@ -22,7 +22,7 @@ using namespace v8;
 
 Application* application;
 
-Handle<Value> login(const Arguments& args) {
+static Handle<Value> login(const Arguments& args) {
   HandleScope scope;
   String::Utf8Value v8User(args[0]->ToString());
   String::Utf8Value v8Password(args[1]->ToString());
@@ -34,14 +34,14 @@ Handle<Value> login(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
-Handle<Value> logout(const Arguments& args) {
+static Handle<Value> logout(const Arguments& args) {
   HandleScope scope;
   auto callback = [] () { application->spotifyService->logout(); };
   application->spotifyService->executeSpotifyAPIcall(callback);
   return scope.Close(Undefined());
 }
 
-Handle<Value> ready(const Arguments& args) {
+static Handle<Value> ready(const Arguments& args) {
   HandleScope scope;
   Handle<Function> fun = Handle<Function>::Cast(args[0]);
   Persistent<Function> p = Persistent<Function>::New(fun);
@@ -49,7 +49,7 @@ Handle<Value> ready(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
-Handle<Value> getPlaylists(const Arguments& args) {
+static Handle<Value> getPlaylists(const Arguments& args) {
   HandleScope scope;
   std::vector<std::shared_ptr<Playlist>> playlists = application->playlistContainer->getPlaylists();
   Local<Array> nPlaylists = Array::New(playlists.size());
@@ -60,7 +60,7 @@ Handle<Value> getPlaylists(const Arguments& args) {
   return scope.Close(nPlaylists);
 }
 
-Handle<Value> getStarred(const Arguments& args) {
+static Handle<Value> getStarred(const Arguments& args) {
   HandleScope scope;
   NodePlaylist* starredPlaylist = new NodePlaylist(application->playlistContainer->starredPlaylist);
   return scope.Close(starredPlaylist->getV8Object());
@@ -70,7 +70,7 @@ Handle<Value> getStarred(const Arguments& args) {
  * Handle a NodeCallback sent to this thread. 
  * The handle should contain a NodeCallback struct
  **/
-void resolveCallback(uv_async_t* handle, int status) {
+static void resolveCallback(uv_async_t* handle, int status) {
   HandleScope scope;
   NodeCallback* callbackStruct = (NodeCallback*)handle->data;
   Handle<Function>* callback = callbackStruct->function;
@@ -98,7 +98,7 @@ void resolveCallback(uv_async_t* handle, int status) {
   scope.Close(Undefined());
 }
 
-Handle<Value> rememberedUser(const Arguments& args) {
+static Handle<Value> rememberedUser(const Arguments& args) {
   HandleScope scope;
   if(application->spotifyService->rememberedUser != 0) {
     return scope.Close(String::New(application->spotifyService->rememberedUser));
