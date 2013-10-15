@@ -13,12 +13,23 @@
 
 extern Application* application;
 
+/**
+ * This base class is for javascript objects that should provide callbacks.
+ * The callbacks can be set/unset from javascript via on(name, function) / off(name)
+ * There is also the possibility to attach static callbacks, i.e. callbacks that are
+ * the same for all instances of a subclass.
+ *
+ * The callbacks can be called from C++ via the call(name) method. First instance callbacks
+ * then static callbacks will be searched for a callback function. To assure callbacks are called
+ * from within the node.js thread libuv is used to send an event to the main loop.
+ * The function to handle these events is in node-spotify.cc
+ **/
 template<class T>
 class NodeWrappedWithCallbacks : public NodeWrapped<T>, public V8Callable {
 template <class S> friend class StaticCallbackSetter;
 public:
   /**
-   * To set a callback from within C++
+   * To set a callback from within C++.
   **/
   void on(std::string name, v8::Handle<v8::Function> callback) {
     v8::HandleScope scope;
@@ -28,6 +39,7 @@ public:
 
   /**
    * Save a Javascript callback under a certain name.
+   * This method will be called from Javascript.
    **/
   static v8::Handle<v8::Value> on(const v8::Arguments& args) {
     v8::HandleScope scope;
@@ -74,7 +86,7 @@ public:
     }
     
     if(fun != 0) {
-      //Trigger the nodeJS eventloop
+      //Trigger the nodeJS eventloop. See node-spotify.cc for the recieving function.
       NodeCallback* nodeCallback = new NodeCallback();
       nodeCallback->object = this;
       nodeCallback->function = fun;
@@ -94,6 +106,7 @@ private:
   static std::map<std::string, v8::Persistent<v8::Function>> staticCallbacks;
 };
 
+//This field should be static per template, not for all NodeWrappedWithCallbacks subclasses.
 template <class T> std::map<std::string, v8::Persistent<v8::Function>> NodeWrappedWithCallbacks<T>::staticCallbacks;
 
 #endif

@@ -10,8 +10,7 @@
 #include "V8Wrapped.h"
 
 /**
- * A class used as a base class for wrapping objects to node objects
- * 
+ * A class used as a base class for wrapping objects to node objects.
  **/
 template <class T>
 class NodeWrapped : public node::ObjectWrap, public V8Wrapped {
@@ -30,10 +29,15 @@ public:
     return scope.Close(handle_);
   }
 protected:
-  static void emptySetter(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {};
-  static v8::Persistent<v8::Function> constructor;
   /**
-   * Basic init method for a wrapped node object. Provides a callback setter "on" and sets the classname.
+   * A setter that does nothing which is useful for defining properties that should be read only
+   **/
+  static void emptySetter(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {};
+
+  static v8::Persistent<v8::Function> constructor;
+
+  /**
+   * Basic init method for a wrapped node object.
    */
   static v8::Handle<v8::FunctionTemplate> init(const char* className) {
     v8::Local<v8::FunctionTemplate> constructorTemplate = v8::FunctionTemplate::New();
@@ -43,5 +47,6 @@ protected:
   }
 };
 
+//The constructor must be static per template instance not fro all NodeWrapped subclasses.
 template <class T> v8::Persistent<v8::Function> NodeWrapped<T>::constructor;
 #endif
