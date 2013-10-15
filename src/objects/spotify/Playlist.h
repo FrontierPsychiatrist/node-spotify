@@ -19,7 +19,8 @@ public:
   ~Playlist() {
     sp_playlist_release(playlist);
   };
-  Playlist(const Playlist& other) : id(other.id), tracks(other.tracks), playlist(other.playlist), name(other.name), link(other.link) {
+  Playlist(const Playlist& other) : id(other.id), tracks(other.tracks), playlist(other.playlist), name(other.name),
+    link(other.link), nodeObject(other.nodeObject) {
     sp_playlist_add_ref(playlist);
   }
 
@@ -31,7 +32,7 @@ private:
   std::string name;
   std::string link;
   static sp_playlist_callbacks playlistCallbacks;
-  V8Callable* nodeObject;//TODO: what if this is deleted?
+  V8Callable* nodeObject;
 };
 
 #endif

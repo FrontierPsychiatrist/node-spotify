@@ -15,7 +15,6 @@ void PlaylistCallbacks::playlistNameChange(sp_playlist* _playlist, void* userdat
 
 void PlaylistCallbacks::playlistStateChanged(sp_playlist* _playlist, void* userdata) {
   Playlist* playlist = static_cast<Playlist*>(userdata);
-
   
   sp_link* spLink = sp_link_create_from_playlist(_playlist);
   if(spLink != nullptr) {
