@@ -6,7 +6,7 @@ extern Application* application;
 
 void PlaylistContainer::loadPlaylists() {
   int numPlaylists = sp_playlistcontainer_num_playlists(playlistContainer);
-  playlists.resize(numPlaylists + 1);
+  playlists.resize(numPlaylists);
 
   Playlist::playlistCallbacks.playlist_state_changed = &PlaylistCallbacks::playlistStateChanged;
   Playlist::playlistCallbacks.playlist_renamed = &PlaylistCallbacks::playlistNameChange;
