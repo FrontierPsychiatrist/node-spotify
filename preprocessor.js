@@ -1,17 +1,19 @@
-//Writes the events to a header file for usage in C/C++
-var events = require('./frontend/app/scripts/services/events');
+//writes the events.h file to a JSON object
 var fs = require('fs');
 
-var writeStream = fs.createWriteStream('src/events.h', { flags: 'w'});
+var writeStream = fs.createWriteStream('events.js', {flags: 'w'});
 
-function writeEventsToFile(writeStream) {
-	writeStream.write('#ifndef _EVENTS_H\n#define _EVENTS_H\n');
-	for (var event in events) {
-		var define = '#define ' + event.toUpperCase() + ' "' + event + '"\n';
-		writeStream.write(define);
-	}
-	writeStream.write('#endif');
-	writeStream.end();
-}
-
-writeEventsToFile(writeStream);
+fs.readFile('src/events.h', 'utf8', function(err, data) {
+  if (err) throw err;
+  var events = {};
+  var lines = data.split('\n');
+  for(var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var tokens = line.split(' ');
+    if(tokens.length == 3) { //only if the line is in the format #define EVENT_NAME "event_name"
+      var event = tokens[1].toLowerCase();
+      events[event] = event;
+    }
+  }
+  writeStream.write(JSON.stringify(events));
+});

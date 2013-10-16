@@ -5,6 +5,7 @@ logindata.c
 # output
 build
 tmp
+events.js
 
 #vim
 *.swp
