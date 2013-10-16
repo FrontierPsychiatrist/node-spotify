@@ -1,7 +1,7 @@
 #include "SessionCallbacks.h"
 
 #include "../Application.h"
-#include "../NodeCallback.h"
+
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/node/NodePlayer.h"
 #include "../events.h"
@@ -11,15 +11,17 @@ extern "C" {
   #include "../audio/audio.h"
 }
 
-#include <uv.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
 
 extern Application* application;
 
-//TODO!
-extern int notifyDo;
+static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
+
+std::unique_ptr<uv_timer_t> SessionCallbacks::timer;
+std::unique_ptr<uv_async_t> SessionCallbacks::notifyHandle;
+v8::Handle<v8::Function> SessionCallbacks::loginCallback;
 
 namespace spotify {
 //TODO
@@ -27,28 +29,54 @@ int framesReceived = 0;
 int currentSecond = 0;
 }
 
-static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
+void SessionCallbacks::init() {
+  timer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
+  notifyHandle = std::unique_ptr<uv_async_t>(new uv_async_t());
+  uv_async_init(uv_default_loop(), notifyHandle.get(), handleNotify);
+  uv_timer_init(uv_default_loop(), timer.get());
+}
 
+/**
+ * If the timer has run out this method will be called.
+ **/
+void SessionCallbacks::processEvents(uv_timer_t* timer, int status) {
+  handleNotify(notifyHandle.get(), 0);
+}
+
+/**
+ * This is a callback function that will be called by spotify.
+ **/
 void SessionCallbacks::notifyMainThread(sp_session* session) {
-  pthread_mutex_lock(&application->spotifyService->notifyMutex);
-  notifyDo = 1;
-  pthread_cond_signal(&application->spotifyService->notifyCondition);
-  pthread_mutex_unlock(&application->spotifyService->notifyMutex);
+  //effectively calls handleNotify in another thread
+  uv_async_send(notifyHandle.get());
+}
+
+/**
+ * async callback handle function for process events.
+ * This function will always be called in the thread in which the sp_session was created.
+ **/
+void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
+  uv_timer_stop(timer.get()); //a new timeout will be set at the end
+  int nextTimeout = 0;
+  while(nextTimeout == 0) {
+    sp_session_process_events(application->session, &nextTimeout);  
+  }
+  uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
 }
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   if(SP_ERROR_OK != error) {
     std::cout << "Error logging in: " << sp_error_message(error) << std::endl;
-    spotifyService->loggedOut = 1;
+    spotifyService->loggedOut = true;
     return;
   } else {
     std::cout << "Logged in" << std::endl;
   }
 
   //The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
-  rootPlaylistContainerCallbacks.container_loaded = &rootPlaylistContainerLoaded;
-  sp_playlistcontainer *pc = sp_session_playlistcontainer(session);
+  rootPlaylistContainerCallbacks.container_loaded = &SessionCallbacks::rootPlaylistContainerLoaded;
+  sp_playlistcontainer *pc = sp_session_playlistcontainer(application->session);
   application->playlistContainer = std::make_shared<PlaylistContainer>(pc);
   sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, application->playlistContainer.get());
 }
@@ -63,11 +91,12 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlayl
   PlaylistContainer* playlistContainer = static_cast<PlaylistContainer*>(userdata);
   playlistContainer->loadPlaylists();
   
-  //Trigger the login complete callback.
-  NodeCallback* nodeCallback = new NodeCallback();
-  nodeCallback->function = &application->loginCallback;
-  application->asyncHandle.data  = (void*)nodeCallback;
-  uv_async_send(&application->asyncHandle);
+  //Trigger the login complete callback
+  if(!loginCallback.IsEmpty()) {
+    unsigned int argc = 0;
+    v8::Handle<v8::Value> argv[0];
+    loginCallback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+  }
 }
 
 void SessionCallbacks::end_of_track(sp_session* session) {
@@ -96,7 +125,7 @@ int SessionCallbacks::music_delivery(sp_session *sess, const sp_audioformat *for
    
   pthread_mutex_lock(&af->mutex);
 
-  /* Buffer one second of audio */
+  // Buffer one second of audio 
   if (af->qlen > format->sample_rate) {
     pthread_mutex_unlock(&af->mutex);
     return 0;

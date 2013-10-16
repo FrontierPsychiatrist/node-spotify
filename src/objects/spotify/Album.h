@@ -3,27 +3,26 @@
 
 #include <libspotify/api.h>
 #include <string>
-#include <map>
-#include <memory>
 
 class Album {
-friend class NodeAlbum;
 public:
   Album(sp_album* _album);
   ~Album() {
     sp_album_release(album);
+    if(cover != nullptr) {
+      sp_image_release(cover);
+    }
   };
-  Album(const Album& other) : name(other.name), link(other.link), album(other.album), coverBase64(other.coverBase64) {
+  Album(const Album& other) : album(other.album), cover(other.cover) {
     sp_album_add_ref(album);
+    sp_image_add_ref(cover);
   };
-  static std::shared_ptr<Album> fromCache(sp_album* album);
-  static void clearCache();
+  std::string name();
+  std::string link();
+  std::string coverBase64();
 private:
-  std::string name;
-  std::string link;
   sp_album* album;
-  char* coverBase64;
-  static std::map<sp_album*, std::shared_ptr<Album>> cache;
+  sp_image* cover;
 };
 
 #endif

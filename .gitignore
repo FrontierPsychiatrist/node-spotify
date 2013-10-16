@@ -1,6 +1,7 @@
 # Sourcecode not to commit
 appkey.c
 logindata.c
+loginData.js
 
 # output
 build
@@ -18,3 +19,7 @@ events.js
 #IntelliJ
 *.iml
 .idea
+
+# other files
+executes.txt
+TODOS

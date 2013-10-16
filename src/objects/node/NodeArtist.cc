@@ -2,12 +2,12 @@
 
 Handle<Value> NodeArtist::getName(Local<String> property, const AccessorInfo& info) {
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-  return String::New(nodeArtist->artist->name.c_str());
+  return String::New(nodeArtist->artist->name().c_str());
 }
 
 Handle<Value> NodeArtist::getLink(Local<String> property, const AccessorInfo& info) {
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-  return String::New(nodeArtist->artist->link.c_str());
+  return String::New(nodeArtist->artist->link().c_str());
 }
 
 void NodeArtist::init() {

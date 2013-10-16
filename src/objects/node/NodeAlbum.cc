@@ -2,21 +2,18 @@
 
 Handle<Value> NodeAlbum::getName(Local<String> property, const AccessorInfo& info) {
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
-  return String::New(nodeAlbum->album->name.c_str());
+  return String::New(nodeAlbum->album->name().c_str());
 }
 
 Handle<Value> NodeAlbum::getLink(Local<String> property, const AccessorInfo& info) {
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
-  return String::New(nodeAlbum->album->link.c_str());
+  return String::New(nodeAlbum->album->link().c_str());
 }
 
 Handle<Value> NodeAlbum::getCoverBase64(const Arguments& args) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(args.This());
-  if(nodeAlbum->album->coverBase64 != 0) {
-    return scope.Close(String::New(nodeAlbum->album->coverBase64));
-  }
-  return scope.Close(Undefined());
+  return scope.Close(String::New(nodeAlbum->album->coverBase64().c_str()));
 }
 
 void NodeAlbum::init() {

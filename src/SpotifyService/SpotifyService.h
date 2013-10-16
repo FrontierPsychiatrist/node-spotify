@@ -3,8 +3,6 @@
 
 #include <uv.h>
 #include <string>
-#include <functional>
-#include <pthread.h>
 #include <libspotify/api.h>
 
 class SpotifyService {
@@ -15,16 +13,14 @@ public:
 
   void login(std::string username, std::string password, bool rememberMe, bool withRemembered);
   void logout();
-  void executeSpotifyAPIcall(std::function<void()> fun);
 
-  pthread_mutex_t notifyMutex;
-  pthread_cond_t notifyCondition;
-  int loggedOut;
-  char* rememberedUser;
-
+  bool loggedOut;
   sp_session* spotifySession;
 private:
-  pthread_t spotifyThread;
+  sp_session* createSession();
+
+  static sp_session_config sessionConfig;
+  static sp_session_callbacks sessionCallbacks;
 };
 
 #endif

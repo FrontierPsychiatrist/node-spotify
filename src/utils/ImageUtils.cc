@@ -4,11 +4,8 @@
 #include "base64.h"
 
 namespace ImageUtils {
-  void imageLoadedCallback(sp_image* image, void* rawPointerToBase64Image) {
-    char** pointerToBase64Image = (char**)rawPointerToBase64Image;
-    *pointerToBase64Image = convertImageToBase64(image);
-    sp_image_remove_load_callback(image, &imageLoadedCallback, rawPointerToBase64Image);
-    sp_image_release(image);
+  void imageLoadedCallback(sp_image* image, void* imagePromise) {
+    sp_image_remove_load_callback(image, &imageLoadedCallback, imagePromise);
   }
 
   char* convertImageToBase64(sp_image* image) {

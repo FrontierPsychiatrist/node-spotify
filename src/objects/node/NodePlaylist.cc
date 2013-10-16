@@ -4,19 +4,17 @@
 #include "NodeTrack.h"
 
 void NodePlaylist::setName(Local<String> property, Local<Value> value, const AccessorInfo& info) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
-  String::Utf8Value v8Str(value);
-  nodePlaylist->playlist->name = *v8Str;
+
 }
 
 Handle<Value> NodePlaylist::getName(Local<String> property, const AccessorInfo& info) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
-  return String::New(nodePlaylist->playlist->name.c_str());
+  return String::New(nodePlaylist->playlist->name().c_str());
 }
 
 Handle<Value> NodePlaylist::getLink(Local<String> property, const AccessorInfo& info) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
-  return String::New(nodePlaylist->playlist->link.c_str());
+  return String::New(nodePlaylist->playlist->link().c_str());
 }
 
 Handle<Value> NodePlaylist::getId(Local<String> property, const AccessorInfo& info) {

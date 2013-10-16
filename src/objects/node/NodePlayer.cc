@@ -19,34 +19,25 @@ extern int currentSecond;
 Handle<Value> NodePlayer::pause(const Arguments& args) {
   HandleScope scope;
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
-  auto cb = [=] () { 
-    sp_session_player_play(application->session, 0);
-    audio_fifo_flush(&application->audio_fifo);
-    nodePlayer->isPaused = true;
-  };
-  application->spotifyService->executeSpotifyAPIcall(cb);
+  sp_session_player_play(application->session, 0);
+  audio_fifo_flush(&application->audio_fifo);
+  nodePlayer->isPaused = true;
   return scope.Close(Undefined());
 }
 
 Handle<Value> NodePlayer::stop(const Arguments& args) {
   HandleScope scope;
-  auto cb = [=] () { 
-    sp_session_player_unload(application->session);
-  };
-  application->spotifyService->executeSpotifyAPIcall(cb);
+  sp_session_player_unload(application->session);
   return scope.Close(Undefined());
 }
 
 Handle<Value> NodePlayer::resume(const Arguments& args) {
   HandleScope scope;
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
-    auto cb = [=] () { 
-    if(nodePlayer->isPaused) {
-      sp_session_player_play(application->session, 1);
-      nodePlayer->isPaused = false;
-    }
-  };
-  application->spotifyService->executeSpotifyAPIcall(cb);
+  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());  
+  if(nodePlayer->isPaused) {
+    sp_session_player_play(application->session, 1);
+    nodePlayer->isPaused = false;
+  }
   return scope.Close(Undefined());
 }
 
@@ -55,21 +46,15 @@ Handle<Value> NodePlayer::play(const Arguments& args) {
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args[0]->ToObject());
-  auto cb = [=] () {
-    sp_session_player_load(application->session, nodeTrack->track->track);
-    sp_session_player_play(application->session, 1);
-  };
-  application->spotifyService->executeSpotifyAPIcall(cb);
+  sp_session_player_load(application->session, nodeTrack->track->track);
+  sp_session_player_play(application->session, 1);  
   return scope.Close(Undefined());
 }
 
 Handle<Value> NodePlayer::seek(const Arguments& args) {
   HandleScope scope;
   int second = args[0]->ToInteger()->Value();
-  auto cb = [=] () {
-    sp_session_player_seek(application->session, second*1000);
-  };
-  application->spotifyService->executeSpotifyAPIcall(cb);
+  sp_session_player_seek(application->session, second*1000);
   spotify::currentSecond = second;
   return scope.Close(Undefined());
 }

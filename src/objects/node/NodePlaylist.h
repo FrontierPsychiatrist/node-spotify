@@ -16,7 +16,9 @@ public:
     playlist->nodeObject = this;
   };
   ~NodePlaylist() {
-    playlist->nodeObject = nullptr;
+    if(playlist->nodeObject == this) {
+      playlist->nodeObject = nullptr;
+    }
   }
   static void setName(Local<String> property, Local<Value> value, const AccessorInfo& info);
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);

@@ -8,7 +8,6 @@
 #include <node.h>
 #include <string>
 
-#include "../../NodeCallback.h"
 #include "../../Application.h"
 
 extern Application* application;
@@ -61,38 +60,42 @@ public:
     return scope.Close(v8::Integer::New(deleted));
   }
 
+  void call(std::string name, v8::Handle<v8::Value> value) {
+    std::map< std::string, v8::Persistent<v8::Function> >::iterator it;
+    it = callbacks.find(name);
+
+    v8::Handle<v8::Function> callback;
+
+    //Check if a callback for the given name was found in this object
+    if(it != callbacks.end()) {
+      //Get the adress of the callback function and send it to the node thread
+      //This needs to be the adress from the map element, otherwise we would pass the adress of a local and it fails on the node side.
+      callback = it->second;
+    } else {
+      //search static callbacks
+      it = staticCallbacks.find(name);
+      if(it != staticCallbacks.end()) {
+        callback = it->second;
+      }
+    }
+    
+    if(!callback.IsEmpty() && callback->IsCallable()) {
+      unsigned int argc = 2;
+      v8::Handle<v8::Value> argv[2];
+      //TODO: atm error is constantly undefined.
+      argv[0] = v8::Undefined();
+      argv[1] = value;
+      callback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+    }
+  }
+
   /**
    * Call a Javascript callback by name. The callback will be executed in the nodeJS thread.
    * First, object wide callbacks will be searched, then, class wide callbacks.
    * If no callback is found, nothing happens.
    **/
   void call(std::string name)  {
-    std::map< std::string, v8::Persistent<v8::Function> >::iterator it;
-    it = callbacks.find(name);
-
-    v8::Persistent<v8::Function>* fun = 0;
-
-    //Check if a callback for the given name was found in this object
-    if(it != callbacks.end()) {
-      //Get the adress of the callback function and send it to the node thread
-      //This needs to be the adress from the map element, otherwise we would pass the adress of a local and it fails on the node side.
-      fun = &it->second;
-    } else {
-      //search static callbacks
-      it = staticCallbacks.find(name);
-      if(it != staticCallbacks.end()) {
-        fun = &it->second;
-      }
-    }
-    
-    if(fun != 0) {
-      //Trigger the nodeJS eventloop. See node-spotify.cc for the recieving function.
-      NodeCallback* nodeCallback = new NodeCallback();
-      nodeCallback->object = this;
-      nodeCallback->function = fun;
-      application->asyncHandle.data  = (void*)nodeCallback;
-      uv_async_send(&application->asyncHandle);
-    }
+    call(name, this->getV8Object());
   }
 protected:
   static v8::Handle<v8::FunctionTemplate> init(const char* className) {

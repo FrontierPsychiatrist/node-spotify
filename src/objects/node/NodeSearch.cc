@@ -33,19 +33,16 @@ Handle<Value> NodeSearch::execute(const Arguments& args) {
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
   nodeSearch->on(SEARCH_COMPLETE, callback);
-  auto searchFun = [=] () {
-     sp_search_create(application->session,
-                    nodeSearch->searchQuery.c_str(),
-                    nodeSearch->trackOffset, nodeSearch->trackLimit,
-                    nodeSearch->albumOffset, nodeSearch->albumLimit,
-                    nodeSearch->artistOffset, nodeSearch->artistLimit,
-                    nodeSearch->playlistOffset, nodeSearch->playlistLimit,
-                    SP_SEARCH_STANDARD, //?
-                    SearchCallbacks::searchComplete,
-                    nodeSearch
-                    );
-  };
-  application->spotifyService->executeSpotifyAPIcall(searchFun);
+  sp_search_create(application->session,
+                  nodeSearch->searchQuery.c_str(),
+                  nodeSearch->trackOffset, nodeSearch->trackLimit,
+                  nodeSearch->albumOffset, nodeSearch->albumLimit,
+                  nodeSearch->artistOffset, nodeSearch->artistLimit,
+                  nodeSearch->playlistOffset, nodeSearch->playlistLimit,
+                  SP_SEARCH_STANDARD, //?
+                  SearchCallbacks::searchComplete,
+                  nodeSearch
+                  );
   return scope.Close(Undefined());
 }
   
@@ -176,12 +173,12 @@ Handle<Value> NodeSearch::New(const Arguments& args) {
 Handle<Value> NodeSearch::didYouMean(Local<String> property, const AccessorInfo& info) {
     HandleScope scope;
     NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-    return scope.Close(String::New(nodeSearch->search->didYouMeanText.c_str()));
+    return scope.Close(String::New(nodeSearch->search->didYouMeanText().c_str()));
 }
 
 Handle<Value> NodeSearch::getLink(Local<String> property, const AccessorInfo& info) {
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-  return String::New(nodeSearch->search->link.c_str());
+  return String::New(nodeSearch->search->link().c_str());
 }
 
 Handle<Value> NodeSearch::getTracks(const Arguments& args) {
