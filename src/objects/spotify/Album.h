@@ -18,6 +18,7 @@ public:
   };
   void processImage(sp_image* image);
   static std::shared_ptr<Album> fromCache(sp_album* album);
+  static void clearCache();
 private:
   std::string name;
   std::string link;

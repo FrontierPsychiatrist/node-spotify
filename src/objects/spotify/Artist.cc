@@ -13,6 +13,10 @@ Artist::Artist(sp_artist* _artist) : artist(_artist) {
   sp_link_release(spLink);
 };
 
+void Artist::clearCache() {
+  Artist::cache.clear();
+}
+
 std::shared_ptr<Artist> Artist::fromCache(sp_artist* artist) {
   auto it = Artist::cache.find(artist);
   if(it != Artist::cache.end()) {

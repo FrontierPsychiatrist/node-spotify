@@ -7,8 +7,11 @@
 #include <mach/mach.h>
 #endif
 
-#include "SessionCallbacks.h"
 #include <iostream>
+
+#include "SessionCallbacks.h"
+#include "../objects/spotify/Album.h"
+#include "../objects/spotify/Artist.h"
 
 extern uint8_t spotifyAppkey[];
 extern int spotifyAppkeySize;
@@ -144,6 +147,9 @@ void SpotifyService::login(std::string username, std::string password, bool reme
 }
 
 void SpotifyService::logout() {
+  application->playlistContainer.reset();
+  Artist::clearCache();
+  Album::clearCache();
   sp_session_logout(spotifySession);
 }
 

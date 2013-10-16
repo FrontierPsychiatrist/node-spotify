@@ -29,6 +29,10 @@ Album::Album(sp_album* _album) : album(_album), coverBase64(0) {
   sp_link_release(spLink);
 };
 
+void Album::clearCache() {
+  Album::cache.clear();
+}
+
 void Album::processImage(sp_image* image) {
   size_t imageSize;
   int base64Size;

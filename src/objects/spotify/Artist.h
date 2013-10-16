@@ -17,6 +17,7 @@ public:
     sp_artist_release(artist);
   };
   static std::shared_ptr<Artist> fromCache(sp_artist* artist);
+  static void clearCache();
 private:
   std::string name;
   std::string link;
