@@ -9,6 +9,8 @@
       "src/SpotifyService/SessionCallbacks.cc",
       "src/SpotifyService/SearchCallbacks.cc",
 
+      "src/utils/ImageUtils.cc",
+
       "src/objects/spotify/Track.cc", "src/objects/spotify/Artist.cc",
       "src/objects/spotify/Playlist.cc", "src/objects/spotify/PlaylistContainer.cc",
       "src/objects/spotify/Album.cc", "src/objects/spotify/Search.cc",

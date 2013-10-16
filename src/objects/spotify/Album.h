@@ -16,7 +16,6 @@ public:
   Album(const Album& other) : name(other.name), link(other.link), album(other.album), coverBase64(other.coverBase64) {
     sp_album_add_ref(album);
   };
-  void processImage(sp_image* image);
   static std::shared_ptr<Album> fromCache(sp_album* album);
   static void clearCache();
 private:

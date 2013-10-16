@@ -107,7 +107,7 @@ static Handle<Value> rememberedUser(const Arguments& args) {
   }
 }
 
-void init(Handle<Object> target) {
+static void init(Handle<Object> target) {
   NodePlaylist::init();
   NodeTrack::init();
   NodeArtist::init();
