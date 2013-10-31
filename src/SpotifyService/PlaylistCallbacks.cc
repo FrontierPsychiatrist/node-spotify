@@ -32,7 +32,7 @@ void PlaylistCallbacks::playlistStateChanged(sp_playlist* _playlist, void* userd
 }
 
 void PlaylistCallbacks::tracks_moved(sp_playlist* playlist, const int *tracks, int num_tracks, int new_position, void *userdata) {
-  
+
 }*/
 
 /*void PlaylistCallbacks::tracks_removed(sp_playlist* spPlaylist, const int *tracks, int num_tracks, void *userdata) {
@@ -49,9 +49,9 @@ void PlaylistCallbacks::tracks_moved(sp_playlist* playlist, const int *tracks, i
 }*/
 
 /*void playlist_update_in_progress(sp_playlist *pl, bool done, void *userdata) {
-  std::cout << "Update in progress" << std::endl; 
+  std::cout << "Update in progress" << std::endl;
 }
 
 void track_created_changed(sp_playlist *pl, int position, sp_user *user, int when, void *userdata) {
-  std::cout << "Track created change" << std::endl;  
+  std::cout << "Track created change" << std::endl;
 }*/

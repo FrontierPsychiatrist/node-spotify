@@ -17,7 +17,7 @@ extern "C" {
 
 extern Application* application;
 
-static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks; 
+static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks;
 
 std::unique_ptr<uv_timer_t> SessionCallbacks::timer;
 std::unique_ptr<uv_async_t> SessionCallbacks::notifyHandle;
@@ -59,7 +59,7 @@ void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
   uv_timer_stop(timer.get()); //a new timeout will be set at the end
   int nextTimeout = 0;
   while(nextTimeout == 0) {
-    sp_session_process_events(application->session, &nextTimeout);  
+    sp_session_process_events(application->session, &nextTimeout);
   }
   uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
 }
@@ -90,7 +90,7 @@ void SessionCallbacks::loggedOut(sp_session* session) {
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
   PlaylistContainer* playlistContainer = static_cast<PlaylistContainer*>(userdata);
   playlistContainer->loadPlaylists();
-  
+
   //Trigger the login complete callback
   if(!loginCallback.IsEmpty()) {
     unsigned int argc = 0;
@@ -122,10 +122,10 @@ int SessionCallbacks::music_delivery(sp_session *sess, const sp_audioformat *for
 
   if (num_frames == 0)
     return 0; // Audio discontinuity, do nothing
-   
+
   pthread_mutex_lock(&af->mutex);
 
-  // Buffer one second of audio 
+  // Buffer one second of audio
   if (af->qlen > format->sample_rate) {
     pthread_mutex_unlock(&af->mutex);
     return 0;

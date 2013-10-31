@@ -85,7 +85,7 @@ static void init(Handle<Object> target) {
   NodeAlbum::init();
   NodeSearch::init(target);
   StaticCallbackSetter<NodePlaylist>::init(target, "playlists");
-  
+
   SessionCallbacks::init();
   application = new Application();
   application->spotifyService = std::unique_ptr<SpotifyService>(new SpotifyService());

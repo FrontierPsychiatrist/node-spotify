@@ -30,7 +30,7 @@ Handle<Value> NodeTrack::getArtists(Local<String> property, const AccessorInfo& 
     NodeArtist* nodeArtist = new NodeArtist(nodeTrack->track->artists()[i]);
     jsArtists->Set(Number::New(i), nodeArtist->getV8Object() );
   }
-  return scope.Close(jsArtists); 
+  return scope.Close(jsArtists);
 }
 
 Handle<Value> NodeTrack::getAlbum(Local<String> property, const AccessorInfo& info) {

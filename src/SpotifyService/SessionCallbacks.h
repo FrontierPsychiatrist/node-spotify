@@ -8,7 +8,7 @@
 
 class SessionCallbacks {
 public:
-  static void notifyMainThread(sp_session* session); 
+  static void notifyMainThread(sp_session* session);
   static void loggedIn(sp_session* session, sp_error error);
   static void loggedOut(sp_session* session);
   static void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata);

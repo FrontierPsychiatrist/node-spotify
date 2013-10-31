@@ -78,7 +78,7 @@ public:
         callback = it->second;
       }
     }
-    
+
     if(!callback.IsEmpty() && callback->IsCallable()) {
       unsigned int argc = 2;
       v8::Handle<v8::Value> argv[2];

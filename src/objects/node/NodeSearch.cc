@@ -11,17 +11,17 @@ extern Application* application;
 
 NodeSearch::NodeSearch(const char* _searchQuery) : searchQuery(_searchQuery), trackOffset(0), albumOffset(0), artistOffset(0), playlistOffset(0),
   trackLimit(10), albumLimit(10), artistLimit(10), playlistLimit(10) {
-  
+
 }
 
 NodeSearch::NodeSearch(const char* _searchQuery, int offset) : searchQuery(_searchQuery), trackOffset(offset), albumOffset(offset), artistOffset(offset), playlistOffset(offset),
   trackLimit(10), albumLimit(10), artistLimit(10), playlistLimit(10) {
-  
+
 }
 
 NodeSearch::NodeSearch(const char* _searchQuery, int offset, int limit) : searchQuery(_searchQuery), trackOffset(offset), albumOffset(offset), artistOffset(offset), playlistOffset(offset),
   trackLimit(limit), albumLimit(limit), artistLimit(limit), playlistLimit(limit) {
-  
+
 }
 
 void NodeSearch::setSearch(std::shared_ptr<Search> _search) {
@@ -45,7 +45,7 @@ Handle<Value> NodeSearch::execute(const Arguments& args) {
                   );
   return scope.Close(Undefined());
 }
-  
+
 Handle<Value> NodeSearch::getTrackOffset(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());

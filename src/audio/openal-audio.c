@@ -47,10 +47,10 @@ static void error_exit(const char *msg)
 static int queue_buffer(ALuint source, audio_fifo_t *af, ALuint buffer)
 {
     audio_fifo_data_t *afd = audio_get(af);
-    alBufferData(buffer, 
-		 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, 
-		 afd->samples, 
-		 afd->nsamples * afd->channels * sizeof(short), 
+    alBufferData(buffer,
+		 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16,
+		 afd->samples,
+		 afd->nsamples * afd->channels * sizeof(short),
 		 afd->rate);
     alSourceQueueBuffers(source, 1, &buffer);
 	free(afd);
@@ -91,16 +91,16 @@ static void* audio_start(void *aux)
 				alGetSourcei(source, AL_BUFFERS_PROCESSED, &processed);
 				usleep(100);
 			} while (!processed);
-			
+
 			/* Remove old audio from the queue.. */
 			alSourceUnqueueBuffers(source, 1, &buffers[frame % NUM_BUFFERS]);
-			
+
 			/* and queue some more audio */
 			afd = audio_get(af);
 			alGetSourcei(source, AL_SOURCE_STATE, &status);
 			if(status != AL_PLAYING)
 				alSourcePlay(source);
-			
+
 			alGetBufferi(buffers[frame % NUM_BUFFERS], AL_FREQUENCY, &rate);
 			alGetBufferi(buffers[frame % NUM_BUFFERS], AL_CHANNELS, &channels);
 			if (afd->rate != rate || afd->channels != channels) {
@@ -108,14 +108,14 @@ static void* audio_start(void *aux)
                                 free(afd);
 				break;
 			}
-			alBufferData(buffers[frame % NUM_BUFFERS], 
-						 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, 
-						 afd->samples, 
-						 afd->nsamples * afd->channels * sizeof(short), 
+			alBufferData(buffers[frame % NUM_BUFFERS],
+						 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16,
+						 afd->samples,
+						 afd->nsamples * afd->channels * sizeof(short),
 						 afd->rate);
 			free(afd);
 			alSourceQueueBuffers(source, 1, &buffers[frame % NUM_BUFFERS]);
-			
+
 			if ((error = alcGetError(device)) != AL_NO_ERROR) {
 				printf("openal al error: %d\n", error);
 				exit(1);
@@ -127,10 +127,10 @@ static void* audio_start(void *aux)
 		alSourceStop(source);
 
 		/* Make sure we don't lose the audio packet that caused the change */
-		alBufferData(buffers[0], 
-					 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, 
-					 afd->samples, 
-					 afd->nsamples * afd->channels * sizeof(short), 
+		alBufferData(buffers[0],
+					 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16,
+					 afd->samples,
+					 afd->nsamples * afd->channels * sizeof(short),
 					 afd->rate);
 
 		alSourceQueueBuffers(source, 1, &buffers[0]);
@@ -152,5 +152,3 @@ void audio_init(audio_fifo_t *af)
 
     pthread_create(&tid, NULL, audio_start, af);
 }
-
-

@@ -15,7 +15,7 @@ sp_session_callbacks SpotifyService::sessionCallbacks;
 sp_session* SpotifyService::createSession() {
   sp_error error;
   sp_session* session;
-  
+
   sessionCallbacks.notify_main_thread = &SessionCallbacks::notifyMainThread;
   sessionCallbacks.logged_in = &SessionCallbacks::loggedIn;
   sessionCallbacks.logged_out = &SessionCallbacks::loggedOut;
