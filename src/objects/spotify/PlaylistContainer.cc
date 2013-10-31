@@ -11,7 +11,7 @@ void PlaylistContainer::loadPlaylists() {
 
   Playlist::playlistCallbacks.playlist_state_changed = &PlaylistCallbacks::playlistStateChanged;
   Playlist::playlistCallbacks.playlist_renamed = &PlaylistCallbacks::playlistNameChange;
-  //Playlist::playlistCallbacks.tracks_added = &PlaylistCallbacks::tracks_added;
+  Playlist::playlistCallbacks.tracks_added = &PlaylistCallbacks::tracksAdded;
   //Playlist::playlistCallbacks.tracks_moved = &PlaylistCallbacks::tracks_moved;
   /*playlistCallbacks.playlist_update_in_progress = &playlist_update_in_progress;
   playlistCallbacks.track_created_changed = &track_created_changed;*/
