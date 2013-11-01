@@ -61,7 +61,7 @@ Handle<Value> NodePlayer::seek(const Arguments& args) {
 
 void NodePlayer::setCurrentSecond(int _currentSecond) {
   currentSecond = _currentSecond;
-  call(PLAYER_SECOND_IN_SONG);
+  //call(PLAYER_SECOND_IN_SONG);
 }
 
 Handle<Value> NodePlayer::getCurrentSecond(Local<String> property, const AccessorInfo& info) {

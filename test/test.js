@@ -1,4 +1,4 @@
-var spotify = require('../build/Debug/spotify');
+var spotify = require('../build/Debug/spotify')();
 var loginData = require('./loginData.js');
 
 spotify.ready(tests);

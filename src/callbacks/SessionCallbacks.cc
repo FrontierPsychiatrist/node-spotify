@@ -5,7 +5,6 @@
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/node/NodePlayer.h"
 #include "../events.h"
-#include "SpotifyService.h"
 
 extern "C" {
   #include "../audio/audio.h"
@@ -65,10 +64,8 @@ void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
 }
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
-  SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
   if(SP_ERROR_OK != error) {
     std::cout << "Error logging in: " << sp_error_message(error) << std::endl;
-    spotifyService->loggedOut = true;
     return;
   } else {
     std::cout << "Logged in" << std::endl;
@@ -82,8 +79,6 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
-  SpotifyService* spotifyService = static_cast<SpotifyService*>(sp_session_userdata(session));
-  spotifyService->loggedOut = 1;
   std::cout << "Logged out" << std::endl;
 }
 

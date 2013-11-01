@@ -3,7 +3,7 @@
 #include "NodeAlbum.h"
 #include "NodeArtist.h"
 #include "NodePlaylist.h"
-#include "../../SpotifyService/SearchCallbacks.h"
+#include "../../callbacks/SearchCallbacks.h"
 #include "../../events.h"
 #include "../../Application.h"
 
@@ -253,7 +253,12 @@ Handle<Value> NodeSearch::getTotalPlaylists(Local<String> property, const Access
   return scope.Close(Integer::New(nodeSearch->search->totalPlaylists));
 }
 
-void NodeSearch::init(Handle<Object> exports) {
+Handle<Function> NodeSearch::getConstructor() {
+  HandleScope scope;
+  return scope.Close(constructor);
+}
+
+void NodeSearch::init() {
 HandleScope scope;
   Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New(New);
   constructorTemplate->SetClassName(String::NewSymbol("Search"));
@@ -278,6 +283,5 @@ HandleScope scope;
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getArtists", getArtists);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
-  exports->Set(String::NewSymbol("Search"), constructor);
   scope.Close(Undefined());
 }

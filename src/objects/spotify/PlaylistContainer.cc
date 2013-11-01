@@ -1,5 +1,5 @@
 #include "PlaylistContainer.h"
-#include "../../SpotifyService/PlaylistCallbacks.h"
+#include "../../callbacks/PlaylistCallbacks.h"
 #include "../../Application.h"
 #include "StarredPlaylist.h"
 

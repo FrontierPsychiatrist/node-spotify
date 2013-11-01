@@ -47,7 +47,8 @@ public:
   static Handle<Value> getArtists(const Arguments& args);
   static Handle<Value> getPlaylists(const Arguments& args);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static void init(Handle<Object> exports);
+  static Handle<Function> getConstructor();
+  static void init();
 };
 
 #endif

@@ -4,8 +4,9 @@ logindata.c
 loginData.js
 
 # output
-build
-tmp
+build/
+settings/
+cache/
 events.js
 
 #vim
