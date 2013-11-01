@@ -17,6 +17,7 @@ public:
   static Handle<Value> getPlaylists(const Arguments& args);
   static Handle<Value> getStarred(const Arguments& args);
   static Handle<Value> rememberedUser(const Arguments& args);
+  static Handle<Value> createFromLink(const Arguments& args);
   static void init();
 private:
   std::unique_ptr<Spotify> spotify;

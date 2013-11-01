@@ -46,6 +46,51 @@ NodeSpotify::NodeSpotify(Handle<Object> options) {
   scope.Close(Undefined());
 }
 
+Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
+  HandleScope scope;
+  Handle<Value> out;
+  String::Utf8Value linkToParse(args[0]->ToString());
+  sp_link* parsedLink = sp_link_create_from_string(*linkToParse);
+  if(parsedLink != nullptr) {
+    sp_linktype linkType = sp_link_type(parsedLink);
+    switch(linkType) {
+      case SP_LINKTYPE_TRACK:
+      {
+        sp_track* track = sp_link_as_track(parsedLink);
+        NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(track));
+        out = nodeTrack->getV8Object();
+        break;
+      }
+      case SP_LINKTYPE_ALBUM:
+      {
+        sp_album* album = sp_link_as_album(parsedLink);
+        NodeAlbum* nodeAlbum = new NodeAlbum(std::make_shared<Album>(album));
+        out = nodeAlbum->getV8Object();
+        break;
+      }
+      case SP_LINKTYPE_ARTIST:
+      {
+        sp_artist* artist = sp_link_as_artist(parsedLink);
+        NodeArtist* nodeArtist = new NodeArtist(std::make_shared<Artist>(artist));
+        out = nodeArtist->getV8Object();
+        break;
+      }
+      case SP_LINKTYPE_SEARCH:
+        out = Undefined();
+        break;
+      case SP_LINKTYPE_PLAYLIST:
+        out = Undefined();
+        break;
+      default:
+        out = Undefined();
+    }
+  } else {
+    out = Undefined();
+  }
+  sp_link_release(parsedLink);
+  return scope.Close(out);
+}
+
 Handle<Value> NodeSpotify::login(const Arguments& args) {
   HandleScope scope;
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
@@ -105,6 +150,7 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarred", getStarred);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "ready", ready);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "rememberedUser", rememberedUser);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
