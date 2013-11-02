@@ -5,4 +5,5 @@
 #define PLAYER_SECOND_IN_SONG "player_second_in_song"
 #define PLAYER_END_OF_TRACK "player_end_of_track"
 #define SEARCH_COMPLETE "search_complete"
+#define ALBUMBROWSE_COMPLETE "albumbrowse_complete"
 #endif

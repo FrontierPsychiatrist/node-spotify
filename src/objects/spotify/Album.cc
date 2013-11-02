@@ -1,12 +1,11 @@
 #include "Album.h"
 #include "../../utils/ImageUtils.h"
 #include "../../Application.h"
-
-#include <iostream>
+#include "../../callbacks/AlbumBrowseCallbacks.h"
 
 extern Application* application;
 
-Album::Album(sp_album* _album) : album(_album), cover(nullptr) {
+Album::Album(sp_album* _album) : album(_album), cover(nullptr), nodeObject(nullptr), albumBrowse(nullptr) {
   sp_album_add_ref(album);
 };
 
@@ -50,4 +49,8 @@ std::string Album::coverBase64() {
     cover = "Album loading...";
   }
   return cover;
+}
+
+void Album::browse() {
+  sp_albumbrowse_create(application->session, album, AlbumBrowseCallbacks::albumBrowseComplete, this);
 }
