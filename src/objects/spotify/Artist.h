@@ -2,12 +2,20 @@
 #define _ARTIST_H
 
 #include <string>
-#include <map>
+#include <vector>
 #include <memory>
 #include <libspotify/api.h>
 
+#include "Track.h"
+#include "Album.h"
+#include "../node/V8Callable.h"
+
+class Track;
+class Album;
+
 class Artist {
 friend class NodeArtist;
+friend class ArtistBrowseCallbacks;
 public:
   Artist(sp_artist* _artist);
   Artist(const Artist& other);
@@ -15,10 +23,16 @@ public:
 
   std::string name();
   std::string link();
-  void browse();
+  std::vector<std::shared_ptr<Track>> tracks();
+  std::vector<std::shared_ptr<Track>> tophitTracks();
+  std::vector<std::shared_ptr<Album>> albums();
+  std::vector<std::shared_ptr<Artist>> similarArtists();
+  std::string biography();
+  void browse(sp_artistbrowse_type artistbrowseType);
 private:
   sp_artist* artist;
   sp_artistbrowse* artistBrowse;
+  V8Callable* nodeObject;
 };
 
 #endif

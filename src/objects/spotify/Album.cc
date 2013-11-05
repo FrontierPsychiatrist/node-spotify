@@ -112,5 +112,5 @@ std::string Album::coverBase64() {
 }
 
 void Album::browse() {
-  sp_albumbrowse_create(application->session, album, AlbumBrowseCallbacks::albumBrowseComplete, this);
+  this->albumBrowse = sp_albumbrowse_create(application->session, album, AlbumBrowseCallbacks::albumBrowseComplete, this);
 }

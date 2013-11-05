@@ -10,6 +10,7 @@
 #include "Album.h"
 
 class Album;
+class Artist;
 
 class Track {
 friend class NodePlayer;

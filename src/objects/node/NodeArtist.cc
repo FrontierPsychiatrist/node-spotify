@@ -1,4 +1,6 @@
 #include "NodeArtist.h"
+#include "NodeTrack.h"
+#include "NodeAlbum.h"
 
 #include "../../events.h"
 
@@ -30,7 +32,7 @@ Handle<Value> NodeArtist::browse(const Arguments& args) {
     nodeArtistV8->SetAccessor(String::NewSymbol("biography"), getBiography);
     //TODO: portraits
 
-    nodeArtist->artist->browse();
+    nodeArtist->artist->browse(SP_ARTISTBROWSE_FULL);
   } else {
     nodeArtist->call(ARTISTBROWSE_COMPLETE);
   }
@@ -40,36 +42,56 @@ Handle<Value> NodeArtist::browse(const Arguments& args) {
 Handle<Value> NodeArtist::getTracks(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-
-  return scope.Close(Undefined());
+  std::vector<std::shared_ptr<Track>> tracks = nodeArtist->artist->tracks();
+  Local<Array> nodeTracks = Array::New(tracks.size());
+  for(int i = 0; i < (int)tracks.size(); i++) {
+    NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
+    nodeTracks->Set(Number::New(i), nodeTrack->getV8Object());
+  }
+  return scope.Close(nodeTracks);
 }
 
 Handle<Value> NodeArtist::getTophitTracks(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-
-  return scope.Close(Undefined());
+  std::vector<std::shared_ptr<Track>> tophitTracks = nodeArtist->artist->tophitTracks();
+  Local<Array> nodeTophitTracks = Array::New(tophitTracks.size());
+  for(int i = 0; i < (int)tophitTracks.size(); i++) {
+    NodeTrack* nodeTrack = new NodeTrack(tophitTracks[i]);
+    nodeTophitTracks->Set(Number::New(i), nodeTrack->getV8Object());
+  }
+  return scope.Close(nodeTophitTracks);
 }
 
 Handle<Value> NodeArtist::getAlbums(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-
-  return scope.Close(Undefined());
+  std::vector<std::shared_ptr<Album>> albums = nodeArtist->artist->albums();
+  Local<Array> nodeAlbums = Array::New(albums.size());
+  for(int i = 0; i < (int)albums.size(); i++) {
+    NodeAlbum* nodeAlbum = new NodeAlbum(albums[i]);
+    nodeAlbums->Set(Number::New(i), nodeAlbum->getV8Object());
+  }
+  return scope.Close(nodeAlbums);
 }
 
 Handle<Value> NodeArtist::getSimilarArtists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-
-  return scope.Close(Undefined());
+  std::vector<std::shared_ptr<Artist>> similarArtists = nodeArtist->artist->similarArtists();
+  Local<Array> nodeSimilarArtists = Array::New(similarArtists.size());
+  for(int i = 0; i < (int)similarArtists.size(); i++) {
+    NodeArtist* nodeArtist = new NodeArtist(similarArtists[i]);
+    nodeSimilarArtists->Set(Number::New(i), nodeArtist->getV8Object());
+  }
+  return scope.Close(nodeSimilarArtists);
 }
 
 Handle<Value> NodeArtist::getBiography(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-
-  return scope.Close(Undefined());
+  std::string biography = nodeArtist->artist->biography();
+  return scope.Close(String::New(biography.c_str()));
 }
 
 void NodeArtist::init() {

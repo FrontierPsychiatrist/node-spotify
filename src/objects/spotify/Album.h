@@ -11,6 +11,7 @@
 #include "../node/V8Callable.h"
 
 class Track;
+class Artist;
 
 class Album {
 friend class NodeAlbum;

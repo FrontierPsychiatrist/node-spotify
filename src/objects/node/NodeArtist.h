@@ -11,7 +11,14 @@ class NodeArtist : public NodeWrappedWithCallbacks<NodeArtist> {
 private:
   std::shared_ptr<Artist> artist;
 public:
-  NodeArtist(std::shared_ptr<Artist> _artist) : artist(_artist) {};
+  NodeArtist(std::shared_ptr<Artist> _artist) : artist(_artist) {
+    artist->nodeObject = this;
+  };
+  ~NodeArtist() {
+    if(artist->nodeObject == this) {
+      artist->nodeObject = nullptr;
+    }
+  }
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static Handle<Value> browse(const Arguments& args);
