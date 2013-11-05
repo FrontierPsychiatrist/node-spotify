@@ -34,7 +34,26 @@ Handle<Value> NodeSearch::execute(const Arguments& args) {
     nodeSearch->albumOffset, nodeSearch->albumLimit,
     nodeSearch->artistOffset, nodeSearch->artistLimit,
     nodeSearch->playlistLimit, nodeSearch->playlistLimit);
+  nodeSearch->setupAdditionalMethods();
   return scope.Close(Undefined());
+}
+
+/**
+ * Adds adiitional properties to the V8 object.
+ * These will call libspotify functions and should first be available when the search has been executed.
+ **/
+void NodeSearch::setupAdditionalMethods() {
+  Handle<Object> nodeObject = this->getV8Object();
+  nodeObject->SetAccessor(String::NewSymbol("didYouMean"), didYouMean);
+  nodeObject->SetAccessor(String::NewSymbol("link"), getLink);
+  nodeObject->SetAccessor(String::NewSymbol("tracks"), getTracks);
+  nodeObject->SetAccessor(String::NewSymbol("albums"), getAlbums);
+  nodeObject->SetAccessor(String::NewSymbol("artists"), getArtists);
+  nodeObject->SetAccessor(String::NewSymbol("playlists"), getPlaylists);
+  nodeObject->SetAccessor(String::NewSymbol("totalTracks"), getTotalTracks);
+  nodeObject->SetAccessor(String::NewSymbol("totalAlbums"), getTotalAlbums);
+  nodeObject->SetAccessor(String::NewSymbol("totalArtists"), getTotalArtists);
+  nodeObject->SetAccessor(String::NewSymbol("totalPlaylists"), getTotalPlaylists);
 }
 
 Handle<Value> NodeSearch::getTrackOffset(Local<String> property, const AccessorInfo& info) {
@@ -172,9 +191,9 @@ Handle<Value> NodeSearch::getLink(Local<String> property, const AccessorInfo& in
   return String::New(nodeSearch->search->link().c_str());
 }
 
-Handle<Value> NodeSearch::getTracks(const Arguments& args) {
+Handle<Value> NodeSearch::getTracks(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
   std::vector<std::shared_ptr<Track>> tracks = nodeSearch->search->getTracks();
   Local<Array> outArray = Array::New(tracks.size());
   for(int i = 0; i < (int)tracks.size(); i++) {
@@ -184,9 +203,9 @@ Handle<Value> NodeSearch::getTracks(const Arguments& args) {
   return scope.Close(outArray);
 }
 
-Handle<Value> NodeSearch::getAlbums(const Arguments& args) {
+Handle<Value> NodeSearch::getAlbums(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
   std::vector<std::shared_ptr<Album>> albums = nodeSearch->search->getAlbums();
   Local<Array> outArray = Array::New(albums.size());
   for(int i = 0; i < (int)albums.size(); i++) {
@@ -196,9 +215,9 @@ Handle<Value> NodeSearch::getAlbums(const Arguments& args) {
   return scope.Close(outArray);
 }
 
-Handle<Value> NodeSearch::getArtists(const Arguments& args) {
+Handle<Value> NodeSearch::getArtists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
   std::vector<std::shared_ptr<Artist>> artists = nodeSearch->search->getArtists();
   Local<Array> outArray = Array::New(artists.size());
   for(int i = 0; i < (int)artists.size(); i++) {
@@ -208,9 +227,9 @@ Handle<Value> NodeSearch::getArtists(const Arguments& args) {
   return scope.Close(outArray);
 }
 
-Handle<Value> NodeSearch::getPlaylists(const Arguments& args) {
+Handle<Value> NodeSearch::getPlaylists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
   std::vector<std::shared_ptr<Playlist>> playlists = nodeSearch->search->getPlaylists();
   Local<Array> outArray = Array::New(playlists.size());
   for(int i = 0; i < (int)playlists.size(); i++) {
@@ -263,16 +282,6 @@ HandleScope scope;
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artistLimit"), getArtistLimit, setArtistLimit);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistOffset"), getPlaylistOffset, setPlaylistOffset);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistLimit"), getPlaylistLimit, setPlaylistLimit);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("didYouMean"), didYouMean, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("totalTracks"), getTotalTracks, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("totalAlbums"), getTotalAlbums, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("totalArtists"), getTotalArtists, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("totalPlaylists"), getTotalPlaylists, emptySetter);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getAlbums", getAlbums);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getArtists", getArtists);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }

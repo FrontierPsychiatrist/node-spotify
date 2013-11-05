@@ -13,6 +13,7 @@ private:
   std::string searchQuery;
   int trackOffset, albumOffset, artistOffset, playlistOffset;
   int trackLimit, albumLimit, artistLimit, playlistLimit;
+  void setupAdditionalMethods();
 public:
   NodeSearch(const char* _query);
   NodeSearch(const char* _query, int offset);
@@ -41,10 +42,10 @@ public:
   static Handle<Value> getTotalPlaylists(Local<String> property, const AccessorInfo& info);
   static Handle<Value> New(const Arguments& args);
   static Handle<Value> execute(const Arguments& args);
-  static Handle<Value> getTracks(const Arguments& args);
-  static Handle<Value> getAlbums(const Arguments& args);
-  static Handle<Value> getArtists(const Arguments& args);
-  static Handle<Value> getPlaylists(const Arguments& args);
+  static Handle<Value> getTracks(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getAlbums(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getArtists(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getPlaylists(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static Handle<Function> getConstructor();
   static void init();
