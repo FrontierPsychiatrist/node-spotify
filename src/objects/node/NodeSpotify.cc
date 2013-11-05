@@ -136,9 +136,9 @@ Handle<Value> NodeSpotify::getStarred(const Arguments& args) {
   return scope.Close(starredPlaylist->getV8Object());
 }
 
-Handle<Value> NodeSpotify::rememberedUser(const Arguments& args) {
+Handle<Value> NodeSpotify::getRememberedUser(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.Holder());
   return scope.Close(String::New(nodeSpotify->spotify->rememberedUser().c_str()));
 }
 
@@ -151,7 +151,7 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarred", getStarred);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "ready", ready);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "rememberedUser", rememberedUser);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser, emptySetter);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }
