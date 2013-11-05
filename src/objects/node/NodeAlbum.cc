@@ -1,7 +1,6 @@
 #include "NodeAlbum.h"
 #include "NodeTrack.h"
 #include "NodeArtist.h"
-#include "../spotify/Artist.h"
 #include "../spotify/Track.h"
 #include "../../events.h"
 
@@ -28,7 +27,7 @@ Handle<Value> NodeAlbum::browse(const Arguments& args) {
     Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
     nodeAlbum->on(ALBUMBROWSE_COMPLETE, callback);
 
-    //Mutate the V8 object. TODO: is this permanent, i.e. available after this scope closed?
+    //Mutate the V8 object.
     Handle<Object> nodeAlbumV8 = nodeAlbum->getV8Object();
     nodeAlbumV8->SetAccessor(String::NewSymbol("tracks"), getTracks);
     nodeAlbumV8->SetAccessor(String::NewSymbol("review"), getReview);
@@ -41,14 +40,14 @@ Handle<Value> NodeAlbum::browse(const Arguments& args) {
   }
   return scope.Close(Undefined());
 }
-//TODO: Delegate to Album, no libspotify api calls here!
+
 Handle<Value> NodeAlbum::getTracks(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
-  int numTracks = sp_albumbrowse_num_tracks(nodeAlbum->album->albumBrowse);
-  Handle<Array> nodeTracks = Array::New(numTracks);
-  for(int i = 0; i < numTracks; i++) {
-    NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(sp_albumbrowse_track(nodeAlbum->album->albumBrowse, i)));
+  std::vector<std::shared_ptr<Track>> tracks = nodeAlbum->album->tracks();
+  Handle<Array> nodeTracks = Array::New(tracks.size());
+  for(int i = 0; i < (int)tracks.size(); i++) {
+    NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
     nodeTracks->Set(Number::New(i), nodeTrack->getV8Object());
   }
   return scope.Close(nodeTracks);
@@ -57,25 +56,25 @@ Handle<Value> NodeAlbum::getTracks(Local<String> property, const AccessorInfo& i
 Handle<Value> NodeAlbum::getReview(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
-  Handle<String> review = String::New(sp_albumbrowse_review(nodeAlbum->album->albumBrowse));
+  Handle<String> review = String::New(nodeAlbum->album->review().c_str());
   return scope.Close(review);
 }
 
 Handle<Value> NodeAlbum::getCopyrights(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
-  int numCopyrights = sp_albumbrowse_num_copyrights(nodeAlbum->album->albumBrowse);
-  Handle<Array> copyrights = Array::New(numCopyrights);
-  for(int i = 0; i < numCopyrights; i++) {
-    copyrights->Set(Number::New(i), String::New(sp_albumbrowse_copyright(nodeAlbum->album->albumBrowse, i)));
+  std::vector<std::string> copyrights = nodeAlbum->album->copyrights();
+  Handle<Array> nodeCopyrights = Array::New(copyrights.size());
+  for(int i = 0; i < (int)copyrights.size(); i++) {
+    nodeCopyrights->Set(Number::New(i), String::New(copyrights[i].c_str()));
   }
-  return scope.Close(copyrights);
+  return scope.Close(nodeCopyrights);
 }
 
 Handle<Value> NodeAlbum::getArtist(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
-  NodeArtist* nodeArtist = new NodeArtist(std::make_shared<Artist>(sp_albumbrowse_artist(nodeAlbum->album->albumBrowse)));
+  NodeArtist* nodeArtist = new NodeArtist(nodeAlbum->album->artist());
   return scope.Close(nodeArtist->getV8Object());
 }
 

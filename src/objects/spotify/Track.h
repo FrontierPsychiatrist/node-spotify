@@ -9,6 +9,8 @@
 #include "Artist.h"
 #include "Album.h"
 
+class Album;
+
 class Track {
 friend class NodePlayer;
 friend class NodeTrack;

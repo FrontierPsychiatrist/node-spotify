@@ -9,6 +9,26 @@ Album::Album(sp_album* _album) : album(_album), cover(nullptr), nodeObject(nullp
   sp_album_add_ref(album);
 };
 
+Album::Album(const Album& other) : album(other.album), cover(other.cover) {
+  sp_album_add_ref(album);
+  if(cover != nullptr) {
+    sp_image_add_ref(cover);
+  }
+  if(albumBrowse != nullptr) {
+    sp_albumbrowse_add_ref(albumBrowse);
+  }
+};
+
+Album::~Album() {
+  sp_album_release(album);
+  if(cover != nullptr) {
+    sp_image_release(cover);
+  }
+  if(albumBrowse != nullptr) {
+    sp_albumbrowse_release(albumBrowse);
+  }
+};
+
 std::string Album::name() {
   std::string name;
   if(sp_album_is_loaded(album)) {
@@ -31,6 +51,46 @@ std::string Album::link() {
   return link;
 }
 
+std::vector<std::shared_ptr<Track>> Album::tracks() {
+  std::vector<std::shared_ptr<Track>> tracks;
+  if(sp_albumbrowse_is_loaded(albumBrowse)) {
+    int numTracks = sp_albumbrowse_num_tracks(albumBrowse);
+    tracks.resize(numTracks);
+    for(int i = 0; i < numTracks; i++) {
+      tracks[i] = std::make_shared<Track>(sp_albumbrowse_track(albumBrowse, i));
+    }
+  }
+  return tracks;
+}
+
+std::string Album::review() {
+  std::string review;
+  if(sp_albumbrowse_is_loaded(albumBrowse)) {
+    review = std::string(sp_albumbrowse_review(albumBrowse));
+  }
+  return review;
+}
+
+std::vector<std::string> Album::copyrights() {
+  std::vector<std::string> copyrights;
+  if(sp_albumbrowse_is_loaded(albumBrowse)) {
+    int numCopyrights = sp_albumbrowse_num_copyrights(albumBrowse);
+    copyrights.resize(numCopyrights);
+    for(int i = 0; i < numCopyrights; i++) {
+      copyrights[i] = std::string(sp_albumbrowse_copyright(albumBrowse, i));
+    }
+  }
+  return copyrights;
+}
+
+std::shared_ptr<Artist> Album::artist() {
+  std::shared_ptr<Artist> artist;
+  if(sp_albumbrowse_is_loaded(albumBrowse)) {
+    artist = std::make_shared<Artist>(sp_albumbrowse_artist(albumBrowse));
+  }
+  return artist;
+}
+
 std::string Album::coverBase64() {
   std::string cover;
   if(sp_album_is_loaded(album)) {
@@ -41,12 +101,12 @@ std::string Album::coverBase64() {
         this->cover = image;
         cover = std::string(ImageUtils::convertImageToBase64(image));
       } else {
-        cover = "Cover loading...";
+        cover = "";
         sp_image_add_load_callback(image, ImageUtils::imageLoadedCallback, nullptr);
       }
     }
   } else {
-    cover = "Album loading...";
+    cover = "";
   }
   return cover;
 }

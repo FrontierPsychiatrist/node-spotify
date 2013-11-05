@@ -3,35 +3,29 @@
 
 #include <libspotify/api.h>
 #include <string>
+#include <vector>
+#include <memory>
 
+#include "Track.h"
+#include "Artist.h"
 #include "../node/V8Callable.h"
+
+class Track;
 
 class Album {
 friend class NodeAlbum;
 friend class AlbumBrowseCallbacks;
 public:
   Album(sp_album* _album);
-  ~Album() {
-    sp_album_release(album);
-    if(cover != nullptr) {
-      sp_image_release(cover);
-    }
-    if(albumBrowse != nullptr) {
-      sp_albumbrowse_release(albumBrowse);
-    }
-  };
-  Album(const Album& other) : album(other.album), cover(other.cover) {
-    sp_album_add_ref(album);
-    if(cover != nullptr) {
-      sp_image_add_ref(cover);
-    }
-    if(albumBrowse != nullptr) {
-      sp_albumbrowse_add_ref(albumBrowse);
-    }
-  };
+  ~Album();
+  Album(const Album& other);
   std::string name();
   std::string link();
   std::string coverBase64();
+  std::vector<std::shared_ptr<Track>> tracks();
+  std::string review();
+  std::vector<std::string> copyrights();
+  std::shared_ptr<Artist> artist();
   void browse();
 private:
   sp_album* album;
