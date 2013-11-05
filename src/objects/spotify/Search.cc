@@ -1,16 +1,18 @@
 #include "Search.h"
 
+#include <libspotify/api.h>
 #include "../../Application.h"
+#include "../../callbacks/SearchCallbacks.h"
 
 extern Application* application;
 
-Search::Search(sp_search* _search) : search(_search) {
+Search::Search(const Search& other) : search(other.search) {
   sp_search_add_ref(search);
-  totalTracks = sp_search_total_tracks(search);
-  totalAlbums = sp_search_total_albums(search);
-  totalArtists = sp_search_total_artists(search);
-  totalPlaylists = sp_search_total_playlists(search);
-}
+};
+
+Search::~Search() {
+  sp_search_release(search);
+};
 
 std::string Search::link() {
   std::string link;
@@ -34,39 +36,87 @@ std::string Search::didYouMeanText() {
 
 std::vector<std::shared_ptr<Track>> Search::getTracks() {
   std::vector<std::shared_ptr<Track>> tracks(sp_search_num_tracks(search));
-  for(int i = 0; i < (int)tracks.size() ; ++i) {
-    tracks[i] = std::make_shared<Track>(sp_search_track(search, i));
+  if(sp_search_is_loaded(search)) {
+    for(int i = 0; i < (int)tracks.size() ; ++i) {
+      tracks[i] = std::make_shared<Track>(sp_search_track(search, i));
+    }
   }
   return tracks;
 }
 
 std::vector<std::shared_ptr<Album>> Search::getAlbums() {
   std::vector<std::shared_ptr<Album>> albums(sp_search_num_albums(search));
-  for(int i = 0; i < (int)albums.size() ; ++i) {
-    albums[i] = std::make_shared<Album>(sp_search_album(search, i));
+  if(sp_search_is_loaded(search)) {
+    for(int i = 0; i < (int)albums.size() ; ++i) {
+      albums[i] = std::make_shared<Album>(sp_search_album(search, i));
+    }
   }
   return albums;
 }
 
 std::vector<std::shared_ptr<Artist>> Search::getArtists() {
   std::vector<std::shared_ptr<Artist>> artists(sp_search_num_artists(search));
-  for(int i = 0; i < (int)artists.size() ; ++i) {
-    artists[i] = std::make_shared<Artist>(sp_search_artist(search, i));
+  if(sp_search_is_loaded(search)) {
+    for(int i = 0; i < (int)artists.size() ; ++i) {
+      artists[i] = std::make_shared<Artist>(sp_search_artist(search, i));
+    }
   }
   return artists;
 }
 
 std::vector<std::shared_ptr<Playlist>> Search::getPlaylists() {
   std::vector<std::shared_ptr<Playlist>> playlists(sp_search_num_playlists(search));
-  for(int i = 0; i < (int)playlists.size() ; ++i) {
-    playlists[i] = std::make_shared<Playlist>(sp_search_playlist(search, i), -1);
+  if(sp_search_is_loaded(search)) {
+    for(int i = 0; i < (int)playlists.size() ; ++i) {
+      playlists[i] = std::make_shared<Playlist>(sp_search_playlist(search, i), -1);
+    }
   }
   return playlists;
+}
+
+int Search::totalTracks() {
+  int totalTracks = 0;
+  if(sp_search_is_loaded(search)) {
+    totalTracks = sp_search_total_tracks(search);
+  }
+  return totalTracks;
+}
+
+int Search::totalAlbums() {
+  int totalAlbums = 0;
+  if(sp_search_is_loaded(search)) {
+    totalAlbums = sp_search_total_albums(search);
+  }
+  return totalAlbums;
+}
+
+int Search::totalArtists() {
+  int totalArtists = 0;
+  if(sp_search_is_loaded(search)) {
+    totalArtists = sp_search_total_artists(search);
+  }
+  return totalArtists;
+}
+
+int Search::totalPlaylists() {
+  int totalPlaylists = 0;
+  if(sp_search_is_loaded(search)) {
+    totalPlaylists = sp_search_total_playlists(search);
+  }
+  return totalPlaylists;
 }
 
 void Search::execute(std::string query, int trackOffset, int trackLimit,
     int albumOffset, int albumLimit,
     int artistOffset, int artistLimit,
     int playlistOffset, int playlistLimit) {
-  //TODO: implement search here
+  this->search = sp_search_create(application->session, query.c_str(),
+    trackOffset, trackLimit,
+    albumOffset, albumLimit,
+    artistOffset, artistLimit,
+    playlistOffset, playlistLimit,
+    SP_SEARCH_STANDARD, //?
+    SearchCallbacks::searchComplete,
+    this
+  );
 }

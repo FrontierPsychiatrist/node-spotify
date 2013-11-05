@@ -17,7 +17,6 @@ public:
   NodeSearch(const char* _query);
   NodeSearch(const char* _query, int offset);
   NodeSearch(const char* _query, int offset, int limit);
-  void setSearch(std::shared_ptr<Search> _search);
 
   static Handle<Value> getTrackOffset(Local<String> property, const AccessorInfo& info);
   static void setTrackOffset(Local<String> property, Local<Value> value,  const AccessorInfo& info);

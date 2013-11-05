@@ -3,7 +3,6 @@
 #include "NodeAlbum.h"
 #include "NodeArtist.h"
 #include "NodePlaylist.h"
-#include "../../callbacks/SearchCallbacks.h"
 #include "../../events.h"
 #include "../../Application.h"
 
@@ -24,25 +23,17 @@ NodeSearch::NodeSearch(const char* _searchQuery, int offset, int limit) : search
 
 }
 
-void NodeSearch::setSearch(std::shared_ptr<Search> _search) {
-  this->search = _search;
-}
-
 Handle<Value> NodeSearch::execute(const Arguments& args) {
   HandleScope scope;
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
   nodeSearch->on(SEARCH_COMPLETE, callback);
-  sp_search_create(application->session,
-                  nodeSearch->searchQuery.c_str(),
-                  nodeSearch->trackOffset, nodeSearch->trackLimit,
-                  nodeSearch->albumOffset, nodeSearch->albumLimit,
-                  nodeSearch->artistOffset, nodeSearch->artistLimit,
-                  nodeSearch->playlistOffset, nodeSearch->playlistLimit,
-                  SP_SEARCH_STANDARD, //?
-                  SearchCallbacks::searchComplete,
-                  nodeSearch
-                  );
+  nodeSearch->search = std::make_shared<Search>();
+  nodeSearch->search->nodeObject = nodeSearch;
+  nodeSearch->search->execute(nodeSearch->searchQuery, nodeSearch->trackOffset, nodeSearch->trackLimit,
+    nodeSearch->albumOffset, nodeSearch->albumLimit,
+    nodeSearch->artistOffset, nodeSearch->artistLimit,
+    nodeSearch->playlistLimit, nodeSearch->playlistLimit);
   return scope.Close(Undefined());
 }
 
@@ -232,25 +223,25 @@ Handle<Value> NodeSearch::getPlaylists(const Arguments& args) {
 Handle<Value> NodeSearch::getTotalTracks(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-  return scope.Close(Integer::New(nodeSearch->search->totalTracks));
+  return scope.Close(Integer::New(nodeSearch->search->totalTracks()));
 }
 
 Handle<Value> NodeSearch::getTotalAlbums(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-  return scope.Close(Integer::New(nodeSearch->search->totalAlbums));
+  return scope.Close(Integer::New(nodeSearch->search->totalAlbums()));
 }
 
 Handle<Value> NodeSearch::getTotalArtists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-  return scope.Close(Integer::New(nodeSearch->search->totalArtists));
+  return scope.Close(Integer::New(nodeSearch->search->totalArtists()));
 }
 
 Handle<Value> NodeSearch::getTotalPlaylists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-  return scope.Close(Integer::New(nodeSearch->search->totalPlaylists));
+  return scope.Close(Integer::New(nodeSearch->search->totalPlaylists()));
 }
 
 Handle<Function> NodeSearch::getConstructor() {

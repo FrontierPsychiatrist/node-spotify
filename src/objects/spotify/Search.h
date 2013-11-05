@@ -1,7 +1,6 @@
 #ifndef _SEARCH_RESULT_H
 #define _SEARCH_RESULT_H
 
-#include <libspotify/api.h>
 #include <memory>
 #include <vector>
 #include <string>
@@ -11,17 +10,15 @@
 #include "Playlist.h"
 #include "Artist.h"
 
+#include "../node/V8Callable.h"
+
 class Search {
 friend class NodeSearch;
+friend class SearchCallbacks;
 public:
-  Search(sp_search* _search);
-  Search(const Search& other) : search(other.search), totalTracks(other.totalTracks),
-    totalAlbums(other.totalAlbums), totalArtists(other.totalArtists), totalPlaylists(other.totalPlaylists) {
-    sp_search_add_ref(search);
-  };
-  ~Search() {
-    sp_search_release(search);
-  };
+  Search() {};
+  Search(const Search& other);
+  ~Search();
   std::vector<std::shared_ptr<Track>> getTracks();
   std::vector<std::shared_ptr<Album>> getAlbums();
   std::vector<std::shared_ptr<Artist>> getArtists();
@@ -32,12 +29,13 @@ public:
     int playlistOffset, int playlistLimit);
   std::string link();
   std::string didYouMeanText();
+  int totalTracks();
+  int totalAlbums();
+  int totalArtists();
+  int totalPlaylists();
 private:
   sp_search* search;
-  int totalTracks;
-  int totalAlbums;
-  int totalArtists;
-  int totalPlaylists;
+  V8Callable* nodeObject;
 };
 
 #endif
