@@ -6,4 +6,5 @@
 #define PLAYER_END_OF_TRACK "player_end_of_track"
 #define SEARCH_COMPLETE "search_complete"
 #define ALBUMBROWSE_COMPLETE "albumbrowse_complete"
+#define ARTISTBROWSE_COMPLETE "artistbrowse_complete"
 #endif

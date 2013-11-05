@@ -7,19 +7,18 @@
 #include <libspotify/api.h>
 
 class Artist {
+friend class NodeArtist;
 public:
   Artist(sp_artist* _artist);
-  Artist(const Artist& other) : artist(other.artist) {
-    sp_artist_add_ref(artist);
-  };
-  ~Artist() {
-    sp_artist_release(artist);
-  };
+  Artist(const Artist& other);
+  ~Artist();
 
   std::string name();
   std::string link();
+  void browse();
 private:
   sp_artist* artist;
+  sp_artistbrowse* artistBrowse;
 };
 
 #endif
