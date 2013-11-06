@@ -7,6 +7,7 @@ struct SpotifyOptions {
   std::string settingsFolder;
   std::string cacheFolder;
   std::string traceFile;
+  std::string appkeyFile;
 };
 
 #endif

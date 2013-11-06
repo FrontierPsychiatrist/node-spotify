@@ -27,7 +27,8 @@ cache folder etc.
 
 Requirements
 ------------
-You need a spotify premium account to build or use node-spotify. This is a requirement for using libspotify, sorry.
+You need a spotify premium account to build or use node-spotify. This is a requirement for using libspotify, sorry. You also need an appkey that
+comes with a premium account (https://developer.spotify.com/technologies/libspotify/#application-keys).
 
 Dependencies
 ------------
@@ -39,8 +40,6 @@ Compiling
 ---------
 Compiling was tested on Raspbian, Debian and OSX. Due to the usage of pthreads I'm not sure if node-spotify will compile on Windows.
 
-To compile from source you need an appkey from spotify. You can obtain one here: https://developer.spotify.com/technologies/libspotify/#application-keys.
-Download the C implementation of the appkey and paste it into the variables in src/example_appkey.c. Rename it to src/appkey.c
 
 If you use OSX and have installed libspotify as a framework you need to edit the binding.gyp file. Remove "-lspotify" and write instead as one link option:
 ```"-framework OpenAL -framework libspotify"```. This is due to a bug in node-gyp that will eliminate a duplicate "-framework" entry from the link settings. If you
@@ -51,8 +50,12 @@ Change into the main folder (where binding.gyp lies) and run ```node-gyp configu
 Now the spotify module lies in ./build/Release/spotify.node. You can use it in a node.js program like so
 
 ```javascript
-var spotify = require('./build/Release/spotify');
+var spotify = require('./build/Release/spotify')( {
+  appkeyFile: './spotify_appkey.key'
+});
 ```
+
+The appkey file can be obtained from https://developer.spotify.com/technologies/libspotify/#application-keys (choose binary, not C-code).
 
 Binary distribution
 -------------------

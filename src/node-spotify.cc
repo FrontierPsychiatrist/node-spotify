@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "exceptions.h"
 #include "objects/node/NodeSpotify.h"
 #include "objects/node/NodePlaylist.h"
 #include "objects/node/NodeTrack.h"
@@ -39,7 +40,12 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
     }
     options = args[0]->ToObject();
   }
-  NodeSpotify* nodeSpotify = new NodeSpotify(options);
+  NodeSpotify* nodeSpotify;
+  try {
+    nodeSpotify = new NodeSpotify(options);
+  } catch (const FileException& e) {
+    return scope.Close(ThrowException(Exception::Error(String::New("Appkey file not found"))));
+  }
   v8::Handle<Object> out = nodeSpotify->getV8Object();
   out->Set(v8::String::NewSymbol("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
   out->Set(v8::String::NewSymbol("player"), NodePlayer::getInstance().getV8Object());

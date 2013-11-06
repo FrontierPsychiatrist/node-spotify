@@ -1,12 +1,13 @@
 #include "Spotify.h"
 #include "../../Application.h"
 #include "../../Callbacks/SessionCallbacks.h"
+#include "../../exceptions.h"
+
+#include <fstream>
 
 extern Application* application;
 static sp_session_config sessionConfig;
 static sp_session_callbacks sessionCallbacks;
-extern uint8_t spotifyAppkey[];
-extern int spotifyAppkeySize;
 
 Spotify::Spotify(SpotifyOptions options) {
   session = createSession(options);
@@ -17,6 +18,19 @@ sp_session* Spotify::createSession(SpotifyOptions options) {
   sp_error error;
   sp_session* session;
 
+  std::ifstream::pos_type size;
+  char* appkey;
+  std::ifstream file(options.appkeyFile.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
+  if(file.is_open()) {
+    size = file.tellg();
+    appkey = new char[size];
+    file.seekg(0, std::ios::beg);
+    file.read(appkey, size);
+    file.close();
+  } else {
+    throw FileException();
+  }
+
   sessionCallbacks.notify_main_thread = &SessionCallbacks::notifyMainThread;
   sessionCallbacks.logged_in = &SessionCallbacks::loggedIn;
   sessionCallbacks.logged_out = &SessionCallbacks::loggedOut;
@@ -26,8 +40,8 @@ sp_session* Spotify::createSession(SpotifyOptions options) {
   sessionConfig.api_version = SPOTIFY_API_VERSION;
   sessionConfig.cache_location = options.cacheFolder.c_str();
   sessionConfig.settings_location = options.settingsFolder.c_str();
-  sessionConfig.application_key = spotifyAppkey;
-  sessionConfig.application_key_size = spotifyAppkeySize;
+  sessionConfig.application_key = appkey;
+  sessionConfig.application_key_size = size;
   sessionConfig.user_agent = "nodejs-spotify-adapter";
   sessionConfig.callbacks = &sessionCallbacks;
   if(!options.traceFile.empty()) {

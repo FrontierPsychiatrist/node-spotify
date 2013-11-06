@@ -1,7 +1,6 @@
 # Sourcecode not to commit
-appkey.c
-logindata.c
 loginData.js
+spotify_appkey.key
 
 # output
 build/

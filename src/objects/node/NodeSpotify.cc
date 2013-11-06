@@ -26,6 +26,7 @@ NodeSpotify::NodeSpotify(Handle<Object> options) {
   Handle<String> settingsFolderKey = String::New("settingsFolder");
   Handle<String> cacheFolderKey = String::New("cacheFolder");
   Handle<String> traceFileKey = String::New("traceFile");
+  Handle<String> appkeyFileKey = String::New("appkeyFile");
   if(options->Has(settingsFolderKey)) {
     String::Utf8Value settingsFolderValue(options->Get(settingsFolderKey)->ToString());
     _options.settingsFolder = *settingsFolderValue;
@@ -41,6 +42,10 @@ NodeSpotify::NodeSpotify(Handle<Object> options) {
   if(options->Has(traceFileKey)) {
     String::Utf8Value traceFileValue(options->Get(traceFileKey)->ToString());
     _options.traceFile = *traceFileValue;
+  }
+  if(options->Has(appkeyFileKey)) {
+    String::Utf8Value appkeyFileValue(options->Get(appkeyFileKey)->ToString());
+    _options.appkeyFile = *appkeyFileValue;
   }
   spotify = std::unique_ptr<Spotify>(new Spotify(_options));
   scope.Close(Undefined());

@@ -3,7 +3,7 @@
   {
     "target_name": "spotify",
     "sources": [
-      "src/node-spotify.cc", "src/appkey.c", "src/audio/audio.c",
+      "src/node-spotify.cc", "src/audio/audio.c",
       "src/callbacks/PlaylistCallbacks.cc",
       "src/callbacks/SessionCallbacks.cc",
       "src/callbacks/SearchCallbacks.cc",
@@ -35,6 +35,7 @@
       ["OS=='mac'", {
         "xcode_settings": {
           "OTHER_CPLUSPLUSFLAGS" : ["-std=c++11", "-stdlib=libc++"],
+          "GCC_ENABLE_CPP_EXCEPTIONS": 'YES',
           "MACOSX_DEPLOYMENT_TARGET" : "10.8"
         },
         "sources": ["src/audio/openal-audio.c"],
@@ -45,7 +46,10 @@
       ["OS=='linux'", {
         "sources": ["src/audio/alsa-audio.c"],
         "cflags": ["-I/usr/include/alsa"],
-        "cflags_cc": ["-std=c++11"],
+        "cflags_cc": [
+          "-std=c++11",
+          "-fexceptions"
+          ],
         "defines": ["OS_LINUX"],
         "link_settings" : { "libraries" : ["-lasound"] }
       }]
