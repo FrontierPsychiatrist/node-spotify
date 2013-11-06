@@ -59,4 +59,4 @@ The appkey file can be obtained from https://developer.spotify.com/technologies/
 
 Binary distribution
 -------------------
-As of version 0.2.0 downloads of the pure compiled node.js module are available at http://www.node-spotify.com. I'll try to provide OSX, Linux x86_64 (ALSA) and Linux ARMv6hf (ALSA) builds.
+As of version 0.4.0 downloads of the pure compiled node.js module are available at http://www.node-spotify.com. I'll try to provide OSX, Linux x86_64 (ALSA) and Linux ARMv6hf (ALSA) builds.
