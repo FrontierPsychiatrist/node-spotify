@@ -57,4 +57,4 @@ static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Object> module) 
   module->Set(v8::String::NewSymbol("exports"), v8::FunctionTemplate::New(CreateNodespotify)->GetFunction());
 }
 
-NODE_MODULE(spotify, init)
+NODE_MODULE(nodespotify, init)

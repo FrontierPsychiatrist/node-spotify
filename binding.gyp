@@ -1,7 +1,7 @@
 {
   "targets": [
   {
-    "target_name": "spotify",
+    "target_name": "nodespotify",
     "sources": [
       "src/node-spotify.cc", "src/audio/audio.c",
       "src/callbacks/PlaylistCallbacks.cc",
@@ -30,6 +30,11 @@
       "outputs": ["src/events.h"],
       "action": ["node", "preprocessor.js"],
       "message": "Generating C++ events headerfile"
+      }
+    ],
+    "copies": [ {
+      "destination": "<(PRODUCT_DIR)",
+      "files": ["src/spotify.js"]
       }
     ],
     "conditions": [
