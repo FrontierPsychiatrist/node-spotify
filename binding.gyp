@@ -26,8 +26,8 @@
     },
     "actions": [ {
       "action_name": "generateEventsHeader",
-      "inputs": ["frontend/app/scripts/services/events.js"],
-      "outputs": ["src/events.h"],
+      "inputs": ["src/events.h"],
+      "outputs": ["events.js"],
       "action": ["node", "preprocessor.js"],
       "message": "Generating C++ events headerfile"
       }
