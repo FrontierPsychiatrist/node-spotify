@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 #include "Spotify.h"
 #include "../../Application.h"
-#include "../../Callbacks/SessionCallbacks.h"
+#include "../../callbacks/SessionCallbacks.h"
 #include "../../exceptions.h"
 
 #include <fstream>

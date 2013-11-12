@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 #include "NodeSpotify.h"
 #include "../../Application.h"
-#include "../../Callbacks/SessionCallbacks.h"
+#include "../../callbacks/SessionCallbacks.h"
 #include "../spotify/SpotifyOptions.h"
 #include "NodePlaylist.h"
 #include "NodePlayer.h"
