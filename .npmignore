@@ -1,6 +1,4 @@
-backend/
-frontend/
-
+.gitmodules
 executes.txt
 copyright.txt
 TODOS

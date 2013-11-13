@@ -4,19 +4,13 @@ Overview
 --------
 node-spotify is a node.js module to use the Spotify API in an easy manner from node.js.
 
-The goal is to run spotify on a Raspberry Pi and control it over a web interface. So apart from the node.js module this also includes a node.js
-app and a web frontend.
-
-The backend is obviously a node.js app.
-
-The node.js module is a native module written mainly in C++, the frontend is an angular.js app. Communication is done via socket.io.
+The node.js module is a native module written mainly in C++.
 
 A webpage for the project is here: http://www.node-spotify.com.
 
 Notes
 -----
-Currently I have decided to bring the pure node.js module to a somewhat complete state before I improve the sample backend and frontend. I'll try
-to keep the documentation up to date with the current implementation so you know how to use node-spotify.
+Currently I have decided to bring the pure node.js module to a somewhat complete state before I improve the sample backend and frontend. I'll try to keep the documentation up to date with the current implementation so you know how to use node-spotify.
 
 Working towards version 1.0.0 node-spotify should include the following browsing features: the playlists of the logged in user, searching,
 browsing albums and artists. Playback should be possible. Creation and editing of playlists should be possible. The usage of all
@@ -27,14 +21,13 @@ cache folder etc.
 
 Requirements
 ------------
-You need a spotify premium account to build or use node-spotify. This is a requirement for using libspotify, sorry. You also need an appkey that
-comes with a premium account (https://developer.spotify.com/technologies/libspotify/#application-keys).
+You need a spotify premium account to build or use node-spotify. This is a requirement for using libspotify, sorry. You also need an appkey that comes with a premium account (https://developer.spotify.com/technologies/libspotify/#application-keys).
 
 Dependencies
 ------------
 node-gyp and libspotify are required for building. Install node-gyp via ```npm install -g node-gyp```.
 
-Your compiler must be able to translate some C++11 features (std::function, std::shared_ptr, std::promise; G++ 4.7 or Clang 3.2 should do).
+Your compiler must be able to translate some C++11 features (std::shared_ptr, G++ 4.7 or Clang 3.2 should do).
 
 Compiling
 ---------
