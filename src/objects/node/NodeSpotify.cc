@@ -104,12 +104,6 @@ Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
         out = nodeArtist->getV8Object();
         break;
       }
-      case SP_LINKTYPE_SEARCH:
-        out = Undefined();
-        break;
-      case SP_LINKTYPE_PLAYLIST:
-        out = Undefined();
-        break;
       default:
         out = Undefined();
     }
