@@ -39,11 +39,11 @@ friend class NodePlaylist;
 friend class PlaylistCallbacks;
 friend class PlaylistContainer;
 public:
-  Playlist(sp_playlist* _playlist, int _id);
+  Playlist(sp_playlist* _playlist);
   ~Playlist() {
     sp_playlist_release(playlist);
   };
-  Playlist(const Playlist& other) : id(other.id), playlist(other.playlist), nodeObject(other.nodeObject) {
+  Playlist(const Playlist& other) : playlist(other.playlist), nodeObject(other.nodeObject) {
     sp_playlist_add_ref(playlist);
   }
 
@@ -51,7 +51,6 @@ public:
   virtual std::string name();
   std::string link();
 private:
-  int id;
   sp_playlist* playlist;
   static sp_playlist_callbacks playlistCallbacks;
   V8Callable* nodeObject;

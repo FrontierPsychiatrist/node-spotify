@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 class StarredPlaylist : public Playlist {
 public:
-  StarredPlaylist(sp_playlist* _playlist, int _id) : Playlist(_playlist, _id) {};
+  StarredPlaylist(sp_playlist* _playlist) : Playlist(_playlist) {};
   std::string name() { return "Starred"; }
 };
 

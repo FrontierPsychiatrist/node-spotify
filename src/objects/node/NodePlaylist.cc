@@ -41,11 +41,6 @@ Handle<Value> NodePlaylist::getLink(Local<String> property, const AccessorInfo& 
   return String::New(nodePlaylist->playlist->link().c_str());
 }
 
-Handle<Value> NodePlaylist::getId(Local<String> property, const AccessorInfo& info) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
-  return Integer::New(nodePlaylist->playlist->id);
-}
-
 Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
   HandleScope scope;
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
@@ -64,7 +59,6 @@ void NodePlaylist::init() {
 
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, setName);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("id"), getId, emptySetter);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());

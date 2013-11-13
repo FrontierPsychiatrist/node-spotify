@@ -42,11 +42,11 @@ void PlaylistContainer::loadPlaylists() {
 
   for(int i = 0; i < numPlaylists; ++i) {
     sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
-    playlists[i] = std::make_shared<Playlist>(spPlaylist, i);
+    playlists[i] = std::make_shared<Playlist>(spPlaylist);
     sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, playlists[i].get());
   }
 
   sp_playlist* spPlaylist = sp_session_starred_create(application->session);
-  starredPlaylist = std::make_shared<StarredPlaylist>(spPlaylist, numPlaylists);
+  starredPlaylist = std::make_shared<StarredPlaylist>(spPlaylist);
   sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, starredPlaylist.get());
 }

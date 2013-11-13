@@ -47,7 +47,6 @@ public:
   static void setName(Local<String> property, Local<Value> value, const AccessorInfo& info);
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getId(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getTracks(const Arguments& args);
 
   static void init();
