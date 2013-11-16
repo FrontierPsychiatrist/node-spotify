@@ -22,21 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-#ifndef _APPLICATION_H
-#define _APPLICATION_H
+#ifndef _PLAYER_H
+#define _PLAYER_H
 
 #include <libspotify/api.h>
 #include <memory>
-#include "objects/spotify/PlaylistContainer.h"
 
-extern "C" {
-  #include "audio/audio.h"
-}
+#include "../node/V8Callable.h"
+#include "Track.h"
 
-struct Application {
-  sp_session* session;
-  audio_fifo_t audio_fifo;
-  std::shared_ptr<PlaylistContainer> playlistContainer;
+class Player {
+friend class NodePlayer;
+friend class SessionCallbacks;
+public:
+  Player() {};
+  void stop();
+  void pause();
+  void resume();
+  void play(std::shared_ptr<Track> track);
+  void seek(int second);
+  void setCurrentSecond(int second);
+private:
+  int currentSecond;
+  bool isPaused;
+  Player(const Player& other) {};
+  static std::shared_ptr<Player> instance;
+  V8Callable* nodeObject;
 };
 
 #endif

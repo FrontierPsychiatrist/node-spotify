@@ -45,6 +45,7 @@ private:
   static std::unique_ptr<uv_timer_t> timer;
   static std::unique_ptr<uv_async_t> notifyHandle;
   static void processEvents(uv_timer_t* timer, int status);
+  static void sendTimer(int sample_rate);
 };
 
 #endif

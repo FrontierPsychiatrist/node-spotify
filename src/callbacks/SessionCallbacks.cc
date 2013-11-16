@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include "../Application.h"
 
 #include "../objects/spotify/PlaylistContainer.h"
-#include "../objects/node/NodePlayer.h"
+#include "../objects/spotify/Player.h"
 #include "../events.h"
 
 extern "C" {
@@ -121,14 +121,16 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlayl
 void SessionCallbacks::end_of_track(sp_session* session) {
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
-  NodePlayer::getInstance().call(PLAYER_END_OF_TRACK);
+  if(Player::instance->nodeObject != nullptr) {
+    Player::instance->nodeObject->call(PLAYER_END_OF_TRACK);
+  }
 }
 
-static void sendTimer(int sample_rate) {
+void SessionCallbacks::sendTimer(int sample_rate) {
   if( spotify::framesReceived / sample_rate > 0) {
     spotify::currentSecond++;
     spotify::framesReceived = spotify::framesReceived - sample_rate;
-    NodePlayer::getInstance().setCurrentSecond(spotify::currentSecond);
+    Player::instance->setCurrentSecond(spotify::currentSecond);
   }
 }
 
