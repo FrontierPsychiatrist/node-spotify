@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include "NodeWrapped.h"
 #include "../spotify/Spotify.h"
 #include <v8.h>
+#include <memory>
 
 using namespace v8;
 
