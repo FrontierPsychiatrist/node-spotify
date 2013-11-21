@@ -1,6 +1,6 @@
 {
   "name" : "node-spotify",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A wrapper for libspotify",
   "keywords": ["spotify", "music"],
   "bugs" : {

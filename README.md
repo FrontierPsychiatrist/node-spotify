@@ -25,13 +25,13 @@ You need a spotify premium account to build or use node-spotify. This is a requi
 
 Dependencies
 ------------
-node-gyp and libspotify are required for building. Install node-gyp via ```npm install -g node-gyp```.
+node-gyp and libspotify are required for building. Under Linux you need libasound2-dev additionally. Install node-gyp via ```npm install -g node-gyp```.
 
 Your compiler must be able to translate some C++11 features (std::shared_ptr, G++ 4.7 or Clang 3.2 should do).
 
 Compiling
 ---------
-Compiling was tested on Raspbian, Debian and OSX. Due to the usage of pthreads I'm not sure if node-spotify will compile on Windows.
+Compiling was tested on Raspbian, Ubuntu and OSX. Due to the usage of pthreads I'm not sure if node-spotify will compile on Windows.
 
 
 If you use OSX and have installed libspotify as a framework you need to edit the binding.gyp file. Remove "-lspotify" and write instead as one link option:

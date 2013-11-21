@@ -119,6 +119,7 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlayl
 }
 
 void SessionCallbacks::end_of_track(sp_session* session) {
+  sp_session_player_unload(application->session);
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
   if(Player::instance->nodeObject != nullptr) {
