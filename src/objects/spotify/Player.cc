@@ -25,7 +25,6 @@ THE SOFTWARE.
 #include "Player.h"
 
 #include "../../Application.h"
-#include "../../events.h"
 
 extern "C" {
   #include "../../audio/audio.h"
@@ -70,9 +69,6 @@ void Player::seek(int second) {
 
 void Player::setCurrentSecond(int second) {
   currentSecond = second;
-  if(nodeObject != nullptr) {
-    //nodeObject->call(PLAYER_SECOND_IN_SONG);
-  }
 }
 
 std::shared_ptr<Player> Player::instance = std::make_shared<Player>();
