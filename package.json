@@ -3,6 +3,7 @@
   "version": "0.4.1",
   "description": "A wrapper for libspotify",
   "keywords": ["spotify", "music"],
+  "homepage": "http://www.node-spotify.com",
   "bugs" : {
     "url" : "https://github.com/FrontierPsychiatrist/node-spotify/issues",
     "email": "moritz.schulze@gmail.com"
