@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 #include "Player.h"
 
+#include "../../exceptions.h"
 #include "../../Application.h"
 
 extern "C" {
@@ -37,6 +38,9 @@ namespace spotify {
 }
 
 extern Application* application;
+
+Player::Player() : currentSecond(0), isPaused(false), isLoading(false),
+  loadingTrack(nullptr), nodeObject(nullptr) {};
 
 void Player::stop() {
   sp_session_player_unload(application->session);
@@ -58,8 +62,25 @@ void Player::resume() {
 void Player::play(std::shared_ptr<Track> track) {
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
-  sp_session_player_load(application->session, track->track);
-  sp_session_player_play(application->session, 1);
+  sp_error error = sp_session_player_load(application->session, track->track);
+  if(error == SP_ERROR_IS_LOADING) {
+    isLoading = true;
+    loadingTrack = track->track;
+  } else if (error == SP_ERROR_TRACK_NOT_PLAYABLE) {
+    throw TrackNotPlayableException();
+  } else {
+    sp_session_player_play(application->session, 1);
+  }
+}
+
+void Player::retryPlay() {
+  sp_error error = sp_track_error(loadingTrack);
+  if(error != SP_ERROR_IS_LOADING) {
+    sp_session_player_load(application->session, loadingTrack);
+    sp_session_player_play(application->session, 1);
+    isLoading = false;
+    loadingTrack = nullptr;
+  }
 }
 
 void Player::seek(int second) {

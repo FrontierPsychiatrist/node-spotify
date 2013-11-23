@@ -60,6 +60,7 @@ sp_session* Spotify::createSession(SpotifyOptions options) {
   sessionCallbacks.logged_out = &SessionCallbacks::loggedOut;
   sessionCallbacks.music_delivery = &SessionCallbacks::music_delivery;
   sessionCallbacks.end_of_track = &SessionCallbacks::end_of_track;
+  sessionCallbacks.metadata_updated = &SessionCallbacks::metadata_updated;
 
   sessionConfig.api_version = SPOTIFY_API_VERSION;
   sessionConfig.cache_location = options.cacheFolder.c_str();
@@ -75,7 +76,7 @@ sp_session* Spotify::createSession(SpotifyOptions options) {
 
   error = sp_session_create(&sessionConfig, &session);
   if(SP_ERROR_OK != error) {
-    //LOG(WARNING) << "Could not create spotify session: " << sp_error_message(error);
+    throw SessionCreationException(sp_error_message(error));
   }
   return session;
 }

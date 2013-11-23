@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 #include "NodePlayer.h"
 #include "NodeTrack.h"
+#include "../../exceptions.h"
+#include "../../common_macros.h"
 
 NodePlayer::NodePlayer() {
   player = player->instance;
@@ -61,7 +63,11 @@ Handle<Value> NodePlayer::play(const Arguments& args) {
   HandleScope scope;
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args[0]->ToObject());
-  nodePlayer->player->play(nodeTrack->track);
+  try {
+    nodePlayer->player->play(nodeTrack->track);
+  } catch (const TrackNotPlayableException& e) {
+    return scope.Close(V8_EXCEPTION("Track not playable"));
+  }
   return scope.Close(Undefined());
 }
 

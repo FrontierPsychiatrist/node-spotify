@@ -40,6 +40,7 @@ public:
   static void end_of_track(sp_session* session);
   static void handleNotify(uv_async_t* handle, int status);
   static void init();
+  static void metadata_updated(sp_session* session);
   static v8::Handle<v8::Function> loginCallback;
 private:
   static std::unique_ptr<uv_timer_t> timer;

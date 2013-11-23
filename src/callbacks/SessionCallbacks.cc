@@ -87,6 +87,13 @@ void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
   uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
 }
 
+void SessionCallbacks::metadata_updated(sp_session* session) {
+  //If sp_session_player_load did not load the track it must be retried to play. Bug #26.
+  if(Player::instance->isLoading) {
+    Player::instance->retryPlay();
+  }
+}
+
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   if(SP_ERROR_OK != error) {
     std::cout << "Error logging in: " << sp_error_message(error) << std::endl;

@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 #include "Application.h"
 #include "exceptions.h"
+#include "common_macros.h"
 #include "objects/node/NodeSpotify.h"
 #include "objects/node/NodePlaylist.h"
 #include "objects/node/NodeTrack.h"
@@ -60,7 +61,7 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
     options = v8::Object::New();
   } else {
     if(!args[0]->IsObject()) {
-      return scope.Close(v8::ThrowException(v8::Exception::Error(v8::String::New("Please provide an object to the node-spotify initializer function"))));
+      return scope.Close(V8_EXCEPTION("Please provide an object to the node-spotify initializer function"));
     }
     options = args[0]->ToObject();
   }
@@ -68,7 +69,9 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   try {
     nodeSpotify = new NodeSpotify(options);
   } catch (const FileException& e) {
-    return scope.Close(ThrowException(Exception::Error(String::New("Appkey file not found"))));
+    return scope.Close(V8_EXCEPTION("Appkey file not found"));
+  } catch (const SessionCreationException& e) {
+    return scope.Close(V8_EXCEPTION(e.message.c_str()));
   }
   v8::Handle<Object> out = nodeSpotify->getV8Object();
   out->Set(v8::String::NewSymbol("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor

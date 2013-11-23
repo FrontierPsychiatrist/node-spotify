@@ -35,7 +35,7 @@ class Player {
 friend class NodePlayer;
 friend class SessionCallbacks;
 public:
-  Player() {};
+  Player();
   void stop();
   void pause();
   void resume();
@@ -45,9 +45,12 @@ public:
 private:
   int currentSecond;
   bool isPaused;
+  bool isLoading;
+  sp_track* loadingTrack;
   Player(const Player& other) {};
   static std::shared_ptr<Player> instance;
   V8Callable* nodeObject;
+  void retryPlay();
 };
 
 #endif
