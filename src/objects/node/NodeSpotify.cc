@@ -114,10 +114,10 @@ Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
       default:
         out = Undefined();
     }
+    sp_link_release(parsedLink);
   } else {
     out = Undefined();
   }
-  sp_link_release(parsedLink);
   return scope.Close(out);
 }
 
