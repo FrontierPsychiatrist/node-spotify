@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "NodePlaylist.h"
 #include "../../events.h"
 #include "../../Application.h"
+#include "../../common_macros.h"
 
 extern Application* application;
 
@@ -198,7 +199,7 @@ Handle<Value> NodeSearch::New(const Arguments& args) {
     int limit = args[2]->ToInteger()->Value();
     search = new NodeSearch(*searchQuery, offset, limit);
   } else {
-    return scope.Close(ThrowException(Exception::Error(String::New("Wrong arguments to search"))));
+    return scope.Close(V8_EXCEPTION("Please provide an object to the node-spotify initializer function"));
   }
   search->Wrap(args.This());
   return scope.Close(args.This());
