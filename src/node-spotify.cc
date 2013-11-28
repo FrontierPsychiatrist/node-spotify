@@ -75,6 +75,7 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   }
   v8::Handle<Object> out = nodeSpotify->getV8Object();
   out->Set(v8::String::NewSymbol("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
+  out->Set(v8::String::NewSymbol("Playlist"), NodePlaylist::getConstructor());
   NodePlayer* nodePlayer = new NodePlayer();
   out->Set(v8::String::NewSymbol("player"), nodePlayer->getV8Object());
   StaticCallbackSetter<NodePlaylist>::init(out, "playlists");

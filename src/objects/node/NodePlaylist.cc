@@ -53,10 +53,23 @@ Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
   return scope.Close(outArray);
 }
 
+Handle<Value> NodePlaylist::New(const Arguments& args) {
+  HandleScope scope;
+  return scope.Close(args.This());
+}
+
+Handle<Function> NodePlaylist::getConstructor() {
+  HandleScope scope;
+  return scope.Close(constructor);
+}
+
 void NodePlaylist::init() {
   HandleScope scope;
-  Handle<FunctionTemplate> constructorTemplate = NodeWrappedWithCallbacks::init("Playlist");
-
+  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New(New);
+  constructorTemplate->SetClassName(String::NewSymbol("Playlist"));
+  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, setName);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
