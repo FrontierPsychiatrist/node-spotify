@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <libspotify/api.h>
 #include <vector>
 #include <memory>
+#include <string>
 
 #include "Playlist.h"
 
@@ -37,6 +38,7 @@ public:
   void loadPlaylists();
   std::vector<std::shared_ptr<Playlist>> getPlaylists() { return playlists; };
   std::shared_ptr<Playlist> starredPlaylist;
+  std::shared_ptr<Playlist> addPlaylist(std::string name);
 private:
   sp_playlistcontainer* playlistContainer;
   std::vector<std::shared_ptr<Playlist>> playlists;

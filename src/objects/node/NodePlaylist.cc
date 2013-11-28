@@ -24,8 +24,13 @@ THE SOFTWARE.
 
 #include "NodePlaylist.h"
 #include "../../events.h"
+#include "../../Application.h"
+#include "../../exceptions.h"
+#include "../../common_macros.h"
 #include "../spotify/Track.h"
 #include "NodeTrack.h"
+
+extern Application* application;
 
 void NodePlaylist::setName(Local<String> property, Local<Value> value, const AccessorInfo& info) {
 
@@ -55,6 +60,15 @@ Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
 
 Handle<Value> NodePlaylist::New(const Arguments& args) {
   HandleScope scope;
+  NodePlaylist* nodePlaylist;
+  String::Utf8Value playlistName(args[0]->ToString());
+  try {
+    std::shared_ptr<Playlist> playlist = application->playlistContainer->addPlaylist(std::string(*playlistName));  
+    nodePlaylist = new NodePlaylist(playlist);
+  } catch(const PlaylistCreationException& e) {
+    return scope.Close(V8_EXCEPTION("Playlist creation failed"));
+  }
+  nodePlaylist->Wrap(args.This());
   return scope.Close(args.This());
 }
 

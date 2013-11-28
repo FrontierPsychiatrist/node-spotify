@@ -29,6 +29,7 @@ THE SOFTWARE.
 
 class FileException : public std::exception {};
 class TrackNotPlayableException : public std::exception {};
+class PlaylistCreationException : public std::exception {};
 class SessionCreationException : public std::exception {
 public:
   SessionCreationException(const char* _message) : message(_message) {};

@@ -25,6 +25,7 @@ THE SOFTWARE.
 #include "PlaylistContainer.h"
 #include "../../callbacks/PlaylistCallbacks.h"
 #include "../../Application.h"
+#include "../../exceptions.h"
 #include "StarredPlaylist.h"
 
 extern Application* application;
@@ -49,4 +50,14 @@ void PlaylistContainer::loadPlaylists() {
   sp_playlist* spPlaylist = sp_session_starred_create(application->session);
   starredPlaylist = std::make_shared<StarredPlaylist>(spPlaylist);
   sp_playlist_add_callbacks(spPlaylist, &Playlist::playlistCallbacks, starredPlaylist.get());
+}
+
+std::shared_ptr<Playlist> PlaylistContainer::addPlaylist(std::string name) {
+  sp_playlist* spotifyPlaylist = sp_playlistcontainer_add_new_playlist(playlistContainer, name.c_str());
+  if(spotifyPlaylist == nullptr) {
+    throw PlaylistCreationException();
+  }
+  std::shared_ptr<Playlist> playlist = std::make_shared<Playlist>(spotifyPlaylist);
+  playlists.push_back(playlist);
+  return playlist;
 }
