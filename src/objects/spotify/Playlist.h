@@ -50,6 +50,7 @@ public:
   std::vector<std::shared_ptr<Track>> getTracks();
   virtual std::string name();
   std::string link();
+  bool isLoaded();
 private:
   sp_playlist* playlist;
   static sp_playlist_callbacks playlistCallbacks;

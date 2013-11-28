@@ -119,11 +119,17 @@ Handle<Value> NodeArtist::getBiography(Local<String> property, const AccessorInf
   return scope.Close(String::New(biography.c_str()));
 }
 
+Handle<Value> NodeArtist::isLoaded(Local<String> property, const AccessorInfo& info) {
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
+  return Boolean::New(nodeArtist->artist->isLoaded());
+}
+
 void NodeArtist::init() {
   HandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Artist");
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "browse", browse);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());

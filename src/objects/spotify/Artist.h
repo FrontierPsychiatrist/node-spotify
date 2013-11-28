@@ -53,6 +53,7 @@ public:
   std::vector<std::shared_ptr<Artist>> similarArtists();
   std::string biography();
   void browse(sp_artistbrowse_type artistbrowseType);
+  bool isLoaded();
 private:
   sp_artist* artist;
   sp_artistbrowse* artistBrowse;

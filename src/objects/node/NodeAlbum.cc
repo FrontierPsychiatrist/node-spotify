@@ -102,11 +102,17 @@ Handle<Value> NodeAlbum::getArtist(Local<String> property, const AccessorInfo& i
   return scope.Close(nodeArtist->getV8Object());
 }
 
+Handle<Value> NodeAlbum::isLoaded(Local<String> property, const AccessorInfo& info) {
+  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
+  return Boolean::New(nodeAlbum->album->isLoaded());
+}
+
 void NodeAlbum::init() {
   HandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Album");
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCoverBase64", getCoverBase64);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "browse", browse);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());

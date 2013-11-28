@@ -54,6 +54,7 @@ public:
   static Handle<Value> getCopyrights(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getReview(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getArtist(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
 };
 
 #endif

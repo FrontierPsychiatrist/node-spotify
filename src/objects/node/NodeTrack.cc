@@ -76,17 +76,23 @@ void NodeTrack::setStarred(Local<String> property, Local<Value> value, const Acc
   scope.Close(Undefined());
 }
 
+Handle<Value> NodeTrack::isLoaded(Local<String> property, const AccessorInfo& info) {
+  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.Holder());
+  return Boolean::New(nodeTrack->track->isLoaded());
+}
+
 void NodeTrack::init() {
   HandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
 
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("duration"), getDuration, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artists"), getArtists, emptySetter);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("album"), getAlbum, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("duration"), getDuration);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("artists"), getArtists);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("album"), getAlbum);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("starred"), getStarred, setStarred);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("popularity"), getPopularity, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("popularity"), getPopularity);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }

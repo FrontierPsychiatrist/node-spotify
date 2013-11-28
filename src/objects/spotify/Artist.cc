@@ -127,3 +127,7 @@ std::string Artist::biography() {
   }
   return biography;
 }
+
+bool Artist::isLoaded() {
+  return sp_artist_is_loaded(artist);
+}

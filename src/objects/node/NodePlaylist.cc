@@ -58,12 +58,17 @@ Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
   return scope.Close(outArray);
 }
 
+Handle<Value> NodePlaylist::isLoaded(Local<String> property, const AccessorInfo& info) {
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
+  return Boolean::New(nodePlaylist->playlist->isLoaded());
+}
+
 Handle<Value> NodePlaylist::New(const Arguments& args) {
   HandleScope scope;
   NodePlaylist* nodePlaylist;
   String::Utf8Value playlistName(args[0]->ToString());
   try {
-    std::shared_ptr<Playlist> playlist = application->playlistContainer->addPlaylist(std::string(*playlistName));  
+    std::shared_ptr<Playlist> playlist = application->playlistContainer->addPlaylist(std::string(*playlistName));
     nodePlaylist = new NodePlaylist(playlist);
   } catch(const PlaylistCreationException& e) {
     return scope.Close(V8_EXCEPTION("Playlist creation failed"));
@@ -85,7 +90,8 @@ void NodePlaylist::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, setName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());

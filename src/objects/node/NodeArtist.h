@@ -51,6 +51,7 @@ public:
   static Handle<Value> getAlbums(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getSimilarArtists(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getBiography(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
   static void init();
 };
 

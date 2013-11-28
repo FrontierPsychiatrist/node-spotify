@@ -56,6 +56,7 @@ public:
   bool starred();
   void setStarred(bool starred);
   int popularity();
+  bool isLoaded();
 private:
   sp_track* track;
 };

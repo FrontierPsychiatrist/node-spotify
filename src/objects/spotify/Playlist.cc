@@ -56,6 +56,10 @@ std::string Playlist::link() {
   return link;
 }
 
+bool Playlist::isLoaded() {
+  return sp_playlist_is_loaded(playlist);
+}
+
 std::vector<std::shared_ptr<Track>> Playlist::getTracks() {
   std::vector<std::shared_ptr<Track>> tracks(sp_playlist_num_tracks(playlist));
   for(int i = 0; i < (int)tracks.size(); ++i) {

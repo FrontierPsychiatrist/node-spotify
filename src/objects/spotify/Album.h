@@ -52,6 +52,7 @@ public:
   std::vector<std::string> copyrights();
   std::shared_ptr<Artist> artist();
   void browse();
+  bool isLoaded();
 private:
   sp_album* album;
   sp_image* cover;

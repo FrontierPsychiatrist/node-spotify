@@ -99,6 +99,10 @@ int Track::popularity() {
   return popularity;
 }
 
+bool Track::isLoaded() {
+  return sp_track_is_loaded(track);
+}
+
 void Track::setStarred(bool starred) {
   //This takes an array of pointers to nodeTracks, so we need to tack the adress of the saved spotifyNodeTrack pointer.
   sp_track_set_starred(application->session, &track, 1, starred);
