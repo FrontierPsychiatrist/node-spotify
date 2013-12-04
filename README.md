@@ -40,7 +40,7 @@ have installed libspotify via homebrew you don't need this step.
 
 Change into the main folder (where binding.gyp lies) and run ```node-gyp configure && node-gyp build```.
 
-Now the spotify module lies in ./build/Release/spotify.node. You can use it in a node.js program like so
+Now the spotify module lies in ./build/Release/spotify.js. You can use it in a node.js program like so
 
 ```javascript
 var spotify = require('./build/Release/spotify')( {
