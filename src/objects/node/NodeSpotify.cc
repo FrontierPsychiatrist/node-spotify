@@ -25,6 +25,8 @@ THE SOFTWARE.
 
 #include "NodeSpotify.h"
 #include "../../Application.h"
+#include "../../exceptions.h"
+#include "../../common_macros.h"
 #include "../../callbacks/SessionCallbacks.h"
 #include "../spotify/SpotifyOptions.h"
 #include "NodePlaylist.h"
@@ -162,8 +164,21 @@ Handle<Value> NodeSpotify::getPlaylists(const Arguments& args) {
 
 Handle<Value> NodeSpotify::getStarred(const Arguments& args) {
   HandleScope scope;
-  NodePlaylist* starredPlaylist = new NodePlaylist(application->playlistContainer->starredPlaylist);
+  NodePlaylist* starredPlaylist = new NodePlaylist(application->playlistContainer->starredPlaylist());
   return scope.Close(starredPlaylist->getV8Object());
+}
+
+Handle<Value> NodeSpotify::addPlaylist(const Arguments& args) {
+  HandleScope scope;
+  NodePlaylist* nodePlaylist;
+  String::Utf8Value playlistName(args[0]->ToString());
+  try {
+    std::shared_ptr<Playlist> playlist = application->playlistContainer->addPlaylist(std::string(*playlistName));
+    nodePlaylist = new NodePlaylist(playlist);
+  } catch(const PlaylistCreationException& e) {
+    return scope.Close(V8_EXCEPTION("Playlist creation failed"));
+  }
+  return scope.Close(nodePlaylist->getV8Object());
 }
 
 Handle<Value> NodeSpotify::getRememberedUser(Local<String> property, const AccessorInfo& info) {
@@ -179,6 +194,7 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "logout", logout);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarred", getStarred);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addPlaylist", addPlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "ready", ready);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser, emptySetter);

@@ -51,9 +51,6 @@ public:
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
 
   static void init();
-
-  static Handle<Function> getConstructor();
-  static Handle<Value> New(const Arguments& args);
 };
 
 #endif

@@ -41,6 +41,7 @@ public:
   static Handle<Value> ready(const Arguments& args);
   static Handle<Value> getPlaylists(const Arguments& args);
   static Handle<Value> getStarred(const Arguments& args);
+  static Handle<Value> addPlaylist(const Arguments& args);
   static Handle<Value> getRememberedUser(Local<String> property, const AccessorInfo& info);
   static Handle<Value> createFromLink(const Arguments& args);
   static void init();

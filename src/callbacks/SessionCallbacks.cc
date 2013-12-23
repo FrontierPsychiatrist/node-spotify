@@ -106,16 +106,7 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   rootPlaylistContainerCallbacks.container_loaded = &SessionCallbacks::rootPlaylistContainerLoaded;
   sp_playlistcontainer *pc = sp_session_playlistcontainer(application->session);
   application->playlistContainer = std::make_shared<PlaylistContainer>(pc);
-  sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, application->playlistContainer.get());
-}
-
-void SessionCallbacks::loggedOut(sp_session* session) {
-  std::cout << "Logged out" << std::endl;
-}
-
-void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
-  PlaylistContainer* playlistContainer = static_cast<PlaylistContainer*>(userdata);
-  playlistContainer->loadPlaylists();
+  sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, nullptr);
 
   //Trigger the login complete callback
   if(!loginCallback.IsEmpty()) {
@@ -123,6 +114,14 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlayl
     v8::Handle<v8::Value> argv[0];
     loginCallback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
   }
+}
+
+void SessionCallbacks::loggedOut(sp_session* session) {
+  std::cout << "Logged out" << std::endl;
+}
+
+void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
+
 }
 
 void SessionCallbacks::end_of_track(sp_session* session) {

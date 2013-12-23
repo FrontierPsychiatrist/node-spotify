@@ -23,8 +23,8 @@ THE SOFTWARE.
 **/
 
 #include "Playlist.h"
-#include <future>
 #include "../../Application.h"
+#include "../../callbacks/PlaylistCallbacks.h"
 
 extern Application* application;
 
@@ -68,4 +68,34 @@ std::vector<std::shared_ptr<Track>> Playlist::getTracks() {
   return tracks;
 }
 
-sp_playlist_callbacks Playlist::playlistCallbacks;
+std::shared_ptr<Playlist> Playlist::fromCache(sp_playlist* key) {
+  auto it = cache.find(key);
+  if(it != cache.end()) {
+    return it->second;
+  } else {
+    auto playlist = std::make_shared<Playlist>(key);
+    sp_playlist_add_callbacks(key, &Playlist::playlistCallbacks, playlist.get());
+    cache[key] = playlist;
+    return playlist;
+  }
+}
+
+//Playlist::playlistCallbacks.tracks_moved = &PlaylistCallbacks::tracks_moved;
+/*playlistCallbacks.playlist_update_in_progress = &playlist_update_in_progress;
+playlistCallbacks.track_created_changed = &track_created_changed;*/
+sp_playlist_callbacks Playlist::playlistCallbacks = {
+  &PlaylistCallbacks::tracksAdded,
+  nullptr,
+  nullptr,
+  &PlaylistCallbacks::playlistNameChange,
+  &PlaylistCallbacks::playlistStateChanged,
+  nullptr,
+  nullptr,
+  nullptr,
+  nullptr,
+  nullptr,
+  nullptr,
+  nullptr,
+  nullptr
+};
+std::map<sp_playlist*, std::shared_ptr<Playlist>> Playlist::cache;

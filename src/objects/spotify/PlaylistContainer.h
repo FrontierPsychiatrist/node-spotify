@@ -35,13 +35,11 @@ THE SOFTWARE.
 class PlaylistContainer {
 public:
   PlaylistContainer(sp_playlistcontainer* _playlistContainer) : playlistContainer(_playlistContainer) {};
-  void loadPlaylists();
-  std::vector<std::shared_ptr<Playlist>> getPlaylists() { return playlists; };
-  std::shared_ptr<Playlist> starredPlaylist;
+  std::vector<std::shared_ptr<Playlist>> getPlaylists();
+  std::shared_ptr<Playlist> starredPlaylist();
   std::shared_ptr<Playlist> addPlaylist(std::string name);
 private:
   sp_playlistcontainer* playlistContainer;
-  std::vector<std::shared_ptr<Playlist>> playlists;
 };
 
 #endif

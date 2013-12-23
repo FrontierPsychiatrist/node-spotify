@@ -25,8 +25,6 @@ THE SOFTWARE.
 #include "NodePlaylist.h"
 #include "../../events.h"
 #include "../../Application.h"
-#include "../../exceptions.h"
-#include "../../common_macros.h"
 #include "../spotify/Track.h"
 #include "NodeTrack.h"
 
@@ -63,28 +61,9 @@ Handle<Value> NodePlaylist::isLoaded(Local<String> property, const AccessorInfo&
   return Boolean::New(nodePlaylist->playlist->isLoaded());
 }
 
-Handle<Value> NodePlaylist::New(const Arguments& args) {
-  HandleScope scope;
-  NodePlaylist* nodePlaylist;
-  String::Utf8Value playlistName(args[0]->ToString());
-  try {
-    std::shared_ptr<Playlist> playlist = application->playlistContainer->addPlaylist(std::string(*playlistName));
-    nodePlaylist = new NodePlaylist(playlist);
-  } catch(const PlaylistCreationException& e) {
-    return scope.Close(V8_EXCEPTION("Playlist creation failed"));
-  }
-  nodePlaylist->Wrap(args.This());
-  return scope.Close(args.This());
-}
-
-Handle<Function> NodePlaylist::getConstructor() {
-  HandleScope scope;
-  return scope.Close(constructor);
-}
-
 void NodePlaylist::init() {
   HandleScope scope;
-  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New(New);
+  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
   constructorTemplate->SetClassName(String::NewSymbol("Playlist"));
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);

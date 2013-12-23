@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 #include <libspotify/api.h>
 
 #include "../node/V8Callable.h"
@@ -51,9 +52,12 @@ public:
   virtual std::string name();
   std::string link();
   bool isLoaded();
+  static std::shared_ptr<Playlist> fromCache(sp_playlist* key);
 private:
   sp_playlist* playlist;
   static sp_playlist_callbacks playlistCallbacks;
+  static std::map<sp_playlist*, std::shared_ptr<Playlist>> cache;
+
   V8Callable* nodeObject;
 };
 
