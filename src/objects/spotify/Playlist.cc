@@ -24,11 +24,12 @@ THE SOFTWARE.
 
 #include "Playlist.h"
 #include "../../Application.h"
+#include "../../exceptions.h"
 #include "../../callbacks/PlaylistCallbacks.h"
 
 extern Application* application;
 
-Playlist::Playlist(sp_playlist* _playlist) : playlist(_playlist), nodeObject(nullptr) {
+Playlist::Playlist(sp_playlist* _playlist) : playlist(_playlist), positionInContainer(-1), nodeObject(nullptr) {
   sp_playlist_add_ref(playlist);
 };
 
@@ -68,15 +69,28 @@ std::vector<std::shared_ptr<Track>> Playlist::getTracks() {
   return tracks;
 }
 
-std::shared_ptr<Playlist> Playlist::fromCache(sp_playlist* key) {
+std::shared_ptr<Playlist> Playlist::fromCache(sp_playlist* key, int position) {
   auto it = cache.find(key);
   if(it != cache.end()) {
     return it->second;
   } else {
     auto playlist = std::make_shared<Playlist>(key);
+    playlist->positionInContainer = position;
     sp_playlist_add_callbacks(key, &Playlist::playlistCallbacks, playlist.get());
     cache[key] = playlist;
     return playlist;
+  }
+}
+
+std::shared_ptr<Playlist> Playlist::fromCache(sp_playlist* key) {
+  return fromCache(key, -1);
+}
+
+void Playlist::deletePlaylist() {
+  if(positionInContainer == -1) {
+    throw PlaylistNotDeleteableException();
+  } else {
+    application->playlistContainer->removePlaylist(positionInContainer);
   }
 }
 

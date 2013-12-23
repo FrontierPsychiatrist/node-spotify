@@ -38,6 +38,7 @@ public:
   std::vector<std::shared_ptr<Playlist>> getPlaylists();
   std::shared_ptr<Playlist> starredPlaylist();
   std::shared_ptr<Playlist> addPlaylist(std::string name);
+  void removePlaylist(int position);
 private:
   sp_playlistcontainer* playlistContainer;
 };

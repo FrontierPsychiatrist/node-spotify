@@ -44,7 +44,7 @@ public:
   ~Playlist() {
     sp_playlist_release(playlist);
   };
-  Playlist(const Playlist& other) : playlist(other.playlist), nodeObject(other.nodeObject) {
+  Playlist(const Playlist& other) : playlist(other.playlist), positionInContainer(other.positionInContainer), nodeObject(other.nodeObject) {
     sp_playlist_add_ref(playlist);
   }
 
@@ -53,11 +53,13 @@ public:
   std::string link();
   bool isLoaded();
   static std::shared_ptr<Playlist> fromCache(sp_playlist* key);
+  static std::shared_ptr<Playlist> fromCache(sp_playlist* key, int position);
+  void deletePlaylist();
 private:
   sp_playlist* playlist;
   static sp_playlist_callbacks playlistCallbacks;
   static std::map<sp_playlist*, std::shared_ptr<Playlist>> cache;
-
+  int positionInContainer;
   V8Callable* nodeObject;
 };
 

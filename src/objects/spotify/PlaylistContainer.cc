@@ -34,7 +34,7 @@ std::vector<std::shared_ptr<Playlist>> PlaylistContainer::getPlaylists() {
   auto playlists = std::vector<std::shared_ptr<Playlist>>((numPlaylists));
   for(int i = 0; i < numPlaylists; ++i) {
     sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
-    playlists[i] = Playlist::fromCache(spPlaylist);
+    playlists[i] = Playlist::fromCache(spPlaylist, i);
   }
   return playlists;
 }
@@ -51,4 +51,8 @@ std::shared_ptr<Playlist> PlaylistContainer::addPlaylist(std::string name) {
   }
   std::shared_ptr<Playlist> playlist = Playlist::fromCache(spotifyPlaylist);
   return playlist;
+}
+
+void PlaylistContainer::removePlaylist(int position) {
+  sp_playlistcontainer_remove_playlist(playlistContainer, position);
 }

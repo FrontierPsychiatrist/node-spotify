@@ -25,6 +25,8 @@ THE SOFTWARE.
 #include "NodePlaylist.h"
 #include "../../events.h"
 #include "../../Application.h"
+#include "../../exceptions.h"
+#include "../../common_macros.h"
 #include "../spotify/Track.h"
 #include "NodeTrack.h"
 
@@ -56,6 +58,17 @@ Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
   return scope.Close(outArray);
 }
 
+Handle<Value> NodePlaylist::deletePlaylist(const Arguments& args) {
+  HandleScope scope;
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
+  try {
+    nodePlaylist->playlist->deletePlaylist();
+  } catch (const PlaylistNotDeleteableException& e) {
+    return scope.Close(V8_EXCEPTION("Playlist not deleteable"));
+  }
+  return scope.Close(Undefined());
+}
+
 Handle<Value> NodePlaylist::isLoaded(Local<String> property, const AccessorInfo& info) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
   return Boolean::New(nodePlaylist->playlist->isLoaded());
@@ -72,6 +85,7 @@ void NodePlaylist::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "delete", deletePlaylist);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
