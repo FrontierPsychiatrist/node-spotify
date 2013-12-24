@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <v8.h>
 #include <node.h>
 #include <string>
+#include <initializer_list>
 
 #include "../../Application.h"
 
@@ -84,7 +85,7 @@ public:
     return scope.Close(v8::Integer::New(deleted));
   }
 
-  void call(std::string name, v8::Handle<v8::Value> value) {
+  void call(std::string name, std::initializer_list<v8::Handle<v8::Value>> args) {
     std::map< std::string, v8::Persistent<v8::Function> >::iterator it;
     it = callbacks.find(name);
 
@@ -104,11 +105,11 @@ public:
     }
 
     if(!callback.IsEmpty() && callback->IsCallable()) {
-      unsigned int argc = 2;
-      v8::Handle<v8::Value> argv[2];
+      unsigned int argc = args.size();
+      v8::Handle<v8::Value>* argv = const_cast<v8::Handle<v8::Value>*>(args.begin());
       //TODO: atm error is constantly undefined.
-      argv[0] = v8::Undefined();
-      argv[1] = value;
+      //argv[0] = v8::Undefined();
+      //argv[1] = value;
       callback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
     }
   }
@@ -119,7 +120,7 @@ public:
    * If no callback is found, nothing happens.
    **/
   void call(std::string name)  {
-    call(name, this->getV8Object());
+    call(name, {v8::Undefined(), this->getV8Object()});
   }
 protected:
   static v8::Handle<v8::FunctionTemplate> init(const char* className) {

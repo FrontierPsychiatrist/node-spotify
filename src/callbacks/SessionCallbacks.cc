@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/spotify/Player.h"
+#include "../objects/node/NodePlaylist.h"
 #include "../events.h"
 
 extern "C" {
@@ -104,6 +105,7 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
 
   //The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
   rootPlaylistContainerCallbacks.container_loaded = &SessionCallbacks::rootPlaylistContainerLoaded;
+  rootPlaylistContainerCallbacks.playlist_added = &SessionCallbacks::playlistAdded;
   sp_playlistcontainer *pc = sp_session_playlistcontainer(application->session);
   application->playlistContainer = std::make_shared<PlaylistContainer>(pc);
   sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, nullptr);
@@ -122,6 +124,12 @@ void SessionCallbacks::loggedOut(sp_session* session) {
 
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
 
+}
+
+void SessionCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata) {
+  auto playlist = Playlist::fromCache(spPlaylist, position);
+  NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
+  nodePlaylist->call(PLAYLIST_ADDED, {v8::Undefined(), nodePlaylist->getV8Object(), v8::Number::New(position)});
 }
 
 void SessionCallbacks::end_of_track(sp_session* session) {
