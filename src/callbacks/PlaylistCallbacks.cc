@@ -51,7 +51,7 @@ void PlaylistCallbacks::tracksAdded(sp_playlist* spPlaylist, sp_track *const *tr
       NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(tracks[i]));
       nodeTracks->Set(v8::Number::New(i), nodeTrack->getV8Object());
     }
-    playlist->nodeObject->call(PLAYLIST_TRACKS_ADDED, {v8::Undefined(), nodeTracks});
+    playlist->nodeObject->call(PLAYLIST_TRACKS_ADDED, {v8::Undefined(), playlist->nodeObject->getV8Object(), nodeTracks});
     scope.Close(Undefined());
   }
 }
