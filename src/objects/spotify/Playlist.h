@@ -55,6 +55,7 @@ public:
   bool isLoaded();
   static std::shared_ptr<Playlist> fromCache(sp_playlist* key);
   static std::shared_ptr<Playlist> fromCache(sp_playlist* key, int position);
+  static void clearCache();
   void deletePlaylist();
 private:
   sp_playlist* playlist;

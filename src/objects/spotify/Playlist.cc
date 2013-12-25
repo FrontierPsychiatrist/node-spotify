@@ -86,6 +86,12 @@ std::shared_ptr<Playlist> Playlist::fromCache(sp_playlist* key) {
   return fromCache(key, -1);
 }
 
+void Playlist::clearCache() {
+  for(auto it = cache.begin(); it != cache.end(); it++) {
+    it->second.reset();
+  }
+}
+
 void Playlist::deletePlaylist() {
   if(positionInContainer == -1) {
     throw PlaylistNotDeleteableException();
