@@ -55,6 +55,10 @@ void Playlist::addTracks(std::vector<std::shared_ptr<Track>> tracks, int positio
   sp_playlist_add_tracks(playlist, spTracks, tracks.size(), position, application->session);
 }
 
+void Playlist::removeTracks(const int* trackPositions, int numberOfTracks) {
+  sp_playlist_remove_tracks(playlist, trackPositions, numberOfTracks);
+}
+
 std::string Playlist::link() {
   std::string link;
   if(sp_playlist_is_loaded(playlist)) {

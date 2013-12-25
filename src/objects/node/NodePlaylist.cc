@@ -84,6 +84,21 @@ Handle<Value> NodePlaylist::addTracks(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
+Handle<Value> NodePlaylist::removeTracks(const Arguments& args) {
+  HandleScope scope;
+  if(args.Length() < 1 || !args[0]->IsArray()) {
+    return scope.Close(V8_EXCEPTION("addTracks needs an array as its first argument"));
+  }
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
+  Handle<Array> trackPositionsArray = Handle<Array>::Cast(args[0]);
+  int trackPositions[trackPositionsArray->Length()];
+  for(unsigned int i = 0; i < trackPositionsArray->Length(); i++) {
+    trackPositions[i] = trackPositionsArray->Get(i)->ToNumber()->IntegerValue();
+  }
+  nodePlaylist->playlist->removeTracks(trackPositions, trackPositionsArray->Length());
+  return scope.Close(Undefined());
+}
+
 Handle<Value> NodePlaylist::deletePlaylist(const Arguments& args) {
   HandleScope scope;
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
@@ -112,6 +127,7 @@ void NodePlaylist::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "removeTracks", removeTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "delete", deletePlaylist);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());

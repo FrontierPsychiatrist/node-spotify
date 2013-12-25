@@ -56,6 +56,7 @@ public:
   bool isLoaded();
   void deletePlaylist();
   void addTracks(std::vector<std::shared_ptr<Track>> tracks, int position);
+  void removeTracks(const int* trackPositions, int numerOfTracks);
 
   //Cache functionality
   static std::shared_ptr<Playlist> fromCache(sp_playlist* key);
