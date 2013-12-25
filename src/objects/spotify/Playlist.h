@@ -38,6 +38,7 @@ THE SOFTWARE.
 class Playlist {
 friend class NodePlaylist;
 friend class PlaylistCallbacks;
+friend class SessionCallbacks;
 friend class PlaylistContainer;
 public:
   Playlist(sp_playlist* _playlist);
