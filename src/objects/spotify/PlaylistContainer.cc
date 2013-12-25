@@ -39,7 +39,7 @@ std::vector<std::shared_ptr<Playlist>> PlaylistContainer::getPlaylists() {
   return playlists;
 }
 
-std::shared_ptr<Playlist> starredPlaylist() {
+std::shared_ptr<Playlist> PlaylistContainer::starredPlaylist() {
   sp_playlist* spPlaylist = sp_session_starred_create(application->session);
   return Playlist::fromCache(spPlaylist);
 }
