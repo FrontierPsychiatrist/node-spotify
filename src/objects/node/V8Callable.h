@@ -29,7 +29,9 @@ THE SOFTWARE.
 #include <v8.h>
 #include <initializer_list>
 
-class V8Callable {
+#include "V8Wrapped.h"
+
+class V8Callable : public virtual V8Wrapped {
 public:
   virtual void call(std::string name) = 0;
   virtual void call(std::string name, std::initializer_list<v8::Handle<v8::Value>> args) = 0;

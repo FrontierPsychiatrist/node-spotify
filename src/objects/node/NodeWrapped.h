@@ -37,13 +37,13 @@ THE SOFTWARE.
  * A class used as a base class for wrapping objects to node objects.
  **/
 template <class T>
-class NodeWrapped : public node::ObjectWrap, public V8Wrapped {
+class NodeWrapped : public node::ObjectWrap, public virtual V8Wrapped {
 public:
   ~NodeWrapped() {}
   /**
    * Get a V8 handle with the Javascript object inside.
    **/
-  v8::Handle<v8::Object> getV8Object() {
+  virtual v8::Handle<v8::Object> getV8Object() {
     //check if the handle from ObjectWrap has been initialized and if not wrap the object in a new JS instance
     if(handle_.IsEmpty()) {
       v8::Local<v8::Object> o = v8::Local<v8::Object>::New(constructor->NewInstance());
