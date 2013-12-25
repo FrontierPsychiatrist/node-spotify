@@ -33,7 +33,9 @@ THE SOFTWARE.
 extern Application* application;
 
 void NodePlaylist::setName(Local<String> property, Local<Value> value, const AccessorInfo& info) {
-
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
+  String::Utf8Value newName(value->ToString());
+  nodePlaylist->playlist->name(*newName);
 }
 
 Handle<Value> NodePlaylist::getName(Local<String> property, const AccessorInfo& info) {

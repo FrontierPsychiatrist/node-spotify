@@ -51,6 +51,7 @@ public:
 
   std::vector<std::shared_ptr<Track>> getTracks();
   virtual std::string name();
+  void name(std::string _name);
   std::string link();
   bool isLoaded();
   static std::shared_ptr<Playlist> fromCache(sp_playlist* key);

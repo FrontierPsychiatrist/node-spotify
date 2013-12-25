@@ -43,6 +43,10 @@ std::string Playlist::name() {
   return name;
 }
 
+void Playlist::name(std::string _name) {
+  sp_playlist_rename(playlist, _name.c_str());
+}
+
 std::string Playlist::link() {
   std::string link;
   if(sp_playlist_is_loaded(playlist)) {
