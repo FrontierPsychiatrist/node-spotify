@@ -60,6 +60,30 @@ Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
   return scope.Close(outArray);
 }
 
+Handle<Value> NodePlaylist::addTracks(const Arguments& args) {
+  HandleScope scope;
+  if(args.Length() < 2) {
+    return scope.Close(V8_EXCEPTION("addTracks needs 2 arguments"));
+  }
+  if(!args[0]->IsArray()) {
+    return scope.Close(V8_EXCEPTION("First argument must be an array"));
+  }
+  if(!args[1]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("Second argument must be a number"));
+  }
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
+  Handle<Array> trackArray = Handle<Array>::Cast(args[0]);
+  std::vector<std::shared_ptr<Track>> tracks(trackArray->Length());
+  for(unsigned int i = 0; i < trackArray->Length(); i++) {
+    Handle<Object> trackObject = trackArray->Get(i)->ToObject();
+    NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(trackObject);
+    tracks[i] = nodeTrack->track;
+  }
+  int position = args[1]->ToNumber()->IntegerValue();
+  nodePlaylist->playlist->addTracks(tracks, position);
+  return scope.Close(Undefined());
+}
+
 Handle<Value> NodePlaylist::deletePlaylist(const Arguments& args) {
   HandleScope scope;
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
@@ -87,6 +111,7 @@ void NodePlaylist::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "delete", deletePlaylist);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());

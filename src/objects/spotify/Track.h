@@ -38,6 +38,7 @@ class Artist;
 
 class Track {
 friend class Player;
+friend class Playlist;
 friend class NodeTrack;
 public:
   Track(sp_track* _track);

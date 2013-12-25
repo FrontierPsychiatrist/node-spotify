@@ -48,6 +48,7 @@ public:
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getTracks(const Arguments& args);
+  static Handle<Value> addTracks(const Arguments& args);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
   static Handle<Value> deletePlaylist(const Arguments& args);
 

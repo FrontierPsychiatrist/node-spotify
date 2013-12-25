@@ -47,6 +47,14 @@ void Playlist::name(std::string _name) {
   sp_playlist_rename(playlist, _name.c_str());
 }
 
+void Playlist::addTracks(std::vector<std::shared_ptr<Track>> tracks, int position) {
+  sp_track* spTracks[tracks.size()];
+  for(int i = 0; i < (int)tracks.size(); i++) {
+    spTracks[i] = tracks[i]->track;
+  }
+  sp_playlist_add_tracks(playlist, spTracks, tracks.size(), position, application->session);
+}
+
 std::string Playlist::link() {
   std::string link;
   if(sp_playlist_is_loaded(playlist)) {

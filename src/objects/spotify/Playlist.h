@@ -54,10 +54,13 @@ public:
   void name(std::string _name);
   std::string link();
   bool isLoaded();
+  void deletePlaylist();
+  void addTracks(std::vector<std::shared_ptr<Track>> tracks, int position);
+
+  //Cache functionality
   static std::shared_ptr<Playlist> fromCache(sp_playlist* key);
   static std::shared_ptr<Playlist> fromCache(sp_playlist* key, int position);
   static void clearCache();
-  void deletePlaylist();
 private:
   sp_playlist* playlist;
   static sp_playlist_callbacks playlistCallbacks;

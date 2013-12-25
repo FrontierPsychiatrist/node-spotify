@@ -34,6 +34,7 @@ using namespace v8;
 
 class NodeTrack : public NodeWrapped<NodeTrack> {
 friend class NodePlayer;
+friend class NodePlaylist;
 private:
   std::shared_ptr<Track> track;
 public:
