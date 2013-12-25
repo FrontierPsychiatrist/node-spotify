@@ -92,7 +92,7 @@ std::vector<std::shared_ptr<Playlist>> Search::getPlaylists() {
   std::vector<std::shared_ptr<Playlist>> playlists(sp_search_num_playlists(search));
   if(sp_search_is_loaded(search)) {
     for(int i = 0; i < (int)playlists.size() ; ++i) {
-      playlists[i] = std::make_shared<Playlist>(sp_search_playlist(search, i));
+      playlists[i] = Playlist::fromCache(sp_search_playlist(search, i));
     }
   }
   return playlists;
