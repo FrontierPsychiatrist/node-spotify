@@ -1,10 +1,15 @@
-var spotify = require('../build/Debug/spotify')({appkeyFile: '../spotify_appkey.key'});
-var loginData = require('./loginData.js');
+var baseTest = require('./basetest.js');
+var spotify = baseTest.spotify;
 
-spotify.ready(test);
-spotify.login(loginData.user, loginData.password, false, false);
+baseTest.executeTest(test);
 
 function test() {
+  console.log('Starting tests');
   var track = spotify.createFromLink('spotify:track:6koWevx9MqN6efQ6qreIbm');
   spotify.player.play(track);
+  setTimeout( function() {
+    spotify.player.stop();
+    spotify.logout();
+    baseTest.quit();
+  }, 10000);
 }

@@ -1,10 +1,10 @@
-var spotify = require('../build/Debug/spotify')({appkeyFile: '../spotify_appkey.key'});
-var loginData = require('./loginData.js');
+var baseTest = require('./basetest.js');
+var spotify = baseTest.spotify;
 
-spotify.ready(tests);
-spotify.login(loginData.user, loginData.password, false, false);
+baseTest.executeTest(tests);
 
 function tests() {
+  console.log('Starting tests');
   /* Playlists */
   var playlists = spotify.getPlaylists();
   console.log('Playlists: ' + playlists.length)
@@ -38,11 +38,12 @@ function tests() {
   var search = new spotify.Search('kanje');
   search.execute(function(err, result) {
     console.log('Search: ' + search);
-    console.log('Search tracks: ' + search.getTracks().length);
-    console.log('Search albums: ' + search.getAlbums().length);
-    console.log('Search artists: ' + search.getArtists().length);
-    console.log('Search playlists: ' + search.getPlaylists().length);
+    console.log('Search tracks: ' + search.tracks.length);
+    console.log('Search albums: ' + search.albums.length);
+    console.log('Search artists: ' + search.artists.length);
+    console.log('Search playlists: ' + search.playlists.length);
 
     spotify.logout();
+    baseTest.quit();
   });
 }
