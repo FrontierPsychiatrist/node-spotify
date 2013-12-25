@@ -105,7 +105,7 @@ void Playlist::deletePlaylist() {
 playlistCallbacks.track_created_changed = &track_created_changed;*/
 sp_playlist_callbacks Playlist::playlistCallbacks = {
   &PlaylistCallbacks::tracksAdded,
-  nullptr,
+  &PlaylistCallbacks::tracksRemoved,
   nullptr,
   &PlaylistCallbacks::playlistNameChange,
   &PlaylistCallbacks::playlistStateChanged,

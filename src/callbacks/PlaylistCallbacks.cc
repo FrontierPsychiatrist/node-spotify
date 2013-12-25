@@ -60,18 +60,18 @@ void PlaylistCallbacks::tracksAdded(sp_playlist* spPlaylist, sp_track *const *tr
 
 }*/
 
-/*void PlaylistCallbacks::tracks_removed(sp_playlist* spPlaylist, const int *tracks, int num_tracks, void *userdata) {
+void PlaylistCallbacks::tracksRemoved(sp_playlist* spPlaylist, const int *tracks, int num_tracks, void *userdata) {
   Playlist* playlist  = static_cast<Playlist*>(userdata);
-  if(playlist->tracksLoaded) {
-    pthread_mutex_lock(&playlist->lockingMutex);
-    auto it = playlist->tracks.begin();
+  if(playlist->nodeObject != nullptr) {
+    v8::HandleScope scope;
+    v8::Handle<v8::Array> removedTrackIndexes = v8::Array::New(num_tracks);
     for(int i = 0; i < num_tracks; i++) {
-      playlist->tracks.erase(it + tracks[i]);
+      removedTrackIndexes->Set(v8::Number::New(i), v8::Number::New(tracks[i]));
     }
-    pthread_mutex_unlock(&playlist->lockingMutex);
-    playlist->call(PLAYLIST_TRACKS_CHANGED);
+    playlist->nodeObject->call(PLAYLIST_TRACKS_REMOVED, {v8::Undefined(), playlist->nodeObject->getV8Object(), removedTrackIndexes});
+    scope.Close(v8::Undefined());
   }
-}*/
+}
 
 /*void playlist_update_in_progress(sp_playlist *pl, bool done, void *userdata) {
   std::cout << "Update in progress" << std::endl;
