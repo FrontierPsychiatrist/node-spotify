@@ -22,20 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-#ifndef _PLAYLIST_FOLDER_H
-#define _PLAYLIST_FOLDER_H
+#ifndef _NODE_PLAYLIST_FOLDER_H
+#define _NODE_PLAYLIST_FOLDER_H
 
-#include "PlaylistBase.h"
+#include <memory>
 
-class PlaylistFolder : public PlaylistBase {
-friend class NodePlaylistFolder;
+#include "NodeWrapped.h"
+#include "../spotify/PlaylistFolder.h"
+
+using namespace v8;
+
+class NodePlaylistFolder : public NodeWrapped<NodePlaylistFolder> {
 private:
-  std::string folderName;
+  std::shared_ptr<PlaylistFolder> playlistFolder;
 public:
-  PlaylistFolder(int position);
-  PlaylistFolder(std::string name, int position);
-  virtual std::string name();
-  bool isStart;
+  NodePlaylistFolder(std::shared_ptr<PlaylistFolder> _playlistFolder) : playlistFolder(_playlistFolder) {};
+  static void init();
+  static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
 };
 
 #endif

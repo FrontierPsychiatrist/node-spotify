@@ -45,7 +45,6 @@ std::vector<std::shared_ptr<PlaylistBase>> PlaylistContainer::getPlaylists() {
     } else if(playlistType == SP_PLAYLIST_TYPE_END_FOLDER) {
       playlists[i] = std::make_shared<PlaylistFolder>(i);
     }
-
   }
   return playlists;
 }

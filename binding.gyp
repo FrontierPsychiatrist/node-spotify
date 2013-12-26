@@ -20,7 +20,7 @@
       "src/objects/node/NodeTrack.cc", "src/objects/node/NodeArtist.cc",
       "src/objects/node/NodePlaylist.cc", "src/objects/node/NodeAlbum.cc",
       "src/objects/node/NodePlayer.cc", "src/objects/node/NodeSearch.cc",
-      "src/objects/node/NodeSpotify.cc"
+      "src/objects/node/NodeSpotify.cc", "src/objects/node/NodePlaylistFolder.cc"
     ],
     "link_settings" : {
       "libraries": ["-lspotify"]

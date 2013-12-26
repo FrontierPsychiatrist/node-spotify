@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include "../../callbacks/SessionCallbacks.h"
 #include "../spotify/SpotifyOptions.h"
 #include "NodePlaylist.h"
+#include "NodePlaylistFolder.h"
 #include "NodePlayer.h"
 #include "NodeArtist.h"
 #include "NodeAlbum.h"
@@ -159,6 +160,9 @@ Handle<Value> NodeSpotify::getPlaylists(const Arguments& args) {
     if(!playlists[i]->isFolder) {
       NodePlaylist* nodePlaylist = new NodePlaylist(std::static_pointer_cast<Playlist>(playlists[i]));
       nPlaylists->Set(Number::New(i), nodePlaylist->getV8Object());
+    } else {
+      NodePlaylistFolder* nodePlaylistFolder = new NodePlaylistFolder(std::static_pointer_cast<PlaylistFolder>(playlists[i]));
+      nPlaylists->Set(Number::New(i), nodePlaylistFolder->getV8Object());
     }
   }
   return scope.Close(nPlaylists);

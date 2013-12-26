@@ -22,20 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-#ifndef _PLAYLIST_FOLDER_H
-#define _PLAYLIST_FOLDER_H
+#include "NodePlaylistFolder.h"
 
-#include "PlaylistBase.h"
+Handle<Value> NodePlaylistFolder::getName(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.Holder());
+  return scope.Close(String::New(nodePlaylistFolder->playlistFolder->name().c_str()));
+}
 
-class PlaylistFolder : public PlaylistBase {
-friend class NodePlaylistFolder;
-private:
-  std::string folderName;
-public:
-  PlaylistFolder(int position);
-  PlaylistFolder(std::string name, int position);
-  virtual std::string name();
-  bool isStart;
-};
-
-#endif
+void NodePlaylistFolder::init() {
+  HandleScope scope;
+  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("PlaylistFolder");
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName);
+  constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
+}

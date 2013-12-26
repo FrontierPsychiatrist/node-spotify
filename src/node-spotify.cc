@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include "objects/node/NodeAlbum.h"
 #include "objects/node/NodeArtist.h"
 #include "objects/node/NodeSearch.h"
+#include "objects/node/NodePlaylistFolder.h"
 #include "objects/node/StaticCallbackSetter.h"
 #include "audio/audio.h"
 
@@ -51,6 +52,7 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   NodeAlbum::init();
   NodeSearch::init();
   NodeSpotify::init();
+  NodePlaylistFolder::init();
 
   application = new Application();
   audio_init(&application->audio_fifo);
