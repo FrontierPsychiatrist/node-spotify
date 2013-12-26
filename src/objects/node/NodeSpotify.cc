@@ -153,11 +153,13 @@ Handle<Value> NodeSpotify::ready(const Arguments& args) {
 
 Handle<Value> NodeSpotify::getPlaylists(const Arguments& args) {
   HandleScope scope;
-  std::vector<std::shared_ptr<Playlist>> playlists = application->playlistContainer->getPlaylists();
+  std::vector<std::shared_ptr<PlaylistBase>> playlists = application->playlistContainer->getPlaylists();
   Local<Array> nPlaylists = Array::New(playlists.size());
   for(int i = 0; i < (int)playlists.size(); i++) {
-    NodePlaylist* nodePlaylist = new NodePlaylist(playlists[i]);
-    nPlaylists->Set(Number::New(i), nodePlaylist->getV8Object());
+    if(!playlists[i]->isFolder) {
+      NodePlaylist* nodePlaylist = new NodePlaylist(std::static_pointer_cast<Playlist>(playlists[i]));
+      nPlaylists->Set(Number::New(i), nodePlaylist->getV8Object());
+    }
   }
   return scope.Close(nPlaylists);
 }

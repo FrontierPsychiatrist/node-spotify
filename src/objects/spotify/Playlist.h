@@ -46,7 +46,7 @@ public:
   ~Playlist() {
     sp_playlist_release(playlist);
   };
-  Playlist(const Playlist& other) : PlaylistBase(other.isFolder), playlist(other.playlist), positionInContainer(other.positionInContainer), nodeObject(other.nodeObject) {
+  Playlist(const Playlist& other) : PlaylistBase(other.isFolder, other.positionInContainer), playlist(other.playlist), nodeObject(other.nodeObject) {
     sp_playlist_add_ref(playlist);
   }
 
@@ -67,7 +67,6 @@ private:
   sp_playlist* playlist;
   static sp_playlist_callbacks playlistCallbacks;
   static std::map<sp_playlist*, std::shared_ptr<Playlist>> cache;
-  int positionInContainer;
   V8Callable* nodeObject;
 };
 

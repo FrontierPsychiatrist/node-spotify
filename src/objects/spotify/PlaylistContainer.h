@@ -31,11 +31,12 @@ THE SOFTWARE.
 #include <string>
 
 #include "Playlist.h"
+#include "PlaylistBase.h"
 
 class PlaylistContainer {
 public:
   PlaylistContainer(sp_playlistcontainer* _playlistContainer) : playlistContainer(_playlistContainer) {};
-  std::vector<std::shared_ptr<Playlist>> getPlaylists();
+  std::vector<std::shared_ptr<PlaylistBase>> getPlaylists();
   std::shared_ptr<Playlist> starredPlaylist();
   std::shared_ptr<Playlist> addPlaylist(std::string name);
   void removePlaylist(int position);

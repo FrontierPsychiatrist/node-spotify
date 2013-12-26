@@ -24,17 +24,9 @@ THE SOFTWARE.
 
 #include "PlaylistFolder.h"
 
-PlaylistFolder::PlaylistFolder(std::string name) : PlaylistBase(true), folderName(name) {
+PlaylistFolder::PlaylistFolder(std::string name, int position) : PlaylistBase(true, position), folderName(name), isStart(true) {}
 
-}
-
-std::vector<std::shared_ptr<Playlist>> PlaylistFolder::getPlaylists() {
-  return playlists;
-}
-
-void PlaylistFolder::addPlaylist(std::shared_ptr<Playlist> playlist) {
-  playlists.push_back(playlist);
-}
+PlaylistFolder::PlaylistFolder(int position) : PlaylistBase(true, position), folderName(""), isStart(false) {}
 
 std::string PlaylistFolder::name() {
   return folderName;

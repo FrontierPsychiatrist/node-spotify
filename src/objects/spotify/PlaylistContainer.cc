@@ -26,15 +26,26 @@ THE SOFTWARE.
 #include "../../Application.h"
 #include "../../exceptions.h"
 #include "StarredPlaylist.h"
+#include "PlaylistFolder.h"
 
 extern Application* application;
 
-std::vector<std::shared_ptr<Playlist>> PlaylistContainer::getPlaylists() {
+std::vector<std::shared_ptr<PlaylistBase>> PlaylistContainer::getPlaylists() {
   int numPlaylists = sp_playlistcontainer_num_playlists(playlistContainer);
-  auto playlists = std::vector<std::shared_ptr<Playlist>>((numPlaylists));
+  auto playlists = std::vector<std::shared_ptr<PlaylistBase>>((numPlaylists));
   for(int i = 0; i < numPlaylists; ++i) {
-    sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
-    playlists[i] = Playlist::fromCache(spPlaylist, i);
+    sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(playlistContainer, i);
+    if(playlistType == SP_PLAYLIST_TYPE_PLAYLIST) {
+      sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
+      playlists[i] = Playlist::fromCache(spPlaylist, i);
+    } else if(playlistType == SP_PLAYLIST_TYPE_START_FOLDER) {
+      char buf[256];
+      sp_playlistcontainer_playlist_folder_name(playlistContainer, i, buf, 256);
+      playlists[i] = std::make_shared<PlaylistFolder>(buf, i);
+    } else if(playlistType == SP_PLAYLIST_TYPE_END_FOLDER) {
+      playlists[i] = std::make_shared<PlaylistFolder>(i);
+    }
+
   }
   return playlists;
 }

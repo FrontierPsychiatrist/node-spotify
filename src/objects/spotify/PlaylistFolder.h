@@ -25,20 +25,16 @@ THE SOFTWARE.
 #ifndef _PLAYLIST_FOLDER_H
 #define _PLAYLIST_FOLDER_H
 
-#include <vector>
-#include <memory>
 #include "PlaylistBase.h"
-#include "Playlist.h"
 
 class PlaylistFolder : public PlaylistBase {
 private:
-  std::vector<std::shared_ptr<Playlist>> playlists;
   std::string folderName;
 public:
-  PlaylistFolder(std::string name);
-  std::vector<std::shared_ptr<Playlist>> getPlaylists();
-  void addPlaylist(std::shared_ptr<Playlist>);
+  PlaylistFolder(int position);
+  PlaylistFolder(std::string name, int position);
   virtual std::string name();
+  bool isStart;
 };
 
 #endif

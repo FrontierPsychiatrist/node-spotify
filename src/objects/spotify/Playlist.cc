@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 extern Application* application;
 
-Playlist::Playlist(sp_playlist* _playlist) : PlaylistBase(false), playlist(_playlist), positionInContainer(-1), nodeObject(nullptr) {
+Playlist::Playlist(sp_playlist* _playlist) : PlaylistBase(false, -1), playlist(_playlist), nodeObject(nullptr) {
   sp_playlist_add_ref(playlist);
 };
 
