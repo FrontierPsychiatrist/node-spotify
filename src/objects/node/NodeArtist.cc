@@ -46,7 +46,7 @@ Handle<Value> NodeArtist::browse(const Arguments& args) {
   if(nodeArtist->artist->artistBrowse == nullptr) {
     sp_artistbrowse_type artistbrowseType = static_cast<sp_artistbrowse_type>(args[0]->ToNumber()->IntegerValue());
     Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
-    nodeArtist->on(ALBUMBROWSE_COMPLETE, callback);
+    nodeArtist->browseCompleteCallback = callback;
 
     //Mutate the V8 object.
     Handle<Object> nodeArtistV8 = nodeArtist->getV8Object();
@@ -59,7 +59,7 @@ Handle<Value> NodeArtist::browse(const Arguments& args) {
 
     nodeArtist->artist->browse(artistbrowseType);
   } else {
-    nodeArtist->call(ARTISTBROWSE_COMPLETE);
+    nodeArtist->callBrowseComplete();
   }
   return scope.Close(Undefined());
 }

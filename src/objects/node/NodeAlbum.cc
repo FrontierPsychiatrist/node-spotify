@@ -28,6 +28,16 @@ THE SOFTWARE.
 #include "../spotify/Track.h"
 #include "../../events.h"
 
+NodeAlbum::NodeAlbum(std::shared_ptr<Album> _album) : album(_album) {
+  album->nodeObject = this;
+};
+
+NodeAlbum::~NodeAlbum() {
+  if(album->nodeObject == this) {
+    album->nodeObject = nullptr;
+  }
+}
+
 Handle<Value> NodeAlbum::getName(Local<String> property, const AccessorInfo& info) {
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
   return String::New(nodeAlbum->album->name().c_str());
@@ -49,7 +59,7 @@ Handle<Value> NodeAlbum::browse(const Arguments& args) {
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(args.This());
   if(nodeAlbum->album->albumBrowse == nullptr) {
     Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
-    nodeAlbum->on(ALBUMBROWSE_COMPLETE, callback);
+    nodeAlbum->browseCompleteCallback = callback;
 
     //Mutate the V8 object.
     Handle<Object> nodeAlbumV8 = nodeAlbum->getV8Object();
@@ -60,7 +70,7 @@ Handle<Value> NodeAlbum::browse(const Arguments& args) {
 
     nodeAlbum->album->browse();
   } else {
-    nodeAlbum->call(ALBUMBROWSE_COMPLETE);
+    nodeAlbum->callBrowseComplete();
   }
   return scope.Close(Undefined());
 }

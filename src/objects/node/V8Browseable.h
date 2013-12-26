@@ -22,34 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-#ifndef _NODE_ALBUM_H
-#define _NODE_ALBUM_H
+#ifndef _V8_BROWSEABLE_H
+#define _V8_BROWSEABLE_H
 
-#include "NodeWrapped.h"
-#include "V8Browseable.h"
-#include "../spotify/Album.h"
+#include <v8.h>
 
-#include <memory>
+#include "V8Wrapped.h"
 
-using namespace v8;
-
-class NodeAlbum : public NodeWrapped<NodeAlbum>, public V8Browseable {
-friend class AlbumBrowseCallbacks;
-private:
-  std::shared_ptr<Album> album;
+class V8Browseable : public virtual V8Wrapped {
 public:
-  NodeAlbum(std::shared_ptr<Album> _album);
-  ~NodeAlbum();
-  static void init();
-  static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getCoverBase64(const Arguments& args);
-  static Handle<Value> browse(const Arguments& args);
-  static Handle<Value> getTracks(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getCopyrights(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getReview(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getArtist(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
+  void callBrowseComplete() {
+    unsigned int argc = 2;
+    v8::Handle<v8::Value> argv[2] = {v8::Undefined(), this->getV8Object()};
+    browseCompleteCallback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+  }
+protected:
+  v8::Handle<v8::Function> browseCompleteCallback;
 };
 
 #endif

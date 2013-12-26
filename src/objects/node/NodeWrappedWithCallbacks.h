@@ -107,9 +107,6 @@ public:
     if(!callback.IsEmpty() && callback->IsCallable()) {
       unsigned int argc = args.size();
       v8::Handle<v8::Value>* argv = const_cast<v8::Handle<v8::Value>*>(args.begin());
-      //TODO: atm error is constantly undefined.
-      //argv[0] = v8::Undefined();
-      //argv[1] = value;
       callback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
     }
   }

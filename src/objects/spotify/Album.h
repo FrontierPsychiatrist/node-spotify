@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 #include "Track.h"
 #include "Artist.h"
-#include "../node/V8Callable.h"
+#include "../node/V8Browseable.h"
 
 class Track;
 class Artist;
@@ -56,7 +56,7 @@ public:
 private:
   sp_album* album;
   sp_image* cover;
-  V8Callable* nodeObject;
+  V8Browseable* nodeObject;
   sp_albumbrowse* albumBrowse;
 };
 

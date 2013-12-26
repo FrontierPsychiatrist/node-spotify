@@ -26,12 +26,13 @@ THE SOFTWARE.
 #define _NODE_ARTIST_H
 
 #include <memory>
-#include "NodeWrappedWithCallbacks.h"
+#include "NodeWrapped.h"
+#include "V8Wrapped.h"
 #include "../spotify/Artist.h"
 
 using namespace v8;
 
-class NodeArtist : public NodeWrappedWithCallbacks<NodeArtist> {
+class NodeArtist : public NodeWrapped<NodeArtist>, public V8Browseable {
 private:
   std::shared_ptr<Artist> artist;
 public:
