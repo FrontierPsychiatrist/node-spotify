@@ -31,11 +31,12 @@ THE SOFTWARE.
 #include <map>
 #include <libspotify/api.h>
 
+#include "PlaylistBase.h"
 #include "../node/V8Callable.h"
 
 #include "Track.h"
 
-class Playlist {
+class Playlist : public PlaylistBase {
 friend class NodePlaylist;
 friend class PlaylistCallbacks;
 friend class SessionCallbacks;
@@ -45,7 +46,7 @@ public:
   ~Playlist() {
     sp_playlist_release(playlist);
   };
-  Playlist(const Playlist& other) : playlist(other.playlist), positionInContainer(other.positionInContainer), nodeObject(other.nodeObject) {
+  Playlist(const Playlist& other) : PlaylistBase(other.isFolder), playlist(other.playlist), positionInContainer(other.positionInContainer), nodeObject(other.nodeObject) {
     sp_playlist_add_ref(playlist);
   }
 

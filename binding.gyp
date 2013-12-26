@@ -15,6 +15,7 @@
       "src/objects/spotify/Playlist.cc", "src/objects/spotify/PlaylistContainer.cc",
       "src/objects/spotify/Album.cc", "src/objects/spotify/Search.cc",
       "src/objects/spotify/Spotify.cc", "src/objects/spotify/Player.cc",
+      "src/objects/spotify/PlaylistFolder.cc",
 
       "src/objects/node/NodeTrack.cc", "src/objects/node/NodeArtist.cc",
       "src/objects/node/NodePlaylist.cc", "src/objects/node/NodeAlbum.cc",
