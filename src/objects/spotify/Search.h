@@ -34,7 +34,7 @@ THE SOFTWARE.
 #include "Playlist.h"
 #include "Artist.h"
 
-#include "../node/V8Callable.h"
+#include "../node/V8Browseable.h"
 
 class Search {
 friend class NodeSearch;
@@ -59,7 +59,7 @@ public:
   int totalPlaylists();
 private:
   sp_search* search;
-  V8Callable* nodeObject;
+  V8Browseable* nodeObject;
 };
 
 #endif

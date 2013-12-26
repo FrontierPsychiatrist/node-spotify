@@ -34,16 +34,6 @@ function tests() {
   console.log('Artistname: ' + firstArtist.name);
   console.log('Artist link: ' + firstArtist.link);
 
-  /* Search */
-  var search = new spotify.Search('kanje');
-  search.execute(function(err, result) {
-    console.log('Search: ' + search);
-    console.log('Search tracks: ' + search.tracks.length);
-    console.log('Search albums: ' + search.albums.length);
-    console.log('Search artists: ' + search.artists.length);
-    console.log('Search playlists: ' + search.playlists.length);
-
-    spotify.logout();
-    baseTest.quit();
-  });
+  spotify.logout();
+  baseTest.quit();
 }

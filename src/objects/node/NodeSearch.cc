@@ -52,7 +52,7 @@ Handle<Value> NodeSearch::execute(const Arguments& args) {
   HandleScope scope;
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
-  nodeSearch->on(SEARCH_COMPLETE, callback);
+  nodeSearch->browseCompleteCallback = callback;
   nodeSearch->search = std::make_shared<Search>();
   nodeSearch->search->nodeObject = nodeSearch;
   nodeSearch->search->execute(nodeSearch->searchQuery, nodeSearch->trackOffset, nodeSearch->trackLimit,

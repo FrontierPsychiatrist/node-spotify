@@ -26,12 +26,13 @@ THE SOFTWARE.
 #define _NODE_SEARCH_RESULT_H
 
 #include <memory>
-#include "NodeWrappedWithCallbacks.h"
+#include "NodeWrapped.h"
+#include "V8Browseable.h"
 #include "../spotify/Search.h"
 
 using namespace v8;
 
-class NodeSearch : public NodeWrappedWithCallbacks<NodeSearch> {
+class NodeSearch : public NodeWrapped<NodeSearch>, public V8Browseable {
 private:
   std::shared_ptr<Search> search;
   std::string searchQuery;

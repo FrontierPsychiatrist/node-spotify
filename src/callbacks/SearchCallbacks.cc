@@ -29,5 +29,5 @@ THE SOFTWARE.
 
 void SearchCallbacks::searchComplete(sp_search* spSearch, void* userdata) {
   Search* search = static_cast<Search*>(userdata);
-  search->nodeObject->call(SEARCH_COMPLETE);
+  search->nodeObject->callBrowseComplete();
 }

@@ -7,7 +7,6 @@ baseTest.executeTest(test);
 function test() {
   console.log('Starting tests');
   var artist = spotify.createFromLink('spotify:artist:2exkZbmNqMKnT8LRWuxWgy');
-  console.log(artist);
   artist.browse(spotify.ARTISTBROWSE_FULL, browseComplete);
 }
 
@@ -22,5 +21,6 @@ function browseComplete(err, artist) {
   console.log('Number of albums:' + artist.albums.length);
   console.log('Number of similarArtists:' + artist.similarArtists.length);
   console.log(artist.biography);
+  spotify.logout();
   baseTest.quit();
 }
