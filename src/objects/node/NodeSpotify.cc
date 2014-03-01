@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "../spotify/SpotifyOptions.h"
 #include "NodePlaylist.h"
 #include "NodePlaylistFolder.h"
+#include "NodePlaylistContainer.h"
 #include "NodePlayer.h"
 #include "NodeArtist.h"
 #include "NodeAlbum.h"
@@ -174,6 +175,12 @@ Handle<Value> NodeSpotify::getStarred(const Arguments& args) {
   return scope.Close(starredPlaylist->getV8Object());
 }
 
+Handle<Value> NodeSpotify::getPlaylistContainer(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(application->playlistContainer);
+  return scope.Close(nodePlaylistContainer->getV8Object());
+}
+
 Handle<Value> NodeSpotify::addPlaylist(const Arguments& args) {
   HandleScope scope;
   NodePlaylist* nodePlaylist;
@@ -203,7 +210,8 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addPlaylist", addPlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "ready", ready);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPlaylistContainer);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }
