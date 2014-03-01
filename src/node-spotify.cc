@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include "common_macros.h"
 #include "objects/node/NodeSpotify.h"
 #include "objects/node/NodePlaylist.h"
+#include "objects/node/NodePlaylistContainer.h"
 #include "objects/node/NodeTrack.h"
 #include "objects/node/NodePlayer.h"
 #include "objects/node/NodeAlbum.h"
@@ -53,6 +54,7 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   NodeSearch::init();
   NodeSpotify::init();
   NodePlaylistFolder::init();
+  NodePlaylistContainer::init();
 
   application = new Application();
   audio_init(&application->audio_fifo);
