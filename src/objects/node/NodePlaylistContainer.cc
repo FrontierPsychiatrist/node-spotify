@@ -1,4 +1,6 @@
 #include "NodePlaylistContainer.h"
+#include "NodePlaylist.h"
+#include "NodePlaylistFolder.h"
 
 NodePlaylistContainer::NodePlaylistContainer(std::shared_ptr<PlaylistContainer> _playlistContainer) : playlistContainer(_playlistContainer) {
 
@@ -15,12 +17,26 @@ Handle<Value> NodePlaylistContainer::getOwner(Local<String> property, const Acce
 
 Handle<Value> NodePlaylistContainer::getPlaylists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  return scope.Close(Undefined());
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.Holder());
+  std::vector<std::shared_ptr<PlaylistBase>> playlists = nodePlaylistContainer->playlistContainer->getPlaylists();
+  Local<Array> nPlaylists = Array::New(playlists.size());
+  for(int i = 0; i < (int)playlists.size(); i++) {
+    if(!playlists[i]->isFolder) {
+      NodePlaylist* nodePlaylist = new NodePlaylist(std::static_pointer_cast<Playlist>(playlists[i]));
+      nPlaylists->Set(Number::New(i), nodePlaylist->getV8Object());
+    } else {
+      NodePlaylistFolder* nodePlaylistFolder = new NodePlaylistFolder(std::static_pointer_cast<PlaylistFolder>(playlists[i]));
+      nPlaylists->Set(Number::New(i), nodePlaylistFolder->getV8Object());
+    }
+  }
+  return scope.Close(nPlaylists);
 }
 
 Handle<Value> NodePlaylistContainer::getStarred(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  return scope.Close(Undefined());
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.Holder());
+  NodePlaylist* starredPlaylist = new NodePlaylist(nodePlaylistContainer->playlistContainer->starredPlaylist());
+  return scope.Close(starredPlaylist->getV8Object());
 }
 
 Handle<Value> NodePlaylistContainer::addPlaylist(const Arguments& args) {
