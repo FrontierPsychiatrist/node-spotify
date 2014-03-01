@@ -30,6 +30,14 @@ var beefedupSpotify = function(options) {
   spotify.ARTISTBROWSE_FULL = 0;
   spotify.ARTISTBROWSE_NO_TRACKS = 1;
   spotify.ARTISTBROWSE_NO_ALBUMS = 2;
+  //Deprecated, will be removed
+  spotify.getPlaylists = function() {
+    return spotify.playlistContainer.playlists;
+  }
+  //Deprecated, will be removed
+  spotify.getStarred = function() {
+    return spotify.playlistContainer.starred;
+  }
   return spotify;
 }
 

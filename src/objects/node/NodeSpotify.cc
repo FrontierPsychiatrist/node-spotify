@@ -153,45 +153,10 @@ Handle<Value> NodeSpotify::ready(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
-Handle<Value> NodeSpotify::getPlaylists(const Arguments& args) {
-  HandleScope scope;
-  std::vector<std::shared_ptr<PlaylistBase>> playlists = application->playlistContainer->getPlaylists();
-  Local<Array> nPlaylists = Array::New(playlists.size());
-  for(int i = 0; i < (int)playlists.size(); i++) {
-    if(!playlists[i]->isFolder) {
-      NodePlaylist* nodePlaylist = new NodePlaylist(std::static_pointer_cast<Playlist>(playlists[i]));
-      nPlaylists->Set(Number::New(i), nodePlaylist->getV8Object());
-    } else {
-      NodePlaylistFolder* nodePlaylistFolder = new NodePlaylistFolder(std::static_pointer_cast<PlaylistFolder>(playlists[i]));
-      nPlaylists->Set(Number::New(i), nodePlaylistFolder->getV8Object());
-    }
-  }
-  return scope.Close(nPlaylists);
-}
-
-Handle<Value> NodeSpotify::getStarred(const Arguments& args) {
-  HandleScope scope;
-  NodePlaylist* starredPlaylist = new NodePlaylist(application->playlistContainer->starredPlaylist());
-  return scope.Close(starredPlaylist->getV8Object());
-}
-
 Handle<Value> NodeSpotify::getPlaylistContainer(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(application->playlistContainer);
   return scope.Close(nodePlaylistContainer->getV8Object());
-}
-
-Handle<Value> NodeSpotify::addPlaylist(const Arguments& args) {
-  HandleScope scope;
-  NodePlaylist* nodePlaylist;
-  String::Utf8Value playlistName(args[0]->ToString());
-  try {
-    std::shared_ptr<Playlist> playlist = application->playlistContainer->addPlaylist(std::string(*playlistName));
-    nodePlaylist = new NodePlaylist(playlist);
-  } catch(const PlaylistCreationException& e) {
-    return scope.Close(V8_EXCEPTION("Playlist creation failed"));
-  }
-  return scope.Close(nodePlaylist->getV8Object());
 }
 
 Handle<Value> NodeSpotify::getRememberedUser(Local<String> property, const AccessorInfo& info) {
@@ -205,9 +170,6 @@ void NodeSpotify::init() {
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "login", login);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "logout", logout);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarred", getStarred);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addPlaylist", addPlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "ready", ready);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
