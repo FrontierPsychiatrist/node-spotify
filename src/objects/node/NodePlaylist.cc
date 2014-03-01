@@ -32,6 +32,16 @@ THE SOFTWARE.
 
 extern Application* application;
 
+std::map<std::string, Persistent<Function>> NodePlaylist::staticCallbacks;
+
+NodePlaylist::NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist) {
+  application->playlistMapper->addObject(playlist->playlist, this);
+}
+
+NodePlaylist::~NodePlaylist() {
+  application->playlistMapper->removeObject(playlist->playlist, this);
+}
+
 void NodePlaylist::setName(Local<String> property, Local<Value> value, const AccessorInfo& info) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
   String::Utf8Value newName(value->ToString());
@@ -113,6 +123,18 @@ Handle<Value> NodePlaylist::deletePlaylist(const Arguments& args) {
 Handle<Value> NodePlaylist::isLoaded(Local<String> property, const AccessorInfo& info) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
   return Boolean::New(nodePlaylist->playlist->isLoaded());
+}
+
+Handle<Function> NodePlaylist::getCallback(std::string name) {
+  Handle<Function> callback = NodeWrappedWithCallbacks<NodePlaylist>::getCallback(name);
+  if(callback.IsEmpty()) {
+    //search static callbacks instead
+    auto iterator = staticCallbacks.find(name);
+    if( iterator != staticCallbacks.end() ) {
+      callback = iterator->second;
+    }
+  }
+  return callback;
 }
 
 void NodePlaylist::init() {

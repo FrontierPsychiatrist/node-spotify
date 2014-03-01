@@ -27,14 +27,16 @@ THE SOFTWARE.
 #include "../objects/node/NodeTrack.h"
 #include "../objects/spotify/Playlist.h"
 #include "../events.h"
+#include "../Application.h"
 
 #include <v8.h>
 #include <memory>
 
+extern Application* application;
+
 void PlaylistCallbacks::playlistNameChange(sp_playlist* _playlist, void* userdata) {
-  Playlist* playlist = static_cast<Playlist*>(userdata);
-  if(playlist->nodeObject != nullptr) {
-    playlist->nodeObject->call(PLAYLIST_RENAMED);
+  for(V8Callable* nodeObject : application->playlistMapper->getObjects(_playlist)) {
+    nodeObject->call(PLAYLIST_RENAMED);
   }
 }
 
@@ -43,15 +45,17 @@ void PlaylistCallbacks::playlistStateChanged(sp_playlist* _playlist, void* userd
 }
 
 void PlaylistCallbacks::tracksAdded(sp_playlist* spPlaylist, sp_track *const *tracks, int num_tracks, int position, void *userdata) {
-  Playlist* playlist  = static_cast<Playlist*>(userdata);
-  if(playlist->nodeObject != nullptr) {
+  auto v8Objects = application->playlistMapper->getObjects(spPlaylist);
+  if(!v8Objects.empty()) {
     v8::HandleScope scope;
     v8::Handle<v8::Array> nodeTracks = v8::Array::New(num_tracks);
     for(int i = 0; i < num_tracks; i++) {
       NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(tracks[i]));
       nodeTracks->Set(v8::Number::New(i), nodeTrack->getV8Object());
     }
-    playlist->nodeObject->call(PLAYLIST_TRACKS_ADDED, {v8::Undefined(), playlist->nodeObject->getV8Object(), nodeTracks});
+    for(V8Callable* nodeObject : v8Objects) {
+      nodeObject->call(PLAYLIST_TRACKS_ADDED, {v8::Undefined(), nodeObject->getV8Object(), nodeTracks});  
+    }
     scope.Close(Undefined());
   }
 }
@@ -61,14 +65,16 @@ void PlaylistCallbacks::tracksAdded(sp_playlist* spPlaylist, sp_track *const *tr
 }*/
 
 void PlaylistCallbacks::tracksRemoved(sp_playlist* spPlaylist, const int *tracks, int num_tracks, void *userdata) {
-  Playlist* playlist  = static_cast<Playlist*>(userdata);
-  if(playlist->nodeObject != nullptr) {
+  auto v8Objects = application->playlistMapper->getObjects(spPlaylist);
+  if(!v8Objects.empty()) {
     v8::HandleScope scope;
     v8::Handle<v8::Array> removedTrackIndexes = v8::Array::New(num_tracks);
     for(int i = 0; i < num_tracks; i++) {
       removedTrackIndexes->Set(v8::Number::New(i), v8::Number::New(tracks[i]));
     }
-    playlist->nodeObject->call(PLAYLIST_TRACKS_REMOVED, {v8::Undefined(), playlist->nodeObject->getV8Object(), removedTrackIndexes});
+    for(V8Callable* nodeObject : v8Objects) {
+      nodeObject->call(PLAYLIST_TRACKS_REMOVED, {v8::Undefined(), nodeObject->getV8Object(), removedTrackIndexes});  
+    }
     scope.Close(v8::Undefined());
   }
 }

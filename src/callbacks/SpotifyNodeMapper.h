@@ -22,23 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-#ifndef _APPLICATION_H
-#define _APPLICATION_H
+#ifndef _SPOTIFY_NODE_MAPPER_H
+#define _SPOTIFY_NODE_MAPPER_H
 
-#include <libspotify/api.h>
-#include <memory>
-#include "objects/spotify/PlaylistContainer.h"
-#include "callbacks/SpotifyNodeMapper.h"
+#include "../objects/node/V8Callable.h"
 
-extern "C" {
-  #include "audio/audio.h"
-}
+#include <v8.h>
+#include <map>
+#include <vector>
 
-struct Application {
-  sp_session* session;
-  audio_fifo_t audio_fifo;
-  std::shared_ptr<PlaylistContainer> playlistContainer;
-  std::unique_ptr<SpotifyNodeMapper<sp_playlist>> playlistMapper;
+/**
+ *  This class maps spotify type pointers to Javascript objects that represent them.
+ *  Used in callbacks to call the user defined callback.
+**/
+template <typename S>
+class SpotifyNodeMapper {
+public:
+  void addObject(S* spotifyType, V8Callable* v8Callable) {
+    objectMapping[spotifyType].push_back(v8Callable);
+  }
+  void removeObject(S* spotifyType, V8Callable* v8Callable) {
+    auto objects = objectMapping[spotifyType];
+    objects.erase(std::remove(objects.begin(), objects.end(), v8Callable), objects.end());
+    objectMapping[spotifyType] = objects;
+  }
+  std::vector<V8Callable*> getObjects(S* spotifyType) {
+    return objectMapping[spotifyType];
+  }
+private:
+  std::map<S*, std::vector<V8Callable*>> objectMapping;
 };
-
 #endif

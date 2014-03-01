@@ -56,8 +56,11 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   NodePlaylistFolder::init();
   NodePlaylistContainer::init();
 
+  //initialize application struct
   application = new Application();
   audio_init(&application->audio_fifo);
+  std::unique_ptr<SpotifyNodeMapper<sp_playlist>> playlistMapper(new SpotifyNodeMapper<sp_playlist>());
+  application->playlistMapper = std::move(playlistMapper);
 
   //configure and create spotify session
   v8::Handle<v8::Object> options;
@@ -69,6 +72,8 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
     }
     options = args[0]->ToObject();
   }
+
+  //Create nodeSpotify object
   NodeSpotify* nodeSpotify;
   try {
     nodeSpotify = new NodeSpotify(options);
@@ -77,12 +82,14 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   } catch (const SessionCreationException& e) {
     return scope.Close(V8_EXCEPTION(e.message.c_str()));
   }
-  v8::Handle<Object> out = nodeSpotify->getV8Object();
-  out->Set(v8::String::NewSymbol("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
+  v8::Handle<Object> spotifyObject = nodeSpotify->getV8Object();
+
+  //Set some fields on the nodeSpotify object
+  spotifyObject->Set(v8::String::NewSymbol("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
   NodePlayer* nodePlayer = new NodePlayer();
-  out->Set(v8::String::NewSymbol("player"), nodePlayer->getV8Object());
-  StaticCallbackSetter<NodePlaylist>::init(out, "playlists");
-  return scope.Close(out);
+  spotifyObject->Set(v8::String::NewSymbol("player"), nodePlayer->getV8Object());
+  StaticCallbackSetter<NodePlaylist>::init(spotifyObject, "playlists");
+  return scope.Close(spotifyObject);
 };
 
 static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Object> module) {

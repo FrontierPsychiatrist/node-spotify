@@ -40,13 +40,8 @@ extern Application* application;
 /**
  * This base class is for javascript objects that should provide callbacks.
  * The callbacks can be set/unset from javascript via on(name, function) / off(name)
- * There is also the possibility to attach static callbacks, i.e. callbacks that are
- * the same for all instances of a subclass.
  *
- * The callbacks can be called from C++ via the call(name) method. First instance callbacks
- * then static callbacks will be searched for a callback function. To assure callbacks are called
- * from within the node.js thread libuv is used to send an event to the main loop.
- * The function to handle these events is in node-spotify.cc
+ * The callbacks can be called from C++ via the call(name) or call(name, args) method.
  **/
 template<class T>
 class NodeWrappedWithCallbacks : public NodeWrapped<T>, public V8Callable {
@@ -86,24 +81,7 @@ public:
   }
 
   void call(std::string name, std::initializer_list<v8::Handle<v8::Value>> args) {
-    std::map< std::string, v8::Persistent<v8::Function> >::iterator it;
-    it = callbacks.find(name);
-
-    v8::Handle<v8::Function> callback;
-
-    //Check if a callback for the given name was found in this object
-    if(it != callbacks.end()) {
-      //Get the adress of the callback function and send it to the node thread
-      //This needs to be the adress from the map element, otherwise we would pass the adress of a local and it fails on the node side.
-      callback = it->second;
-    } else {
-      //search static callbacks
-      it = staticCallbacks.find(name);
-      if(it != staticCallbacks.end()) {
-        callback = it->second;
-      }
-    }
-
+    v8::Handle<v8::Function> callback = getCallback(name);
     if(!callback.IsEmpty() && callback->IsCallable()) {
       unsigned int argc = args.size();
       v8::Handle<v8::Value>* argv = const_cast<v8::Handle<v8::Value>*>(args.begin());
@@ -112,26 +90,27 @@ public:
   }
 
   /**
-   * Call a Javascript callback by name. The callback will be executed in the nodeJS thread.
-   * First, object wide callbacks will be searched, then, class wide callbacks.
+   * Call a Javascript callback by name.
    * If no callback is found, nothing happens.
    **/
   void call(std::string name)  {
     call(name, {v8::Undefined(), this->getV8Object()});
   }
 protected:
-  static v8::Handle<v8::FunctionTemplate> init(const char* className) {
-    v8::Handle<v8::FunctionTemplate> constructorTemplate = NodeWrapped<T>::init(className);
-    NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
-    NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
-    return constructorTemplate;
+  /**
+   *  Get a callback function by name.
+   *  Can be overwritten by extending classes to provide support for static callbacks.
+   **/
+  virtual v8::Handle<v8::Function> getCallback(std::string name) {
+    auto iterator = callbacks.find(name);
+    v8::Handle<v8::Function> callback;
+    if( iterator != callbacks.end() ) {
+      callback = iterator->second;
+    }
+    return callback;
   }
 private:
-  std::map<std::string, v8::Persistent<v8::Function>> callbacks;
-  static std::map<std::string, v8::Persistent<v8::Function>> staticCallbacks;
+  std::map<std::string, v8::Persistent<v8::Function>> callbacks;  
 };
-
-//This field should be static per template, not for all NodeWrappedWithCallbacks subclasses.
-template <class T> std::map<std::string, v8::Persistent<v8::Function>> NodeWrappedWithCallbacks<T>::staticCallbacks;
 
 #endif

@@ -32,7 +32,6 @@ THE SOFTWARE.
 #include <libspotify/api.h>
 
 #include "PlaylistBase.h"
-#include "../node/V8Callable.h"
 
 #include "Track.h"
 
@@ -43,13 +42,9 @@ friend class SessionCallbacks;
 friend class PlaylistContainer;
 public:
   Playlist(sp_playlist* _playlist);
-  ~Playlist() {
-    sp_playlist_release(playlist);
-  };
-  Playlist(const Playlist& other) : PlaylistBase(other.isFolder, other.positionInContainer), playlist(other.playlist), nodeObject(other.nodeObject) {
-    sp_playlist_add_ref(playlist);
-  }
-
+  Playlist(const Playlist& other);
+  ~Playlist();
+  
   std::vector<std::shared_ptr<Track>> getTracks();
   virtual std::string name();
   void name(std::string _name);
@@ -67,7 +62,6 @@ private:
   sp_playlist* playlist;
   static sp_playlist_callbacks playlistCallbacks;
   static std::map<sp_playlist*, std::shared_ptr<Playlist>> cache;
-  V8Callable* nodeObject;
 };
 
 #endif

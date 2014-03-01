@@ -29,9 +29,17 @@ THE SOFTWARE.
 
 extern Application* application;
 
-Playlist::Playlist(sp_playlist* _playlist) : PlaylistBase(false, -1), playlist(_playlist), nodeObject(nullptr) {
+Playlist::Playlist(sp_playlist* _playlist) : PlaylistBase(false, -1), playlist(_playlist) {
   sp_playlist_add_ref(playlist);
-};
+}
+
+Playlist::Playlist(const Playlist& other) : PlaylistBase(other.isFolder, other.positionInContainer), playlist(other.playlist) {
+  sp_playlist_add_ref(playlist);
+}
+
+Playlist::~Playlist() {
+  sp_playlist_release(playlist);
+}
 
 std::string Playlist::name() {
   std::string name;
