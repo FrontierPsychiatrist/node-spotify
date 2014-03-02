@@ -30,7 +30,7 @@ THE SOFTWARE.
 extern Application* application;
 
 Playlist::Playlist(sp_playlist* _playlist) : PlaylistBase(false), playlist(_playlist) {
-  sp_playlist_add_callbacks(playlist, &Playlist::playlistCallbacks, this);
+  sp_playlist_add_callbacks(playlist, &Playlist::playlistCallbacks, nullptr);
   sp_playlist_add_ref(playlist);
 }
 
@@ -39,7 +39,7 @@ Playlist::Playlist(const Playlist& other) : PlaylistBase(other.isFolder), playli
 }
 
 Playlist::~Playlist() {
-  sp_playlist_remove_callbacks(playlist, &Playlist::playlistCallbacks, this);
+  sp_playlist_remove_callbacks(playlist, &Playlist::playlistCallbacks, nullptr);
   sp_playlist_release(playlist);
 }
 
