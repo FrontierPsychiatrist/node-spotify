@@ -47,7 +47,6 @@ public:
   static Handle<Value> addTracks(const Arguments& args);
   static Handle<Value> removeTracks(const Arguments& args);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> deletePlaylist(const Arguments& args);
 
   static void init();
   static std::map<std::string, Persistent<Function>> staticCallbacks;

@@ -116,13 +116,6 @@ void Playlist::clearCache() {
   }
 }
 
-void Playlist::deletePlaylist() {
-  if(positionInContainer == -1) {
-    throw PlaylistNotDeleteableException();
-  } else {
-    application->playlistContainer->removePlaylist(positionInContainer);
-  }
-}
 
 //Playlist::playlistCallbacks.tracks_moved = &PlaylistCallbacks::tracks_moved;
 /*playlistCallbacks.playlist_update_in_progress = &playlist_update_in_progress;

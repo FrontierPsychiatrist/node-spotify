@@ -109,17 +109,6 @@ Handle<Value> NodePlaylist::removeTracks(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
-Handle<Value> NodePlaylist::deletePlaylist(const Arguments& args) {
-  HandleScope scope;
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  try {
-    nodePlaylist->playlist->deletePlaylist();
-  } catch (const PlaylistNotDeleteableException& e) {
-    return scope.Close(V8_EXCEPTION("Playlist not deleteable"));
-  }
-  return scope.Close(Undefined());
-}
-
 Handle<Value> NodePlaylist::isLoaded(Local<String> property, const AccessorInfo& info) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
   return Boolean::New(nodePlaylist->playlist->isLoaded());
@@ -150,7 +139,6 @@ void NodePlaylist::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "removeTracks", removeTracks);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "delete", deletePlaylist);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
