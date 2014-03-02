@@ -110,8 +110,9 @@ Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
       }
       case SP_LINKTYPE_PLAYLIST:
       {
-        sp_playlist* playlist = sp_playlist_create(application->session, parsedLink);
-        NodePlaylist* nodePlaylist = new NodePlaylist(Playlist::fromCache(playlist));
+        sp_playlist* spPlaylist = sp_playlist_create(application->session, parsedLink);
+        auto playlist = std::make_shared<Playlist>(spPlaylist);
+        NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
         out = nodePlaylist->getV8Object();
         break;
       }

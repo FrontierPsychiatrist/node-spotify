@@ -91,7 +91,6 @@ void Spotify::login(std::string username, std::string password, bool rememberMe,
 
 void Spotify::logout() {
   application->playlistContainer.reset();
-  Playlist::clearCache();
   sp_session_logout(session);
 }
 

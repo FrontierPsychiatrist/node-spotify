@@ -32,8 +32,8 @@ friend class NodePlaylistFolder;
 private:
   std::string folderName;
 public:
-  PlaylistFolder(int position);
-  PlaylistFolder(std::string name, int position);
+  PlaylistFolder();
+  PlaylistFolder(std::string name);
   virtual std::string name();
   bool isStart;
 };

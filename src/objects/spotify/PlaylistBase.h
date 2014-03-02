@@ -29,10 +29,9 @@ THE SOFTWARE.
 
 class PlaylistBase {
 public:
-  PlaylistBase(bool _isFolder, int _positionInContainer) : isFolder(_isFolder), positionInContainer(_positionInContainer) {};
+  PlaylistBase(bool _isFolder) : isFolder(_isFolder) {};
   virtual std::string name() = 0;
   virtual ~PlaylistBase() {};
   bool isFolder;
-  int positionInContainer;
 };
 #endif

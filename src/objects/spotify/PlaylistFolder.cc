@@ -24,9 +24,9 @@ THE SOFTWARE.
 
 #include "PlaylistFolder.h"
 
-PlaylistFolder::PlaylistFolder(std::string name, int position) : PlaylistBase(true, position), folderName(name), isStart(true) {}
+PlaylistFolder::PlaylistFolder(std::string name) : PlaylistBase(true), folderName(name), isStart(true) {}
 
-PlaylistFolder::PlaylistFolder(int position) : PlaylistBase(true, position), folderName(""), isStart(false) {}
+PlaylistFolder::PlaylistFolder() : PlaylistBase(true), folderName(""), isStart(false) {}
 
 std::string PlaylistFolder::name() {
   return folderName;

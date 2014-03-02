@@ -37,13 +37,13 @@ std::vector<std::shared_ptr<PlaylistBase>> PlaylistContainer::getPlaylists() {
     sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(playlistContainer, i);
     if(playlistType == SP_PLAYLIST_TYPE_PLAYLIST) {
       sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
-      playlists[i] = Playlist::fromCache(spPlaylist, i);
+      playlists[i] = std::make_shared<Playlist>(spPlaylist);
     } else if(playlistType == SP_PLAYLIST_TYPE_START_FOLDER) {
       char buf[256];
       sp_playlistcontainer_playlist_folder_name(playlistContainer, i, buf, 256);
-      playlists[i] = std::make_shared<PlaylistFolder>(buf, i);
+      playlists[i] = std::make_shared<PlaylistFolder>(buf);
     } else if(playlistType == SP_PLAYLIST_TYPE_END_FOLDER) {
-      playlists[i] = std::make_shared<PlaylistFolder>(i);
+      playlists[i] = std::make_shared<PlaylistFolder>();
     }
   }
   return playlists;
@@ -51,7 +51,7 @@ std::vector<std::shared_ptr<PlaylistBase>> PlaylistContainer::getPlaylists() {
 
 std::shared_ptr<Playlist> PlaylistContainer::starredPlaylist() {
   sp_playlist* spPlaylist = sp_session_starred_create(application->session);
-  return Playlist::fromCache(spPlaylist);
+  return std::make_shared<Playlist>(spPlaylist);
 }
 
 std::shared_ptr<Playlist> PlaylistContainer::addPlaylist(std::string name) {
@@ -59,7 +59,7 @@ std::shared_ptr<Playlist> PlaylistContainer::addPlaylist(std::string name) {
   if(spotifyPlaylist == nullptr) {
     throw PlaylistCreationException();
   }
-  std::shared_ptr<Playlist> playlist = Playlist::fromCache(spotifyPlaylist);
+  std::shared_ptr<Playlist> playlist = std::make_shared<Playlist>(spotifyPlaylist);
   return playlist;
 }
 

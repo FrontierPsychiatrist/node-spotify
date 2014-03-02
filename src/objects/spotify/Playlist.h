@@ -38,7 +38,6 @@ THE SOFTWARE.
 class Playlist : public PlaylistBase {
 friend class NodePlaylist;
 friend class PlaylistCallbacks;
-friend class SessionCallbacks;
 friend class PlaylistContainer;
 public:
   Playlist(sp_playlist* _playlist);
@@ -51,16 +50,10 @@ public:
   std::string link();
   bool isLoaded();
   void addTracks(std::vector<std::shared_ptr<Track>> tracks, int position);
-  void removeTracks(const int* trackPositions, int numerOfTracks);
-
-  //Cache functionality
-  static std::shared_ptr<Playlist> fromCache(sp_playlist* key);
-  static std::shared_ptr<Playlist> fromCache(sp_playlist* key, int position);
-  static void clearCache();
+  void removeTracks(const int* trackPositions, int numberOfTracks);
 private:
   sp_playlist* playlist;
   static sp_playlist_callbacks playlistCallbacks;
-  static std::map<sp_playlist*, std::shared_ptr<Playlist>> cache;
 };
 
 #endif

@@ -127,9 +127,8 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlayl
 }
 
 void SessionCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata) {
-  auto playlist = Playlist::fromCache(spPlaylist, position);
+  auto playlist = std::make_shared<Playlist>(spPlaylist);
   NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
-  playlist->positionInContainer = position;
   nodePlaylist->call(PLAYLIST_ADDED, {v8::Undefined(), nodePlaylist->getV8Object(), v8::Number::New(position)});
 }
 

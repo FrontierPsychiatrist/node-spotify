@@ -29,15 +29,17 @@ THE SOFTWARE.
 
 extern Application* application;
 
-Playlist::Playlist(sp_playlist* _playlist) : PlaylistBase(false, -1), playlist(_playlist) {
+Playlist::Playlist(sp_playlist* _playlist) : PlaylistBase(false), playlist(_playlist) {
+  sp_playlist_add_callbacks(playlist, &Playlist::playlistCallbacks, this);
   sp_playlist_add_ref(playlist);
 }
 
-Playlist::Playlist(const Playlist& other) : PlaylistBase(other.isFolder, other.positionInContainer), playlist(other.playlist) {
+Playlist::Playlist(const Playlist& other) : PlaylistBase(other.isFolder), playlist(other.playlist) {
   sp_playlist_add_ref(playlist);
 }
 
 Playlist::~Playlist() {
+  sp_playlist_remove_callbacks(playlist, &Playlist::playlistCallbacks, this);
   sp_playlist_release(playlist);
 }
 
@@ -93,30 +95,6 @@ std::vector<std::shared_ptr<Track>> Playlist::getTracks() {
   return tracks;
 }
 
-std::shared_ptr<Playlist> Playlist::fromCache(sp_playlist* key, int position) {
-  auto it = cache.find(key);
-  if(it != cache.end()) {
-    return it->second;
-  } else {
-    auto playlist = std::make_shared<Playlist>(key);
-    playlist->positionInContainer = position;
-    sp_playlist_add_callbacks(key, &Playlist::playlistCallbacks, playlist.get());
-    cache[key] = playlist;
-    return playlist;
-  }
-}
-
-std::shared_ptr<Playlist> Playlist::fromCache(sp_playlist* key) {
-  return fromCache(key, -1);
-}
-
-void Playlist::clearCache() {
-  for(auto it = cache.begin(); it != cache.end(); it++) {
-    it->second.reset();
-  }
-}
-
-
 //Playlist::playlistCallbacks.tracks_moved = &PlaylistCallbacks::tracks_moved;
 /*playlistCallbacks.playlist_update_in_progress = &playlist_update_in_progress;
 playlistCallbacks.track_created_changed = &track_created_changed;*/
@@ -135,4 +113,3 @@ sp_playlist_callbacks Playlist::playlistCallbacks = {
   nullptr,
   nullptr
 };
-std::map<sp_playlist*, std::shared_ptr<Playlist>> Playlist::cache;
