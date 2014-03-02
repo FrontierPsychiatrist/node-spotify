@@ -25,11 +25,11 @@ THE SOFTWARE.
 #ifndef _PLAYER_H
 #define _PLAYER_H
 
-#include <libspotify/api.h>
-#include <memory>
-
 #include "../node/V8Callable.h"
 #include "Track.h"
+
+#include <libspotify/api.h>
+#include <memory>
 
 class Player {
 friend class NodePlayer;

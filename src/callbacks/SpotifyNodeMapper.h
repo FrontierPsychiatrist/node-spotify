@@ -27,7 +27,6 @@ THE SOFTWARE.
 
 #include "../objects/node/V8Callable.h"
 
-#include <v8.h>
 #include <map>
 #include <vector>
 

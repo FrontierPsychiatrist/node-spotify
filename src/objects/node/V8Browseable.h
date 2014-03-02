@@ -25,9 +25,9 @@ THE SOFTWARE.
 #ifndef _V8_BROWSEABLE_H
 #define _V8_BROWSEABLE_H
 
-#include <v8.h>
-
 #include "V8Wrapped.h"
+
+#include <v8.h>
 
 class V8Browseable : public virtual V8Wrapped {
 public:

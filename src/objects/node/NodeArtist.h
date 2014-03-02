@@ -25,10 +25,12 @@ THE SOFTWARE.
 #ifndef _NODE_ARTIST_H
 #define _NODE_ARTIST_H
 
-#include <memory>
 #include "NodeWrapped.h"
 #include "V8Wrapped.h"
 #include "../spotify/Artist.h"
+
+#include <v8.h>
+#include <memory>
 
 using namespace v8;
 
@@ -36,14 +38,8 @@ class NodeArtist : public NodeWrapped<NodeArtist>, public V8Browseable {
 private:
   std::shared_ptr<Artist> artist;
 public:
-  NodeArtist(std::shared_ptr<Artist> _artist) : artist(_artist) {
-    artist->nodeObject = this;
-  };
-  ~NodeArtist() {
-    if(artist->nodeObject == this) {
-      artist->nodeObject = nullptr;
-    }
-  }
+  NodeArtist(std::shared_ptr<Artist> artist);
+  ~NodeArtist();
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static Handle<Value> browse(const Arguments& args);

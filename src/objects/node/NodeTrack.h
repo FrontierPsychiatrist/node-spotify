@@ -25,10 +25,11 @@ THE SOFTWARE.
 #ifndef _NODE_TRACK_H
 #define _NODE_TRACK_H
 
-#include <memory>
-
 #include "NodeWrapped.h"
 #include "../spotify/Track.h"
+
+#include <v8.h>
+#include <memory>
 
 using namespace v8;
 
@@ -38,7 +39,8 @@ friend class NodePlaylist;
 private:
   std::shared_ptr<Track> track;
 public:
-  NodeTrack(std::shared_ptr<Track> _track) : track(_track) {};
+  NodeTrack(std::shared_ptr<Track> track);
+  ~NodeTrack();
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getArtists(Local<String> property, const AccessorInfo& info);

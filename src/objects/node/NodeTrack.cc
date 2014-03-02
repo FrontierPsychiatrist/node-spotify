@@ -26,6 +26,14 @@ THE SOFTWARE.
 #include "NodeArtist.h"
 #include "NodeAlbum.h"
 
+NodeTrack::NodeTrack(std::shared_ptr<Track> _track) : track(_track) {
+
+};
+
+NodeTrack::~NodeTrack() {
+
+}
+
 Handle<Value> NodeTrack::getName(Local<String> property, const AccessorInfo& info) {
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.Holder());
   return String::New(nodeTrack->track->name().c_str());

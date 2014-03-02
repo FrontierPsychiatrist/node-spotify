@@ -79,6 +79,10 @@ NodeSpotify::NodeSpotify(Handle<Object> options) {
   scope.Close(Undefined());
 }
 
+NodeSpotify::~NodeSpotify() {
+
+}
+
 Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
   HandleScope scope;
   Handle<Value> out;

@@ -1,7 +1,6 @@
 #include "NodePlaylistContainer.h"
 #include "NodePlaylist.h"
 #include "NodePlaylistFolder.h"
-
 #include "../../exceptions.h"
 #include "../../common_macros.h"
 

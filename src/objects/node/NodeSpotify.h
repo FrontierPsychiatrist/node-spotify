@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #include "NodeWrapped.h"
 #include "../spotify/Spotify.h"
+
 #include <v8.h>
 #include <memory>
 
@@ -35,7 +36,7 @@ using namespace v8;
 class NodeSpotify : public NodeWrapped<NodeSpotify> {
 public:
   NodeSpotify(Handle<Object> option);
-  ~NodeSpotify() {};
+  ~NodeSpotify();
   static Handle<Value> login(const Arguments& args);
   static Handle<Value> logout(const Arguments& args);
   static Handle<Value> ready(const Arguments& args);

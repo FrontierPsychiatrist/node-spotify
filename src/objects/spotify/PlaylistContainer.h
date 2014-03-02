@@ -25,13 +25,13 @@ THE SOFTWARE.
 #ifndef PLAYLIST_CONTAINER_H
 #define PLAYLIST_CONTAINER_H
 
+#include "Playlist.h"
+#include "PlaylistBase.h"
+
 #include <libspotify/api.h>
 #include <vector>
 #include <memory>
 #include <string>
-
-#include "Playlist.h"
-#include "PlaylistBase.h"
 
 class PlaylistContainer {
 public:

@@ -25,9 +25,10 @@ THE SOFTWARE.
 #ifndef _SPOTIFY_H
 #define _SPOTIFY_H
 
+#include "SpotifyOptions.h"
+
 #include <libspotify/api.h>
 #include <string>
-#include "SpotifyOptions.h"
 
 class Spotify {
 public:

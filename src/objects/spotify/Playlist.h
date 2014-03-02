@@ -25,15 +25,13 @@ THE SOFTWARE.
 #ifndef PLAYLIST_H
 #define PLAYLIST_H
 
+#include "PlaylistBase.h"
+#include "Track.h"
+
 #include <string>
 #include <vector>
 #include <memory>
-#include <map>
 #include <libspotify/api.h>
-
-#include "PlaylistBase.h"
-
-#include "Track.h"
 
 class Playlist : public PlaylistBase {
 friend class NodePlaylist;

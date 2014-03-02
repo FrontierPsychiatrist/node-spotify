@@ -22,12 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-#include "ArtistBrowseCallbacks.h"
-#include "../objects/spotify/Artist.h"
+#include "PlaylistContainerCallbacks.h"
+#include "../objects/node/NodePlaylist.h"
+#include "../objects/spotify/Playlist.h"
+#include "../events.h"
 
-void ArtistBrowseCallbacks::artistBrowseComplete(sp_artistbrowse* result, void* userdata) {
-  Artist* artist = static_cast<Artist*>(userdata);
-  if(artist->nodeObject != nullptr) {
-    artist->nodeObject->callBrowseComplete();
-  }
+#include <memory>
+#include <v8.h>
+
+using namespace v8;
+
+void PlaylistContainerCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata) {
+  auto playlist = std::make_shared<Playlist>(spPlaylist);
+  NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
+  nodePlaylist->call(PLAYLIST_ADDED, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});
+}
+
+void PlaylistContainerCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
+
 }

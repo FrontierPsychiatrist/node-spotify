@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include "NodeWrappedWithCallbacks.h"
 #include "../spotify/PlaylistContainer.h"
 
+#include <v8.h>
 #include <memory>
 
 using namespace v8;

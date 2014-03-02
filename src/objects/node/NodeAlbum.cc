@@ -26,7 +26,6 @@ THE SOFTWARE.
 #include "NodeTrack.h"
 #include "NodeArtist.h"
 #include "../spotify/Track.h"
-#include "../../events.h"
 
 NodeAlbum::NodeAlbum(std::shared_ptr<Album> _album) : album(_album) {
   album->nodeObject = this;

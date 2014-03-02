@@ -22,12 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-#include "ArtistBrowseCallbacks.h"
-#include "../objects/spotify/Artist.h"
+#ifndef _PLAYLIST_CONTAINER_CALLBACKS_H
+#define _PLAYLIST_CONTAINER_CALLBACKS_H
 
-void ArtistBrowseCallbacks::artistBrowseComplete(sp_artistbrowse* result, void* userdata) {
-  Artist* artist = static_cast<Artist*>(userdata);
-  if(artist->nodeObject != nullptr) {
-    artist->nodeObject->callBrowseComplete();
-  }
-}
+#include <libspotify/api.h>
+
+class PlaylistContainerCallbacks {
+public:
+  static void playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata);
+  static void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata);
+};
+
+#endif

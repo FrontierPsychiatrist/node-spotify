@@ -26,7 +26,15 @@ THE SOFTWARE.
 #include "NodeTrack.h"
 #include "NodeAlbum.h"
 
-#include "../../events.h"
+NodeArtist::NodeArtist(std::shared_ptr<Artist> _artist) : artist(_artist) {
+  artist->nodeObject = this;
+};
+
+NodeArtist::~NodeArtist() {
+  if(artist->nodeObject == this) {
+    artist->nodeObject = nullptr;
+  }
+}
 
 Handle<Value> NodeArtist::getName(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;

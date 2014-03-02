@@ -25,16 +25,15 @@ THE SOFTWARE.
 #ifndef _SEARCH_RESULT_H
 #define _SEARCH_RESULT_H
 
-#include <memory>
-#include <vector>
-#include <string>
-
 #include "Track.h"
 #include "Album.h"
 #include "Playlist.h"
 #include "Artist.h"
-
 #include "../node/V8Browseable.h"
+
+#include <memory>
+#include <vector>
+#include <string>
 
 class Search {
 friend class NodeSearch;

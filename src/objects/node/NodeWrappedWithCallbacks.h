@@ -27,13 +27,12 @@ THE SOFTWARE.
 
 #include "NodeWrapped.h"
 #include "V8Callable.h"
+#include "../../Application.h"
 
 #include <v8.h>
 #include <node.h>
 #include <string>
 #include <initializer_list>
-
-#include "../../Application.h"
 
 extern Application* application;
 

@@ -26,15 +26,17 @@ THE SOFTWARE.
 #define _NODE_PLAYER_H
 
 #include "NodeWrappedWithCallbacks.h"
-#include <memory>
 #include "../spotify/Player.h"
+
+#include <v8.h>
+#include <memory>
 
 using namespace v8;
 
 class NodePlayer : public NodeWrappedWithCallbacks<NodePlayer> {
 private:
   std::shared_ptr<Player> player;
-  NodePlayer(const NodePlayer& other) {};
+  NodePlayer(const NodePlayer& other);
 public:
   NodePlayer();
   ~NodePlayer();

@@ -23,10 +23,10 @@ THE SOFTWARE.
 **/
 
 #include "Search.h"
-
-#include <libspotify/api.h>
 #include "../../Application.h"
 #include "../../callbacks/SearchCallbacks.h"
+
+#include <libspotify/api.h>
 
 extern Application* application;
 

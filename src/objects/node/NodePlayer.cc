@@ -38,6 +38,10 @@ NodePlayer::~NodePlayer() {
   }
 }
 
+NodePlayer::NodePlayer(const NodePlayer& other) {
+
+}
+
 Handle<Value> NodePlayer::pause(const Arguments& args) {
   HandleScope scope;
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());

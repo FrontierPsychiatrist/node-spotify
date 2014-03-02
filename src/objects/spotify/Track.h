@@ -25,13 +25,13 @@ THE SOFTWARE.
 #ifndef _TRACK_H
 #define _TRACK_H
 
+#include "Artist.h"
+#include "Album.h"
+
 #include <libspotify/api.h>
 #include <string>
 #include <vector>
 #include <memory>
-
-#include "Artist.h"
-#include "Album.h"
 
 class Album;
 class Artist;

@@ -27,7 +27,6 @@ THE SOFTWARE.
 #include "NodeAlbum.h"
 #include "NodeArtist.h"
 #include "NodePlaylist.h"
-#include "../../events.h"
 #include "../../Application.h"
 #include "../../common_macros.h"
 

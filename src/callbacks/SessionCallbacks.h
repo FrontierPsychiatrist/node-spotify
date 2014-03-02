@@ -35,8 +35,6 @@ public:
   static void notifyMainThread(sp_session* session);
   static void loggedIn(sp_session* session, sp_error error);
   static void loggedOut(sp_session* session);
-  static void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata);
-  static void playlistAdded(sp_playlistcontainer *pc, sp_playlist *playlist, int position, void *userdata);
   static int music_delivery(sp_session *sess, const sp_audioformat *format, const void *frames, int num_frames);
   static void end_of_track(sp_session* session);
   static void handleNotify(uv_async_t* handle, int status);

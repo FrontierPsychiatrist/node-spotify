@@ -23,7 +23,6 @@ THE SOFTWARE.
 **/
 
 #include "Player.h"
-
 #include "../../exceptions.h"
 #include "../../Application.h"
 

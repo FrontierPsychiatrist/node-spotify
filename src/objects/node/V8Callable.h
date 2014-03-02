@@ -25,11 +25,11 @@ THE SOFTWARE.
 #ifndef _V8_CALLABLE_H
 #define _V8_CALLABLE_H
 
+#include "V8Wrapped.h"
+
 #include <string>
 #include <v8.h>
 #include <initializer_list>
-
-#include "V8Wrapped.h"
 
 class V8Callable : public virtual V8Wrapped {
 public:

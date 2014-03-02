@@ -24,6 +24,14 @@ THE SOFTWARE.
 
 #include "NodePlaylistFolder.h"
 
+NodePlaylistFolder::NodePlaylistFolder(std::shared_ptr<PlaylistFolder> _playlistFolder) : playlistFolder(_playlistFolder) {
+
+};
+
+NodePlaylistFolder::~NodePlaylistFolder() {
+
+}
+
 Handle<Value> NodePlaylistFolder::getName(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.Holder());

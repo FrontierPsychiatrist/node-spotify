@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "V8Browseable.h"
 #include "../spotify/Album.h"
 
+#include <v8.h>
 #include <memory>
 
 using namespace v8;
@@ -38,7 +39,7 @@ friend class AlbumBrowseCallbacks;
 private:
   std::shared_ptr<Album> album;
 public:
-  NodeAlbum(std::shared_ptr<Album> _album);
+  NodeAlbum(std::shared_ptr<Album> album);
   ~NodeAlbum();
   static void init();
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);

@@ -26,6 +26,7 @@ THE SOFTWARE.
 #define _STATIC_CALLBACK_SETTER_H
 
 #include <node.h>
+#include <v8.h>
 
 template <class T>
 class StaticCallbackSetter : public node::ObjectWrap {
