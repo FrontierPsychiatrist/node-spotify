@@ -17,9 +17,9 @@ Handle<Value> NodePlaylistContainer::getOwner(Local<String> property, const Acce
   return scope.Close(Undefined());
 }
 
-Handle<Value> NodePlaylistContainer::getPlaylists(Local<String> property, const AccessorInfo& info) {
+Handle<Value> NodePlaylistContainer::getPlaylists(const Arguments& args) {
   HandleScope scope;
-  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.Holder());
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   std::vector<std::shared_ptr<PlaylistBase>> playlists = nodePlaylistContainer->playlistContainer->getPlaylists();
   Local<Array> nPlaylists = Array::New(playlists.size());
   for(int i = 0; i < (int)playlists.size(); i++) {
@@ -34,9 +34,9 @@ Handle<Value> NodePlaylistContainer::getPlaylists(Local<String> property, const 
   return scope.Close(nPlaylists);
 }
 
-Handle<Value> NodePlaylistContainer::getStarred(Local<String> property, const AccessorInfo& info) {
+Handle<Value> NodePlaylistContainer::getStarred(const Arguments& args) {
   HandleScope scope;
-  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.Holder());
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   NodePlaylist* starredPlaylist = new NodePlaylist(nodePlaylistContainer->playlistContainer->starredPlaylist());
   return scope.Close(starredPlaylist->getV8Object());
 }
@@ -75,9 +75,9 @@ void NodePlaylistContainer::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("owner"), getOwner);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlists"), getPlaylists);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("starred"), getStarred);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarred", getStarred);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addPlaylist", addPlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "deletePlaylist", deletePlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "movePlaylist", movePlaylist);

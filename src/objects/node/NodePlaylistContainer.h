@@ -40,8 +40,8 @@ public:
   NodePlaylistContainer(std::shared_ptr<PlaylistContainer> playlistContainer);
   ~NodePlaylistContainer();
   static Handle<Value> getOwner(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getPlaylists(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getStarred(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getPlaylists(const Arguments& args);
+  static Handle<Value> getStarred(const Arguments& args);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
   static Handle<Value> addPlaylist(const Arguments& args);
   static Handle<Value> deletePlaylist(const Arguments& args);
