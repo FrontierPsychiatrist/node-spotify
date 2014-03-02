@@ -2,6 +2,9 @@
 #include "NodePlaylist.h"
 #include "NodePlaylistFolder.h"
 
+#include "../../exceptions.h"
+#include "../../common_macros.h"
+
 NodePlaylistContainer::NodePlaylistContainer(std::shared_ptr<PlaylistContainer> _playlistContainer) : playlistContainer(_playlistContainer) {
 
 }
@@ -41,6 +44,12 @@ Handle<Value> NodePlaylistContainer::getStarred(Local<String> property, const Ac
 
 Handle<Value> NodePlaylistContainer::addPlaylist(const Arguments& args) {
   HandleScope scope;
+  String::Utf8Value playlistName(args[0]->ToString());
+  try {
+    application->playlistContainer->addPlaylist(std::string(*playlistName));
+  } catch(const PlaylistCreationException& e) {
+    return scope.Close(V8_EXCEPTION("Playlist creation failed"));
+  }
   return scope.Close(Undefined());
 }
 

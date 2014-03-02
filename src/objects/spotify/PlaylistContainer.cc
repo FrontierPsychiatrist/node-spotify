@@ -54,13 +54,11 @@ std::shared_ptr<Playlist> PlaylistContainer::starredPlaylist() {
   return std::make_shared<Playlist>(spPlaylist);
 }
 
-std::shared_ptr<Playlist> PlaylistContainer::addPlaylist(std::string name) {
+void PlaylistContainer::addPlaylist(std::string name) {
   sp_playlist* spotifyPlaylist = sp_playlistcontainer_add_new_playlist(playlistContainer, name.c_str());
   if(spotifyPlaylist == nullptr) {
     throw PlaylistCreationException();
   }
-  std::shared_ptr<Playlist> playlist = std::make_shared<Playlist>(spotifyPlaylist);
-  return playlist;
 }
 
 void PlaylistContainer::removePlaylist(int position) {
