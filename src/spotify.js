@@ -35,7 +35,9 @@ var beefedupSpotify = function(options) {
     return spotify.playlistContainer.getPlaylists();
   }
   //Deprecated, will be removed
-  spotify.getStarred = spotify.playlistContainer.getStarred;
+  spotify.getStarred = function() {
+    return spotify.playlistContainer.getStarred();
+  }
   return spotify;
 }
 
