@@ -26,16 +26,24 @@ THE SOFTWARE.
 #include "../objects/node/NodePlaylist.h"
 #include "../objects/spotify/Playlist.h"
 #include "../events.h"
+#include "../Application.h"
 
 #include <memory>
 #include <v8.h>
 
 using namespace v8;
 
+extern Application* application;
+
 void PlaylistContainerCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata) {
-  auto playlist = std::make_shared<Playlist>(spPlaylist);
-  NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
-  nodePlaylist->call(PLAYLIST_ADDED, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});
+  auto nodeObjects = application->playlistContainerMapper->getObjects(pc);
+  if(!nodeObjects.empty()) {
+    auto playlist = std::make_shared<Playlist>(spPlaylist);
+    NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
+    for(V8Callable* nodeObject : nodeObjects) {
+      nodeObject->call(PLAYLIST_ADDED, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});
+    }  
+  }
 }
 
 void PlaylistContainerCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {

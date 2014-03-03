@@ -3,13 +3,16 @@
 #include "NodePlaylistFolder.h"
 #include "../../exceptions.h"
 #include "../../common_macros.h"
+#include "../../Application.h"
+
+extern Application* application;
 
 NodePlaylistContainer::NodePlaylistContainer(std::shared_ptr<PlaylistContainer> _playlistContainer) : playlistContainer(_playlistContainer) {
-
+  application->playlistContainerMapper->addObject(playlistContainer->playlistContainer, this);
 }
 
 NodePlaylistContainer::~NodePlaylistContainer() {
-
+  application->playlistContainerMapper->removeObject(playlistContainer->playlistContainer, this);
 }
 
 Handle<Value> NodePlaylistContainer::getOwner(Local<String> property, const AccessorInfo& info) {

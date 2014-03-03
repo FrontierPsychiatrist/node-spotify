@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include <string>
 
 class PlaylistContainer {
+friend class NodePlaylistContainer;
 public:
   PlaylistContainer(sp_playlistcontainer* _playlistContainer) : playlistContainer(_playlistContainer) {};
   std::vector<std::shared_ptr<PlaylistBase>> getPlaylists();
