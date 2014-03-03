@@ -57,6 +57,12 @@ Handle<Value> NodePlaylistContainer::addPlaylist(const Arguments& args) {
 
 Handle<Value> NodePlaylistContainer::deletePlaylist(const Arguments& args) {
   HandleScope scope;
+  if(args.Length() < 1 || !args[0]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("Please provide a number as the first argument"));
+  }
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
+  int position = args[0]->ToNumber()->IntegerValue();
+  nodePlaylistContainer->playlistContainer->removePlaylist(position);
   return scope.Close(Undefined());
 }
 
