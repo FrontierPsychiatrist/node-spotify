@@ -96,6 +96,13 @@ public:
     call(name, {v8::Undefined(), this->getV8Object()});
   }
 protected:
+  static v8::Handle<v8::FunctionTemplate> init(const char* className) {
+    v8::Handle<v8::FunctionTemplate> constructorTemplate = NodeWrapped<T>::init(className);
+    NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
+    NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
+    return constructorTemplate;
+  }
+
   /**
    *  Get a callback function by name.
    *  Can be overwritten by extending classes to provide support for static callbacks.
