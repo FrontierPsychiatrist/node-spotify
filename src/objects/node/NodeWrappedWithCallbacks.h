@@ -116,7 +116,7 @@ protected:
     return callback;
   }
 private:
-  std::map<std::string, v8::Persistent<v8::Function>> callbacks;  
+  std::map<std::string, v8::Persistent<v8::Function>> callbacks;
 };
 
 #endif

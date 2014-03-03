@@ -41,7 +41,7 @@ public:
   Playlist(sp_playlist* _playlist);
   Playlist(const Playlist& other);
   ~Playlist();
-  
+
   std::vector<std::shared_ptr<Track>> getTracks();
   virtual std::string name();
   void name(std::string _name);
