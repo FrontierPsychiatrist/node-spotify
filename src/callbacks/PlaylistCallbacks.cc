@@ -54,7 +54,7 @@ void PlaylistCallbacks::tracksAdded(sp_playlist* spPlaylist, sp_track *const *tr
       nodeTracks->Set(v8::Number::New(i), nodeTrack->getV8Object());
     }
     for(V8Callable* nodeObject : v8Objects) {
-      nodeObject->call(PLAYLIST_TRACKS_ADDED, {v8::Undefined(), nodeObject->getV8Object(), nodeTracks});  
+      nodeObject->call(PLAYLIST_TRACKS_ADDED, {v8::Undefined(), nodeObject->getV8Object(), nodeTracks, v8::Number::New(position)});  
     }
     scope.Close(Undefined());
   }
