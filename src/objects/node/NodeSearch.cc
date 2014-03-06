@@ -49,6 +49,9 @@ NodeSearch::NodeSearch(const char* _searchQuery, int offset, int limit) : search
 
 Handle<Value> NodeSearch::execute(const Arguments& args) {
   HandleScope scope;
+  if(args.Length() < 1) {//TODO: how to check if it is a function? ->IsFunction() does not work, it does not recoginze functions.
+    return scope.Close(V8_EXCEPTION("execute needs a callback function as its argument."));
+  }
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
   nodeSearch->browseCompleteCallback = callback;
