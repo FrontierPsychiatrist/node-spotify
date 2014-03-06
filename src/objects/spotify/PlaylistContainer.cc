@@ -61,6 +61,13 @@ void PlaylistContainer::addPlaylist(std::string name) {
   }
 }
 
+void PlaylistContainer::addFolder(int index, std::string name) {
+  sp_error error = sp_playlistcontainer_add_folder(playlistContainer, index, name.c_str());
+  if(error == SP_ERROR_INDEX_OUT_OF_RANGE) {
+    throw PlaylistCreationException();
+  }
+}
+
 void PlaylistContainer::removePlaylist(int index) {
   sp_playlistcontainer_remove_playlist(playlistContainer, index);
 }

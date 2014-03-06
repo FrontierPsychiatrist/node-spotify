@@ -40,7 +40,8 @@ public:
   std::vector<std::shared_ptr<PlaylistBase>> getPlaylists();
   std::shared_ptr<Playlist> starredPlaylist();
   void addPlaylist(std::string name);
-  void removePlaylist(int position);
+  void addFolder(int index, std::string name);
+  void removePlaylist(int index);
   void movePlaylist(int index, int newPosition);
   bool isLoaded();
 private:

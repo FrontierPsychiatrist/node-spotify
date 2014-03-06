@@ -55,6 +55,21 @@ Handle<Value> NodePlaylistContainer::addPlaylist(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
+Handle<Value> NodePlaylistContainer::addFolder(const Arguments& args) {
+  HandleScope scope;
+  if(args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsString()) {
+    return scope.Close(V8_EXCEPTION("addFolder needs a number and a string as arguments"));
+  }
+  int index = args[0]->ToNumber()->IntegerValue();
+  String::Utf8Value folderName(args[1]->ToString());
+  try {
+    application->playlistContainer->addFolder(index, std::string(*folderName));
+  } catch(const PlaylistCreationException& e) {
+    return scope.Close(V8_EXCEPTION("Folder creation failed"));
+  }
+  return scope.Close(Undefined());
+}
+
 Handle<Value> NodePlaylistContainer::deletePlaylist(const Arguments& args) {
   HandleScope scope;
   if(args.Length() < 1 || !args[0]->IsNumber()) {
@@ -99,6 +114,7 @@ void NodePlaylistContainer::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarred", getStarred);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addPlaylist", addPlaylist);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addFolder", addFolder);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "deletePlaylist", deletePlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "movePlaylist", movePlaylist);
 
