@@ -68,6 +68,17 @@ Handle<Value> NodePlaylistContainer::deletePlaylist(const Arguments& args) {
 
 Handle<Value> NodePlaylistContainer::movePlaylist(const Arguments& args) {
   HandleScope scope;
+  if(args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("Move playlist needs 2 numbers as its first arguments"));
+  }
+  int index = args[0]->ToNumber()->IntegerValue();
+  int newPosition = args[1]->ToNumber()->IntegerValue();
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
+  try {
+    nodePlaylistContainer->playlistContainer->movePlaylist(index, newPosition);
+  } catch(const PlaylistNotMoveableException& e) {
+    return scope.Close(V8_EXCEPTION(e.message.c_str()));
+  }
   return scope.Close(Undefined());
 }
 

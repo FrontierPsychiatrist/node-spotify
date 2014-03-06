@@ -47,10 +47,19 @@ void PlaylistContainerCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_play
 }
 
 void PlaylistContainerCallbacks::playlistRemoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, void *userdata) {
-auto nodeObjects = application->playlistContainerMapper->getObjects(pc);
+  auto nodeObjects = application->playlistContainerMapper->getObjects(pc);
   if(!nodeObjects.empty()) {
     for(V8Callable* nodeObject : nodeObjects) {
       nodeObject->call(PLAYLIST_REMOVED, {Undefined(), Number::New(position)});
+    }
+  }
+}
+
+void PlaylistContainerCallbacks::playlistMoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, int new_position, void *userdata) {
+  auto nodeObjects = application->playlistContainerMapper->getObjects(pc);
+  if(!nodeObjects.empty()) {
+    for(V8Callable* nodeObject : nodeObjects) {
+      nodeObject->call(PLAYLIST_MOVED, {Undefined(), Number::New(position), Number::New(new_position)});
     }
   }
 }

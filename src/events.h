@@ -29,5 +29,6 @@ THE SOFTWARE.
 #define PLAYLIST_TRACKS_REMOVED "playlist_tracks_removed"
 #define PLAYLIST_ADDED "playlist_added"
 #define PLAYLIST_REMOVED "playlist_removed"
+#define PLAYLIST_MOVED "playlist_moved"
 #define PLAYER_END_OF_TRACK "player_end_of_track"
 #endif

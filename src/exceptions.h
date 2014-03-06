@@ -31,6 +31,11 @@ class FileException : public std::exception {};
 class TrackNotPlayableException : public std::exception {};
 class PlaylistCreationException : public std::exception {};
 class PlaylistNotDeleteableException : public std::exception {};
+class PlaylistNotMoveableException : public std::exception {
+public:
+  PlaylistNotMoveableException(const char* _message) : message(_message) {};
+  std::string message;
+};
 class SessionCreationException : public std::exception {
 public:
   SessionCreationException(const char* _message) : message(_message) {};

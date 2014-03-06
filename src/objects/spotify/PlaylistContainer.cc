@@ -61,6 +61,16 @@ void PlaylistContainer::addPlaylist(std::string name) {
   }
 }
 
-void PlaylistContainer::removePlaylist(int position) {
-  sp_playlistcontainer_remove_playlist(playlistContainer, position);
+void PlaylistContainer::removePlaylist(int index) {
+  sp_playlistcontainer_remove_playlist(playlistContainer, index);
+}
+
+void PlaylistContainer::movePlaylist(int index, int newPosition) {
+  //very strange: if index < newPosition, the newPosition is 1 based (so if you move a playlist "down") but if index > newPosition it is 0 based
+  //meaning: if you want to move the first playlist to the next place you use 0, 2
+  //but if you want to move the second playlist to the first you use 1, 0
+  sp_error error = sp_playlistcontainer_move_playlist(playlistContainer, index, newPosition, false);
+  if(error == SP_ERROR_INDEX_OUT_OF_RANGE || error == SP_ERROR_INVALID_INDATA) {
+    throw PlaylistNotMoveableException(sp_error_message(error));
+  }
 }

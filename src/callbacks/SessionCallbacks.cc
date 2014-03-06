@@ -105,6 +105,7 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   rootPlaylistContainerCallbacks.container_loaded = &PlaylistContainerCallbacks::rootPlaylistContainerLoaded;
   rootPlaylistContainerCallbacks.playlist_added = &PlaylistContainerCallbacks::playlistAdded;
   rootPlaylistContainerCallbacks.playlist_removed = &PlaylistContainerCallbacks::playlistRemoved;
+  rootPlaylistContainerCallbacks.playlist_moved = &PlaylistContainerCallbacks::playlistMoved;
   sp_playlistcontainer *pc = sp_session_playlistcontainer(application->session);
   application->playlistContainer = std::make_shared<PlaylistContainer>(pc);
   sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, nullptr);
