@@ -83,8 +83,8 @@ Handle<Value> NodePlaylistContainer::movePlaylist(const Arguments& args) {
 }
 
 Handle<Value> NodePlaylistContainer::isLoaded(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  return scope.Close(Undefined());
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.Holder());
+  return Boolean::New(nodePlaylistContainer->playlistContainer->isLoaded());
 }
 
 void NodePlaylistContainer::init() {

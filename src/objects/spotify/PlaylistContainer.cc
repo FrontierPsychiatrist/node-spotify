@@ -74,3 +74,7 @@ void PlaylistContainer::movePlaylist(int index, int newPosition) {
     throw PlaylistNotMoveableException(sp_error_message(error));
   }
 }
+
+bool PlaylistContainer::isLoaded() {
+  return sp_playlistcontainer_is_loaded(playlistContainer);
+}

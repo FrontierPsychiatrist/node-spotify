@@ -42,6 +42,7 @@ public:
   void addPlaylist(std::string name);
   void removePlaylist(int position);
   void movePlaylist(int index, int newPosition);
+  bool isLoaded();
 private:
   sp_playlistcontainer* playlistContainer;
 };
