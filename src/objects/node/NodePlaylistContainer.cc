@@ -46,6 +46,9 @@ Handle<Value> NodePlaylistContainer::getStarred(const Arguments& args) {
 
 Handle<Value> NodePlaylistContainer::addPlaylist(const Arguments& args) {
   HandleScope scope;
+  if(args.Length() < 1 || !args[0]->IsString()) {
+    return scope.Close(V8_EXCEPTION("addPlaylist needs a string as its argument"));
+  }
   String::Utf8Value playlistName(args[0]->ToString());
   try {
     application->playlistContainer->addPlaylist(std::string(*playlistName));
