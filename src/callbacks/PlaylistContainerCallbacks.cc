@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 #include "PlaylistContainerCallbacks.h"
 #include "../objects/node/NodePlaylist.h"
+#include "../objects/node/NodePlaylistFolder.h"
 #include "../objects/spotify/Playlist.h"
 #include "../events.h"
 #include "../Application.h"
@@ -38,9 +39,23 @@ extern Application* application;
 void PlaylistContainerCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata) {
   V8Callable* nodeObject = application->playlistContainerMapper->getObject(pc);
   if(nodeObject != nullptr) {
-    auto playlist = Playlist::fromCache(spPlaylist);
-    NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
-    nodeObject->call(PLAYLIST_ADDED, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});
+    sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(pc, position);
+    std::shared_ptr<PlaylistBase> playlistBase;
+    V8Wrapped* nodePlaylist;
+    if(playlistType == SP_PLAYLIST_TYPE_PLAYLIST) {
+      playlistBase = Playlist::fromCache(spPlaylist);
+      nodePlaylist = new NodePlaylist(Playlist::fromCache(spPlaylist));
+    } else if(playlistType == SP_PLAYLIST_TYPE_START_FOLDER) {
+      char buf[256];
+      sp_playlistcontainer_playlist_folder_name(pc, position, buf, 256);
+      nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>(buf));
+    } else if(playlistType == SP_PLAYLIST_TYPE_END_FOLDER) {
+      nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>());
+    } else {
+      return;
+    }
+
+    nodeObject->call(PLAYLIST_ADDED, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});  
   }
 }
 
