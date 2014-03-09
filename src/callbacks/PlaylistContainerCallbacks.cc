@@ -55,7 +55,7 @@ void PlaylistContainerCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_play
       return;
     }
 
-    nodeObject->call(PLAYLIST_ADDED, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});  
+    nodeObject->call(PLAYLIST_ADDED, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});
   }
 }
 

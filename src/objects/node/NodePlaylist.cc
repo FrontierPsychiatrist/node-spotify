@@ -100,11 +100,11 @@ Handle<Value> NodePlaylist::removeTracks(const Arguments& args) {
     trackPositions[i] = trackPositionsArray->Get(i)->ToNumber()->IntegerValue();
   }
   try {
-    nodePlaylist->playlist->removeTracks(trackPositions, trackPositionsArray->Length());  
+    nodePlaylist->playlist->removeTracks(trackPositions, trackPositionsArray->Length());
   } catch(const TracksNotRemoveableException& e) {
     return scope.Close(V8_EXCEPTION("Tracks not removeable, permission denied."));
   }
-  
+
   return scope.Close(Undefined());
 }
 
@@ -121,11 +121,11 @@ Handle<Value> NodePlaylist::reorderTracks(const Arguments& args) {
     trackPositions[i] = trackPositionsArray->Get(i)->ToNumber()->IntegerValue();
   }
   try {
-    nodePlaylist->playlist->reorderTracks(trackPositions, trackPositionsArray->Length(), newPosition);  
+    nodePlaylist->playlist->reorderTracks(trackPositions, trackPositionsArray->Length(), newPosition);
   } catch(const TracksNotReorderableException& e) {
     return scope.Close(V8_EXCEPTION(e.message.c_str()));
   }
-  
+
   return scope.Close(Undefined());
 }
 
