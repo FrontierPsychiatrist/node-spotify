@@ -35,7 +35,7 @@ extern Application* application;
 std::map<std::string, Persistent<Function>> NodePlaylist::staticCallbacks;
 
 NodePlaylist::NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist) {
-  application->playlistMapper->addObject(playlist->playlist, this);
+  application->playlistMapper->setObject(playlist->playlist, this);
 }
 
 NodePlaylist::~NodePlaylist() {

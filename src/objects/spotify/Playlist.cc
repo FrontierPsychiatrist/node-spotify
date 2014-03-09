@@ -28,6 +28,18 @@ THE SOFTWARE.
 #include "../../callbacks/PlaylistCallbacks.h"
 
 extern Application* application;
+std::map<sp_playlist*, std::shared_ptr<Playlist>> Playlist::cache;
+
+std::shared_ptr<Playlist> Playlist::fromCache(sp_playlist* spPlaylist) {
+  auto it = cache.find(spPlaylist);
+  if(it != cache.end()) {
+    return it->second;
+  } else {
+    auto playlist = std::make_shared<Playlist>(spPlaylist);
+    cache[spPlaylist] = playlist;
+    return playlist;
+  }
+}
 
 Playlist::Playlist(sp_playlist* _playlist) : PlaylistBase(false), playlist(_playlist) {
   sp_playlist_add_callbacks(playlist, &Playlist::playlistCallbacks, nullptr);

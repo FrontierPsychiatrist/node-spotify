@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "Track.h"
 
 #include <string>
+#include <map>
 #include <vector>
 #include <memory>
 #include <libspotify/api.h>
@@ -38,7 +39,7 @@ friend class NodePlaylist;
 friend class PlaylistCallbacks;
 friend class PlaylistContainer;
 public:
-  Playlist(sp_playlist* _playlist);
+  Playlist(sp_playlist* playlist);
   Playlist(const Playlist& other);
   ~Playlist();
 
@@ -49,9 +50,11 @@ public:
   bool isLoaded();
   void addTracks(std::vector<std::shared_ptr<Track>> tracks, int position);
   void removeTracks(const int* trackPositions, int numberOfTracks);
+  static std::shared_ptr<Playlist> fromCache(sp_playlist* playlist);
 private:
   sp_playlist* playlist;
   static sp_playlist_callbacks playlistCallbacks;
+  static std::map<sp_playlist*, std::shared_ptr<Playlist>> cache;
 };
 
 #endif

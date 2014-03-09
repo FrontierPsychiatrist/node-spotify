@@ -28,7 +28,6 @@ THE SOFTWARE.
 #include "../objects/node/V8Callable.h"
 
 #include <map>
-#include <vector>
 
 /**
  *  This class maps spotify type pointers to Javascript objects that represent them.
@@ -37,18 +36,21 @@ THE SOFTWARE.
 template <typename S>
 class SpotifyNodeMapper {
 public:
-  void addObject(S* spotifyType, V8Callable* v8Callable) {
-    objectMapping[spotifyType].push_back(v8Callable);
+  void setObject(S* spotifyType, V8Callable* v8Callable) {
+    objectMapping[spotifyType] = v8Callable;
   }
   void removeObject(S* spotifyType, V8Callable* v8Callable) {
-    auto objects = objectMapping[spotifyType];
-    objects.erase(std::remove(objects.begin(), objects.end(), v8Callable), objects.end());
-    objectMapping[spotifyType] = objects;
+    objectMapping[spotifyType] = nullptr;
   }
-  std::vector<V8Callable*> getObjects(S* spotifyType) {
-    return objectMapping[spotifyType];
+  V8Callable* getObject(S* spotifyType) {
+    auto it = objectMapping.find(spotifyType);
+    if(it != objectMapping.end()) {
+      return it->second;
+    } else {
+      return nullptr;
+    }
   }
 private:
-  std::map<S*, std::vector<V8Callable*>> objectMapping;
+  std::map<S*, V8Callable*> objectMapping;
 };
 #endif

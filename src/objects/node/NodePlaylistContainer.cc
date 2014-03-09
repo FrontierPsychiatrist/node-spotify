@@ -8,7 +8,7 @@
 extern Application* application;
 
 NodePlaylistContainer::NodePlaylistContainer(std::shared_ptr<PlaylistContainer> _playlistContainer) : playlistContainer(_playlistContainer) {
-  application->playlistContainerMapper->addObject(playlistContainer->playlistContainer, this);
+  application->playlistContainerMapper->setObject(playlistContainer->playlistContainer, this);
 }
 
 NodePlaylistContainer::~NodePlaylistContainer() {

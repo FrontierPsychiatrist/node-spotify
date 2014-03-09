@@ -37,7 +37,7 @@ std::vector<std::shared_ptr<PlaylistBase>> PlaylistContainer::getPlaylists() {
     sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(playlistContainer, i);
     if(playlistType == SP_PLAYLIST_TYPE_PLAYLIST) {
       sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
-      playlists[i] = std::make_shared<Playlist>(spPlaylist);
+      playlists[i] = Playlist::fromCache(spPlaylist);
     } else if(playlistType == SP_PLAYLIST_TYPE_START_FOLDER) {
       char buf[256];
       sp_playlistcontainer_playlist_folder_name(playlistContainer, i, buf, 256);
@@ -51,7 +51,7 @@ std::vector<std::shared_ptr<PlaylistBase>> PlaylistContainer::getPlaylists() {
 
 std::shared_ptr<Playlist> PlaylistContainer::starredPlaylist() {
   sp_playlist* spPlaylist = sp_session_starred_create(application->session);
-  return std::make_shared<Playlist>(spPlaylist);
+  return Playlist::fromCache(spPlaylist);
 }
 
 void PlaylistContainer::addPlaylist(std::string name) {

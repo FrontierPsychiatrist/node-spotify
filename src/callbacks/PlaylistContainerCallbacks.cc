@@ -36,30 +36,34 @@ using namespace v8;
 extern Application* application;
 
 void PlaylistContainerCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata) {
-  auto nodeObjects = application->playlistContainerMapper->getObjects(pc);
-  if(!nodeObjects.empty()) {
-    auto playlist = std::make_shared<Playlist>(spPlaylist);
+  V8Callable* nodeObject = application->playlistContainerMapper->getObject(pc);
+  if(nodeObject != nullptr) {
+    auto playlist = Playlist::fromCache(spPlaylist);
     NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
-    for(V8Callable* nodeObject : nodeObjects) {
-      nodeObject->call(PLAYLIST_ADDED, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});
-    }
+    nodeObject->call(PLAYLIST_ADDED, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});
   }
 }
 
-void PlaylistContainerCallbacks::playlistRemoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, void *userdata) {
-  auto nodeObjects = application->playlistContainerMapper->getObjects(pc);
-  if(!nodeObjects.empty()) {
-    for(V8Callable* nodeObject : nodeObjects) {
+void PlaylistContainerCallbacks::playlistRemoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void *userdata) {
+  V8Callable* nodeObject = application->playlistContainerMapper->getObject(pc);
+  if(nodeObject != nullptr) {
+    V8Callable* nodePlaylist = application->playlistMapper->getObject(spPlaylist);
+    if(nodePlaylist != nullptr) {
+      nodeObject->call(PLAYLIST_REMOVED, {Undefined(), Number::New(position), nodePlaylist->getV8Object()});
+    } else {
       nodeObject->call(PLAYLIST_REMOVED, {Undefined(), Number::New(position)});
     }
   }
 }
 
-void PlaylistContainerCallbacks::playlistMoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, int new_position, void *userdata) {
-  auto nodeObjects = application->playlistContainerMapper->getObjects(pc);
-  if(!nodeObjects.empty()) {
-    for(V8Callable* nodeObject : nodeObjects) {
+void PlaylistContainerCallbacks::playlistMoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, int new_position, void *userdata) {
+  V8Callable* nodeObject = application->playlistContainerMapper->getObject(pc);
+  if(nodeObject != nullptr) {
+    V8Callable* nodePlaylist = application->playlistMapper->getObject(spPlaylist);
+    if(nodePlaylist != nullptr) {
       nodeObject->call(PLAYLIST_MOVED, {Undefined(), Number::New(position), Number::New(new_position)});
+    } else {
+      nodeObject->call(PLAYLIST_MOVED, {Undefined(), Number::New(position), Number::New(new_position), nodePlaylist->getV8Object()});
     }
   }
 }
