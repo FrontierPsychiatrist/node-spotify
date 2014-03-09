@@ -78,7 +78,10 @@ void Playlist::addTracks(std::vector<std::shared_ptr<Track>> tracks, int positio
 }
 
 void Playlist::removeTracks(const int* trackPositions, int numberOfTracks) {
-  sp_playlist_remove_tracks(playlist, trackPositions, numberOfTracks);
+  sp_error error = sp_playlist_remove_tracks(playlist, trackPositions, numberOfTracks);
+  if(error == SP_ERROR_PERMISSION_DENIED) {
+    throw TracksNotRemoveableException();
+  }
 }
 
 std::string Playlist::link() {

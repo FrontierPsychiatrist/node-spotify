@@ -105,7 +105,12 @@ Handle<Value> NodePlaylist::removeTracks(const Arguments& args) {
   for(unsigned int i = 0; i < trackPositionsArray->Length(); i++) {
     trackPositions[i] = trackPositionsArray->Get(i)->ToNumber()->IntegerValue();
   }
-  nodePlaylist->playlist->removeTracks(trackPositions, trackPositionsArray->Length());
+  try {
+    nodePlaylist->playlist->removeTracks(trackPositions, trackPositionsArray->Length());  
+  } catch(const TracksNotRemoveableException& e) {
+    return scope.Close(V8_EXCEPTION("Tracks not removeable, permission denied."));
+  }
+  
   return scope.Close(Undefined());
 }
 
