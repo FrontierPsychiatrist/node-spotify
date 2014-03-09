@@ -170,6 +170,19 @@ Handle<Value> NodeSpotify::getRememberedUser(Local<String> property, const Acces
   return scope.Close(String::New(nodeSpotify->spotify->rememberedUser().c_str()));
 }
 
+Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  Local<Object> constants = Object::New();
+  constants->Set(String::NewSymbol("ARTISTBROWSE_FULL"), Number::New(SP_ARTISTBROWSE_FULL));
+  constants->Set(String::NewSymbol("ARTISTBROWSE_NO_TRACKS"), Number::New(SP_ARTISTBROWSE_NO_TRACKS));
+  constants->Set(String::NewSymbol("ARTISTBROWSE_NO_ALBUMS"), Number::New(SP_ARTISTBROWSE_NO_ALBUMS));
+
+  constants->Set(String::NewSymbol("PLAYLIST_TYPE_PLAYLIST"), Number::New(SP_PLAYLIST_TYPE_PLAYLIST));
+  constants->Set(String::NewSymbol("PLAYLIST_TYPE_START_FOLDER"), Number::New(SP_PLAYLIST_TYPE_START_FOLDER));
+  constants->Set(String::NewSymbol("PLAYLIST_TYPE_END_FOLDER"), Number::New(SP_PLAYLIST_TYPE_END_FOLDER));
+  return scope.Close(constants);
+}
+
 void NodeSpotify::init() {
   HandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
@@ -179,6 +192,7 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPlaylistContainer);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("constants"), getConstants);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }
