@@ -41,6 +41,7 @@ public:
   ~NodePlaylistFolder();
   static void init();
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getType(Local<String> property, const AccessorInfo& info);
 };
 
 #endif

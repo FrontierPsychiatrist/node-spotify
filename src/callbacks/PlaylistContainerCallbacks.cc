@@ -48,9 +48,9 @@ void PlaylistContainerCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_play
     } else if(playlistType == SP_PLAYLIST_TYPE_START_FOLDER) {
       char buf[256];
       sp_playlistcontainer_playlist_folder_name(pc, position, buf, 256);
-      nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>(buf));
+      nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>(buf, playlistType));
     } else if(playlistType == SP_PLAYLIST_TYPE_END_FOLDER) {
-      nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>());
+      nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>(playlistType));
     } else {
       return;
     }

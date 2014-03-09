@@ -31,10 +31,12 @@ class PlaylistFolder : public PlaylistBase {
 friend class NodePlaylistFolder;
 private:
   std::string folderName;
+  int folderType;
 public:
-  PlaylistFolder();
-  PlaylistFolder(std::string name);
+  PlaylistFolder(int type);
+  PlaylistFolder(std::string name, int type);
   virtual std::string name();
+  int type();
   bool isStart;
 };
 
