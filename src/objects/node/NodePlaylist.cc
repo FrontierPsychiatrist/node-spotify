@@ -97,7 +97,7 @@ Handle<Value> NodePlaylist::addTracks(const Arguments& args) {
 Handle<Value> NodePlaylist::removeTracks(const Arguments& args) {
   HandleScope scope;
   if(args.Length() < 1 || !args[0]->IsArray()) {
-    return scope.Close(V8_EXCEPTION("addTracks needs an array as its first argument"));
+    return scope.Close(V8_EXCEPTION("removeTracks needs an array as its first argument"));
   }
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   Handle<Array> trackPositionsArray = Handle<Array>::Cast(args[0]);
