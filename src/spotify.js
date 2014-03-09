@@ -29,10 +29,12 @@ var beefedupSpotify = function(options) {
   spotify.version = '0.5.0';
   //Deprecated, will be removed
   spotify.getPlaylists = function() {
+    console.log("This method is deprecated. Please use playlistContainer.getPlaylists().")
     return spotify.playlistContainer.getPlaylists();
   }
   //Deprecated, will be removed
   spotify.getStarred = function() {
+    console.log("This method is deprecated. Please use playlistContainer.getStarred()")
     return spotify.playlistContainer.getStarred();
   }
   return spotify;
