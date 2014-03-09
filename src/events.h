@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define PLAYLIST_RENAMED "playlist_renamed"
 #define PLAYLIST_TRACKS_ADDED "playlist_tracks_added"
 #define PLAYLIST_TRACKS_REMOVED "playlist_tracks_removed"
+#define PLAYLIST_TRACKS_MOVED "playlist_tracks_moved"
 #define PLAYLIST_ADDED "playlist_added"
 #define PLAYLIST_REMOVED "playlist_removed"
 #define PLAYLIST_MOVED "playlist_moved"

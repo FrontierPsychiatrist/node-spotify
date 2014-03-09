@@ -59,9 +59,18 @@ void PlaylistCallbacks::tracksAdded(sp_playlist* spPlaylist, sp_track *const *tr
   }
 }
 
-/*void PlaylistCallbacks::tracks_moved(sp_playlist* playlist, const int *tracks, int num_tracks, int new_position, void *userdata) {
-
-}*/
+void PlaylistCallbacks::tracksMoved(sp_playlist* spPlaylist, const int* tracks, int num_tracks, int new_position, void *userdata) {
+  V8Callable* nodeObject = application->playlistMapper->getObject(spPlaylist);
+  if(nodeObject != nullptr) {
+    v8::HandleScope scope;
+    v8::Handle<v8::Array> movedTrackIndices = v8::Array::New(num_tracks);
+    for(int i = 0; i < num_tracks; i++) {
+      movedTrackIndices->Set(v8::Number::New(i), v8::Number::New(tracks[i]));
+    }
+    nodeObject->call(PLAYLIST_TRACKS_MOVED, {v8::Undefined(), nodeObject->getV8Object(), movedTrackIndices, v8::Number::New(new_position)});
+    scope.Close(v8::Undefined());
+  }
+}
 
 void PlaylistCallbacks::tracksRemoved(sp_playlist* spPlaylist, const int *tracks, int num_tracks, void *userdata) {
   V8Callable* nodeObject = application->playlistMapper->getObject(spPlaylist );

@@ -125,7 +125,7 @@ playlistCallbacks.track_created_changed = &track_created_changed;*/
 sp_playlist_callbacks Playlist::playlistCallbacks = {
   &PlaylistCallbacks::tracksAdded,
   &PlaylistCallbacks::tracksRemoved,
-  nullptr,
+  &PlaylistCallbacks::tracksMoved,
   &PlaylistCallbacks::playlistNameChange,
   &PlaylistCallbacks::playlistStateChanged,
   nullptr,
