@@ -109,6 +109,27 @@ Handle<Value> NodePlaylist::removeTracks(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
+Handle<Value> NodePlaylist::reorderTracks(const Arguments& args) {
+  HandleScope scope;
+  if(args.Length() < 2 || !args[0]->IsArray() || !args[1]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("reorderTracks needs an array and a numer as its arguments"));
+  }
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
+  Handle<Array> trackPositionsArray = Handle<Array>::Cast(args[0]);
+  int trackPositions[trackPositionsArray->Length()];
+  int newPosition = args[1]->ToNumber()->IntegerValue();
+  for(unsigned int i = 0; i < trackPositionsArray->Length(); i++) {
+    trackPositions[i] = trackPositionsArray->Get(i)->ToNumber()->IntegerValue();
+  }
+  try {
+    nodePlaylist->playlist->reorderTracks(trackPositions, trackPositionsArray->Length(), newPosition);  
+  } catch(const TracksNotReorderableException& e) {
+    return scope.Close(V8_EXCEPTION(e.message.c_str()));
+  }
+  
+  return scope.Close(Undefined());
+}
+
 Handle<Value> NodePlaylist::isLoaded(Local<String> property, const AccessorInfo& info) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
   return Boolean::New(nodePlaylist->playlist->isLoaded());
@@ -139,6 +160,7 @@ void NodePlaylist::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "removeTracks", removeTracks);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "reorderTracks", reorderTracks);
 
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());

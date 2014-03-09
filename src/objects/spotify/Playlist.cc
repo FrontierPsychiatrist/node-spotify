@@ -107,6 +107,15 @@ std::vector<std::shared_ptr<Track>> Playlist::getTracks() {
   return tracks;
 }
 
+void Playlist::reorderTracks(const int* trackPositions, int numberOfTracks, int newPosition) {
+  sp_error error = sp_playlist_reorder_tracks(playlist, trackPositions, numberOfTracks, newPosition);
+  if(error == SP_ERROR_INVALID_INDATA) {
+    throw TracksNotReorderableException("Cannot reorder tracks, newPosition > playlist size.");
+  } else if(error == SP_ERROR_PERMISSION_DENIED) {
+    throw TracksNotReorderableException("Permission denied");
+  }
+}
+
 //Playlist::playlistCallbacks.tracks_moved = &PlaylistCallbacks::tracks_moved;
 /*playlistCallbacks.playlist_update_in_progress = &playlist_update_in_progress;
 playlistCallbacks.track_created_changed = &track_created_changed;*/

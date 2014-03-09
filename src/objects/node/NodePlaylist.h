@@ -47,6 +47,7 @@ public:
   static Handle<Value> getTracks(const Arguments& args);
   static Handle<Value> addTracks(const Arguments& args);
   static Handle<Value> removeTracks(const Arguments& args);
+  static Handle<Value> reorderTracks(const Arguments& args);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
 
   static void init();

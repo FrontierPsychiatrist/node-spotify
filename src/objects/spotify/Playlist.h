@@ -50,6 +50,7 @@ public:
   bool isLoaded();
   void addTracks(std::vector<std::shared_ptr<Track>> tracks, int position);
   void removeTracks(const int* trackPositions, int numberOfTracks);
+  void reorderTracks(const int* trackPositions, int numberOfTracks, int newPosition);
   static std::shared_ptr<Playlist> fromCache(sp_playlist* playlist);
 private:
   sp_playlist* playlist;
