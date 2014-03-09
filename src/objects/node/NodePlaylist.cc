@@ -72,14 +72,8 @@ Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
 
 Handle<Value> NodePlaylist::addTracks(const Arguments& args) {
   HandleScope scope;
-  if(args.Length() < 2) {
-    return scope.Close(V8_EXCEPTION("addTracks needs 2 arguments"));
-  }
-  if(!args[0]->IsArray()) {
-    return scope.Close(V8_EXCEPTION("First argument must be an array"));
-  }
-  if(!args[1]->IsNumber()) {
-    return scope.Close(V8_EXCEPTION("Second argument must be a number"));
+  if(args.Length() < 2 || !args[0]->IsArray() || !args[1]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("addTracks needs an array and a number as its arguments."));
   }
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   Handle<Array> trackArray = Handle<Array>::Cast(args[0]);
@@ -97,7 +91,7 @@ Handle<Value> NodePlaylist::addTracks(const Arguments& args) {
 Handle<Value> NodePlaylist::removeTracks(const Arguments& args) {
   HandleScope scope;
   if(args.Length() < 1 || !args[0]->IsArray()) {
-    return scope.Close(V8_EXCEPTION("removeTracks needs an array as its first argument"));
+    return scope.Close(V8_EXCEPTION("removeTracks needs an array as its first argument."));
   }
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   Handle<Array> trackPositionsArray = Handle<Array>::Cast(args[0]);
@@ -117,7 +111,7 @@ Handle<Value> NodePlaylist::removeTracks(const Arguments& args) {
 Handle<Value> NodePlaylist::reorderTracks(const Arguments& args) {
   HandleScope scope;
   if(args.Length() < 2 || !args[0]->IsArray() || !args[1]->IsNumber()) {
-    return scope.Close(V8_EXCEPTION("reorderTracks needs an array and a numer as its arguments"));
+    return scope.Close(V8_EXCEPTION("reorderTracks needs an array and a numer as its arguments."));
   }
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   Handle<Array> trackPositionsArray = Handle<Array>::Cast(args[0]);
