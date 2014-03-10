@@ -4,30 +4,32 @@ var spotify = baseTest.spotify;
 
 baseTest.executeTest(tests);
 
+var playlistContainer;
 var newPlaylist;
 var newIndex;
 var playlistCountOriginal;
-spotify.playlists.on('playlist_added', function(err, playlist, index) {
-  newPlaylist = playlist;
-  newIndex = index;
-});
 
 function tests() {
   console.log('Starting test');
-  playlistCountOriginal = spotify.getPlaylists().length;
-  var pl = spotify.addPlaylist('My test playlist');
+  playlistContainer = spotify.playlistContainer;
+  playlistContainer.on('playlist_added', function(err, playlist, index) {
+    newPlaylist = playlist;
+    newIndex = index;
+  });
+  playlistCountOriginal = playlistContainer.getPlaylists().length;
+  var pl = playlistContainer.addPlaylist('My test playlist');
   setTimeout(playlistAdded, 1000);
 }
 
 function playlistAdded() {
   assert(newPlaylist !== undefined);
   console.log('New playlist was added');
-  newPlaylist.delete();
+  playlistContainer.deletePlaylist(newIndex);
   setTimeout(playlistDeleted, 1000);
 }
 
 function playlistDeleted() {
-  assert(spotify.getPlaylists().length === playlistCountOriginal);
+  assert(playlistContainer.getPlaylists().length === playlistCountOriginal);
   console.log('Playlist was deleted');
   spotify.logout();
   baseTest.quit();
