@@ -47,6 +47,7 @@ public:
   virtual std::string name();
   void name(std::string _name);
   std::string link();
+  std::string description();
   bool isLoaded();
   void addTracks(std::vector<std::shared_ptr<Track>> tracks, int position);
   void removeTracks(const int* trackPositions, int numberOfTracks);

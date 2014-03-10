@@ -98,6 +98,17 @@ std::string Playlist::link() {
   return link;
 }
 
+std::string Playlist::description() {
+  std::string description;
+  if(sp_playlist_is_loaded(playlist)) {
+    const char* spDescription = sp_playlist_get_description(playlist);
+    if(spDescription != nullptr) {
+      description = std::string(spDescription);  
+    }
+  }
+  return description;
+}
+
 bool Playlist::isLoaded() {
   return sp_playlist_is_loaded(playlist);
 }

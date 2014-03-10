@@ -58,6 +58,11 @@ Handle<Value> NodePlaylist::getLink(Local<String> property, const AccessorInfo& 
   return String::New(nodePlaylist->playlist->link().c_str());
 }
 
+Handle<Value> NodePlaylist::getDescription(Local<String> property, const AccessorInfo& info) {
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
+  return String::New(nodePlaylist->playlist->description().c_str());
+}
+
 Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
   HandleScope scope;
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
@@ -155,6 +160,7 @@ void NodePlaylist::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, setName);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("description"), getDescription);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
