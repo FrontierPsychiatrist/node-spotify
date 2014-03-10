@@ -74,10 +74,17 @@ void PlaylistContainer::removePlaylist(int index) {
   sp_playlistcontainer_remove_playlist(playlistContainer, index);
 }
 
+/**
+ * This method moves a playlist. Both index and newPosition are 0-based, but newPosition is the desired position *before* anything is moved.
+
+ * So if you have
+ * Playlist 1 (0)
+ * Playlist 2 (1)
+ * Playlist 3 (2)
+ * and want to move playlist 1 behinde playlist 2 the new desired index is actually 2. So you call move(0, 2).
+ * If you want to move playlist 2 before playlist 1 the new desired index is 0, so you call move(1,0).
+ **/
 void PlaylistContainer::movePlaylist(int index, int newPosition) {
-  //very strange: if index < newPosition, the newPosition is 1 based (so if you move a playlist "down") but if index > newPosition it is 0 based
-  //meaning: if you want to move the first playlist to the next place you use 0, 2
-  //but if you want to move the second playlist to the first you use 1, 0
   sp_error error = sp_playlistcontainer_move_playlist(playlistContainer, index, newPosition, false);
   if(error == SP_ERROR_INDEX_OUT_OF_RANGE || error == SP_ERROR_INVALID_INDATA) {
     throw PlaylistNotMoveableException(sp_error_message(error));
