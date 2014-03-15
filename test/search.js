@@ -29,6 +29,7 @@ function searchComplete(err, search) {
   console.log('Total number of albums:' + search.totalAlbums);
   console.log('Total number of playlists:' + search.totalPlaylists);
   console.log(search.didYouMean);
-  spotify.logout();
-  baseTest.quit();
+  spotify.logout(function () {
+    process.exit();
+  });
 }

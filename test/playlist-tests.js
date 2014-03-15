@@ -31,6 +31,7 @@ function playlistAdded() {
 function playlistDeleted() {
   assert(playlistContainer.getPlaylists().length === playlistCountOriginal);
   console.log('Playlist was deleted');
-  spotify.logout();
-  baseTest.quit();
+  spotify.logout(function () {
+    process.exit();
+  });
 }

@@ -21,6 +21,7 @@ function browseComplete(err, artist) {
   console.log('Number of albums:' + artist.albums.length);
   console.log('Number of similarArtists:' + artist.similarArtists.length);
   console.log(artist.biography);
-  spotify.logout();
-  baseTest.quit();
+  spotify.logout(function () {
+    process.exit();
+  });
 }
