@@ -45,6 +45,7 @@ std::unique_ptr<uv_timer_t> SessionCallbacks::timer;
 std::unique_ptr<uv_async_t> SessionCallbacks::notifyHandle;
 v8::Handle<v8::Function> SessionCallbacks::loginCallback;
 v8::Handle<v8::Function> SessionCallbacks::logoutCallback;
+v8::Handle<v8::Function> SessionCallbacks::metadataUpdatedCallback;
 
 namespace spotify {
 //TODO
@@ -100,6 +101,8 @@ void SessionCallbacks::metadata_updated(sp_session* session) {
   if(Player::instance->isLoading) {
     Player::instance->retryPlay();
   }
+  
+  callV8FunctionWithNoArgumentsIfHandleNotEmpty(metadataUpdatedCallback); 
 }
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
@@ -129,11 +132,7 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, voi
 
 void SessionCallbacks::loggedOut(sp_session* session) {
   std::cout << "Logged out" << std::endl;
-  if (!logoutCallback.IsEmpty()) {
-    unsigned int argc = 0;
-    v8::Handle<v8::Value> argv[0];
-    logoutCallback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-  }
+  callV8FunctionWithNoArgumentsIfHandleNotEmpty(logoutCallback);
 }
 
 void SessionCallbacks::end_of_track(sp_session* session) {

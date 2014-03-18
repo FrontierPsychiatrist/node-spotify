@@ -186,6 +186,17 @@ Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorIn
   return scope.Close(constants);
 }
 
+Handle<Value> NodeSpotify::onMetadataUpdated(const Arguments& args) {
+  HandleScope scope;
+  if(args.Length() < 1) {
+    return scope.Close(V8_EXCEPTION("onMetadataUpdated needs a function as an argument."));
+  }
+  Handle<Function> fun = Handle<Function>::Cast(args[0]);
+  Persistent<Function> p = Persistent<Function>::New(fun);
+  SessionCallbacks::metadataUpdatedCallback = p;
+  return scope.Close(Undefined());
+}
+
 void NodeSpotify::init() {
   HandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
@@ -193,6 +204,7 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "logout", logout);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "ready", ready);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "onMetadataUpdated", onMetadataUpdated);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPlaylistContainer);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("constants"), getConstants);

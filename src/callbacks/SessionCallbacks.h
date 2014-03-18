@@ -43,6 +43,7 @@ public:
   static void rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata);
   static v8::Handle<v8::Function> loginCallback;
   static v8::Handle<v8::Function> logoutCallback;
+  static v8::Handle<v8::Function> metadataUpdatedCallback;
 private:
   static std::unique_ptr<uv_timer_t> timer;
   static std::unique_ptr<uv_async_t> notifyHandle;
