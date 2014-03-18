@@ -23,6 +23,7 @@ THE SOFTWARE.
 **/
 
 var _spotify = require('./nodespotify');
+var metadataUpdater = require('./metadataUpdater');
 
 var beefedupSpotify = function(options) {
   var spotify = _spotify(options);
@@ -37,6 +38,9 @@ var beefedupSpotify = function(options) {
     console.log("This method is deprecated. Please use playlistContainer.getStarred()")
     return spotify.playlistContainer.getStarred();
   }
+
+  spotify.onMetadataUpdated(metadataUpdater.metadataUpdated);
+  spotify.waitForLoaded = metadataUpdater.waitForLoaded;
   return spotify;
 }
 

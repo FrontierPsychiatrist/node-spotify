@@ -36,7 +36,7 @@
     ],
     "copies": [ {
       "destination": "<(PRODUCT_DIR)",
-      "files": ["src/spotify.js"]
+      "files": ["src/spotify.js", "src/metadataUpdater.js"]
       }
     ],
     "conditions": [
