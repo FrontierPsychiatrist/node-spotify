@@ -26,7 +26,7 @@ var _spotify = require('./nodespotify');
 
 var beefedupSpotify = function(options) {
   var spotify = _spotify(options);
-  spotify.version = '0.5.0';
+  spotify.version = '0.5.1';
   //Deprecated, will be removed
   spotify.getPlaylists = function() {
     console.log("This method is deprecated. Please use playlistContainer.getPlaylists().")

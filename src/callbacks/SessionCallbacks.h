@@ -40,6 +40,7 @@ public:
   static void handleNotify(uv_async_t* handle, int status);
   static void init();
   static void metadata_updated(sp_session* session);
+  static void rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata);
   static v8::Handle<v8::Function> loginCallback;
   static v8::Handle<v8::Function> logoutCallback;
 private:

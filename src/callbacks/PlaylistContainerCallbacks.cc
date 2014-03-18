@@ -82,7 +82,3 @@ void PlaylistContainerCallbacks::playlistMoved(sp_playlistcontainer* pc, sp_play
     }
   }
 }
-
-void PlaylistContainerCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata) {
-
-}

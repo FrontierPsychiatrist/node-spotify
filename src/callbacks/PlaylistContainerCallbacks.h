@@ -32,7 +32,6 @@ public:
   static void playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata);
   static void playlistRemoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, void *userdata);
   static void playlistMoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, int new_position, void *userdata);
-  static void rootPlaylistContainerLoaded(sp_playlistcontainer* spPlaylistContainer, void* userdata);
 };
 
 #endif

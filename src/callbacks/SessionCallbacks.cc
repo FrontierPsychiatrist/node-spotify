@@ -87,6 +87,14 @@ void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
   uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
 }
 
+static void callV8FunctionWithNoArgumentsIfHandleNotEmpty(v8::Handle<v8::Function> function) {
+  if(!function.IsEmpty()) {
+    unsigned int argc = 0;
+    v8::Handle<v8::Value> argv[0];
+    function->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+  }
+}
+
 void SessionCallbacks::metadata_updated(sp_session* session) {
   //If sp_session_player_load did not load the track it must be retried to play. Bug #26.
   if(Player::instance->isLoading) {
@@ -103,20 +111,20 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   }
 
   //The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
-  rootPlaylistContainerCallbacks.container_loaded = &PlaylistContainerCallbacks::rootPlaylistContainerLoaded;
+  rootPlaylistContainerCallbacks.container_loaded = &SessionCallbacks::rootPlaylistContainerLoaded;
   rootPlaylistContainerCallbacks.playlist_added = &PlaylistContainerCallbacks::playlistAdded;
   rootPlaylistContainerCallbacks.playlist_removed = &PlaylistContainerCallbacks::playlistRemoved;
   rootPlaylistContainerCallbacks.playlist_moved = &PlaylistContainerCallbacks::playlistMoved;
   sp_playlistcontainer *pc = sp_session_playlistcontainer(application->session);
   application->playlistContainer = std::make_shared<PlaylistContainer>(pc);
-  sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, nullptr);
+  sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, nullptr); 
+}
 
-  //Trigger the login complete callback
-  if(!loginCallback.IsEmpty()) {
-    unsigned int argc = 0;
-    v8::Handle<v8::Value> argv[0];
-    loginCallback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-  }
+/**
+ * This is the "ready" hook for users. Playlists should be available at this point.
+ **/
+void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata) {
+  callV8FunctionWithNoArgumentsIfHandleNotEmpty(loginCallback);
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
