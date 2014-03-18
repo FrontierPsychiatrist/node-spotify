@@ -44,6 +44,7 @@ static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks;
 std::unique_ptr<uv_timer_t> SessionCallbacks::timer;
 std::unique_ptr<uv_async_t> SessionCallbacks::notifyHandle;
 v8::Handle<v8::Function> SessionCallbacks::loginCallback;
+v8::Handle<v8::Function> SessionCallbacks::logoutCallback;
 
 namespace spotify {
 //TODO
@@ -120,6 +121,11 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
 
 void SessionCallbacks::loggedOut(sp_session* session) {
   std::cout << "Logged out" << std::endl;
+  if (!logoutCallback.IsEmpty()) {
+    unsigned int argc = 0;
+    v8::Handle<v8::Value> argv[0];
+    logoutCallback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+  }
 }
 
 void SessionCallbacks::end_of_track(sp_session* session) {

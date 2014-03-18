@@ -35,6 +35,7 @@ function tests() {
   console.log('Artistname: ' + firstArtist.name);
   console.log('Artist link: ' + firstArtist.link);
 
-  spotify.logout();
-  baseTest.quit();
+  spotify.logout(function () {
+    process.exit();
+  });
 }

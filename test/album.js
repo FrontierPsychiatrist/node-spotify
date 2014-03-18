@@ -18,6 +18,7 @@ function browseComplete(err, album) {
   console.log(album.artist);
   console.log('Review: ' + album.review);
   console.log(album.copyrights);
-  spotify.logout();
-  baseTest.quit();
+  spotify.logout(function () {
+    process.exit();
+  });
 }

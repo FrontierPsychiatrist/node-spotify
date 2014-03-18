@@ -145,6 +145,9 @@ Handle<Value> NodeSpotify::login(const Arguments& args) {
 
 Handle<Value> NodeSpotify::logout(const Arguments& args) {
   HandleScope scope;
+  Handle<Function> fun = Handle<Function>::Cast(args[0]);
+  Persistent<Function> p = Persistent<Function>::New(fun);
+  SessionCallbacks::logoutCallback = p;
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
   nodeSpotify->spotify->logout();
   return scope.Close(Undefined());

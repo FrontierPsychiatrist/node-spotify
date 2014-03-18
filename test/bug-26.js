@@ -9,7 +9,8 @@ function test() {
   spotify.player.play(track);
   setTimeout( function() {
     spotify.player.stop();
-    spotify.logout();
-    baseTest.quit();
+    spotify.logout(function () {
+      process.exit();
+    });
   }, 10000);
 }

@@ -41,6 +41,7 @@ public:
   static void init();
   static void metadata_updated(sp_session* session);
   static v8::Handle<v8::Function> loginCallback;
+  static v8::Handle<v8::Function> logoutCallback;
 private:
   static std::unique_ptr<uv_timer_t> timer;
   static std::unique_ptr<uv_async_t> notifyHandle;
