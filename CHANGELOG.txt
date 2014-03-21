@@ -1,0 +1,9 @@
+0.5.1
+* FEATURE: Added logout callback
+* FEATURE: Added metadata_updated callback and wrapper
+* CHANGE: ready callback is now executed when the root playlistcontainer is loaded
+  and not directly after a successful login.
+* FIX: If a track is accessible but is not loaded querying the artist or album will not crash.
+
+0.5.0
+---
