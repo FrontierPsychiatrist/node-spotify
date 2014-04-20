@@ -1,4 +1,11 @@
+
+0.5.2
+-----
+* FEATURE: logout callback is settable without logging out (to catch external logouts)
+* FIX: Pausing audio with OpenAL flushes the buffers
+
 0.5.1
+-----
 * FEATURE: Added logout callback
 * FEATURE: Added metadata_updated callback and wrapper
 * CHANGE: ready callback is now executed when the root playlistcontainer is loaded
@@ -6,4 +13,5 @@
 * FIX: If a track is accessible but is not loaded querying the artist or album will not crash.
 
 0.5.0
----
+-----
+- started Changelog ;)
