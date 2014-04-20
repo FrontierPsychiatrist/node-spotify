@@ -1,6 +1,6 @@
 {
   "name" : "node-spotify",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A wrapper for libspotify",
   "keywords": ["spotify", "music"],
   "homepage": "http://www.node-spotify.com",

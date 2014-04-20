@@ -27,7 +27,7 @@ var metadataUpdater = require('./metadataUpdater');
 
 var beefedupSpotify = function(options) {
   var spotify = _spotify(options);
-  spotify.version = '0.5.1';
+  spotify.version = '0.5.2';
   //Deprecated, will be removed
   spotify.getPlaylists = function() {
     console.log("This method is deprecated. Please use playlistContainer.getPlaylists().")
