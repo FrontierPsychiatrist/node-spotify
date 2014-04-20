@@ -98,8 +98,10 @@ static void* audio_start(void *aux)
 			/* and queue some more audio */
 			afd = audio_get(af);
 			alGetSourcei(source, AL_SOURCE_STATE, &status);
-			if(status != AL_PLAYING)
-				alSourcePlay(source);
+			if(status != AL_PLAYING) {
+				/* player has been paused, restart */
+				break;
+			}
 
 			alGetBufferi(buffers[frame % NUM_BUFFERS], AL_FREQUENCY, &rate);
 			alGetBufferi(buffers[frame % NUM_BUFFERS], AL_CHANNELS, &channels);
