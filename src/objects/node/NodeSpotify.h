@@ -39,6 +39,8 @@ public:
   ~NodeSpotify();
   static Handle<Value> login(const Arguments& args);
   static Handle<Value> logout(const Arguments& args);
+  static Handle<Value> getLogoutCallback(Local<String> property, const AccessorInfo& info);
+  static void setLogoutCallback(Local<String> property, Local<Value> value, const AccessorInfo& info);
   static Handle<Value> ready(const Arguments& args);
   static Handle<Value> getPlaylistContainer(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getRememberedUser(Local<String> property, const AccessorInfo& info);

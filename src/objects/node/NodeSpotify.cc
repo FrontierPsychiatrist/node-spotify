@@ -145,12 +145,27 @@ Handle<Value> NodeSpotify::login(const Arguments& args) {
 
 Handle<Value> NodeSpotify::logout(const Arguments& args) {
   HandleScope scope;
-  Handle<Function> fun = Handle<Function>::Cast(args[0]);
-  Persistent<Function> p = Persistent<Function>::New(fun);
-  SessionCallbacks::logoutCallback = p;
+  if(args.Length() > 0) {
+    Handle<Function> fun = Handle<Function>::Cast(args[0]);
+    Persistent<Function> p = Persistent<Function>::New(fun);
+    SessionCallbacks::logoutCallback = p;
+  }
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
   nodeSpotify->spotify->logout();
   return scope.Close(Undefined());
+}
+
+Handle<Value> NodeSpotify::getLogoutCallback(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  return scope.Close(SessionCallbacks::logoutCallback);
+}
+
+void NodeSpotify::setLogoutCallback(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  Handle<Function> fun = Handle<Function>::Cast(value);
+  Persistent<Function> p = Persistent<Function>::New(fun);
+  SessionCallbacks::logoutCallback = p;
+  scope.Close(Undefined());
 }
 
 Handle<Value> NodeSpotify::ready(const Arguments& args) {
@@ -208,6 +223,7 @@ void NodeSpotify::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPlaylistContainer);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("constants"), getConstants);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("onLogout"), getLogoutCallback, setLogoutCallback);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }
