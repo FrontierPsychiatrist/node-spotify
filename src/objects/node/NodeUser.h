@@ -42,6 +42,9 @@ public:
   static Handle<Value> getCanonicalName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getDisplayName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getPublishedPlaylists(const Arguments& args);
+  static Handle<Value> getStarredPlaylist(const Arguments& args);
   static void init();
 };
 

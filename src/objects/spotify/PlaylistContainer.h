@@ -34,6 +34,8 @@ THE SOFTWARE.
 #include <memory>
 #include <string>
 
+class User;
+
 class PlaylistContainer {
 friend class NodePlaylistContainer;
 public:
