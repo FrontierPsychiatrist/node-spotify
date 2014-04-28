@@ -1,6 +1,7 @@
 #include "NodePlaylistContainer.h"
 #include "NodePlaylist.h"
 #include "NodePlaylistFolder.h"
+#include "NodeUser.h"
 #include "../../exceptions.h"
 #include "../../common_macros.h"
 #include "../../Application.h"
@@ -17,7 +18,9 @@ NodePlaylistContainer::~NodePlaylistContainer() {
 
 Handle<Value> NodePlaylistContainer::getOwner(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  return scope.Close(Undefined());
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.Holder());
+  NodeUser* nodeUser = new NodeUser(nodePlaylistContainer->playlistContainer->owner());
+  return scope.Close(nodeUser->getV8Object());
 }
 
 Handle<Value> NodePlaylistContainer::getPlaylists(const Arguments& args) {

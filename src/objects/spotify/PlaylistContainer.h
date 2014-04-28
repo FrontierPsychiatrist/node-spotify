@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #include "Playlist.h"
 #include "PlaylistBase.h"
+#include "User.h"
 
 #include <libspotify/api.h>
 #include <vector>
@@ -43,6 +44,7 @@ public:
   void addFolder(int index, std::string name);
   void removePlaylist(int index);
   void movePlaylist(int index, int newPosition);
+  std::shared_ptr<User> owner();
   bool isLoaded();
 private:
   sp_playlistcontainer* playlistContainer;
