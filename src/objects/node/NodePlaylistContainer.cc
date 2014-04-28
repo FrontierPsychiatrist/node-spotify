@@ -40,13 +40,6 @@ Handle<Value> NodePlaylistContainer::getPlaylists(const Arguments& args) {
   return scope.Close(nPlaylists);
 }
 
-Handle<Value> NodePlaylistContainer::getStarred(const Arguments& args) {
-  HandleScope scope;
-  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
-  NodePlaylist* starredPlaylist = new NodePlaylist(nodePlaylistContainer->playlistContainer->starredPlaylist());
-  return scope.Close(starredPlaylist->getV8Object());
-}
-
 Handle<Value> NodePlaylistContainer::addPlaylist(const Arguments& args) {
   HandleScope scope;
   if(args.Length() < 1 || !args[0]->IsString()) {
@@ -118,7 +111,6 @@ void NodePlaylistContainer::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("owner"), getOwner);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarred", getStarred);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addPlaylist", addPlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addFolder", addFolder);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "deletePlaylist", deletePlaylist);

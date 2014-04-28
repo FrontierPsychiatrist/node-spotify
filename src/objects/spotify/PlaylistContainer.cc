@@ -25,7 +25,6 @@ THE SOFTWARE.
 #include "PlaylistContainer.h"
 #include "../../Application.h"
 #include "../../exceptions.h"
-#include "StarredPlaylist.h"
 #include "PlaylistFolder.h"
 
 extern Application* application;
@@ -49,11 +48,6 @@ std::vector<std::shared_ptr<PlaylistBase>> PlaylistContainer::getPlaylists() {
     }
   }
   return playlists;
-}
-
-std::shared_ptr<Playlist> PlaylistContainer::starredPlaylist() {
-  sp_playlist* spPlaylist = sp_session_starred_create(application->session);
-  return Playlist::fromCache(spPlaylist);
 }
 
 void PlaylistContainer::addPlaylist(std::string name) {

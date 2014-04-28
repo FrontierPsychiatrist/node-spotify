@@ -203,6 +203,13 @@ Handle<Value> NodeSpotify::getSessionUser(Local<String> property, const Accessor
   return scope.Close(nodeUser->getV8Object());
 }
 
+Handle<Value> NodeSpotify::getStarredPlaylist(const Arguments& args) {
+  HandleScope scope;
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NodePlaylist* starredPlaylist = new NodePlaylist(nodeSpotify->spotify->starredPlaylist());
+  return scope.Close(starredPlaylist->getV8Object());
+}
+
 Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   Local<Object> constants = Object::New();
@@ -235,6 +242,7 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "ready", ready);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "onMetadataUpdated", onMetadataUpdated);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarredPlaylist", getStarredPlaylist);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("sessionUser"), getSessionUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPlaylistContainer);

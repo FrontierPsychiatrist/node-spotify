@@ -76,8 +76,8 @@ void NodeUser::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("displayName"), getDisplayName);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "publishedPlaylists", getPublishedPlaylists);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "starredPlaylist", getStarredPlaylist);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPublishedPlaylists", getPublishedPlaylists);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarredPlaylist", getStarredPlaylist);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }
