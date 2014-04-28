@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include "objects/node/NodeArtist.h"
 #include "objects/node/NodeSearch.h"
 #include "objects/node/NodePlaylistFolder.h"
+#include "objects/node/NodeUser.h"
 #include "objects/node/StaticCallbackSetter.h"
 #include "audio/audio.h"
 
@@ -55,6 +56,7 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   NodeSpotify::init();
   NodePlaylistFolder::init();
   NodePlaylistContainer::init();
+  NodeUser::init();
 
   //initialize application struct
   application = new Application();
