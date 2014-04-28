@@ -36,6 +36,7 @@ THE SOFTWARE.
 #include "NodeArtist.h"
 #include "NodeAlbum.h"
 #include "NodeTrack.h"
+#include "NodeUser.h"
 
 extern Application* application;
 
@@ -188,6 +189,13 @@ Handle<Value> NodeSpotify::getRememberedUser(Local<String> property, const Acces
   return scope.Close(String::New(nodeSpotify->spotify->rememberedUser().c_str()));
 }
 
+Handle<Value> NodeSpotify::getSessionUser(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.Holder());
+  NodeUser* nodeUser = new NodeUser(nodeSpotify->spotify->sessionUser());
+  return scope.Close(nodeUser->getV8Object());
+}
+
 Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   Local<Object> constants = Object::New();
@@ -221,6 +229,7 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "onMetadataUpdated", onMetadataUpdated);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("sessionUser"), getSessionUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPlaylistContainer);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("constants"), getConstants);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("onLogout"), getLogoutCallback, setLogoutCallback);

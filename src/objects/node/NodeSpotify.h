@@ -44,6 +44,7 @@ public:
   static Handle<Value> ready(const Arguments& args);
   static Handle<Value> getPlaylistContainer(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getRememberedUser(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getSessionUser(Local<String> property, const AccessorInfo& info);
   static Handle<Value> createFromLink(const Arguments& args);
   static Handle<Value> getConstants(Local<String> property, const AccessorInfo& info);
   static Handle<Value> onMetadataUpdated(const Arguments& args);
