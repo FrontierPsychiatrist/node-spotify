@@ -32,8 +32,6 @@ THE SOFTWARE.
 
 extern Application* application;
 
-std::map<std::string, Persistent<Function>> NodePlaylist::staticCallbacks;
-
 NodePlaylist::NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist) {
   application->playlistMapper->setObject(playlist->playlist, this);
 }
@@ -153,13 +151,6 @@ Handle<Value> NodePlaylist::isLoaded(Local<String> property, const AccessorInfo&
 
 Handle<Function> NodePlaylist::getCallback(std::string name) {
   Handle<Function> callback = NodeWrappedWithCallbacks<NodePlaylist>::getCallback(name);
-  if(callback.IsEmpty()) {
-    //search static callbacks instead
-    auto iterator = staticCallbacks.find(name);
-    if( iterator != staticCallbacks.end() ) {
-      callback = iterator->second;
-    }
-  }
   return callback;
 }
 

@@ -35,7 +35,6 @@ THE SOFTWARE.
 #include "objects/node/NodeSearch.h"
 #include "objects/node/NodePlaylistFolder.h"
 #include "objects/node/NodeUser.h"
-#include "objects/node/StaticCallbackSetter.h"
 #include "audio/audio.h"
 
 #include <node.h>
@@ -92,7 +91,6 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   spotifyObject->Set(v8::String::NewSymbol("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
   NodePlayer* nodePlayer = new NodePlayer();
   spotifyObject->Set(v8::String::NewSymbol("player"), nodePlayer->getV8Object());
-  StaticCallbackSetter<NodePlaylist>::init(spotifyObject, "playlists");
   return scope.Close(spotifyObject);
 };
 

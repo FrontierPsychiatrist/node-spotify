@@ -44,7 +44,6 @@ extern Application* application;
  **/
 template<class T>
 class NodeWrappedWithCallbacks : public NodeWrapped<T>, public V8Callable {
-template <class S> friend class StaticCallbackSetter;
 public:
   /**
    * To set a callback from within C++.

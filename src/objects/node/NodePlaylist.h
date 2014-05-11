@@ -54,7 +54,6 @@ public:
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
 
   static void init();
-  static std::map<std::string, Persistent<Function>> staticCallbacks;
 protected:
   Handle<Function> getCallback(std::string name);
 };
