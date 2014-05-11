@@ -1,3 +1,6 @@
+0.5.4
+-----
+* FEATURE: Added collaborative flag to playlists.
 
 0.5.3
 -----
