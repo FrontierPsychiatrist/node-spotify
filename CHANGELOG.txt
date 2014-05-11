@@ -1,4 +1,8 @@
 
+0.5.3
+-----
+* FIX: ready() callback was executed multiple times (e.g. on the playlist_moved event)
+
 0.5.2
 -----
 * FEATURE: logout callback is settable without logging out (to catch external logouts)

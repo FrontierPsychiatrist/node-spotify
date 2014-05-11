@@ -53,6 +53,18 @@ Handle<Value> NodePlaylist::getName(Local<String> property, const AccessorInfo& 
   return String::New(nodePlaylist->playlist->name().c_str());
 }
 
+void NodePlaylist::setCollaborative(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+  HandleScope scope;
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
+  nodePlaylist->playlist->setCollaborative(value->ToBoolean()->Value());
+  scope.Close(Undefined());
+}
+
+Handle<Value> NodePlaylist::getCollaborative(Local<String> property, const AccessorInfo& info) {
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
+  return Boolean::New(nodePlaylist->playlist->isCollaborative());
+}
+
 Handle<Value> NodePlaylist::getLink(Local<String> property, const AccessorInfo& info) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
   return String::New(nodePlaylist->playlist->link().c_str());
@@ -159,6 +171,7 @@ void NodePlaylist::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName, setName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("collaborative"), getCollaborative, setCollaborative);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("description"), getDescription);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);

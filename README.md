@@ -10,14 +10,8 @@ A webpage for the project is here: http://www.node-spotify.com.
 
 Notes
 -----
-Currently I have decided to bring the pure node.js module to a somewhat complete state before I improve the sample backend and frontend. I'll try to keep the documentation up to date with the current implementation so you know how to use node-spotify.
-
-Working towards version 1.0.0 node-spotify should include the following browsing features: the playlists of the logged in user, searching,
-browsing albums and artists. Playback should be possible. Creation and editing of playlists should be possible. The usage of all
-events on playlists should be possible.
-
-Not planned for version 1.0.0 is the handling of other users playlists, the inbox system, scrobbling and managing other options like
-cache folder etc.
+I'm working toward version 1.0.0 which is not meant to provide everything libspotify offers. But I intend to wrap all libspotify types and provide methods
+to access them where possible. Options and convenience features my lack, though.
 
 Requirements
 ------------
@@ -32,7 +26,6 @@ Your compiler must be able to translate some C++11 features (std::shared_ptr, G+
 Compiling
 ---------
 Compiling was tested on Raspbian, Ubuntu and OSX. Due to the usage of pthreads I'm not sure if node-spotify will compile on Windows.
-
 
 If you use OSX and have installed libspotify as a framework you need to edit the binding.gyp file. Remove "-lspotify" and write instead as one link option:
 ```"-framework OpenAL -framework libspotify"```. This is due to a bug in node-gyp that will eliminate a duplicate "-framework" entry from the link settings. If you
@@ -57,3 +50,4 @@ As of version 0.4.0 downloads of the pure compiled node.js module are available 
 Used software
 -------------
 * Base64 encoder from https://github.com/superwills/NibbleAndAHalf
+* Sound playback is heavily based on https://developer.spotify.com/docs/libspotify/12.1.51/examples.html
