@@ -103,7 +103,7 @@ std::string Playlist::description() {
   if(sp_playlist_is_loaded(playlist)) {
     const char* spDescription = sp_playlist_get_description(playlist);
     if(spDescription != nullptr) {
-      description = std::string(spDescription);  
+      description = std::string(spDescription);
     }
   }
   return description;
@@ -111,6 +111,20 @@ std::string Playlist::description() {
 
 bool Playlist::isLoaded() {
   return sp_playlist_is_loaded(playlist);
+}
+
+bool Playlist::isCollaborative() {
+  if(sp_playlist_is_loaded(playlist)) {
+    return sp_playlist_is_collaborative(playlist);
+  } else {
+    return false;
+  }
+}
+
+void Playlist::setCollaborative(bool collaborative) {
+  if(sp_playlist_is_loaded(playlist)) {
+    sp_playlist_set_collaborative(playlist, collaborative);
+  }
 }
 
 std::vector<std::shared_ptr<Track>> Playlist::getTracks() {

@@ -49,6 +49,8 @@ public:
   std::string link();
   std::string description();
   bool isLoaded();
+  bool isCollaborative();
+  void setCollaborative(bool collaborative);
   void addTracks(std::vector<std::shared_ptr<Track>> tracks, int position);
   void removeTracks(const int* trackPositions, int numberOfTracks);
   void reorderTracks(const int* trackPositions, int numberOfTracks, int newPosition);
