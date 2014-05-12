@@ -25,7 +25,6 @@ THE SOFTWARE.
 #include "Playlist.h"
 #include "../../Application.h"
 #include "../../exceptions.h"
-#include "../../callbacks/PlaylistCallbacks.h"
 
 extern Application* application;
 std::map<sp_playlist*, std::shared_ptr<Playlist>> Playlist::cache;
@@ -42,7 +41,6 @@ std::shared_ptr<Playlist> Playlist::fromCache(sp_playlist* spPlaylist) {
 }
 
 Playlist::Playlist(sp_playlist* _playlist) : PlaylistBase(false), playlist(_playlist) {
-  sp_playlist_add_callbacks(playlist, &Playlist::playlistCallbacks, nullptr);
   sp_playlist_add_ref(playlist);
 }
 
@@ -51,7 +49,6 @@ Playlist::Playlist(const Playlist& other) : PlaylistBase(other.isFolder), playli
 }
 
 Playlist::~Playlist() {
-  sp_playlist_remove_callbacks(playlist, &Playlist::playlistCallbacks, nullptr);
   sp_playlist_release(playlist);
 }
 
@@ -143,22 +140,3 @@ void Playlist::reorderTracks(const int* trackPositions, int numberOfTracks, int 
     throw TracksNotReorderableException("Permission denied");
   }
 }
-
-//Playlist::playlistCallbacks.tracks_moved = &PlaylistCallbacks::tracks_moved;
-/*playlistCallbacks.playlist_update_in_progress = &playlist_update_in_progress;
-playlistCallbacks.track_created_changed = &track_created_changed;*/
-sp_playlist_callbacks Playlist::playlistCallbacks = {
-  &PlaylistCallbacks::tracksAdded,
-  &PlaylistCallbacks::tracksRemoved,
-  &PlaylistCallbacks::tracksMoved,
-  &PlaylistCallbacks::playlistNameChange,
-  &PlaylistCallbacks::playlistStateChanged,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr
-};

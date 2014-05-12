@@ -4,7 +4,7 @@
     "target_name": "nodespotify",
     "sources": [
       "src/node-spotify.cc", "src/audio/audio.c",
-      "src/callbacks/PlaylistCallbacks.cc",
+      "src/callbacks/PlaylistCallbacksHolder.cc",
       "src/callbacks/SessionCallbacks.cc",
       "src/callbacks/SearchCallbacks.cc", "src/callbacks/AlbumBrowseCallbacks.cc",
       "src/callbacks/ArtistBrowseCallbacks.cc", "src/callbacks/PlaylistContainerCallbacks.cc",

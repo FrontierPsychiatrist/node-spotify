@@ -38,7 +38,6 @@ struct Application {
   sp_session* session;
   audio_fifo_t audio_fifo;
   std::shared_ptr<PlaylistContainer> playlistContainer;
-  std::unique_ptr<SpotifyNodeMapper<sp_playlist>> playlistMapper;
   std::unique_ptr<SpotifyNodeMapper<sp_playlistcontainer>> playlistContainerMapper;
 };
 

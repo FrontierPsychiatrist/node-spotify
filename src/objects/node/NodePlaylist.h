@@ -25,7 +25,8 @@ THE SOFTWARE.
 #ifndef _NODE_PLAYLIST_H
 #define _NODE_PLAYLIST_H
 
-#include "NodeWrappedWithCallbacks.h"
+#include "NodeWrapped.h"
+#include "../../callbacks/PlaylistCallbacksHolder.h"
 #include "../spotify/Playlist.h"
 
 #include <v8.h>
@@ -35,9 +36,10 @@ THE SOFTWARE.
 
 using namespace v8;
 
-class NodePlaylist : public NodeWrappedWithCallbacks<NodePlaylist> {
+class NodePlaylist : public NodeWrapped<NodePlaylist> {
 private:
   std::shared_ptr<Playlist> playlist;
+  PlaylistCallbacksHolder playlistCallbacksHolder;
 public:
   NodePlaylist(std::shared_ptr<Playlist> playlist);
   ~NodePlaylist();
@@ -52,10 +54,9 @@ public:
   static Handle<Value> removeTracks(const Arguments& args);
   static Handle<Value> reorderTracks(const Arguments& args);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
-
+  static Handle<Value> on(const Arguments& args);
+  static Handle<Value> off(const Arguments& args);
   static void init();
-protected:
-  Handle<Function> getCallback(std::string name);
 };
 
 #endif

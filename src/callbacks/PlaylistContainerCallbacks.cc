@@ -62,7 +62,7 @@ void PlaylistContainerCallbacks::playlistAdded(sp_playlistcontainer* pc, sp_play
 void PlaylistContainerCallbacks::playlistRemoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void *userdata) {
   V8Callable* nodeObject = application->playlistContainerMapper->getObject(pc);
   if(nodeObject != nullptr) {
-    V8Callable* nodePlaylist = application->playlistMapper->getObject(spPlaylist);
+    V8Callable* nodePlaylist = nullptr;
     if(nodePlaylist != nullptr) {
       nodeObject->call(PLAYLIST_REMOVED, {Undefined(), Number::New(position), nodePlaylist->getV8Object()});
     } else {
@@ -74,7 +74,7 @@ void PlaylistContainerCallbacks::playlistRemoved(sp_playlistcontainer* pc, sp_pl
 void PlaylistContainerCallbacks::playlistMoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, int new_position, void *userdata) {
   V8Callable* nodeObject = application->playlistContainerMapper->getObject(pc);
   if(nodeObject != nullptr) {
-    V8Callable* nodePlaylist = application->playlistMapper->getObject(spPlaylist);
+    V8Callable* nodePlaylist = nullptr;
     if(nodePlaylist != nullptr) {
       nodeObject->call(PLAYLIST_MOVED, {Undefined(), Number::New(position), Number::New(new_position)});
     } else {
