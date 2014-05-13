@@ -28,17 +28,6 @@ var metadataUpdater = require('./metadataUpdater');
 var beefedupSpotify = function(options) {
   var spotify = _spotify(options);
   spotify.version = '0.5.4';
-  //Deprecated, will be removed
-  spotify.getPlaylists = function() {
-    console.log("This method is deprecated. Please use playlistContainer.getPlaylists().")
-    return spotify.playlistContainer.getPlaylists();
-  }
-  //Deprecated, will be removed
-  spotify.getStarred = function() {
-    console.log("This method is deprecated. Please use playlistContainer.getStarred()")
-    return spotify.playlistContainer.getStarred();
-  }
-
   spotify.onMetadataUpdated(metadataUpdater.metadataUpdated);
   spotify.waitForLoaded = metadataUpdater.waitForLoaded;
   return spotify;
