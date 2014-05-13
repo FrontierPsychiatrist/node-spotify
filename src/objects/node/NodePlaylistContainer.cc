@@ -45,9 +45,10 @@ Handle<Value> NodePlaylistContainer::addPlaylist(const Arguments& args) {
   if(args.Length() < 1 || !args[0]->IsString()) {
     return scope.Close(V8_EXCEPTION("addPlaylist needs a string as its argument"));
   }
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   String::Utf8Value playlistName(args[0]->ToString());
   try {
-    application->playlistContainer->addPlaylist(std::string(*playlistName));
+    nodePlaylistContainer->playlistContainer->addPlaylist(std::string(*playlistName));
   } catch(const PlaylistCreationException& e) {
     return scope.Close(V8_EXCEPTION("Playlist creation failed"));
   }
@@ -59,10 +60,11 @@ Handle<Value> NodePlaylistContainer::addFolder(const Arguments& args) {
   if(args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsString()) {
     return scope.Close(V8_EXCEPTION("addFolder needs a number and a string as arguments"));
   }
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   int index = args[0]->ToNumber()->IntegerValue();
   String::Utf8Value folderName(args[1]->ToString());
   try {
-    application->playlistContainer->addFolder(index, std::string(*folderName));
+    nodePlaylistContainer->playlistContainer->addFolder(index, std::string(*folderName));
   } catch(const PlaylistCreationException& e) {
     return scope.Close(V8_EXCEPTION("Folder creation failed"));
   }
