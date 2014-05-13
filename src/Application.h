@@ -28,7 +28,6 @@ THE SOFTWARE.
 #include <libspotify/api.h>
 #include <memory>
 #include "objects/spotify/PlaylistContainer.h"
-#include "callbacks/SpotifyNodeMapper.h"
 
 extern "C" {
   #include "audio/audio.h"
@@ -38,7 +37,6 @@ struct Application {
   sp_session* session;
   audio_fifo_t audio_fifo;
   std::shared_ptr<PlaylistContainer> playlistContainer;
-  std::unique_ptr<SpotifyNodeMapper<sp_playlistcontainer>> playlistContainerMapper;
 };
 
 #endif

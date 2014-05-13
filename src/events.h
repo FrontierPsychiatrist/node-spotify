@@ -24,8 +24,5 @@ THE SOFTWARE.
 
 #ifndef _EVENTS_H
 #define _EVENTS_H
-#define PLAYLIST_ADDED "playlist_added"
-#define PLAYLIST_REMOVED "playlist_removed"
-#define PLAYLIST_MOVED "playlist_moved"
 #define PLAYER_END_OF_TRACK "player_end_of_track"
 #endif

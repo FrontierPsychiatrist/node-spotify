@@ -7,7 +7,7 @@
       "src/callbacks/PlaylistCallbacksHolder.cc",
       "src/callbacks/SessionCallbacks.cc",
       "src/callbacks/SearchCallbacks.cc", "src/callbacks/AlbumBrowseCallbacks.cc",
-      "src/callbacks/ArtistBrowseCallbacks.cc", "src/callbacks/PlaylistContainerCallbacks.cc",
+      "src/callbacks/ArtistBrowseCallbacks.cc", "src/callbacks/PlaylistContainerCallbacksHolder.cc",
 
       "src/utils/ImageUtils.cc",
 

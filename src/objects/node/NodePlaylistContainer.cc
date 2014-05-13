@@ -4,16 +4,12 @@
 #include "NodeUser.h"
 #include "../../exceptions.h"
 #include "../../common_macros.h"
-#include "../../Application.h"
 
-extern Application* application;
-
-NodePlaylistContainer::NodePlaylistContainer(std::shared_ptr<PlaylistContainer> _playlistContainer) : playlistContainer(_playlistContainer) {
-  application->playlistContainerMapper->setObject(playlistContainer->playlistContainer, this);
+NodePlaylistContainer::NodePlaylistContainer(std::shared_ptr<PlaylistContainer> _playlistContainer) : playlistContainer(_playlistContainer),
+  playlistContainerCallbacksHolder(playlistContainer->playlistContainer, this) {
 }
 
 NodePlaylistContainer::~NodePlaylistContainer() {
-  application->playlistContainerMapper->removeObject(playlistContainer->playlistContainer, this);
 }
 
 Handle<Value> NodePlaylistContainer::getOwner(Local<String> property, const AccessorInfo& info) {
@@ -101,6 +97,38 @@ Handle<Value> NodePlaylistContainer::movePlaylist(const Arguments& args) {
 Handle<Value> NodePlaylistContainer::isLoaded(Local<String> property, const AccessorInfo& info) {
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.Holder());
   return Boolean::New(nodePlaylistContainer->playlistContainer->isLoaded());
+}
+
+static Handle<Function> getFunctionFromObject(Handle<Object> callbacks, Handle<String> key) {
+  Handle<Function> callback;
+  if(callbacks->Has(key)) {
+    callback = Persistent<Function>::New(Handle<Function>::Cast(callbacks->Get(key)));
+  }
+  return callback;
+}
+
+Handle<Value> NodePlaylistContainer::on(const Arguments& args) {
+  HandleScope scope;
+  if(args.Length() < 1 || !args[0]->IsObject()) {
+    return scope.Close(V8_EXCEPTION("on needs an object as its first argument."));
+  }
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
+  Handle<Object> callbacks = args[0]->ToObject();
+  Handle<String> playlistAddedKey = String::New("playlistAdded");
+  Handle<String> playlistMovedKey = String::New("playlistMoved");
+  Handle<String> playlistRemovedKey = String::New("playlistRemoved");
+  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistAddedCallback = getFunctionFromObject(callbacks, playlistAddedKey);
+  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistMovedCallback = getFunctionFromObject(callbacks, playlistMovedKey);
+  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistRemovedCallback = getFunctionFromObject(callbacks, playlistRemovedKey);
+  nodePlaylistContainer->playlistContainerCallbacksHolder.setCallbacks();
+  return scope.Close(Undefined());
+}
+
+Handle<Value> NodePlaylistContainer::off(const Arguments& args) {
+  HandleScope scope;
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
+  nodePlaylistContainer->playlistContainerCallbacksHolder.unsetCallbacks();
+  return scope.Close(Undefined());
 }
 
 void NodePlaylistContainer::init() {

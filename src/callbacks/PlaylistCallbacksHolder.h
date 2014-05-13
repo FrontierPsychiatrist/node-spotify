@@ -31,6 +31,8 @@ THE SOFTWARE.
 #include <v8.h>
 #include <initializer_list>
 
+using namespace v8;
+
 class PlaylistCallbacksHolder {
 private:
   V8Wrapped* userdata;
