@@ -40,12 +40,6 @@ extern "C" {
 extern Application* application;
 
 static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks;
-/*
-We use the root playlist container ready callback as a hook for the user to start using node-spotify.
-This callback can be called multiple times, i.e. if a playlist is moved. Since we only want to use it directly
-after the login we use a flag to determine this state.
-*/
-static bool readyCalled = false;
 
 std::unique_ptr<uv_timer_t> SessionCallbacks::timer;
 std::unique_ptr<uv_async_t> SessionCallbacks::notifyHandle;
@@ -133,17 +127,14 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
  * This is the "ready" hook for users. Playlists should be available at this point.
  **/
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata) {
+  callV8FunctionWithNoArgumentsIfHandleNotEmpty(loginCallback);
   //Issue 35, rootPlaylistContainerLoaded can be called multiple times throughout the lifetime of a session.
   //loginCallback must only be called once.
-  if(!readyCalled) {
-    callV8FunctionWithNoArgumentsIfHandleNotEmpty(loginCallback);
-    readyCalled = true;
-  }
+  sp_playlistcontainer_remove_callbacks(sp, &rootPlaylistContainerCallbacks, nullptr);    
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
   std::cout << "Logged out" << std::endl;
-  readyCalled = false;
   callV8FunctionWithNoArgumentsIfHandleNotEmpty(logoutCallback);
 }
 
