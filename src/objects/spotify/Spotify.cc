@@ -23,7 +23,6 @@ THE SOFTWARE.
 **/
 
 #include "Spotify.h"
-#include "StarredPlaylist.h"
 #include "../../Application.h"
 #include "../../callbacks/SessionCallbacks.h"
 #include "../../exceptions.h"
@@ -109,9 +108,4 @@ std::string Spotify::rememberedUser() {
 std::shared_ptr<User> Spotify::sessionUser() {
   auto user = std::make_shared<User>(sp_session_user(session));
   return user;
-}
-
-std::shared_ptr<Playlist> Spotify::starredPlaylist() {
-  sp_playlist* spPlaylist = sp_session_starred_create(session);
-  return Playlist::fromCache(spPlaylist);
 }
