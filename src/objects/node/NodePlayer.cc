@@ -24,18 +24,16 @@ THE SOFTWARE.
 
 #include "NodePlayer.h"
 #include "NodeTrack.h"
+#include "../../callbacks/SessionCallbacks.h"
 #include "../../exceptions.h"
 #include "../../common_macros.h"
 
 NodePlayer::NodePlayer() {
   player = player->instance;
-  player->nodeObject = this;
 }
 
 NodePlayer::~NodePlayer() {
-  if(player->nodeObject == this) {
-    player->nodeObject = nullptr;
-  }
+
 }
 
 NodePlayer::NodePlayer(const NodePlayer& other) {
@@ -88,9 +86,32 @@ Handle<Value> NodePlayer::getCurrentSecond(Local<String> property, const Accesso
   return Integer::New(nodePlayer->player->currentSecond);
 }
 
+Handle<Value> NodePlayer::on(const Arguments& args) {
+  HandleScope scope;
+  if(args.Length() < 1 || !args[0]->IsObject()) {
+    return scope.Close(V8_EXCEPTION("on needs an object as its first argument."));
+  }
+  Handle<Object> callbacks = args[0]->ToObject();
+  Handle<String> endOfTrackKey = String::New("endOfTrack");
+  if(callbacks->Has(endOfTrackKey)) {
+    SessionCallbacks::endOfTrackCallback = Persistent<Function>::New(Handle<Function>::Cast(callbacks->Get(endOfTrackKey)));
+  }
+  return scope.Close(Undefined());
+}
+
+Handle<Value> NodePlayer::off(const Arguments& args) {
+  HandleScope scope;
+  SessionCallbacks::endOfTrackCallback = Handle<Function>();
+  return scope.Close(Undefined());
+}
+
 void NodePlayer::init() {
   HandleScope scope;
-  Handle<FunctionTemplate> constructorTemplate = NodeWrappedWithCallbacks::init("Player");
+  Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New();
+  constructorTemplate->SetClassName(String::NewSymbol("Player"));
+  constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
 
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "play", play);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "pause", pause);

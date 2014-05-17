@@ -60,10 +60,6 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   //initialize application struct
   application = new Application();
   audio_init(&application->audio_fifo);
-  std::unique_ptr<SpotifyNodeMapper<sp_playlist>> playlistMapper(new SpotifyNodeMapper<sp_playlist>());
-  application->playlistMapper = std::move(playlistMapper);
-  std::unique_ptr<SpotifyNodeMapper<sp_playlistcontainer>> playlistContainerMapper(new SpotifyNodeMapper<sp_playlistcontainer>());
-  application->playlistContainerMapper = std::move(playlistContainerMapper);
 
   //configure and create spotify session
   v8::Handle<v8::Object> options;

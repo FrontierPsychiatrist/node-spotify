@@ -4,10 +4,10 @@
     "target_name": "nodespotify",
     "sources": [
       "src/node-spotify.cc", "src/audio/audio.c",
-      "src/callbacks/PlaylistCallbacks.cc",
+      "src/callbacks/PlaylistCallbacksHolder.cc",
       "src/callbacks/SessionCallbacks.cc",
       "src/callbacks/SearchCallbacks.cc", "src/callbacks/AlbumBrowseCallbacks.cc",
-      "src/callbacks/ArtistBrowseCallbacks.cc", "src/callbacks/PlaylistContainerCallbacks.cc",
+      "src/callbacks/ArtistBrowseCallbacks.cc", "src/callbacks/PlaylistContainerCallbacksHolder.cc",
 
       "src/utils/ImageUtils.cc",
 
@@ -26,14 +26,6 @@
     "link_settings" : {
       "libraries": ["-lspotify"]
     },
-    "actions": [ {
-      "action_name": "generateEventsHeader",
-      "inputs": ["src/events.h"],
-      "outputs": ["events.js"],
-      "action": ["node", "preprocessor.js"],
-      "message": "Generating C++ events headerfile"
-      }
-    ],
     "copies": [ {
       "destination": "<(PRODUCT_DIR)",
       "files": ["src/spotify.js", "src/metadataUpdater.js"]

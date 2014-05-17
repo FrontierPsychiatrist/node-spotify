@@ -44,6 +44,7 @@ public:
   static v8::Handle<v8::Function> loginCallback;
   static v8::Handle<v8::Function> logoutCallback;
   static v8::Handle<v8::Function> metadataUpdatedCallback;
+  static v8::Handle<v8::Function> endOfTrackCallback;
 private:
   static std::unique_ptr<uv_timer_t> timer;
   static std::unique_ptr<uv_async_t> notifyHandle;

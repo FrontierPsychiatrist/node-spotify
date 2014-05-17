@@ -36,7 +36,7 @@ THE SOFTWARE.
 
 class Playlist : public PlaylistBase {
 friend class NodePlaylist;
-friend class PlaylistCallbacks;
+friend class PlaylistCallbacksHolder;
 friend class PlaylistContainer;
 public:
   Playlist(sp_playlist* playlist);
@@ -57,7 +57,6 @@ public:
   static std::shared_ptr<Playlist> fromCache(sp_playlist* playlist);
 private:
   sp_playlist* playlist;
-  static sp_playlist_callbacks playlistCallbacks;
   static std::map<sp_playlist*, std::shared_ptr<Playlist>> cache;
 };
 

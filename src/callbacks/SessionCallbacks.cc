@@ -23,11 +23,9 @@ THE SOFTWARE.
 **/
 
 #include "SessionCallbacks.h"
-#include "PlaylistContainerCallbacks.h"
 #include "../Application.h"
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/spotify/Player.h"
-#include "../events.h"
 
 extern "C" {
   #include "../audio/audio.h"
@@ -46,6 +44,7 @@ std::unique_ptr<uv_async_t> SessionCallbacks::notifyHandle;
 v8::Handle<v8::Function> SessionCallbacks::loginCallback;
 v8::Handle<v8::Function> SessionCallbacks::logoutCallback;
 v8::Handle<v8::Function> SessionCallbacks::metadataUpdatedCallback;
+v8::Handle<v8::Function> SessionCallbacks::endOfTrackCallback;
 
 namespace spotify {
 //TODO
@@ -115,9 +114,6 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
 
   //The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
   rootPlaylistContainerCallbacks.container_loaded = &SessionCallbacks::rootPlaylistContainerLoaded;
-  rootPlaylistContainerCallbacks.playlist_added = &PlaylistContainerCallbacks::playlistAdded;
-  rootPlaylistContainerCallbacks.playlist_removed = &PlaylistContainerCallbacks::playlistRemoved;
-  rootPlaylistContainerCallbacks.playlist_moved = &PlaylistContainerCallbacks::playlistMoved;
   sp_playlistcontainer *pc = sp_session_playlistcontainer(application->session);
   application->playlistContainer = std::make_shared<PlaylistContainer>(pc);
   sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, nullptr); 
@@ -142,9 +138,8 @@ void SessionCallbacks::end_of_track(sp_session* session) {
   sp_session_player_unload(application->session);
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
-  if(Player::instance->nodeObject != nullptr) {
-    Player::instance->nodeObject->call(PLAYER_END_OF_TRACK);
-  }
+  
+  callV8FunctionWithNoArgumentsIfHandleNotEmpty(endOfTrackCallback);
 }
 
 void SessionCallbacks::sendTimer(int sample_rate) {
