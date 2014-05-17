@@ -26,14 +26,6 @@
     "link_settings" : {
       "libraries": ["-lspotify"]
     },
-    "actions": [ {
-      "action_name": "generateEventsHeader",
-      "inputs": ["src/events.h"],
-      "outputs": ["events.js"],
-      "action": ["node", "preprocessor.js"],
-      "message": "Generating C++ events headerfile"
-      }
-    ],
     "copies": [ {
       "destination": "<(PRODUCT_DIR)",
       "files": ["src/spotify.js", "src/metadataUpdater.js"]

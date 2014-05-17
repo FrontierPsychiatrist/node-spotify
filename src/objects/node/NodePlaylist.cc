@@ -23,7 +23,6 @@ THE SOFTWARE.
 **/
 
 #include "NodePlaylist.h"
-#include "../../events.h"
 #include "../../exceptions.h"
 #include "../../common_macros.h"
 #include "../spotify/Track.h"

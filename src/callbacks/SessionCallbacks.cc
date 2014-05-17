@@ -26,7 +26,6 @@ THE SOFTWARE.
 #include "../Application.h"
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/spotify/Player.h"
-#include "../events.h"
 
 extern "C" {
   #include "../audio/audio.h"

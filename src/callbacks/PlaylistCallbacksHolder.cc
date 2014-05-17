@@ -26,7 +26,6 @@ THE SOFTWARE.
 #include "../objects/spotify/Track.h"
 #include "../objects/node/NodeTrack.h"
 #include "../objects/spotify/Playlist.h"
-#include "../events.h"
 
 #include <memory>
 
