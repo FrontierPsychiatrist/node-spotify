@@ -45,6 +45,7 @@ std::unique_ptr<uv_async_t> SessionCallbacks::notifyHandle;
 v8::Handle<v8::Function> SessionCallbacks::loginCallback;
 v8::Handle<v8::Function> SessionCallbacks::logoutCallback;
 v8::Handle<v8::Function> SessionCallbacks::metadataUpdatedCallback;
+v8::Handle<v8::Function> SessionCallbacks::endOfTrackCallback;
 
 namespace spotify {
 //TODO
@@ -138,9 +139,8 @@ void SessionCallbacks::end_of_track(sp_session* session) {
   sp_session_player_unload(application->session);
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
-  if(Player::instance->nodeObject != nullptr) {
-    Player::instance->nodeObject->call(PLAYER_END_OF_TRACK);
-  }
+  
+  callV8FunctionWithNoArgumentsIfHandleNotEmpty(endOfTrackCallback);
 }
 
 void SessionCallbacks::sendTimer(int sample_rate) {

@@ -25,7 +25,7 @@ THE SOFTWARE.
 #ifndef _NODE_PLAYER_H
 #define _NODE_PLAYER_H
 
-#include "NodeWrappedWithCallbacks.h"
+#include "NodeWrapped.h"
 #include "../spotify/Player.h"
 
 #include <v8.h>
@@ -33,7 +33,7 @@ THE SOFTWARE.
 
 using namespace v8;
 
-class NodePlayer : public NodeWrappedWithCallbacks<NodePlayer> {
+class NodePlayer : public NodeWrapped<NodePlayer> {
 private:
   std::shared_ptr<Player> player;
   NodePlayer(const NodePlayer& other);
@@ -47,6 +47,8 @@ public:
   static Handle<Value> staticOn(const Arguments& args);
   static Handle<Value> getCurrentSecond(Local<String> property, const AccessorInfo& info);
   static Handle<Value> seek(const Arguments& args);
+  static Handle<Value> on(const Arguments& args);
+  static Handle<Value> off(const Arguments& args);
   static void init();
 };
 

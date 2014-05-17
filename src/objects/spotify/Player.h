@@ -25,7 +25,6 @@ THE SOFTWARE.
 #ifndef _PLAYER_H
 #define _PLAYER_H
 
-#include "../node/V8Callable.h"
 #include "Track.h"
 
 #include <libspotify/api.h>
@@ -49,7 +48,6 @@ private:
   sp_track* loadingTrack;
   Player(const Player& other) {};
   static std::shared_ptr<Player> instance;
-  V8Callable* nodeObject;
   void retryPlay();
 };
 

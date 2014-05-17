@@ -39,7 +39,7 @@ namespace spotify {
 extern Application* application;
 
 Player::Player() : currentSecond(0), isPaused(false), isLoading(false),
-  loadingTrack(nullptr), nodeObject(nullptr) {};
+  loadingTrack(nullptr) {};
 
 void Player::stop() {
   sp_session_player_unload(application->session);
