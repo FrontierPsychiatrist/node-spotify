@@ -23,6 +23,8 @@ THE SOFTWARE.
 **/
 
 #include "Playlist.h"
+#include "User.h"
+#include "Track.h"
 #include "../../Application.h"
 #include "../../exceptions.h"
 
@@ -50,6 +52,14 @@ Playlist::Playlist(const Playlist& other) : PlaylistBase(other.isFolder), playli
 
 Playlist::~Playlist() {
   sp_playlist_release(playlist);
+}
+
+std::shared_ptr<User> Playlist::owner() {
+  std::shared_ptr<User> owner;
+  if(sp_playlist_is_loaded(playlist)) {
+    owner = std::make_shared<User>(sp_playlist_owner(playlist));
+  }
+  return owner;
 }
 
 std::string Playlist::name() {

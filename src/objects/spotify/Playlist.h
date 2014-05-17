@@ -26,13 +26,15 @@ THE SOFTWARE.
 #define PLAYLIST_H
 
 #include "PlaylistBase.h"
-#include "Track.h"
 
 #include <string>
 #include <map>
 #include <vector>
 #include <memory>
 #include <libspotify/api.h>
+
+class User;
+class Track;
 
 class Playlist : public PlaylistBase {
 friend class NodePlaylist;
@@ -44,6 +46,7 @@ public:
   ~Playlist();
 
   std::vector<std::shared_ptr<Track>> getTracks();
+  std::shared_ptr<User> owner();
   virtual std::string name();
   void name(std::string _name);
   std::string link();
