@@ -70,7 +70,9 @@ std::shared_ptr<Album> Track::album() {
   std::shared_ptr<Album> album;
   if(sp_track_is_loaded(track)) {
     sp_album* spAlbum = sp_track_album(track);
-    album = std::make_shared<Album>(spAlbum);
+    if(spAlbum != nullptr) {
+      album = std::make_shared<Album>(spAlbum);
+    }
   }
   return album;
 }

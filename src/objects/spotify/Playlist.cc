@@ -135,12 +135,16 @@ void Playlist::setCollaborative(bool collaborative) {
   }
 }
 
-std::vector<std::shared_ptr<TrackExtended>> Playlist::getTracks() {
-  std::vector<std::shared_ptr<TrackExtended>> tracks(sp_playlist_num_tracks(playlist));
-  for(int i = 0; i < (int)tracks.size(); ++i) {
-    tracks[i] = std::make_shared<TrackExtended>(sp_playlist_track(playlist, i), playlist, i);
+std::shared_ptr<TrackExtended> Playlist::getTrack(int position) {
+  auto track = std::make_shared<TrackExtended>(sp_playlist_track(playlist, position), playlist, position);
+  return track;
+}
+
+int Playlist::numTracks() {
+  if(sp_playlist_is_loaded(playlist)) {
+    return sp_playlist_num_tracks(playlist);
   }
-  return tracks;
+  return 0;
 }
 
 void Playlist::reorderTracks(const int* trackPositions, int numberOfTracks, int newPosition) {

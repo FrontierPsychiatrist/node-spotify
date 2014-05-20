@@ -49,7 +49,8 @@ public:
   static Handle<Value> getCollaborative(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getDescription(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getTracks(const Arguments& args);
+  static Handle<Value> getNumTracks(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getTrack(const Arguments& args);
   static Handle<Value> addTracks(const Arguments& args);
   static Handle<Value> removeTracks(const Arguments& args);
   static Handle<Value> reorderTracks(const Arguments& args);

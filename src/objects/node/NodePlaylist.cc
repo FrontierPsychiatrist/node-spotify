@@ -72,16 +72,24 @@ Handle<Value> NodePlaylist::getDescription(Local<String> property, const Accesso
   return String::New(nodePlaylist->playlist->description().c_str());
 }
 
-Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
+Handle<Value> NodePlaylist::getNumTracks(Local<String> property, const AccessorInfo& info) {
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
+  return Integer::New(nodePlaylist->playlist->numTracks());
+}
+
+Handle<Value> NodePlaylist::getTrack(const Arguments& args) {
   HandleScope scope;
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  std::vector<std::shared_ptr<TrackExtended>> tracks = nodePlaylist->playlist->getTracks();
-  Local<Array> outArray = Array::New(tracks.size());
-  for(int i = 0; i < (int)tracks.size(); i++) {
-    NodeTrackExtended* nodeTrack = new NodeTrackExtended(tracks[i]);
-    outArray->Set(Number::New(i), nodeTrack->getV8Object());
+  if(args.Length() < 1 || !args[0]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("getTrack needs a number as its first argument."));
   }
-  return scope.Close(outArray);
+  int position = args[0]->ToNumber()->IntegerValue();
+  if(position >= nodePlaylist->playlist->numTracks() || position < 0) {
+    return scope.Close(V8_EXCEPTION("Track index out of bounds"));
+  }
+  std::shared_ptr<TrackExtended> track = nodePlaylist->playlist->getTrack(position);
+  NodeTrackExtended* nodeTrack = new NodeTrackExtended(track);
+  return scope.Close(nodeTrack->getV8Object());
 }
 
 Handle<Value> NodePlaylist::addTracks(const Arguments& args) {
@@ -217,7 +225,8 @@ void NodePlaylist::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("description"), getDescription);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("owner"), getOwner);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("numTracks"), getNumTracks);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTrack", getTrack);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "removeTracks", removeTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "reorderTracks", reorderTracks);

@@ -46,12 +46,13 @@ public:
   Playlist(const Playlist& other);
   ~Playlist();
 
-  std::vector<std::shared_ptr<TrackExtended>> getTracks();
+  std::shared_ptr<TrackExtended> getTrack(int position);
   std::shared_ptr<User> owner();
   virtual std::string name();
   void name(std::string _name);
   std::string link();
   std::string description();
+  int numTracks();
   bool isLoaded();
   bool isCollaborative();
   void setCollaborative(bool collaborative);
