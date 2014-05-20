@@ -47,6 +47,30 @@ Binary distribution
 -------------------
 As of version 0.4.0 downloads of the pure compiled node.js module are available at http://www.node-spotify.com. I'll try to provide OSX, Linux x86_64 (ALSA) and Linux ARMv6hf (ALSA) builds.
 
+How to debug node-spotify
+-------------------------
+Launch node.js and load node-spotify with require.
+
+Attach lldb with $PID=process id of node
+
+    lldb -p $PID
+
+Set a breakpoint with, for example
+
+    breakpoint set --file Album.cc --line 57
+
+In the lldb console, execute this to continue the node.js process
+
+    cont
+
+Now you can execute commands in node.js. That lead to the breakpoint.
+
+If you want to attach additional breakpoints, interrupt the process with
+
+    process interrupt
+
+in lldb.
+
 Used software
 -------------
 * Base64 encoder from https://github.com/superwills/NibbleAndAHalf
