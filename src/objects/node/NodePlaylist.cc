@@ -183,10 +183,16 @@ Handle<Value> NodePlaylist::on(const Arguments& args) {
   Handle<String> tracksMovedKey = String::New("tracksMoved");
   Handle<String> tracksAddedKey = String::New("tracksAdded");
   Handle<String> tracksRemovedKey = String::New("tracksRemoved");
+  Handle<String> trackCreatedChangedKey = String::New("trackCreatedChanged");
+  Handle<String> trackSeenChangedKey = String::New("trackSeenChanged");
+  Handle<String> trackMessageChangedKey = String::New("trackMessageChanged");
   nodePlaylist->playlistCallbacksHolder.playlistRenamedCallback = getFunctionFromObject(callbacks, playlistRenamedKey);
   nodePlaylist->playlistCallbacksHolder.tracksAddedCallback = getFunctionFromObject(callbacks, tracksAddedKey);
   nodePlaylist->playlistCallbacksHolder.tracksMovedCallback = getFunctionFromObject(callbacks, tracksMovedKey);
   nodePlaylist->playlistCallbacksHolder.tracksRemovedCallback = getFunctionFromObject(callbacks, tracksRemovedKey);
+  nodePlaylist->playlistCallbacksHolder.trackCreatedChangedCallback = getFunctionFromObject(callbacks, trackCreatedChangedKey);
+  nodePlaylist->playlistCallbacksHolder.trackSeenChangedCallback = getFunctionFromObject(callbacks, trackSeenChangedKey);
+  nodePlaylist->playlistCallbacksHolder.trackMessageChangedCallback = getFunctionFromObject(callbacks, trackMessageChangedKey);
   nodePlaylist->playlistCallbacksHolder.setCallbacks();
   return scope.Close(Undefined());
 }
