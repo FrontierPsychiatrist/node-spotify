@@ -1,7 +1,7 @@
 /**
 The MIT License (MIT)
 
-Copyright (c) <2013> <Moritz Schulze>
+Copyright (c) <2014> <Moritz Schulze>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,44 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-#ifndef _TRACK_H
-#define _TRACK_H
+#ifndef _NODE_TRACK_EXTENDED_H
+#define _NODE_TRACK_EXTENDED_H
 
-#include "Artist.h"
-#include "Album.h"
+#include "NodeTrack.h"
+#include "../spotify/TrackExtended.h"
 
-#include <libspotify/api.h>
-#include <string>
-#include <vector>
+#include <v8.h>
 #include <memory>
 
-class Album;
-class Artist;
+using namespace v8;
 
-class Track {
-friend class Player;
-friend class Playlist;
-friend class NodeTrack;
-public:
-  Track(sp_track* _track);
-  Track(const Track& other) : track(other.track) {
-      sp_track_add_ref(track);
-    };
-  virtual ~Track() {
-    sp_track_release(track);
-  };
-
-  std::string name();
-  std::string link();
-  std::vector<std::shared_ptr<Artist>> artists();
-  std::shared_ptr<Album> album();
-  int duration();
-  bool starred();
-  void setStarred(bool starred);
-  int popularity();
-  bool isLoaded();
+class NodeTrackExtended : public NodeTrack {
 private:
-  sp_track* track;
+  std::shared_ptr<TrackExtended> trackExtended;
+public:
+  NodeTrackExtended(std::shared_ptr<TrackExtended> trackExtended);
+  static Handle<Value> getCreator(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getSeen(Local<String> property, const AccessorInfo& info);
+  static void setSeen(Local<String> property, Local<Value> value, const AccessorInfo& info);
+  static Handle<Value> getCreateTime(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getMessage(Local<String> property, const AccessorInfo& info);
+  static void init();
 };
 
 #endif

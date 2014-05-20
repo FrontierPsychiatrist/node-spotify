@@ -51,6 +51,8 @@ public:
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
   static void setStarred(Local<String> property, Local<Value> value, const AccessorInfo& info);
   static void init();
+protected:
+  static void setMethods(Handle<FunctionTemplate> constructorTemplate);
 };
 
 #endif

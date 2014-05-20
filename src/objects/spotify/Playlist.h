@@ -35,6 +35,7 @@ THE SOFTWARE.
 
 class User;
 class Track;
+class TrackExtended;
 
 class Playlist : public PlaylistBase {
 friend class NodePlaylist;
@@ -45,7 +46,7 @@ public:
   Playlist(const Playlist& other);
   ~Playlist();
 
-  std::vector<std::shared_ptr<Track>> getTracks();
+  std::vector<std::shared_ptr<TrackExtended>> getTracks();
   std::shared_ptr<User> owner();
   virtual std::string name();
   void name(std::string _name);

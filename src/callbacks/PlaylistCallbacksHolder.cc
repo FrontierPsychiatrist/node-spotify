@@ -23,8 +23,8 @@ THE SOFTWARE.
 **/
 
 #include "PlaylistCallbacksHolder.h"
-#include "../objects/spotify/Track.h"
-#include "../objects/node/NodeTrack.h"
+#include "../objects/spotify/TrackExtended.h"
+#include "../objects/node/NodeTrackExtended.h"
 #include "../objects/spotify/Playlist.h"
 
 #include <memory>
@@ -53,8 +53,8 @@ void PlaylistCallbacksHolder::tracksAdded(sp_playlist* spPlaylist, sp_track *con
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
   Handle<Array> nodeTracks = Array::New(num_tracks);
   for(int i = 0; i < num_tracks; i++) {
-    NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(tracks[i]));
-    nodeTracks->Set(Number::New(i), nodeTrack->getV8Object());
+    NodeTrack* nodeTrackExtended = new NodeTrackExtended(std::make_shared<TrackExtended>(tracks[i], spPlaylist, position + i));
+    nodeTracks->Set(Number::New(i), nodeTrackExtended->getV8Object());
   }
   holder->call(holder->tracksAddedCallback, { Undefined(), holder->userdata->getV8Object(), nodeTracks, Number::New(position) });
 }

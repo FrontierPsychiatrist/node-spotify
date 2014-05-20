@@ -1,7 +1,7 @@
 /**
 The MIT License (MIT)
 
-Copyright (c) <2013> <Moritz Schulze>
+Copyright (c) <2014> <Moritz Schulze>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,44 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-#ifndef _TRACK_H
-#define _TRACK_H
+#ifndef _TRACK_EXTENDED_H
+#define _TRACK_EXTENDED_H
 
-#include "Artist.h"
-#include "Album.h"
+#include "Track.h"
+#include "User.h"
 
 #include <libspotify/api.h>
-#include <string>
-#include <vector>
 #include <memory>
+#include <string>
 
-class Album;
-class Artist;
-
-class Track {
-friend class Player;
-friend class Playlist;
-friend class NodeTrack;
-public:
-  Track(sp_track* _track);
-  Track(const Track& other) : track(other.track) {
-      sp_track_add_ref(track);
-    };
-  virtual ~Track() {
-    sp_track_release(track);
-  };
-
-  std::string name();
-  std::string link();
-  std::vector<std::shared_ptr<Artist>> artists();
-  std::shared_ptr<Album> album();
-  int duration();
-  bool starred();
-  void setStarred(bool starred);
-  int popularity();
-  bool isLoaded();
+class TrackExtended : public Track {
 private:
-  sp_track* track;
+  sp_playlist* playlist;
+  int position;
+public:
+  TrackExtended(sp_track* track, sp_playlist* playlist, int position);
+  virtual ~TrackExtended();
+  std::shared_ptr<User> creator();
+  bool seen();
+  void seen(bool seen);
+  std::string message();
+  double createTime();
 };
 
 #endif

@@ -25,6 +25,7 @@ THE SOFTWARE.
 #include "Playlist.h"
 #include "User.h"
 #include "Track.h"
+#include "TrackExtended.h"
 #include "../../Application.h"
 #include "../../exceptions.h"
 
@@ -134,10 +135,10 @@ void Playlist::setCollaborative(bool collaborative) {
   }
 }
 
-std::vector<std::shared_ptr<Track>> Playlist::getTracks() {
-  std::vector<std::shared_ptr<Track>> tracks(sp_playlist_num_tracks(playlist));
+std::vector<std::shared_ptr<TrackExtended>> Playlist::getTracks() {
+  std::vector<std::shared_ptr<TrackExtended>> tracks(sp_playlist_num_tracks(playlist));
   for(int i = 0; i < (int)tracks.size(); ++i) {
-    tracks[i] = std::make_shared<Track>(sp_playlist_track(playlist, i));
+    tracks[i] = std::make_shared<TrackExtended>(sp_playlist_track(playlist, i), playlist, i);
   }
   return tracks;
 }

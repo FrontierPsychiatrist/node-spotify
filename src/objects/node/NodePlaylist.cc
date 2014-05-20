@@ -26,7 +26,9 @@ THE SOFTWARE.
 #include "../../exceptions.h"
 #include "../../common_macros.h"
 #include "../spotify/Track.h"
+#include "../spotify/TrackExtended.h"
 #include "NodeTrack.h"
+#include "NodeTrackExtended.h"
 #include "NodeUser.h"
 
 NodePlaylist::NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist),
@@ -73,10 +75,10 @@ Handle<Value> NodePlaylist::getDescription(Local<String> property, const Accesso
 Handle<Value> NodePlaylist::getTracks(const Arguments& args) {
   HandleScope scope;
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  std::vector<std::shared_ptr<Track>> tracks = nodePlaylist->playlist->getTracks();
+  std::vector<std::shared_ptr<TrackExtended>> tracks = nodePlaylist->playlist->getTracks();
   Local<Array> outArray = Array::New(tracks.size());
   for(int i = 0; i < (int)tracks.size(); i++) {
-    NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
+    NodeTrackExtended* nodeTrack = new NodeTrackExtended(tracks[i]);
     outArray->Set(Number::New(i), nodeTrack->getV8Object());
   }
   return scope.Close(outArray);

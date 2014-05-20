@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "objects/node/NodePlaylist.h"
 #include "objects/node/NodePlaylistContainer.h"
 #include "objects/node/NodeTrack.h"
+#include "objects/node/NodeTrackExtended.h"
 #include "objects/node/NodePlayer.h"
 #include "objects/node/NodeAlbum.h"
 #include "objects/node/NodeArtist.h"
@@ -48,6 +49,7 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   //initiate the javascript ctors and prototypes
   NodePlaylist::init();
   NodeTrack::init();
+  NodeTrackExtended::init();
   NodeArtist::init();
   NodePlayer::init();
   NodeAlbum::init();
