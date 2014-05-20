@@ -44,6 +44,10 @@ public:
   static Handle<Value> getCreateTime(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getMessage(Local<String> property, const AccessorInfo& info);
   static void init();
+  static Handle<Function> getConstructor();
+  Handle<Object> getV8Object();
+protected:
+  static Persistent<Function> constructor;
 };
 
 #endif

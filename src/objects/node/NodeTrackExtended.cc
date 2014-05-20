@@ -25,7 +25,28 @@ THE SOFTWARE.
 #include "NodeTrackExtended.h"
 #include "NodeUser.h"
 
+//Since NodeWrapped uses a templating technique to assign the static constructor to each childclass we need to improvise here.
+Persistent<Function> NodeTrackExtended::constructor;
+
 NodeTrackExtended::NodeTrackExtended(std::shared_ptr<TrackExtended> _trackExtended) : NodeTrack(_trackExtended), trackExtended(_trackExtended) {
+}
+
+/**
+  We need rewrite this method because we need to use our own constructor, not the one from NodeTrack.
+**/
+Handle<Object> NodeTrackExtended::getV8Object() {
+  if(handle_.IsEmpty()) {
+    Local<Object> o = Local<Object>::New(constructor->NewInstance());
+    this->Wrap(o);
+  }
+  return handle_;
+}
+
+/**
+  Same for this... need to rewrite so NodeTrackExtended::constructor is used.
+**/
+Handle<Function> NodeTrackExtended::getConstructor() {
+  return constructor;
 }
 
 Handle<Value> NodeTrackExtended::getCreator(Local<String> property, const AccessorInfo& info) {
