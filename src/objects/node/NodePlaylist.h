@@ -54,6 +54,7 @@ public:
   static Handle<Value> removeTracks(const Arguments& args);
   static Handle<Value> reorderTracks(const Arguments& args);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getOwner(Local<String> property, const AccessorInfo& info);
   static Handle<Value> on(const Arguments& args);
   static Handle<Value> off(const Arguments& args);
   static void init();

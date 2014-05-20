@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include "../../common_macros.h"
 #include "../spotify/Track.h"
 #include "NodeTrack.h"
+#include "NodeUser.h"
 
 NodePlaylist::NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist),
   playlistCallbacksHolder(this, _playlist->playlist) {
@@ -145,6 +146,16 @@ Handle<Value> NodePlaylist::isLoaded(Local<String> property, const AccessorInfo&
   return Boolean::New(nodePlaylist->playlist->isLoaded());
 }
 
+Handle<Value> NodePlaylist::getOwner(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
+  Handle<Value> owner;
+  if(nodePlaylist->playlist->owner().use_count() > 0) {
+    owner = (new NodeUser(nodePlaylist->playlist->owner()))->getV8Object();
+  }
+  return scope.Close(owner);
+}
+
 /**
   Get a field from an object as a persistent function handle. Empty handle if the key does not exist.
 **/
@@ -197,6 +208,7 @@ void NodePlaylist::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("description"), getDescription);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("owner"), getOwner);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTracks", getTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "removeTracks", removeTracks);
