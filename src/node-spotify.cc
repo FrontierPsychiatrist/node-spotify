@@ -43,6 +43,21 @@ THE SOFTWARE.
 
 Application* application;
 
+static Handle<Object> getInternal() {
+  Local<Object> internal = Object::New();
+  Local<Object> protos = Object::New();
+  protos->Set(v8::String::NewSymbol("Playlist"), NodePlaylist::getConstructor());
+  protos->Set(v8::String::NewSymbol("Track"), NodeTrack::getConstructor());
+  protos->Set(v8::String::NewSymbol("TrackExtended"), NodeTrackExtended::getConstructor());
+  protos->Set(v8::String::NewSymbol("PlaylistContainer"), NodePlaylistContainer::getConstructor());
+  protos->Set(v8::String::NewSymbol("Artist"), NodeArtist::getConstructor());
+  protos->Set(v8::String::NewSymbol("Album"), NodeAlbum::getConstructor());
+  protos->Set(v8::String::NewSymbol("User"), NodeUser::getConstructor());
+  protos->Set(v8::String::NewSymbol("PlaylistFolder"), NodePlaylistFolder::getConstructor());
+  internal->Set(v8::String::NewSymbol("protos"), protos);
+  return internal;
+}
+
 v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   v8::HandleScope scope;
 
@@ -87,6 +102,7 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
 
   //Set some fields on the nodeSpotify object
   spotifyObject->Set(v8::String::NewSymbol("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
+  spotifyObject->Set(v8::String::NewSymbol("internal"), getInternal());
   NodePlayer* nodePlayer = new NodePlayer();
   spotifyObject->Set(v8::String::NewSymbol("player"), nodePlayer->getV8Object());
   return scope.Close(spotifyObject);

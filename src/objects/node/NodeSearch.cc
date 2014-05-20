@@ -290,11 +290,6 @@ Handle<Value> NodeSearch::getTotalPlaylists(Local<String> property, const Access
   return scope.Close(Integer::New(nodeSearch->search->totalPlaylists()));
 }
 
-Handle<Function> NodeSearch::getConstructor() {
-  HandleScope scope;
-  return scope.Close(constructor);
-}
-
 void NodeSearch::init() {
 HandleScope scope;
   Local<FunctionTemplate> constructorTemplate = FunctionTemplate::New(New);

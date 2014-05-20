@@ -51,6 +51,10 @@ public:
     }
     return handle_;
   }
+
+  static v8::Handle<v8::Function> getConstructor() {
+    return constructor;
+  }
 protected:
   /**
    * A setter that does nothing which is useful for defining properties that should be read only

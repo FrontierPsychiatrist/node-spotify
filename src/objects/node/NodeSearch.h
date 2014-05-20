@@ -74,7 +74,6 @@ public:
   static Handle<Value> getArtists(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getPlaylists(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static Handle<Function> getConstructor();
   static void init();
 };
 
