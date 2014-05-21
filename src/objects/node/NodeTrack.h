@@ -50,9 +50,7 @@ public:
   static Handle<Value> getPopularity(Local<String> property, const AccessorInfo& info);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
   static void setStarred(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static void init();
-protected:
-  static void setMethods(Handle<FunctionTemplate> constructorTemplate);
+  static Handle<FunctionTemplate> init();
 };
 
 #endif

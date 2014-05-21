@@ -43,7 +43,7 @@ Handle<Object> NodeTrackExtended::getV8Object() {
 }
 
 /**
-  Same for this... need to rewrite so NodeTrackExtended::constructor is used.
+  Same for this... we need to rewrite so NodeTrackExtended::constructor is used and not NodeTrack::constructor.
 **/
 Handle<Function> NodeTrackExtended::getConstructor() {
   return constructor;
@@ -89,7 +89,8 @@ Handle<Value> NodeTrackExtended::getMessage(Local<String> property, const Access
 void NodeTrackExtended::init() {
   HandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("TrackExtended");
-  setMethods(constructorTemplate);
+  Handle<FunctionTemplate> nodeTrackTemplate = NodeTrack::init();
+  constructorTemplate->Inherit(nodeTrackTemplate);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("creator"), getCreator);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("seen"), getSeen, setSeen);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("createTime"), getCreateTime);

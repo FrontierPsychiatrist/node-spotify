@@ -97,7 +97,9 @@ Handle<Value> NodeTrack::isLoaded(Local<String> property, const AccessorInfo& in
   return Boolean::New(nodeTrack->track->isLoaded());
 }
 
-void NodeTrack::setMethods(Handle<FunctionTemplate> constructorTemplate) {
+Handle<FunctionTemplate> NodeTrack::init() {
+  HandleScope scope;
+  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("duration"), getDuration);
@@ -106,12 +108,6 @@ void NodeTrack::setMethods(Handle<FunctionTemplate> constructorTemplate) {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("starred"), getStarred, setStarred);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("popularity"), getPopularity);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
-}
-
-void NodeTrack::init() {
-  HandleScope scope;
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
-  setMethods(constructorTemplate);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
-  scope.Close(Undefined());
+  return scope.Close(constructorTemplate);
 }
