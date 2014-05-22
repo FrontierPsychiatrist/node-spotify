@@ -6,7 +6,6 @@
 #include "User.h"
 
 #include <libspotify/api.h>
-#include <vector>
 #include <memory>
 #include <string>
 
@@ -16,7 +15,8 @@ class PlaylistContainer {
 friend class NodePlaylistContainer;
 public:
   PlaylistContainer(sp_playlistcontainer* _playlistContainer) : playlistContainer(_playlistContainer) {};
-  std::vector<std::shared_ptr<PlaylistBase>> getPlaylists();
+  std::shared_ptr<PlaylistBase> getPlaylist(int index);
+  int numPlaylists();
   void addPlaylist(std::string name);
   void addFolder(int index, std::string name);
   void removePlaylist(int index);

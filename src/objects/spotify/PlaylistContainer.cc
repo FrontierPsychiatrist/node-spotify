@@ -5,25 +5,29 @@
 
 extern Application* application;
 
-std::vector<std::shared_ptr<PlaylistBase>> PlaylistContainer::getPlaylists() {
-  int numPlaylists = sp_playlistcontainer_num_playlists(playlistContainer);
-  auto playlists = std::vector<std::shared_ptr<PlaylistBase>>((numPlaylists));
-  for(int i = 0; i < numPlaylists; ++i) {
-    sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(playlistContainer, i);
-    if(playlistType == SP_PLAYLIST_TYPE_PLAYLIST) {
-      sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, i);
-      playlists[i] = Playlist::fromCache(spPlaylist);
-    } else if(playlistType == SP_PLAYLIST_TYPE_START_FOLDER) {
-      char buf[256];
-      sp_playlistcontainer_playlist_folder_name(playlistContainer, i, buf, 256);
-      playlists[i] = std::make_shared<PlaylistFolder>(buf, playlistType);
-    } else if(playlistType == SP_PLAYLIST_TYPE_END_FOLDER) {
-      playlists[i] = std::make_shared<PlaylistFolder>(playlistType);
-    } else if(playlistType == SP_PLAYLIST_TYPE_PLACEHOLDER) {
-      //TODO: placeholder, maybe orphande folder start/stop?
-    }
+std::shared_ptr<PlaylistBase> PlaylistContainer::getPlaylist(int index) {
+  std::shared_ptr<PlaylistBase> playlist;
+  sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(playlistContainer, index);
+  if(playlistType == SP_PLAYLIST_TYPE_PLAYLIST) {
+    sp_playlist* spPlaylist = sp_playlistcontainer_playlist(playlistContainer, index);
+    playlist = Playlist::fromCache(spPlaylist);
+  } else if(playlistType == SP_PLAYLIST_TYPE_START_FOLDER) {
+    char buf[256];
+    sp_playlistcontainer_playlist_folder_name(playlistContainer, index, buf, 256);
+    playlist = std::make_shared<PlaylistFolder>(buf, playlistType);
+  } else if(playlistType == SP_PLAYLIST_TYPE_END_FOLDER) {
+    playlist = std::make_shared<PlaylistFolder>(playlistType);
+  } else if(playlistType == SP_PLAYLIST_TYPE_PLACEHOLDER) {
+    //TODO: placeholder, maybe orphand folder start/stop?
   }
-  return playlists;
+  return playlist;
+}
+
+int PlaylistContainer::numPlaylists() {
+  if(sp_playlistcontainer_is_loaded(playlistContainer)) {
+    return sp_playlistcontainer_num_playlists(playlistContainer);
+  }
+  return 0;
 }
 
 void PlaylistContainer::addPlaylist(std::string name) {

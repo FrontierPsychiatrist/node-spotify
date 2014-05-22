@@ -20,21 +20,31 @@ Handle<Value> NodePlaylistContainer::getOwner(Local<String> property, const Acce
   return scope.Close(nodeUser->getV8Object());
 }
 
-Handle<Value> NodePlaylistContainer::getPlaylists(const Arguments& args) {
+Handle<Value> NodePlaylistContainer::getNumPlaylists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
-  std::vector<std::shared_ptr<PlaylistBase>> playlists = nodePlaylistContainer->playlistContainer->getPlaylists();
-  Local<Array> nPlaylists = Array::New(playlists.size());
-  for(int i = 0; i < (int)playlists.size(); i++) {
-    if(!playlists[i]->isFolder) {
-      NodePlaylist* nodePlaylist = new NodePlaylist(std::static_pointer_cast<Playlist>(playlists[i]));
-      nPlaylists->Set(Number::New(i), nodePlaylist->getV8Object());
-    } else {
-      NodePlaylistFolder* nodePlaylistFolder = new NodePlaylistFolder(std::static_pointer_cast<PlaylistFolder>(playlists[i]));
-      nPlaylists->Set(Number::New(i), nodePlaylistFolder->getV8Object());
-    }
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.Holder());
+  return scope.Close(Integer::New(nodePlaylistContainer->playlistContainer->numPlaylists()));
+}
+
+Handle<Value> NodePlaylistContainer::getPlaylist(const Arguments& args) {
+  HandleScope scope;
+  if(args.Length() < 1 || !args[0]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("getPlaylist needs an interger as its first argument."));
   }
-  return scope.Close(nPlaylists);
+  int index = args[0]->ToNumber()->IntegerValue();
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
+  std::shared_ptr<PlaylistBase> playlist = nodePlaylistContainer->playlistContainer->getPlaylist(index);
+
+  Handle<Value> outNodePlaylist;
+  if(!playlist->isFolder) {
+    NodePlaylist* nodePlaylist = new NodePlaylist(std::static_pointer_cast<Playlist>(playlist));
+    outNodePlaylist = nodePlaylist->getV8Object();
+  } else {
+    NodePlaylistFolder* nodePlaylistFolder = new NodePlaylistFolder(std::static_pointer_cast<PlaylistFolder>(playlist));
+    outNodePlaylist = nodePlaylistFolder->getV8Object();
+  }
+
+  return scope.Close(outNodePlaylist);
 }
 
 Handle<Value> NodePlaylistContainer::addPlaylist(const Arguments& args) {
@@ -132,8 +142,9 @@ void NodePlaylistContainer::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("owner"), getOwner);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("numPlaylists"), getNumPlaylists);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylists", getPlaylists);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylist", getPlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addPlaylist", addPlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addFolder", addFolder);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "deletePlaylist", deletePlaylist);

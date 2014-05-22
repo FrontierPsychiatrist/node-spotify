@@ -18,8 +18,9 @@ public:
   NodePlaylistContainer(std::shared_ptr<PlaylistContainer> playlistContainer);
   ~NodePlaylistContainer();
   static Handle<Value> getOwner(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getPlaylists(const Arguments& args);
+  static Handle<Value> getPlaylist(const Arguments& args);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getNumPlaylists(Local<String> property, const AccessorInfo& info);
   static Handle<Value> addPlaylist(const Arguments& args);
   static Handle<Value> addFolder(const Arguments& args);
   static Handle<Value> deletePlaylist(const Arguments& args);

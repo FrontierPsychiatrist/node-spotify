@@ -9,6 +9,13 @@ function addMethodsToPrototypes(sp) {
     }
     return out;
   }
+  sp.internal.protos.PlaylistContainer.prototype.getPlaylists = function () {
+    var out = new Array(this.numPlaylists);
+    for(var i = 0; i < this.numPlaylists; i++) {
+      out[i] = this.getPlaylist(i);
+    }
+    return out;
+  }
 }
 
 var beefedupSpotify = function(options) {
