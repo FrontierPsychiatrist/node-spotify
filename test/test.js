@@ -9,7 +9,7 @@ function tests() {
   var playlistContainer = spotify.playlistContainer;
   var playlists = playlistContainer.getPlaylists();
   console.log('Playlists: ' + playlists.length)
-  var starredPlaylist = playlistContainer.getStarred();
+  var starredPlaylist = spotify.sessionUser.starredPlaylist;
   console.log('Starred playlist accessible');
   var firstPlaylist = playlists[0];
   console.log('Playlistname: ' + firstPlaylist.name);

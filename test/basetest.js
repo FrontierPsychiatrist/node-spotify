@@ -12,9 +12,12 @@ function quit() {
 }
 
 function executeTest(testerFunction) {
-  spotify.ready(function() {
+  var ready = function() {
     console.log('Awaiting caches...');
     setTimeout(testerFunction, 3000);
+  };
+  spotify.on({
+    ready: ready
   });
   spotify.login(loginData.user, loginData.password, false, false);
 }

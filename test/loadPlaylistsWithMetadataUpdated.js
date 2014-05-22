@@ -3,7 +3,7 @@ var loginData = require('./loginData.js');
 var assert = require('assert');
 
 //This test only shows what it should with a deleted cache/settings folder
-spotify.ready(function() {
+var ready = function() {
   console.log('Starting tests');
   function printPlaylist(playlist) {
     console.log(playlist.name + ' is now loaded.');
@@ -16,6 +16,10 @@ spotify.ready(function() {
       process.exit();
     });
   }, 5000);
+};
+
+spotify.on({
+  ready: ready
 });
 
 spotify.login(loginData.user, loginData.password, false, false);

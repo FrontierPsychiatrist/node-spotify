@@ -8,11 +8,11 @@ spotify.ready(function() {
     console.log(track);
   }
   function waitForTrack(playlist) {
-    var track = playlist.getTracks()[0];
+    var track = playlist.getTracks(0);
     console.log('Track is loaded: ' + track.isLoaded);
     spotify.waitForLoaded([track], printTrack);
   }
-  var playlist = spotify.playlistContainer.getPlaylists()[14];
+  var playlist = spotify.playlistContainer.getPlaylist(14);
   spotify.waitForLoaded([playlist], waitForTrack);
   
   setTimeout( function() {
