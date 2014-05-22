@@ -29,17 +29,17 @@ Handle<Value> NodeUser::isLoaded(Local<String> property, const AccessorInfo& inf
   return scope.Close(Boolean::New(nodeUser->user->isLoaded()));
 }
 
-Handle<Value> NodeUser::getPublishedPlaylists(const Arguments& args) {
+Handle<Value> NodeUser::getPublishedPlaylistsContainer(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
+  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.Holder());
   auto playlistContainer = nodeUser->user->publishedPlaylists();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(playlistContainer);
   return scope.Close(nodePlaylistContainer->getV8Object());
 }
 
-Handle<Value> NodeUser::getStarredPlaylist(const Arguments& args) {
+Handle<Value> NodeUser::getStarredPlaylist(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
+  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.Holder());
   auto playlist = nodeUser->user->starredPlaylist();
   NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
   return scope.Close(nodePlaylist->getV8Object()); 
@@ -52,8 +52,8 @@ void NodeUser::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("displayName"), getDisplayName);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPublishedPlaylists", getPublishedPlaylists);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getStarredPlaylist", getStarredPlaylist);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPublishedPlaylistsContainer);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("starredPlaylist"), getStarredPlaylist);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }

@@ -19,8 +19,8 @@ public:
   static Handle<Value> getDisplayName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getPublishedPlaylists(const Arguments& args);
-  static Handle<Value> getStarredPlaylist(const Arguments& args);
+  static Handle<Value> getPublishedPlaylistsContainer(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getStarredPlaylist(Local<String> property, const AccessorInfo& info);
   static void init();
 };
 
