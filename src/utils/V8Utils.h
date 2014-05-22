@@ -1,7 +1,7 @@
 /**
 The MIT License (MIT)
 
-Copyright (c) <2013> <Moritz Schulze>
+Copyright (c) <2014> <Moritz Schulze>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,39 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-var _spotify = require('./nodespotify');
-var metadataUpdater = require('./metadataUpdater');
+#ifndef _V8_UTILS_H
+#define _V8_UTILS_H
 
-function addMethodsToPrototypes(sp) {
-  sp.internal.protos.Playlist.prototype.getTracks = function() {
-    var out = new Array(this.numTracks);
-    for(var i = 0; i < this.numTracks; i++) {
-      out[i] = this.getTrack(i);
-    }
-    return out;
-  }
-}
+#include <v8.h>
 
-var beefedupSpotify = function(options) {
-  var spotify = _spotify(options);
-  addMethodsToPrototypes(spotify);
-  spotify.version = '0.5.4';
+using namespace v8;
 
-  spotify.on = function(callbacks) {
-    if(callbacks.metadataUpdated) {
-      var userCallback = callbacks.metadataUpdated;
-      callbacks.metadataUpdated = function() {
-        userCallback();
-        metadataUpdater.metadataUpdated();
-      }
-    } else {
-      callbacks.metadataUpdated = metadataUpdater.metadataUpdated;
-    }
-    spotify._on(callbacks);
-  }
+class V8Utils {
+public:
+  static Handle<Function> getFunctionFromObject(Handle<Object> callbacks, Handle<String> key); 
+};
 
-  spotify.waitForLoaded = metadataUpdater.waitForLoaded;
-  return spotify;
-}
-
-module.exports = beefedupSpotify;
+#endif

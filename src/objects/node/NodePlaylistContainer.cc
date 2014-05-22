@@ -4,6 +4,7 @@
 #include "NodeUser.h"
 #include "../../exceptions.h"
 #include "../../common_macros.h"
+#include "../../utils/V8Utils.h"
 
 NodePlaylistContainer::NodePlaylistContainer(std::shared_ptr<PlaylistContainer> _playlistContainer) : playlistContainer(_playlistContainer),
   playlistContainerCallbacksHolder(playlistContainer->playlistContainer, this) {
@@ -99,14 +100,6 @@ Handle<Value> NodePlaylistContainer::isLoaded(Local<String> property, const Acce
   return Boolean::New(nodePlaylistContainer->playlistContainer->isLoaded());
 }
 
-static Handle<Function> getFunctionFromObject(Handle<Object> callbacks, Handle<String> key) {
-  Handle<Function> callback;
-  if(callbacks->Has(key)) {
-    callback = Persistent<Function>::New(Handle<Function>::Cast(callbacks->Get(key)));
-  }
-  return callback;
-}
-
 Handle<Value> NodePlaylistContainer::on(const Arguments& args) {
   HandleScope scope;
   if(args.Length() < 1 || !args[0]->IsObject()) {
@@ -117,9 +110,9 @@ Handle<Value> NodePlaylistContainer::on(const Arguments& args) {
   Handle<String> playlistAddedKey = String::New("playlistAdded");
   Handle<String> playlistMovedKey = String::New("playlistMoved");
   Handle<String> playlistRemovedKey = String::New("playlistRemoved");
-  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistAddedCallback = getFunctionFromObject(callbacks, playlistAddedKey);
-  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistMovedCallback = getFunctionFromObject(callbacks, playlistMovedKey);
-  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistRemovedCallback = getFunctionFromObject(callbacks, playlistRemovedKey);
+  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistAddedCallback = V8Utils::getFunctionFromObject(callbacks, playlistAddedKey);
+  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistMovedCallback = V8Utils::getFunctionFromObject(callbacks, playlistMovedKey);
+  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistRemovedCallback = V8Utils::getFunctionFromObject(callbacks, playlistRemovedKey);
   nodePlaylistContainer->playlistContainerCallbacksHolder.setCallbacks();
   return scope.Close(Undefined());
 }

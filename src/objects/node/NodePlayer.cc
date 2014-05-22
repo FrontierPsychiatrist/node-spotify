@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include "../../callbacks/SessionCallbacks.h"
 #include "../../exceptions.h"
 #include "../../common_macros.h"
+#include "../../utils/V8Utils.h"
 
 NodePlayer::NodePlayer() {
   player = player->instance;
@@ -99,9 +100,7 @@ Handle<Value> NodePlayer::on(const Arguments& args) {
   }
   Handle<Object> callbacks = args[0]->ToObject();
   Handle<String> endOfTrackKey = String::New("endOfTrack");
-  if(callbacks->Has(endOfTrackKey)) {
-    SessionCallbacks::endOfTrackCallback = Persistent<Function>::New(Handle<Function>::Cast(callbacks->Get(endOfTrackKey)));
-  }
+  SessionCallbacks::endOfTrackCallback = V8Utils::getFunctionFromObject(callbacks, endOfTrackKey);
   return scope.Close(Undefined());
 }
 

@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-
 #include "NodeSpotify.h"
 #include "../../Application.h"
 #include "../../exceptions.h"
@@ -37,6 +36,7 @@ THE SOFTWARE.
 #include "NodeAlbum.h"
 #include "NodeTrack.h"
 #include "NodeUser.h"
+#include "../../utils/V8Utils.h"
 
 extern Application* application;
 
@@ -163,27 +163,6 @@ Handle<Value> NodeSpotify::logout(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
-Handle<Value> NodeSpotify::getLogoutCallback(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  return scope.Close(SessionCallbacks::logoutCallback);
-}
-
-void NodeSpotify::setLogoutCallback(Local<String> property, Local<Value> value, const AccessorInfo& info) {
-  HandleScope scope;
-  Handle<Function> fun = Handle<Function>::Cast(value);
-  Persistent<Function> p = Persistent<Function>::New(fun);
-  SessionCallbacks::logoutCallback = p;
-  scope.Close(Undefined());
-}
-
-Handle<Value> NodeSpotify::ready(const Arguments& args) {
-  HandleScope scope;
-  Handle<Function> fun = Handle<Function>::Cast(args[0]);
-  Persistent<Function> p = Persistent<Function>::New(fun);
-  SessionCallbacks::loginCallback = p;
-  return scope.Close(Undefined());
-}
-
 Handle<Value> NodeSpotify::getPlaylistContainer(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(application->playlistContainer);
@@ -216,14 +195,18 @@ Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorIn
   return scope.Close(constants);
 }
 
-Handle<Value> NodeSpotify::onMetadataUpdated(const Arguments& args) {
+Handle<Value> NodeSpotify::on(const Arguments& args) {
   HandleScope scope;
-  if(args.Length() < 1) {
-    return scope.Close(V8_EXCEPTION("onMetadataUpdated needs a function as an argument."));
+  if(args.Length() < 1 || !args[0]->IsObject()) {
+    return scope.Close(V8_EXCEPTION("on needs an object as its first argument."));
   }
-  Handle<Function> fun = Handle<Function>::Cast(args[0]);
-  Persistent<Function> p = Persistent<Function>::New(fun);
-  SessionCallbacks::metadataUpdatedCallback = p;
+  Handle<Object> callbacks = args[0]->ToObject();
+  Handle<String> metadataUpdatedKey = String::New("metadataUpdated");
+  Handle<String> readyKey = String::New("ready");
+  Handle<String> logoutKey = String::New("logout");
+  SessionCallbacks::metadataUpdatedCallback = V8Utils::getFunctionFromObject(callbacks, metadataUpdatedKey);
+  SessionCallbacks::loginCallback = V8Utils::getFunctionFromObject(callbacks, readyKey);
+  SessionCallbacks::logoutCallback = V8Utils::getFunctionFromObject(callbacks, logoutKey);
   return scope.Close(Undefined());
 }
 
@@ -232,14 +215,14 @@ void NodeSpotify::init() {
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "login", login);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "logout", logout);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "ready", ready);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "onMetadataUpdated", onMetadataUpdated);
+  //Because of the special metadataUpdated callback with convenience functions we provide _on here, will provide "on" in spotify.js
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "_on", on);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("sessionUser"), getSessionUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPlaylistContainer);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("constants"), getConstants);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("onLogout"), getLogoutCallback, setLogoutCallback);
+
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }

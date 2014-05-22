@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include "NodeTrack.h"
 #include "NodeTrackExtended.h"
 #include "NodeUser.h"
+#include "../../utils/V8Utils.h"
 
 NodePlaylist::NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist),
   playlistCallbacksHolder(this, _playlist->playlist) {
@@ -167,17 +168,6 @@ Handle<Value> NodePlaylist::getOwner(Local<String> property, const AccessorInfo&
 }
 
 /**
-  Get a field from an object as a persistent function handle. Empty handle if the key does not exist.
-**/
-static Handle<Function> getFunctionFromObject(Handle<Object> callbacks, Handle<String> key) {
-  Handle<Function> callback;
-  if(callbacks->Has(key)) {
-    callback = Persistent<Function>::New(Handle<Function>::Cast(callbacks->Get(key)));
-  }
-  return callback;
-}
-
-/**
   Set all callbacks for this playlist. Replaces all old callbacks.
 **/
 Handle<Value> NodePlaylist::on(const Arguments& args) {
@@ -194,13 +184,13 @@ Handle<Value> NodePlaylist::on(const Arguments& args) {
   Handle<String> trackCreatedChangedKey = String::New("trackCreatedChanged");
   Handle<String> trackSeenChangedKey = String::New("trackSeenChanged");
   Handle<String> trackMessageChangedKey = String::New("trackMessageChanged");
-  nodePlaylist->playlistCallbacksHolder.playlistRenamedCallback = getFunctionFromObject(callbacks, playlistRenamedKey);
-  nodePlaylist->playlistCallbacksHolder.tracksAddedCallback = getFunctionFromObject(callbacks, tracksAddedKey);
-  nodePlaylist->playlistCallbacksHolder.tracksMovedCallback = getFunctionFromObject(callbacks, tracksMovedKey);
-  nodePlaylist->playlistCallbacksHolder.tracksRemovedCallback = getFunctionFromObject(callbacks, tracksRemovedKey);
-  nodePlaylist->playlistCallbacksHolder.trackCreatedChangedCallback = getFunctionFromObject(callbacks, trackCreatedChangedKey);
-  nodePlaylist->playlistCallbacksHolder.trackSeenChangedCallback = getFunctionFromObject(callbacks, trackSeenChangedKey);
-  nodePlaylist->playlistCallbacksHolder.trackMessageChangedCallback = getFunctionFromObject(callbacks, trackMessageChangedKey);
+  nodePlaylist->playlistCallbacksHolder.playlistRenamedCallback = V8Utils::getFunctionFromObject(callbacks, playlistRenamedKey);
+  nodePlaylist->playlistCallbacksHolder.tracksAddedCallback = V8Utils::getFunctionFromObject(callbacks, tracksAddedKey);
+  nodePlaylist->playlistCallbacksHolder.tracksMovedCallback = V8Utils::getFunctionFromObject(callbacks, tracksMovedKey);
+  nodePlaylist->playlistCallbacksHolder.tracksRemovedCallback = V8Utils::getFunctionFromObject(callbacks, tracksRemovedKey);
+  nodePlaylist->playlistCallbacksHolder.trackCreatedChangedCallback = V8Utils::getFunctionFromObject(callbacks, trackCreatedChangedKey);
+  nodePlaylist->playlistCallbacksHolder.trackSeenChangedCallback = V8Utils::getFunctionFromObject(callbacks, trackSeenChangedKey);
+  nodePlaylist->playlistCallbacksHolder.trackMessageChangedCallback = V8Utils::getFunctionFromObject(callbacks, trackMessageChangedKey);
   nodePlaylist->playlistCallbacksHolder.setCallbacks();
   return scope.Close(Undefined());
 }
