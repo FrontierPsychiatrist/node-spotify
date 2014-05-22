@@ -32,10 +32,10 @@ Handle<Value> NodePlaylistContainer::getPlaylist(const Arguments& args) {
     return scope.Close(V8_EXCEPTION("getPlaylist needs an interger as its first argument."));
   }
   int index = args[0]->ToNumber()->IntegerValue();
+  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   if(index < 0 || index > nodePlaylistContainer->playlistContainer->numPlaylists()) {
     return scope.Close(V8_EXCEPTION("Index out of range."));
   }
-  NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   std::shared_ptr<PlaylistBase> playlist = nodePlaylistContainer->playlistContainer->getPlaylist(index);
 
   Handle<Value> outNodePlaylist;
