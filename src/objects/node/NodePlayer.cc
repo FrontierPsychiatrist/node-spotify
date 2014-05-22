@@ -63,6 +63,9 @@ Handle<Value> NodePlayer::resume(const Arguments& args) {
 
 Handle<Value> NodePlayer::play(const Arguments& args) {
   HandleScope scope;
+  if(args.Length() < 1) {
+    return scope.Close(V8_EXCEPTION("play needs a track as its first argument."));
+  }
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args[0]->ToObject());
   try {
@@ -75,6 +78,9 @@ Handle<Value> NodePlayer::play(const Arguments& args) {
 
 Handle<Value> NodePlayer::seek(const Arguments& args) {
   HandleScope scope;
+  if(args.Length() < 1 || !args[0]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("seek needs an integer as its first argument."));
+  }
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
   int second = args[0]->ToInteger()->Value();
   nodePlayer->player->seek(second);
