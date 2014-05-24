@@ -2,6 +2,7 @@
 #include "../Application.h"
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/spotify/Player.h"
+#include "../utils/V8Utils.h"
 
 extern "C" {
   #include "../audio/audio.h"
@@ -77,7 +78,7 @@ void SessionCallbacks::metadata_updated(sp_session* session) {
     Player::instance->retryPlay();
   }
   
-  callV8FunctionWithNoArgumentsIfHandleNotEmpty(metadataUpdatedCallback); 
+  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(metadataUpdatedCallback);
 }
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
@@ -99,7 +100,7 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
  * This is the "ready" hook for users. Playlists should be available at this point.
  **/
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata) {
-  callV8FunctionWithNoArgumentsIfHandleNotEmpty(loginCallback);
+  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(loginCallback);
   //Issue 35, rootPlaylistContainerLoaded can be called multiple times throughout the lifetime of a session.
   //loginCallback must only be called once.
   sp_playlistcontainer_remove_callbacks(sp, &rootPlaylistContainerCallbacks, nullptr);    
@@ -107,7 +108,7 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, voi
 
 void SessionCallbacks::loggedOut(sp_session* session) {
   std::cout << "Logged out" << std::endl;
-  callV8FunctionWithNoArgumentsIfHandleNotEmpty(logoutCallback);
+  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(logoutCallback);
 }
 
 void SessionCallbacks::end_of_track(sp_session* session) {
@@ -115,7 +116,7 @@ void SessionCallbacks::end_of_track(sp_session* session) {
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
   
-  callV8FunctionWithNoArgumentsIfHandleNotEmpty(endOfTrackCallback);
+  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(endOfTrackCallback);
 }
 
 void SessionCallbacks::sendTimer(int sample_rate) {
