@@ -8,20 +8,24 @@ extern "C" {
   #include "../audio/audio.h"
 }
 
+#include <node_buffer.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
 
 extern Application* application;
+static void handleNotify(uv_async_t* handle, int status);
+static void handleMusicInNodeThread(uv_async_t* handle, int status);
 
 static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks;
-
-std::unique_ptr<uv_timer_t> SessionCallbacks::timer;
-std::unique_ptr<uv_async_t> SessionCallbacks::notifyHandle;
+static std::unique_ptr<uv_timer_t> timer;
+static std::unique_ptr<uv_async_t> notifyHandle;
+static std::unique_ptr<uv_async_t> musicNotifyHandle;
 v8::Handle<v8::Function> SessionCallbacks::loginCallback;
 v8::Handle<v8::Function> SessionCallbacks::logoutCallback;
 v8::Handle<v8::Function> SessionCallbacks::metadataUpdatedCallback;
 v8::Handle<v8::Function> SessionCallbacks::endOfTrackCallback;
+v8::Handle<v8::Function> SessionCallbacks::musicDeliveryCallback;
 
 namespace spotify {
 //TODO
@@ -29,17 +33,24 @@ int framesReceived = 0;
 int currentSecond = 0;
 }
 
+struct music {
+  size_t size;
+  void* data;
+};
+
 void SessionCallbacks::init() {
   timer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
   notifyHandle = std::unique_ptr<uv_async_t>(new uv_async_t());
+  musicNotifyHandle = std::unique_ptr<uv_async_t>(new uv_async_t());
   uv_async_init(uv_default_loop(), notifyHandle.get(), handleNotify);
+  uv_async_init(uv_default_loop(), musicNotifyHandle.get(), handleMusicInNodeThread);
   uv_timer_init(uv_default_loop(), timer.get());
 }
 
 /**
- * If the timer has run out this method will be called.
+ * If the timer for sp_session_process_events has run out this method will be called.
  **/
-void SessionCallbacks::processEvents(uv_timer_t* timer, int status) {
+static void handleTimeout(uv_timer_t* timer, int status) {
   handleNotify(notifyHandle.get(), 0);
 }
 
@@ -55,21 +66,13 @@ void SessionCallbacks::notifyMainThread(sp_session* session) {
  * async callback handle function for process events.
  * This function will always be called in the thread in which the sp_session was created.
  **/
-void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
+static void handleNotify(uv_async_t* handle, int status) {
   uv_timer_stop(timer.get()); //a new timeout will be set at the end
   int nextTimeout = 0;
   while(nextTimeout == 0) {
     sp_session_process_events(application->session, &nextTimeout);
   }
-  uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
-}
-
-static void callV8FunctionWithNoArgumentsIfHandleNotEmpty(v8::Handle<v8::Function> function) {
-  if(!function.IsEmpty()) {
-    unsigned int argc = 0;
-    v8::Handle<v8::Value> argv[0];
-    function->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-  }
+  uv_timer_start(timer.get(), &handleTimeout, nextTimeout, 0);
 }
 
 void SessionCallbacks::metadata_updated(sp_session* session) {
@@ -125,6 +128,36 @@ void SessionCallbacks::sendTimer(int sample_rate) {
     spotify::framesReceived = spotify::framesReceived - sample_rate;
     Player::instance->setCurrentSecond(spotify::currentSecond);
   }
+}
+
+static void handleMusicInNodeThread(uv_async_t* handle, int status) {
+  music* musicData = static_cast<music*>(handle->data);
+  node::Buffer *slowBuffer = node::Buffer::New(musicData->size);
+  memcpy(node::Buffer::Data(slowBuffer), musicData->data, musicData->size);
+  v8::Local<v8::Object> globalObj = v8::Context::GetCurrent()->Global();
+  v8::Local<v8::Function> ctor = v8::Local<v8::Function>::Cast(globalObj->Get(v8::String::New("Buffer")));
+  v8::Handle<v8::Value> constructorArgs[3] = { slowBuffer->handle_, v8::Integer::New(musicData->size), v8::Integer::New(0)};
+  v8::Handle<v8::Object> actualBuffer = ctor->NewInstance(3, constructorArgs);
+  int argc = 2;
+  v8::Handle<v8::Value> argv[] = { v8::Undefined(), actualBuffer };
+  SessionCallbacks::musicDeliveryCallback->Call(globalObj, argc, argv);
+  free(musicData->data);
+  delete musicData;
+}
+
+/**
+Sends the music data to the node thread via an async handle that will call handleMusicInNodeThread
+**/
+int SessionCallbacks::node_music_delivery(sp_session* session, const sp_audioformat* format, const void* frames, int num_frames) {
+  music* musicData = new music();
+  size_t size;
+  size = num_frames * sizeof(int16_t) * format->channels;
+  musicData->data = malloc(size);
+  memcpy(musicData->data, frames, size);
+  musicData->size = size;
+  musicNotifyHandle.get()->data = (void*)musicData;
+  uv_async_send(musicNotifyHandle.get());
+  return num_frames;
 }
 
 int SessionCallbacks::music_delivery(sp_session *sess, const sp_audioformat *format,

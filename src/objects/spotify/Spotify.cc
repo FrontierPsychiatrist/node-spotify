@@ -34,7 +34,7 @@ sp_session* Spotify::createSession(SpotifyOptions options) {
   sessionCallbacks.notify_main_thread = &SessionCallbacks::notifyMainThread;
   sessionCallbacks.logged_in = &SessionCallbacks::loggedIn;
   sessionCallbacks.logged_out = &SessionCallbacks::loggedOut;
-  sessionCallbacks.music_delivery = &SessionCallbacks::music_delivery;
+  sessionCallbacks.music_delivery = &SessionCallbacks::node_music_delivery;
   sessionCallbacks.end_of_track = &SessionCallbacks::end_of_track;
   sessionCallbacks.metadata_updated = &SessionCallbacks::metadata_updated;
 
