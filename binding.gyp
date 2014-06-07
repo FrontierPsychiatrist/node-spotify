@@ -3,9 +3,10 @@
   {
     "target_name": "nodespotify",
     "sources": [
-      "src/node-spotify.cc", "src/audio/audio.c",
+      "src/node-spotify.cc", "src/audio/audio.c", "src/audio/AudioHandler.cc",
+      "src/audio/NodeAudioHandler.cc",
       "src/callbacks/PlaylistCallbacksHolder.cc",
-      "src/callbacks/SessionCallbacks.cc",
+      "src/callbacks/SessionCallbacks.cc", "src/callbacks/SessionCallbacks_Audio.cc",
       "src/callbacks/SearchCallbacks.cc", "src/callbacks/AlbumBrowseCallbacks.cc",
       "src/callbacks/ArtistBrowseCallbacks.cc", "src/callbacks/PlaylistContainerCallbacksHolder.cc",
 
@@ -30,9 +31,12 @@
     },
     "copies": [ {
       "destination": "<(PRODUCT_DIR)",
-      "files": ["src/spotify.js", "src/metadataUpdater.js"]
+      "files": ["src/spotify.js", "src/metadataUpdater.js", "src/MusicStream.js"]
       }
     ],
+    "variables": {
+      "native_sound%": 'false'
+    },
     "conditions": [
       ["OS=='mac'", {
         "xcode_settings": {
@@ -40,21 +44,26 @@
           "GCC_ENABLE_CPP_EXCEPTIONS": 'YES',
           "MACOSX_DEPLOYMENT_TARGET" : "10.8"
         },
-        "sources": ["src/audio/openal-audio.c"],
         "defines": ["OS_OSX"],
-        "link_settings" : { "libraries" : ["-framework", "OpenAL"] }
       }],
-
+      [ "OS=='mac' and native_sound=='true'", {
+        "sources": ["src/audio/openal-audio.c", "src/audio/NativeAudioHandler.cc"],
+        "link_settings" : { "libraries" : ["-framework", "OpenAL"] },
+        "defines": ["NODE_SPOTIFY_NATIVE_SOUND"]
+      }],
       ["OS=='linux'", {
-        "sources": ["src/audio/alsa-audio.c"],
-        "cflags": ["-I/usr/include/alsa"],
         "cflags_cc": [
           "-std=c++11",
           "-fexceptions"
           ],
-        "defines": ["OS_LINUX"],
-        "link_settings" : { "libraries" : ["-lasound"] }
-      }]
+        "defines": ["OS_LINUX"]
+      }],
+      [ "OS=='linux' and native_sound=='true'", {
+        "sources": ["src/audio/alsa-audio.c", "src/audio/NativeAudioHandler.cc"],
+        "cflags": ["-I/usr/include/alsa"],
+        "link_settings" : { "libraries" : ["-lasound"] },
+        "defines": ["NODE_SPOTIFY_NATIVE_SOUND"]
+      }],
     ]
   }
   ]

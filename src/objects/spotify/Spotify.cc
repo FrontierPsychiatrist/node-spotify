@@ -3,6 +3,10 @@
 #include "../../callbacks/SessionCallbacks.h"
 #include "../../exceptions.h"
 
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+#include "../../audio/NativeAudioHandler.h"
+#endif
+
 #include <fstream>
 
 extern Application* application;
@@ -10,9 +14,12 @@ static sp_session_config sessionConfig;
 static sp_session_callbacks sessionCallbacks;
 
 Spotify::Spotify(SpotifyOptions options) {
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+  audioHandler = std::unique_ptr<AudioHandler>(new NativeAudioHandler());
+#endif
   session = createSession(options);
   application->session = session;
-};
+}
 
 sp_session* Spotify::createSession(SpotifyOptions options) {
   sp_error error;
@@ -34,9 +41,13 @@ sp_session* Spotify::createSession(SpotifyOptions options) {
   sessionCallbacks.notify_main_thread = &SessionCallbacks::notifyMainThread;
   sessionCallbacks.logged_in = &SessionCallbacks::loggedIn;
   sessionCallbacks.logged_out = &SessionCallbacks::loggedOut;
-  sessionCallbacks.music_delivery = &SessionCallbacks::node_music_delivery;
   sessionCallbacks.end_of_track = &SessionCallbacks::end_of_track;
   sessionCallbacks.metadata_updated = &SessionCallbacks::metadata_updated;
+
+  sessionCallbacks.music_delivery = &AudioHandler::musicDelivery;
+  sessionCallbacks.start_playback = &SessionCallbacks::start_playback;
+  sessionCallbacks.stop_playback = &SessionCallbacks::stop_playback;
+  sessionCallbacks.get_audio_buffer_stats = &AudioHandler::getAudioBufferStats;
 
   sessionConfig.api_version = SPOTIFY_API_VERSION;
   sessionConfig.cache_location = options.cacheFolder.c_str();

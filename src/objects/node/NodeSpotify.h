@@ -20,6 +20,10 @@ public:
   static Handle<Value> getSessionUser(Local<String> property, const AccessorInfo& info);
   static Handle<Value> createFromLink(const Arguments& args);
   static Handle<Value> getConstants(Local<String> property, const AccessorInfo& info);
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+  static Handle<Value> useNativeAudio(const Arguments& args);
+#endif
+  static Handle<Value> useNodejsAudio(const Arguments& args);
   static Handle<Value> on(const Arguments& other);
   static void init();
 private:

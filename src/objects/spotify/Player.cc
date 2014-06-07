@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Spotify.h"
 #include "../../exceptions.h"
 #include "../../Application.h"
 
@@ -14,8 +15,7 @@ namespace spotify {
 
 extern Application* application;
 
-Player::Player() : currentSecond(0), isPaused(false), isLoading(false),
-  loadingTrack(nullptr) {};
+Player::Player() : currentSecond(0), isPaused(false), isLoading(false), loadingTrack(nullptr) {}
 
 void Player::stop() {
   sp_session_player_unload(application->session);
@@ -23,7 +23,9 @@ void Player::stop() {
 
 void Player::pause() {
   sp_session_player_play(application->session, 0);
-  audio_fifo_flush(&application->audio_fifo);
+  Spotify* spotify = static_cast<Spotify*>(sp_session_userdata(application->session));
+  //TODO: flush audio handler
+  //audio_fifo_flush(&application->audio_fifo);
   isPaused = true;
 }
 
@@ -35,6 +37,13 @@ void Player::resume() {
 }
 
 void Player::play(std::shared_ptr<Track> track) {
+#ifndef NODE_SPOTIFY_NATIVE_SOUND
+  //If node-spotify is compiled without native sound we have to check if the user registered a nodejs audio handler.
+  Spotify* spotify = static_cast<Spotify*>(sp_session_userdata(application->session));
+  if(!spotify->audioHandler) {
+    throw NoAudioHandlerException();
+  }
+#endif
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
   sp_error error = sp_session_player_load(application->session, track->track);

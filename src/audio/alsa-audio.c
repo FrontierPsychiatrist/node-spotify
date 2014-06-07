@@ -36,8 +36,7 @@
 #include "audio.h"
 
 
-static snd_pcm_t *alsa_open(char *dev, int rate, int channels)
-{
+static snd_pcm_t *alsa_open(char *dev, int rate, int channels) {
 	snd_pcm_hw_params_t *hwp;
 	snd_pcm_sw_params_t *swp;
 	snd_pcm_t *h;
@@ -172,24 +171,24 @@ static snd_pcm_t *alsa_open(char *dev, int rate, int channels)
 	return h;
 }
 
-static void* alsa_audio_start(void *aux)
+static void alsa_audio_start(void *aux)
 {
-	audio_fifo_t *af = aux;
+	audio_fifo_t *audioFifo = aux;
 	snd_pcm_t *h = NULL;
 	int c;
 	int cur_channels = 0;
 	int cur_rate = 0;
 
-	audio_fifo_data_t *afd;
+	audio_fifo_data_t *audioData;
 
 	for (;;) {
-		afd = audio_get(af);
+		audioData = audio_get(audioFifo);
 
-		if (!h || cur_rate != afd->rate || cur_channels != afd->channels) {
+		if (!h || cur_rate != audioData->sampleRate || cur_channels != audioData->channels) {
 			if (h) snd_pcm_close(h);
 
-			cur_rate = afd->rate;
-			cur_channels = afd->channels;
+			cur_rate = audioData->sampleRate;
+			cur_channels = audioData->channels;
 
 			h = alsa_open("default", cur_rate, cur_channels);
 
@@ -208,20 +207,13 @@ static void* alsa_audio_start(void *aux)
 		if (c == -EPIPE)
 			snd_pcm_prepare(h);
 
-		snd_pcm_writei(h, afd->samples, afd->nsamples);
-		free(afd);
+		snd_pcm_writei(h, audioData->samples, audioData->numberOfSamples);
+		free(audioData);
 	}
 }
 
-void audio_init(audio_fifo_t *af)
-{
-	pthread_t tid;
-
-	TAILQ_INIT(&af->q);
-	af->qlen = 0;
-
-	pthread_mutex_init(&af->mutex, NULL);
-	pthread_cond_init(&af->cond, NULL);
-
-	pthread_create(&tid, NULL, alsa_audio_start, af);
+void audio_init(audio_fifo_t *audioFifo) {
+	uv_thread_t tid;
+	uv_cond_init(&audioFifo->audioCondition);
+	uv_thread_create(&tid, alsa_audio_start, audioFifo);
 }

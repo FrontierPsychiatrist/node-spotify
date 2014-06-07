@@ -32,11 +32,6 @@ public:
     return constructor;
   }
 protected:
-  /**
-   * A setter that does nothing which is useful for defining properties that should be read only
-   **/
-  static void emptySetter(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {};
-
   static v8::Persistent<v8::Function> constructor;
 
   /**

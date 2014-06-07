@@ -12,7 +12,6 @@
 #include "objects/node/NodeSearch.h"
 #include "objects/node/NodePlaylistFolder.h"
 #include "objects/node/NodeUser.h"
-#include "audio/audio.h"
 
 #include <node.h>
 #include <v8.h>
@@ -31,6 +30,7 @@ static Handle<Object> getInternal() {
   protos->Set(v8::String::NewSymbol("User"), NodeUser::getConstructor());
   protos->Set(v8::String::NewSymbol("PlaylistFolder"), NodePlaylistFolder::getConstructor());
   internal->Set(v8::String::NewSymbol("protos"), protos);
+
   return internal;
 }
 
@@ -52,7 +52,6 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
 
   //initialize application struct
   application = new Application();
-  audio_init(&application->audio_fifo);
 
   //configure and create spotify session
   v8::Handle<v8::Object> options;
