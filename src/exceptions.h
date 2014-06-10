@@ -22,5 +22,6 @@ class TracksNotRemoveableException : public std::exception {};
 CREATE_EXCEPTION_WITH_MESSAGE(PlaylistNotMoveableException)
 CREATE_EXCEPTION_WITH_MESSAGE(TracksNotReorderableException)
 CREATE_EXCEPTION_WITH_MESSAGE(SessionCreationException)
+CREATE_EXCEPTION_WITH_MESSAGE(TracksNotAddedException)
 
 #endif

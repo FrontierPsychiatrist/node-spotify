@@ -83,7 +83,12 @@ Handle<Value> NodePlaylist::addTracks(const Arguments& args) {
     tracks[i] = nodeTrack->track;
   }
   int position = args[1]->ToNumber()->IntegerValue();
-  nodePlaylist->playlist->addTracks(tracks, position);
+  try {
+    nodePlaylist->playlist->addTracks(tracks, position);
+  } catch(const TracksNotAddedException& e) {
+    return scope.Close(V8_EXCEPTION(e.message.c_str()));
+  }
+
   return scope.Close(Undefined());
 }
 

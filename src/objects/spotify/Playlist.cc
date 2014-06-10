@@ -58,7 +58,10 @@ void Playlist::addTracks(std::vector<std::shared_ptr<Track>> tracks, int positio
   for(int i = 0; i < (int)tracks.size(); i++) {
     spTracks[i] = tracks[i]->track;
   }
-  sp_playlist_add_tracks(playlist, spTracks, tracks.size(), position, application->session);
+  sp_error error = sp_playlist_add_tracks(playlist, spTracks, tracks.size(), position, application->session);
+  if(error != SP_ERROR_OK) {
+    throw TracksNotAddedException(sp_error_message(error));
+  }
 }
 
 void Playlist::removeTracks(const int* trackPositions, int numberOfTracks) {
