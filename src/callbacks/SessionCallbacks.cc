@@ -1,5 +1,6 @@
 #include "SessionCallbacks.h"
 #include "../Application.h"
+#include "../common_macros.h"
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/spotify/Player.h"
 
@@ -9,7 +10,6 @@ extern "C" {
 
 #include <stdlib.h>
 #include <string.h>
-#include <iostream>
 
 extern Application* application;
 
@@ -82,10 +82,10 @@ void SessionCallbacks::metadata_updated(sp_session* session) {
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   if(SP_ERROR_OK != error) {
-    std::cout << "Error logging in: " << sp_error_message(error) << std::endl;
+    unsigned int argc = 1;
+    v8::Handle<v8::Value> argv[1] = { v8::Exception::Error(v8::String::New(sp_error_message(error))) };
+    loginCallback->Call( v8::Context::GetCurrent()->Global(), argc, argv );
     return;
-  } else {
-    std::cout << "Logged in" << std::endl;
   }
 
   //The creation of the root playlist container is absolutely necessary here, otherwise following callbacks can crash.
@@ -106,7 +106,6 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, voi
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
-  std::cout << "Logged out" << std::endl;
   callV8FunctionWithNoArgumentsIfHandleNotEmpty(logoutCallback);
 }
 
