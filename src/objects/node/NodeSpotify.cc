@@ -104,6 +104,13 @@ Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
         out = nodePlaylist->getV8Object();
         break;
       }
+      case SP_LINKTYPE_LOCALTRACK:
+      {
+        sp_track* track = sp_link_as_track(parsedLink);
+        NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(track));
+        out = nodeTrack->getV8Object();
+        break;
+      }
       default:
         out = Undefined();
     }
