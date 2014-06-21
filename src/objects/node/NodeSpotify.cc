@@ -168,6 +168,7 @@ Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorIn
   constants->Set(String::NewSymbol("PLAYLIST_TYPE_PLAYLIST"), Number::New(SP_PLAYLIST_TYPE_PLAYLIST));
   constants->Set(String::NewSymbol("PLAYLIST_TYPE_START_FOLDER"), Number::New(SP_PLAYLIST_TYPE_START_FOLDER));
   constants->Set(String::NewSymbol("PLAYLIST_TYPE_END_FOLDER"), Number::New(SP_PLAYLIST_TYPE_END_FOLDER));
+  constants->Set(String::NewSymbol("PLAYLIST_TYPE_PLACEHOLDER"), Number::New(SP_PLAYLIST_TYPE_PLACEHOLDER));
   return scope.Close(constants);
 }
 
