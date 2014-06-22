@@ -18,7 +18,7 @@ std::shared_ptr<PlaylistBase> PlaylistContainer::getPlaylist(int index) {
   } else if(playlistType == SP_PLAYLIST_TYPE_END_FOLDER) {
     playlist = std::make_shared<PlaylistFolder>(playlistType);
   } else if(playlistType == SP_PLAYLIST_TYPE_PLACEHOLDER) {
-    //TODO: placeholder, maybe orphand folder start/stop?
+    playlist = std::make_shared<PlaylistFolder>(playlistType);
   }
   return playlist;
 }
