@@ -15,6 +15,13 @@ events.js
 .#.*
 *~
 
+#QtCreator
+node-spotify.config
+node-spotify.creator
+node-spotify.creator.user
+node-spotify.files
+node-spotify.includes
+
 #osx
 .DS_Store
 
@@ -26,3 +33,4 @@ events.js
 executes.txt
 TODOS
 copyright.txt
+node_modules/
