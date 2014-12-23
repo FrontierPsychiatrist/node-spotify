@@ -20,8 +20,6 @@ NodeAudioHandler::~NodeAudioHandler() {
   uv_timer_stop(&musicTimer);
 }
 
-// TODO end_of_track, playtoken lost, logout
-// TODO on seek flush?
 void NodeAudioHandler::musicTimeout(uv_timer_t* timer, int status) {
   NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(timer->data);
   audio_fifo_t *audioFifo = &audioHandler->audioFifo;
