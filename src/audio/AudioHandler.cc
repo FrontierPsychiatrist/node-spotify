@@ -39,6 +39,13 @@ int AudioHandler::musicDelivery(sp_session *session, const sp_audioformat *forma
   TAILQ_INSERT_TAIL(&audioFifo->queue, audioData, link);
   audioFifo->samplesInQueue += num_frames;
 
+  application->audioHandler->framesReceived += num_frames;
+  if( application->audioHandler->framesReceived / audioData->sampleRate > 0) {
+    application->audioHandler->currentSecond++;
+    application->audioHandler->framesReceived = application->audioHandler->framesReceived - audioData->sampleRate;
+    application->player->setCurrentSecond(application->audioHandler->currentSecond);
+  }
+
   application->audioHandler->afterMusicDelivery(format);
 
   uv_mutex_unlock(&audioFifo->audioQueueMutex);

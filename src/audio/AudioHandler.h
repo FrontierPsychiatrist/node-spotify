@@ -13,13 +13,16 @@ extern "C" {
  * that pushes music data into a queue and a audio buffer stats callback.
  */
 class AudioHandler {
-friend class Spotify;
+friend class Player; // to set current second and frames received on stop
+friend class Spotify; // access the callback methods
 public:
   AudioHandler();
   virtual ~AudioHandler();
   virtual void setStopped(bool stopped);
 protected:
   audio_fifo_t audioFifo;
+  int framesReceived;
+  int currentSecond;
   /**
    * @brief afterMusicDelivery Method that will be called after audio data has been written into the queue.
    * @param format audio format delivered together with the raw music data by libspotify.

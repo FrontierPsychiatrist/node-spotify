@@ -2,16 +2,6 @@
 #include "../../exceptions.h"
 #include "../../Application.h"
 
-extern "C" {
-  #include "../../audio/audio.h"
-}
-
-/* REMOVE ME */
-namespace spotify {
-  extern int framesReceived;
-  extern int currentSecond;
-}
-
 extern Application* application;
 
 Player::Player() : currentSecond(0), isPaused(false), isLoading(false), loadingTrack(nullptr) {}
@@ -42,8 +32,9 @@ void Player::play(std::shared_ptr<Track> track) {
   }
 #endif
   application->audioHandler->setStopped(false);
-  spotify::framesReceived = 0;
-  spotify::currentSecond = 0;
+  application->audioHandler->framesReceived = 0;
+  application->audioHandler->currentSecond = 0;
+  currentSecond = 0;
   sp_error error = sp_session_player_load(application->session, track->track);
   if(error == SP_ERROR_IS_LOADING) {
     isLoading = true;
@@ -67,7 +58,7 @@ void Player::retryPlay() {
 
 void Player::seek(int second) {
   sp_session_player_seek(application->session, second*1000);
-  spotify::currentSecond = second;
+  application->audioHandler->currentSecond = second;
 }
 
 void Player::setCurrentSecond(int second) {

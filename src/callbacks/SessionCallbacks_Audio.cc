@@ -16,15 +16,8 @@ using namespace v8;
 
 extern Application* application;
 
-namespace spotify {
-int framesReceived = 0;
-int currentSecond = 0;
-}
-
 void SessionCallbacks::end_of_track(sp_session* session) {
   sp_session_player_unload(application->session);
-  spotify::framesReceived = 0;
-  spotify::currentSecond = 0;
   
   V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(endOfTrackCallback);
 
@@ -38,17 +31,6 @@ void SessionCallbacks::end_of_track(sp_session* session) {
     TAILQ_INSERT_TAIL(&audioFifo->queue, audioData, link);
     uv_mutex_unlock(&audioFifo->audioQueueMutex);
   }*/
-}
-
-/**
-Save the second we are currently in while playing music
-**/
-void SessionCallbacks::sendTimer(int sample_rate) {
-  if( spotify::framesReceived / sample_rate > 0) {
-    spotify::currentSecond++;
-    spotify::framesReceived = spotify::framesReceived - sample_rate;
-    application->player->setCurrentSecond(spotify::currentSecond);
-  }
 }
 
 void SessionCallbacks::start_playback(sp_session* session) {

@@ -21,7 +21,6 @@ public:
   static v8::Handle<v8::Function> logoutCallback;
   static v8::Handle<v8::Function> metadataUpdatedCallback;
   static v8::Handle<v8::Function> endOfTrackCallback;
-  static void sendTimer(int sample_rate);
 };
 
 #endif
