@@ -35,7 +35,7 @@
       }
     ],
     "variables": {
-      "native_sound%": 'false'
+      "native_audio%": 'true'
     },
     "conditions": [
       ["OS=='mac'", {
@@ -46,7 +46,7 @@
         },
         "defines": ["OS_OSX"],
       }],
-      [ "OS=='mac' and native_sound=='true'", {
+      [ "OS=='mac' and native_audio=='true'", {
         "sources": ["src/audio/openal-audio.c", "src/audio/NativeAudioHandler.cc"],
         "link_settings" : { "libraries" : ["-framework", "OpenAL"] },
         "defines": ["NODE_SPOTIFY_NATIVE_SOUND"]
@@ -58,7 +58,7 @@
           ],
         "defines": ["OS_LINUX"]
       }],
-      [ "OS=='linux' and native_sound=='true'", {
+      [ "OS=='linux' and native_audio=='true'", {
         "sources": ["src/audio/alsa-audio.c", "src/audio/NativeAudioHandler.cc"],
         "cflags": ["-I/usr/include/alsa"],
         "link_settings" : { "libraries" : ["-lasound"] },
