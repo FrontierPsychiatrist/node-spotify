@@ -29,6 +29,7 @@ Handle<Value> NodeSearch::execute(const Arguments& args) {
     return scope.Close(V8_EXCEPTION("execute needs a callback function as its argument."));
   }
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  nodeSearch->makePersistent();
   Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
   nodeSearch->browseCompleteCallback = callback;
   nodeSearch->search = std::make_shared<Search>();

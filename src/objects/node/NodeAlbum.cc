@@ -33,6 +33,7 @@ Handle<Value> NodeAlbum::browse(const Arguments& args) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(args.This());
   if(nodeAlbum->album->albumBrowse == nullptr) {
+    nodeAlbum->makePersistent();
     Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
     nodeAlbum->browseCompleteCallback = callback;
 

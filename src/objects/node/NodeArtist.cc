@@ -28,6 +28,7 @@ Handle<Value> NodeArtist::browse(const Arguments& args) {
   HandleScope scope;
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
   if(nodeArtist->artist->artistBrowse == nullptr) {
+    nodeArtist->makePersistent();
     sp_artistbrowse_type artistbrowseType = static_cast<sp_artistbrowse_type>(args[0]->ToNumber()->IntegerValue());
     Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
     nodeArtist->browseCompleteCallback = callback;
