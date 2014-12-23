@@ -34,44 +34,28 @@ std::string Search::didYouMeanText() {
   return didYouMeanText;
 }
 
-std::vector<std::shared_ptr<Track>> Search::getTracks() {
-  std::vector<std::shared_ptr<Track>> tracks(sp_search_num_tracks(search));
-  if(sp_search_is_loaded(search)) {
-    for(int i = 0; i < (int)tracks.size() ; ++i) {
-      tracks[i] = std::make_shared<Track>(sp_search_track(search, i));
-    }
-  }
-  return tracks;
+std::shared_ptr<Track> Search::getTrack(int position) {
+  auto track = std::make_shared<Track>(sp_search_track(search, position));
+  return track;
 }
 
-std::vector<std::shared_ptr<Album>> Search::getAlbums() {
-  std::vector<std::shared_ptr<Album>> albums(sp_search_num_albums(search));
-  if(sp_search_is_loaded(search)) {
-    for(int i = 0; i < (int)albums.size() ; ++i) {
-      albums[i] = std::make_shared<Album>(sp_search_album(search, i));
-    }
-  }
-  return albums;
+std::shared_ptr<Album> Search::getAlbum(int position) {
+  auto album = std::make_shared<Album>(sp_search_album(search, position));
+  return album;
 }
 
-std::vector<std::shared_ptr<Artist>> Search::getArtists() {
-  std::vector<std::shared_ptr<Artist>> artists(sp_search_num_artists(search));
-  if(sp_search_is_loaded(search)) {
-    for(int i = 0; i < (int)artists.size() ; ++i) {
-      artists[i] = std::make_shared<Artist>(sp_search_artist(search, i));
-    }
-  }
-  return artists;
+std::shared_ptr<Artist> Search::getArtist(int position) {
+  auto artist = std::make_shared<Artist>(sp_search_artist(search, position));
+  return artist;
 }
 
-std::vector<std::shared_ptr<Playlist>> Search::getPlaylists() {
-  std::vector<std::shared_ptr<Playlist>> playlists(sp_search_num_playlists(search));
-  if(sp_search_is_loaded(search)) {
-    for(int i = 0; i < (int)playlists.size() ; ++i) {
-      playlists[i] = Playlist::fromCache(sp_search_playlist(search, i));
-    }
-  }
-  return playlists;
+std::shared_ptr<Playlist> Search::getPlaylist(int position) {
+  auto playlist = Playlist::fromCache(sp_search_playlist(search, position));
+  return playlist;
+}
+
+int Search::numTracks() {
+  return sp_search_num_tracks(search);
 }
 
 int Search::totalTracks() {
@@ -82,6 +66,10 @@ int Search::totalTracks() {
   return totalTracks;
 }
 
+int Search::numAlbums() {
+  return sp_search_num_albums(search);
+}
+
 int Search::totalAlbums() {
   int totalAlbums = 0;
   if(sp_search_is_loaded(search)) {
@@ -90,12 +78,20 @@ int Search::totalAlbums() {
   return totalAlbums;
 }
 
+int Search::numArtists() {
+  return sp_search_num_artists(search);
+}
+
 int Search::totalArtists() {
   int totalArtists = 0;
   if(sp_search_is_loaded(search)) {
     totalArtists = sp_search_total_artists(search);
   }
   return totalArtists;
+}
+
+int Search::numPlaylists() {
+  return sp_search_num_playlists(search);
 }
 
 int Search::totalPlaylists() {

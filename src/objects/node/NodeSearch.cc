@@ -50,14 +50,18 @@ void NodeSearch::setupAdditionalMethods() {
   Handle<Object> nodeObject = this->getV8Object();
   nodeObject->SetAccessor(String::NewSymbol("didYouMean"), didYouMean);
   nodeObject->SetAccessor(String::NewSymbol("link"), getLink);
-  nodeObject->SetAccessor(String::NewSymbol("tracks"), getTracks);
-  nodeObject->SetAccessor(String::NewSymbol("albums"), getAlbums);
-  nodeObject->SetAccessor(String::NewSymbol("artists"), getArtists);
-  nodeObject->SetAccessor(String::NewSymbol("playlists"), getPlaylists);
+  nodeObject->Set(String::NewSymbol("getTrack"), FunctionTemplate::New(getTrack)->GetFunction());
+  nodeObject->Set(String::NewSymbol("getAlbum"), FunctionTemplate::New(getAlbum)->GetFunction());
+  nodeObject->Set(String::NewSymbol("getArtist"), FunctionTemplate::New(getArtist)->GetFunction());
+  nodeObject->Set(String::NewSymbol("getPlaylist"), FunctionTemplate::New(getPlaylist)->GetFunction());
   nodeObject->SetAccessor(String::NewSymbol("totalTracks"), getTotalTracks);
+  nodeObject->SetAccessor(String::NewSymbol("numTracks"), getNumTracks);
   nodeObject->SetAccessor(String::NewSymbol("totalAlbums"), getTotalAlbums);
+  nodeObject->SetAccessor(String::NewSymbol("numAlbums"), getNumAlbums);
   nodeObject->SetAccessor(String::NewSymbol("totalArtists"), getTotalArtists);
+  nodeObject->SetAccessor(String::NewSymbol("numArtists"), getNumArtists);
   nodeObject->SetAccessor(String::NewSymbol("totalPlaylists"), getTotalPlaylists);
+  nodeObject->SetAccessor(String::NewSymbol("numPlaylists"), getNumPlaylists);
 }
 
 Handle<Value> NodeSearch::getTrackOffset(Local<String> property, const AccessorInfo& info) {
@@ -195,52 +199,68 @@ Handle<Value> NodeSearch::getLink(Local<String> property, const AccessorInfo& in
   return String::New(nodeSearch->search->link().c_str());
 }
 
-Handle<Value> NodeSearch::getTracks(Local<String> property, const AccessorInfo& info) {
+Handle<Value> NodeSearch::getTrack(const Arguments& args) {
   HandleScope scope;
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-  std::vector<std::shared_ptr<Track>> tracks = nodeSearch->search->getTracks();
-  Local<Array> outArray = Array::New(tracks.size());
-  for(int i = 0; i < (int)tracks.size(); i++) {
-    NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
-    outArray->Set(Number::New(i), nodeTrack->getV8Object());
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  if(args.Length() < 1 || !args[0]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("getTrack needs a number as its first argument."));
   }
-  return scope.Close(outArray);
+
+  int position = args[0]->ToNumber()->IntegerValue();
+  if(position >= nodeSearch->search->numTracks() || position < 0) {
+    return scope.Close(V8_EXCEPTION("Track index out of bounds"));
+  }
+
+  NodeTrack* nodeTrack = new NodeTrack(nodeSearch->search->getTrack(position));
+  return scope.Close(nodeTrack->getV8Object());
 }
 
-Handle<Value> NodeSearch::getAlbums(Local<String> property, const AccessorInfo& info) {
+Handle<Value> NodeSearch::getAlbum(const Arguments& args) {
   HandleScope scope;
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-  std::vector<std::shared_ptr<Album>> albums = nodeSearch->search->getAlbums();
-  Local<Array> outArray = Array::New(albums.size());
-  for(int i = 0; i < (int)albums.size(); i++) {
-    NodeAlbum* nodeAlbum = new NodeAlbum(albums[i]);
-    outArray->Set(Number::New(i), nodeAlbum->getV8Object());
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  if(args.Length() < 1 || !args[0]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("getAlbum needs a number as its first argument."));
   }
-  return scope.Close(outArray);
+
+  int position = args[0]->ToNumber()->IntegerValue();
+  if(position >= nodeSearch->search->numAlbums() || position < 0) {
+    return scope.Close(V8_EXCEPTION("Album index out of bounds"));
+  }
+
+  NodeAlbum* nodeAlbum = new NodeAlbum(nodeSearch->search->getAlbum(position));
+  return scope.Close(nodeAlbum->getV8Object());
 }
 
-Handle<Value> NodeSearch::getArtists(Local<String> property, const AccessorInfo& info) {
+Handle<Value> NodeSearch::getArtist(const Arguments& args) {
   HandleScope scope;
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-  std::vector<std::shared_ptr<Artist>> artists = nodeSearch->search->getArtists();
-  Local<Array> outArray = Array::New(artists.size());
-  for(int i = 0; i < (int)artists.size(); i++) {
-    NodeArtist* nodeArtist = new NodeArtist(artists[i]);
-    outArray->Set(Number::New(i), nodeArtist->getV8Object());
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  if(args.Length() < 1 || !args[0]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("getArtist needs a number as its first argument."));
   }
-  return scope.Close(outArray);
+
+  int position = args[0]->ToNumber()->IntegerValue();
+  if(position >= nodeSearch->search->numArtists() || position < 0) {
+    return scope.Close(V8_EXCEPTION("Artist index out of bounds"));
+  }
+
+  NodeArtist* nodeArtist = new NodeArtist(nodeSearch->search->getArtist(position));
+  return scope.Close(nodeArtist->getV8Object());
 }
 
-Handle<Value> NodeSearch::getPlaylists(Local<String> property, const AccessorInfo& info) {
+Handle<Value> NodeSearch::getPlaylist(const Arguments& args) {
   HandleScope scope;
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
-  std::vector<std::shared_ptr<Playlist>> playlists = nodeSearch->search->getPlaylists();
-  Local<Array> outArray = Array::New(playlists.size());
-  for(int i = 0; i < (int)playlists.size(); i++) {
-    NodePlaylist* nodePlaylist = new NodePlaylist(playlists[i]);
-    outArray->Set(Number::New(i), nodePlaylist->getV8Object());
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
+  if(args.Length() < 1 || !args[0]->IsNumber()) {
+    return scope.Close(V8_EXCEPTION("getPlaylist needs a number as its first argument."));
   }
-  return scope.Close(outArray);
+
+  int position = args[0]->ToNumber()->IntegerValue();
+  if(position >= nodeSearch->search->numPlaylists() || position < 0) {
+    return scope.Close(V8_EXCEPTION("Playlist index out of bounds"));
+  }
+
+  NodePlaylist* nodePlaylist = new NodePlaylist(nodeSearch->search->getPlaylist(position));
+  return scope.Close(nodePlaylist->getV8Object());
 }
 
 Handle<Value> NodeSearch::getTotalTracks(Local<String> property, const AccessorInfo& info) {
@@ -249,10 +269,22 @@ Handle<Value> NodeSearch::getTotalTracks(Local<String> property, const AccessorI
   return scope.Close(Integer::New(nodeSearch->search->totalTracks()));
 }
 
+Handle<Value> NodeSearch::getNumTracks(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->search->numTracks()));
+}
+
 Handle<Value> NodeSearch::getTotalAlbums(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
   return scope.Close(Integer::New(nodeSearch->search->totalAlbums()));
+}
+
+Handle<Value> NodeSearch::getNumAlbums(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->search->numAlbums()));
 }
 
 Handle<Value> NodeSearch::getTotalArtists(Local<String> property, const AccessorInfo& info) {
@@ -261,10 +293,22 @@ Handle<Value> NodeSearch::getTotalArtists(Local<String> property, const Accessor
   return scope.Close(Integer::New(nodeSearch->search->totalArtists()));
 }
 
+Handle<Value> NodeSearch::getNumArtists(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->search->numArtists()));
+}
+
 Handle<Value> NodeSearch::getTotalPlaylists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
   return scope.Close(Integer::New(nodeSearch->search->totalPlaylists()));
+}
+
+Handle<Value> NodeSearch::getNumPlaylists(Local<String> property, const AccessorInfo& info) {
+  HandleScope scope;
+  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.Holder());
+  return scope.Close(Integer::New(nodeSearch->search->numPlaylists()));
 }
 
 void NodeSearch::init() {

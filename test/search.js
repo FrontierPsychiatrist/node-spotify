@@ -16,10 +16,9 @@ function test() {
 
 function searchComplete(err, search) {
   console.log('Search executed');
-  assert(search.tracks.length != 0);
-  assert(search.albums.length != 0);
-  assert(search.artists.length != 0);
-  assert(search.playlists.length != 0);
+  assert(search.numTracks != 0);
+  assert(search.numAlbums != 0);
+  assert(search.numArtists != 0);
   assert(search.totalTracks != 0);
   assert(search.totalArtists != 0);
   assert(search.totalAlbums != 0);
