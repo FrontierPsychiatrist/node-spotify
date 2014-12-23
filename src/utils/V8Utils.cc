@@ -10,3 +10,11 @@ Handle<Function> V8Utils::getFunctionFromObject(Handle<Object> callbacks, Handle
   }
   return callback;
 }
+
+void V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(v8::Handle<v8::Function> function) {
+  if(!function.IsEmpty()) {
+    unsigned int argc = 0;
+    v8::Handle<v8::Value> argv[0];
+    function->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+  }
+}

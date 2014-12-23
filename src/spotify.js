@@ -23,6 +23,7 @@ var beefedupSpotify = function(options) {
   addMethodsToPrototypes(spotify);
   spotify.version = '0.6.0';
 
+  var _on = spotify.on;
   spotify.on = function(callbacks) {
     if(callbacks.metadataUpdated) {
       var userCallback = callbacks.metadataUpdated;
@@ -33,7 +34,7 @@ var beefedupSpotify = function(options) {
     } else {
       callbacks.metadataUpdated = metadataUpdater.metadataUpdated;
     }
-    spotify._on(callbacks);
+    _on.call(spotify, callbacks);
   }
 
   spotify.waitForLoaded = metadataUpdater.waitForLoaded;

@@ -38,119 +38,171 @@
 
 #define NUM_BUFFERS 3
 
-static void error_exit(const char *msg)
-{
-    puts(msg);
-    exit(1);
+static uv_thread_t audioThread;
+static int stopThread;
+
+static void error_exit(const char *msg) {
+  puts(msg);
+  exit(1);
 }
 
-static int queue_buffer(ALuint source, audio_fifo_t *af, ALuint buffer)
-{
-    audio_fifo_data_t *afd = audio_get(af);
-    alBufferData(buffer,
-		 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16,
-		 afd->samples,
-		 afd->nsamples * afd->channels * sizeof(short),
-		 afd->rate);
-    alSourceQueueBuffers(source, 1, &buffer);
-	free(afd);
-	return 1;
+/**
+Gets the audio data from the queue. If there is none, waits for the condition variable to trigger.
+**/
+static audio_fifo_data_t* audio_get_native(audio_fifo_t* audioFifo) {
+  audio_fifo_data_t* audioData;
+  uv_mutex_lock(&audioFifo->audioQueueMutex);
+
+  while( !stopThread && !(audioData = TAILQ_FIRST(&audioFifo->queue)) ) {
+    uv_cond_wait(&audioFifo->audioCondition, &audioFifo->audioQueueMutex);
+  }
+
+  if(stopThread) {
+    uv_mutex_unlock(&audioFifo->audioQueueMutex);
+    return NULL;
+  }
+
+  TAILQ_REMOVE(&audioFifo->queue, audioData, link);
+  audioFifo->samplesInQueue -= audioData->numberOfSamples;
+
+  uv_mutex_unlock(&audioFifo->audioQueueMutex);
+  return audioData;
 }
 
-static void* audio_start(void *aux)
-{
-	audio_fifo_t *af = aux;
-    audio_fifo_data_t *afd;
-	unsigned int frame = 0;
-	ALCdevice *device = NULL;
-	ALCcontext *context = NULL;
-	ALuint buffers[NUM_BUFFERS];
-	ALuint source;
-	ALint processed, status;
-	ALenum error;
-	ALint rate;
-	ALint channels;
-	device = alcOpenDevice(NULL); /* Use the default device */
-	if (!device) error_exit("failed to open device");
-	context = alcCreateContext(device, NULL);
-	alcMakeContextCurrent(context);
-	alListenerf(AL_GAIN, 1.0f);
-	alDistanceModel(AL_NONE);
-	alGenBuffers((ALsizei)NUM_BUFFERS, buffers);
-	alGenSources(1, &source);
-
-	/* First prebuffer some audio */
-	queue_buffer(source, af, buffers[0]);
-	queue_buffer(source, af, buffers[1]);
-	queue_buffer(source, af, buffers[2]);
-	for (;;) {
-		alSourcePlay(source);
-		for (;;) {
-			/* Wait for some audio to play */
-			do {
-				alGetSourcei(source, AL_BUFFERS_PROCESSED, &processed);
-				usleep(100);
-			} while (!processed);
-
-			/* Remove old audio from the queue.. */
-			alSourceUnqueueBuffers(source, 1, &buffers[frame % NUM_BUFFERS]);
-
-			/* and queue some more audio */
-			afd = audio_get(af);
-			alGetSourcei(source, AL_SOURCE_STATE, &status);
-			if(status != AL_PLAYING) {
-				/* player has been paused, restart */
-				break;
-			}
-
-			alGetBufferi(buffers[frame % NUM_BUFFERS], AL_FREQUENCY, &rate);
-			alGetBufferi(buffers[frame % NUM_BUFFERS], AL_CHANNELS, &channels);
-			if (afd->rate != rate || afd->channels != channels) {
-				printf("rate or channel count changed, resetting\n");
-                                free(afd);
-				break;
-			}
-			alBufferData(buffers[frame % NUM_BUFFERS],
-						 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16,
-						 afd->samples,
-						 afd->nsamples * afd->channels * sizeof(short),
-						 afd->rate);
-			free(afd);
-			alSourceQueueBuffers(source, 1, &buffers[frame % NUM_BUFFERS]);
-
-			if ((error = alcGetError(device)) != AL_NO_ERROR) {
-				printf("openal al error: %d\n", error);
-				exit(1);
-			}
-			frame++;
-		}
-		/* Format or rate changed, so we need to reset all buffers */
-		alSourcei(source, AL_BUFFER, 0);
-		alSourceStop(source);
-
-		/* Make sure we don't lose the audio packet that caused the change */
-		alBufferData(buffers[0],
-					 afd->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16,
-					 afd->samples,
-					 afd->nsamples * afd->channels * sizeof(short),
-					 afd->rate);
-
-		alSourceQueueBuffers(source, 1, &buffers[0]);
-		queue_buffer(source, af, buffers[1]);
-		queue_buffer(source, af, buffers[2]);
-		frame = 0;
-	}
+static int queue_buffer(ALuint source, audio_fifo_t *audioFifo, ALuint buffer) {
+  audio_fifo_data_t *audioData = audio_get_native(audioFifo);
+  if(audioData == NULL) {
+    return 0;
+  }
+  alBufferData(buffer,
+    audioData->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16,
+    audioData->samples,
+    audioData->numberOfSamples * audioData->channels * sizeof(short),
+    audioData->sampleRate);
+  alSourceQueueBuffers(source, 1, &buffer);
+  free(audioData);
+  return 1;
 }
 
-void audio_init(audio_fifo_t *af)
-{
-    pthread_t tid;
+static void audio_start(void *aux) {
+  audio_fifo_t *audioFifo = aux;
+  audio_fifo_data_t *audioData;
+  unsigned int frame = 0;
+  ALCdevice *device = NULL;
+  ALCcontext *context = NULL;
+  ALuint buffers[NUM_BUFFERS];
+  ALuint source;
+  ALint processed, status;
+  ALenum error;
+  ALint rate;
+  ALint channels;
+  device = alcOpenDevice(NULL); /* Use the default device */
+  if (!device) {
+    error_exit("failed to open device");
+  }
+  context = alcCreateContext(device, NULL);
+  alcMakeContextCurrent(context);
+  alListenerf(AL_GAIN, 1.0f);
+  alDistanceModel(AL_NONE);
+  alGenBuffers((ALsizei)NUM_BUFFERS, buffers);
+  alGenSources(1, &source);
 
-    TAILQ_INIT(&af->q);
-    af->qlen = 0;
+  /* First prebuffer some audio */
+  int prebuffer = 1;
+  prebuffer = queue_buffer(source, audioFifo, buffers[0]);
+  if(prebuffer == 1) {
+    prebuffer = queue_buffer(source, audioFifo, buffers[1]);
+  }
+  if(prebuffer == 1) {
+    prebuffer = queue_buffer(source, audioFifo, buffers[2]);
+  }
+  for (;!stopThread;) {
+    alSourcePlay(source);
+    for (;!stopThread;) {
+      /* Wait for some audio to play */
+      do {
+        alGetSourcei(source, AL_BUFFERS_PROCESSED, &processed);
+        usleep(100);
+      } while (!processed);
 
-    pthread_mutex_init(&af->mutex, NULL);
-    pthread_cond_init(&af->cond, NULL);
+      /* Remove old audio from the queue.. */
+      alSourceUnqueueBuffers(source, 1, &buffers[frame % NUM_BUFFERS]);
 
-    pthread_create(&tid, NULL, audio_start, af);
+      /* and queue some more audio */
+      audioData = audio_get_native(audioFifo);
+
+      /* audio_get_native will return NULL when the thread should be stopped */
+      if(audioData == NULL) {
+        break;
+      }
+
+      alGetSourcei(source, AL_SOURCE_STATE, &status);
+      if(status != AL_PLAYING) {
+        /* player has been paused, restart */
+        break;
+      }
+
+      alGetBufferi(buffers[frame % NUM_BUFFERS], AL_FREQUENCY, &rate);
+      alGetBufferi(buffers[frame % NUM_BUFFERS], AL_CHANNELS, &channels);
+      if (audioData->sampleRate != rate || audioData->channels != channels) {
+        printf("rate or channel count changed, resetting\n");
+        free(audioData);
+        break;
+      }
+      alBufferData(buffers[frame % NUM_BUFFERS],
+             audioData->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16,
+             audioData->samples,
+             audioData->numberOfSamples * audioData->channels * sizeof(short),
+             audioData->sampleRate);
+      free(audioData);
+      alSourceQueueBuffers(source, 1, &buffers[frame % NUM_BUFFERS]);
+
+      if ((error = alcGetError(device)) != AL_NO_ERROR) {
+        printf("openal al error: %d\n", error);
+        exit(1);
+      }
+      frame++;
+    }
+    if(!stopThread) {
+      /* Format or rate changed, so we need to reset all buffers */
+      alSourcei(source, AL_BUFFER, 0);
+      alSourceStop(source);
+
+      /* Make sure we don't lose the audio packet that caused the change */
+      alBufferData(buffers[0],
+             audioData->channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16,
+             audioData->samples,
+             audioData->numberOfSamples * audioData->channels * sizeof(short),
+             audioData->sampleRate);
+
+      alSourceQueueBuffers(source, 1, &buffers[0]);
+      queue_buffer(source, audioFifo, buffers[1]);
+      queue_buffer(source, audioFifo, buffers[2]);
+      frame = 0;
+    }
+  }
+
+  alSourceUnqueueBuffers(source, NUM_BUFFERS, buffers);
+  alDeleteSources(1, &source);
+  alDeleteBuffers(NUM_BUFFERS, buffers);
+  alcDestroyContext(context);
+  alcCloseDevice(device);
+  //TODO: find out what of this is necessary.
+}
+
+void audio_init_native(audio_fifo_t* audioFifo) {
+  stopThread = 0;
+  uv_cond_init(&audioFifo->audioCondition);
+  uv_thread_create(&audioThread, audio_start, audioFifo);
+}
+
+void audio_stop_native(audio_fifo_t* audioFifo) {
+	stopThread = 1;
+  //Notify audio_get_native to return in case it is waiting for data
+  uv_mutex_lock(&audioFifo->audioQueueMutex);
+  uv_cond_signal(&audioFifo->audioCondition);
+  uv_mutex_unlock(&audioFifo->audioQueueMutex);
+  audio_fifo_flush(audioFifo);
+  uv_thread_join(&audioThread);
+  uv_cond_destroy(&audioFifo->audioCondition);
 }

@@ -1,4 +1,7 @@
 #include "NodeSpotify.h"
+#include "../../audio/AudioHandler.h"
+#include "../../audio/NativeAudioHandler.h"
+#include "../../audio/NodeAudioHandler.h"
 #include "../../Application.h"
 #include "../../exceptions.h"
 #include "../../common_macros.h"
@@ -23,7 +26,6 @@ NodeSpotify::NodeSpotify(Handle<Object> options) {
    * as they will be used as soon as the sp_session is created, which happens in the
    * NodeSpotify ctor.
    */
-  //initiate uv_timer and uv_async
   SessionCallbacks::init();
 
   SpotifyOptions _options;
@@ -179,6 +181,30 @@ Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorIn
   return scope.Close(constants);
 }
 
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+Handle<Value> NodeSpotify::useNativeAudio(const Arguments& args) {
+  HandleScope scope;
+  //Since the old audio handler has to be deleted first, do an empty reset.
+  application->audioHandler.reset();
+  application->audioHandler = std::unique_ptr<AudioHandler>(new NativeAudioHandler());
+  return scope.Close(Undefined());
+}
+#endif
+
+Handle<Value> NodeSpotify::useNodejsAudio(const Arguments &args) {
+  HandleScope scope;
+  if(args.Length() < 1) {
+    return scope.Close(V8_EXCEPTION("useNodjsAudio needs a function as its first argument."));
+  }
+  Handle<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
+  //Since the old audio handler has to be deleted first, do an empty reset.
+  application->audioHandler.reset();
+  application->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(callback));
+
+  Handle<Function> needMoreDataSetter = FunctionTemplate::New(NodeAudioHandler::setNeedMoreData)->GetFunction();
+  return scope.Close(needMoreDataSetter);
+}
+
 Handle<Value> NodeSpotify::on(const Arguments& args) {
   HandleScope scope;
   if(args.Length() < 1 || !args[0]->IsObject()) {
@@ -200,8 +226,11 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "login", login);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "logout", logout);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
-  //Because of the special metadataUpdated callback with convenience functions we provide _on here, will provide "on" in spotify.js
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "_on", on);
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "useNativeAudio", useNativeAudio);
+#endif
+  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "useNodejsAudio", useNodejsAudio);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("sessionUser"), getSessionUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPlaylistContainer);

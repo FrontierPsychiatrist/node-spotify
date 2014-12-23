@@ -27,31 +27,41 @@
 #ifndef _JUKEBOX_AUDIO_H_
 #define _JUKEBOX_AUDIO_H_
 
-#include <pthread.h>
+#include <uv.h>
 #include <stdint.h>
 #include "queue.h"
 
-
-/* --- Types --- */
 typedef struct audio_fifo_data {
-	TAILQ_ENTRY(audio_fifo_data) link;
-	int channels;
-	int rate;
-	int nsamples;
-	int16_t samples[0];
+  TAILQ_ENTRY(audio_fifo_data) link;
+  int channels;
+  int sampleRate;
+  int numberOfSamples;
+  int16_t samples[0];
 } audio_fifo_data_t;
 
 typedef struct audio_fifo {
-	TAILQ_HEAD(, audio_fifo_data) q;
-	int qlen;
-	pthread_mutex_t mutex;
-	pthread_cond_t cond;
+  TAILQ_HEAD(, audio_fifo_data) queue;
+  int samplesInQueue;
+  uv_mutex_t audioQueueMutex;
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+  uv_cond_t audioCondition;
+#endif
 } audio_fifo_t;
 
+extern void audio_fifo_flush(audio_fifo_t *audioFifo);
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+/**
+Initializes the native audio system and the condition variable.
+**/
+extern void audio_init_native(audio_fifo_t *audioFifo);
+extern void audio_stop_native(audio_fifo_t* audioFifo);
+#endif
 
-/* --- Functions --- */
-extern void audio_init(audio_fifo_t *af);
-extern void audio_fifo_flush(audio_fifo_t *af);
-audio_fifo_data_t* audio_get(audio_fifo_t *af);
+/**
+Gets audio data from the queue
+**/
+audio_fifo_data_t* audio_get(audio_fifo_t* audioFifo);
+void audio_init(audio_fifo_t* audioFifo);
+void audio_stop(audio_fifo_t* audioFifo);
 
-#endif /* _JUKEBOX_AUDIO_H_ */
+#endif

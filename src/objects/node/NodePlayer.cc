@@ -5,9 +5,7 @@
 #include "../../common_macros.h"
 #include "../../utils/V8Utils.h"
 
-NodePlayer::NodePlayer() {
-  player = player->instance;
-}
+NodePlayer::NodePlayer(std::shared_ptr<Player> _player) : player(_player) {}
 
 NodePlayer::~NodePlayer() {
 
@@ -50,6 +48,12 @@ Handle<Value> NodePlayer::play(const Arguments& args) {
   } catch (const TrackNotPlayableException& e) {
     return scope.Close(V8_EXCEPTION("Track not playable"));
   }
+#ifndef NODE_SPOTIFY_NATIVE_SOUND
+  catch (const NoAudioHandlerException& e) {
+    return scope.Close(V8_EXCEPTION("No audio handler registered. Use spotify.useNodejsAudio()."));
+  }
+#endif
+
   return scope.Close(Undefined());
 }
 
@@ -99,7 +103,7 @@ void NodePlayer::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "seek", seek);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("currentSecond"), &getCurrentSecond, emptySetter);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("currentSecond"), &getCurrentSecond);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   scope.Close(Undefined());
 }

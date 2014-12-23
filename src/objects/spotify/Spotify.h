@@ -9,9 +9,11 @@
 #include <memory>
 
 class Spotify {
+friend class NodeSpotify;
+
 public:
   Spotify(SpotifyOptions options);
-  ~Spotify() {};
+  ~Spotify() {}
   void login(std::string user, std::string password, bool remeberedUser, bool withRemembered);
   void logout();
   std::string rememberedUser();

@@ -28,33 +28,42 @@
 #include "audio.h"
 #include <stdlib.h>
 
-audio_fifo_data_t* audio_get(audio_fifo_t *af)
-{
-    audio_fifo_data_t *afd;
-    pthread_mutex_lock(&af->mutex);
+audio_fifo_data_t* audio_get(audio_fifo_t* audioFifo) {
+  uv_mutex_lock(&audioFifo->audioQueueMutex);
 
-    while (!(afd = TAILQ_FIRST(&af->q)))
-	pthread_cond_wait(&af->cond, &af->mutex);
+  audio_fifo_data_t* audioData = TAILQ_FIRST(&audioFifo->queue);
+  if(audioData) {
+    TAILQ_REMOVE(&audioFifo->queue, audioData, link);
+    audioFifo->samplesInQueue -= audioData->numberOfSamples;
+  }
 
-    TAILQ_REMOVE(&af->q, afd, link);
-    af->qlen -= afd->nsamples;
-
-    pthread_mutex_unlock(&af->mutex);
-    return afd;
+  uv_mutex_unlock(&audioFifo->audioQueueMutex);
+  return audioData;
 }
 
-void audio_fifo_flush(audio_fifo_t *af)
-{
-    audio_fifo_data_t *afd;
+void audio_fifo_flush(audio_fifo_t* audioFifo) {
+  audio_fifo_data_t *audioData;
+  uv_mutex_lock(&audioFifo->audioQueueMutex);
 
+  while((audioData = TAILQ_FIRST(&audioFifo->queue))) {
+	  TAILQ_REMOVE(&audioFifo->queue, audioData, link);
+	  free(audioData);
+  }
 
-    pthread_mutex_lock(&af->mutex);
+  audioFifo->samplesInQueue = 0;
+  uv_mutex_unlock(&audioFifo->audioQueueMutex);
+}
 
-    while((afd = TAILQ_FIRST(&af->q))) {
-	TAILQ_REMOVE(&af->q, afd, link);
-	free(afd);
-    }
+/**
+Initialize the audio queue and the locking mutex
+**/
+void audio_init(audio_fifo_t* audioFifo) {
+  TAILQ_INIT(&audioFifo->queue);
+  audioFifo->samplesInQueue = 0;
+  uv_mutex_init(&audioFifo->audioQueueMutex);
+}
 
-    af->qlen = 0;
-    pthread_mutex_unlock(&af->mutex);
+void audio_stop(audio_fifo_t *audioFifo) {
+  audio_fifo_flush(audioFifo);
+  uv_mutex_destroy(&audioFifo->audioQueueMutex);
 }

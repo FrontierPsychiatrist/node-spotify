@@ -3,42 +3,34 @@
 #include "../common_macros.h"
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/spotify/Player.h"
+#include "../utils/V8Utils.h"
 
-extern "C" {
-  #include "../audio/audio.h"
-}
-
-#include <stdlib.h>
 #include <string.h>
 
 extern Application* application;
+static void handleNotify(uv_async_t* handle, int status);
 
 static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks;
+//Timer to call sp_session_process_events after a timeout
+static std::unique_ptr<uv_timer_t> processEventsTimer;
+static std::unique_ptr<uv_async_t> notifyHandle;
 
-std::unique_ptr<uv_timer_t> SessionCallbacks::timer;
-std::unique_ptr<uv_async_t> SessionCallbacks::notifyHandle;
 v8::Handle<v8::Function> SessionCallbacks::loginCallback;
 v8::Handle<v8::Function> SessionCallbacks::logoutCallback;
 v8::Handle<v8::Function> SessionCallbacks::metadataUpdatedCallback;
 v8::Handle<v8::Function> SessionCallbacks::endOfTrackCallback;
 
-namespace spotify {
-//TODO
-int framesReceived = 0;
-int currentSecond = 0;
-}
-
 void SessionCallbacks::init() {
-  timer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
+  processEventsTimer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
   notifyHandle = std::unique_ptr<uv_async_t>(new uv_async_t());
   uv_async_init(uv_default_loop(), notifyHandle.get(), handleNotify);
-  uv_timer_init(uv_default_loop(), timer.get());
+  uv_timer_init(uv_default_loop(), processEventsTimer.get());
 }
 
 /**
- * If the timer has run out this method will be called.
+ * If the timer for sp_session_process_events has run out this method will be called.
  **/
-void SessionCallbacks::processEvents(uv_timer_t* timer, int status) {
+static void processEventsTimeout(uv_timer_t* timer, int status) {
   handleNotify(notifyHandle.get(), 0);
 }
 
@@ -54,30 +46,22 @@ void SessionCallbacks::notifyMainThread(sp_session* session) {
  * async callback handle function for process events.
  * This function will always be called in the thread in which the sp_session was created.
  **/
-void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
-  uv_timer_stop(timer.get()); //a new timeout will be set at the end
+static void handleNotify(uv_async_t* handle, int status) {
+  uv_timer_stop(processEventsTimer.get()); //a new timeout will be set at the end
   int nextTimeout = 0;
   while(nextTimeout == 0) {
     sp_session_process_events(application->session, &nextTimeout);
   }
-  uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
-}
-
-static void callV8FunctionWithNoArgumentsIfHandleNotEmpty(v8::Handle<v8::Function> function) {
-  if(!function.IsEmpty()) {
-    unsigned int argc = 0;
-    v8::Handle<v8::Value> argv[0];
-    function->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-  }
+  uv_timer_start(processEventsTimer.get(), &processEventsTimeout, nextTimeout, 0);
 }
 
 void SessionCallbacks::metadata_updated(sp_session* session) {
   //If sp_session_player_load did not load the track it must be retried to play. Bug #26.
-  if(Player::instance->isLoading) {
-    Player::instance->retryPlay();
+  if(application->player->isLoading) {
+    application->player->retryPlay();
   }
   
-  callV8FunctionWithNoArgumentsIfHandleNotEmpty(metadataUpdatedCallback); 
+  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(metadataUpdatedCallback);
 }
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
@@ -99,67 +83,12 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
  * This is the "ready" hook for users. Playlists should be available at this point.
  **/
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata) {
-  callV8FunctionWithNoArgumentsIfHandleNotEmpty(loginCallback);
+  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(loginCallback);
   //Issue 35, rootPlaylistContainerLoaded can be called multiple times throughout the lifetime of a session.
   //loginCallback must only be called once.
   sp_playlistcontainer_remove_callbacks(sp, &rootPlaylistContainerCallbacks, nullptr);    
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
-  callV8FunctionWithNoArgumentsIfHandleNotEmpty(logoutCallback);
-}
-
-void SessionCallbacks::end_of_track(sp_session* session) {
-  sp_session_player_unload(application->session);
-  spotify::framesReceived = 0;
-  spotify::currentSecond = 0;
-  
-  callV8FunctionWithNoArgumentsIfHandleNotEmpty(endOfTrackCallback);
-}
-
-void SessionCallbacks::sendTimer(int sample_rate) {
-  if( spotify::framesReceived / sample_rate > 0) {
-    spotify::currentSecond++;
-    spotify::framesReceived = spotify::framesReceived - sample_rate;
-    Player::instance->setCurrentSecond(spotify::currentSecond);
-  }
-}
-
-int SessionCallbacks::music_delivery(sp_session *sess, const sp_audioformat *format,
-                          const void *frames, int num_frames)
-{
-  audio_fifo_t *af = &application->audio_fifo;
-  audio_fifo_data_t *afd;
-  size_t s;
-
-  if (num_frames == 0)
-    return 0; // Audio discontinuity, do nothing
-
-  pthread_mutex_lock(&af->mutex);
-
-  // Buffer one second of audio
-  if (af->qlen > format->sample_rate) {
-    pthread_mutex_unlock(&af->mutex);
-    return 0;
-  }
-
-  s = num_frames * sizeof(int16_t) * format->channels;
-
-  afd = (audio_fifo_data_t*)malloc(sizeof(*afd) + s);
-  memcpy(afd->samples, frames, s);
-
-  afd->nsamples = num_frames;
-
-  afd->rate = format->sample_rate;
-  afd->channels = format->channels;
-
-  TAILQ_INSERT_TAIL(&af->q, afd, link);
-  af->qlen += num_frames;
-
-  pthread_cond_signal(&af->cond);
-  pthread_mutex_unlock(&af->mutex);
-
-  spotify::framesReceived += num_frames;
-  sendTimer(format->sample_rate);
-  return num_frames;
+  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(logoutCallback);
 }
