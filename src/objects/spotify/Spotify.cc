@@ -3,10 +3,6 @@
 #include "../../callbacks/SessionCallbacks.h"
 #include "../../exceptions.h"
 
-#ifdef NODE_SPOTIFY_NATIVE_SOUND
-#include "../../audio/NativeAudioHandler.h"
-#endif
-
 #include <fstream>
 
 extern Application* application;
@@ -14,9 +10,6 @@ static sp_session_config sessionConfig;
 static sp_session_callbacks sessionCallbacks;
 
 Spotify::Spotify(SpotifyOptions options) {
-#ifdef NODE_SPOTIFY_NATIVE_SOUND
-  audioHandler = std::unique_ptr<AudioHandler>(new NativeAudioHandler());
-#endif
   session = createSession(options);
   application->session = session;
 }

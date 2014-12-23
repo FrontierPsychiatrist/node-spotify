@@ -16,7 +16,6 @@ using namespace v8;
 
 extern Application* application;
 
-
 namespace spotify {
 int framesReceived = 0;
 int currentSecond = 0;
@@ -48,7 +47,7 @@ void SessionCallbacks::sendTimer(int sample_rate) {
   if( spotify::framesReceived / sample_rate > 0) {
     spotify::currentSecond++;
     spotify::framesReceived = spotify::framesReceived - sample_rate;
-    Player::instance->setCurrentSecond(spotify::currentSecond);
+    application->player->setCurrentSecond(spotify::currentSecond);
   }
 }
 

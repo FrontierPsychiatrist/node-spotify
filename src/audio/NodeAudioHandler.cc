@@ -10,58 +10,76 @@ using namespace v8;
 extern Application* application;
 
 NodeAudioHandler::NodeAudioHandler(Handle<Function> _musicDeliveryCallback) :
-  AudioHandler(), musicDeliveryCallback(_musicDeliveryCallback), needMoreData(true) {
-  uv_async_init(uv_default_loop(), &musicCallbackHandle, NodeAudioHandler::handleMusicInNodeThread);
-  musicCallbackHandle.data = this;
+  AudioHandler(), musicDeliveryCallback(_musicDeliveryCallback), needMoreData(true), stopped(false), musicTimerRepeat(20) {
+  uv_timer_init(uv_default_loop(), &musicTimer);
+  musicTimer.data = this;
+  uv_timer_start(&musicTimer, &musicTimeout, 0, musicTimerRepeat);
 }
 
 NodeAudioHandler::~NodeAudioHandler() {
-
+  uv_timer_stop(&musicTimer);
 }
 
-//helper function to free audioData after being copied into the node.js buffer
+// TODO end_of_track, playtoken lost, logout
+// TODO on seek flush?
+void NodeAudioHandler::musicTimeout(uv_timer_t* timer, int status) {
+  NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(timer->data);
+  audio_fifo_t *audioFifo = &audioHandler->audioFifo;
+  audio_fifo_data_t* audioData;
+
+  if( !audioHandler->stopped && audioHandler->needMoreData && (audioData = audio_get(audioFifo)) ) {
+    // The audio data will be freed in a callback that is set up in this method.
+    audioHandler->needMoreData = audioHandler->callMusicDeliveryCallback(audioData);
+  }
+}
+
+/**
+ * @brief free_data Free the audio data after buffer initialization.
+ */
 static void free_data(char* data, void* hint) {
-  free(hint);
+  audio_fifo_data_t* audioData = static_cast<audio_fifo_data_t*>(hint);
+  assert((char*)audioData->samples == data);
+  free(audioData);
 }
 
-void NodeAudioHandler::handleMusicInNodeThread(uv_async_t* handle, int status) {
-  //for perfomance reasons make the key symbols static.
+/**
+ * @brief NodeAudioHandler::callMusicDeliveryCallback
+ * Call the user provided JavaScript callback with the audio data.
+ * @param audioData
+ * @return true if the callback needs more data.
+ */
+bool NodeAudioHandler::callMusicDeliveryCallback(audio_fifo_data_t* audioData) {
   static Local<String> numberOfSamplesKey = String::NewSymbol("numberOfSamples");
   static Local<String> sampleRateKey = String::NewSymbol("sampleRate");
   static Local<String> channelsKey = String::NewSymbol("channels");
 
-  NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(handle->data);
-  audio_fifo_t *audioFifo = &audioHandler->audioFifo;
-  audio_fifo_data_t* audioData;
+  size_t size = audioData->numberOfSamples * sizeof(int16_t) * audioData->channels;
+  node::Buffer *slowBuffer = node::Buffer::New((char*)audioData->samples, size, free_data, audioData);
 
-  while( audioHandler->needMoreData && (audioData = audio_get(audioFifo)) ) {
-    size_t size = audioData->numberOfSamples * sizeof(int16_t) * audioData->channels;
-    node::Buffer *slowBuffer = node::Buffer::New((char*)audioData->samples, size, free_data, audioData);
+  Local<Object> globalObj = Context::GetCurrent()->Global();
+  Local<Function> ctor = Local<Function>::Cast(globalObj->Get(String::New("Buffer")));
+  Handle<Value> constructorArgs[3] = { slowBuffer->handle_, Integer::New(size), Integer::New(0)};
+  Handle<Object> actualBuffer = ctor->NewInstance(3, constructorArgs);
 
-    Local<Object> globalObj = Context::GetCurrent()->Global();
-    Local<Function> ctor = Local<Function>::Cast(globalObj->Get(String::New("Buffer")));
-    Handle<Value> constructorArgs[3] = { slowBuffer->handle_, Integer::New(size), Integer::New(0)};
-    Handle<Object> actualBuffer = ctor->NewInstance(3, constructorArgs);
+  actualBuffer->Set(numberOfSamplesKey, Integer::New(audioData->numberOfSamples));
+  actualBuffer->Set(sampleRateKey, Integer::New(audioData->sampleRate));
+  actualBuffer->Set(channelsKey, Integer::New(audioData->channels));
 
-    actualBuffer->Set(numberOfSamplesKey, Integer::New(audioData->numberOfSamples));
-    actualBuffer->Set(sampleRateKey, Integer::New(audioData->sampleRate));
-    actualBuffer->Set(channelsKey, Integer::New(audioData->channels));
-
-    int argc = 2;
-    Handle<Value> argv[] = { Undefined(), actualBuffer };
-    Handle<Value> bufferFilled = audioHandler->musicDeliveryCallback->Call(globalObj, argc, argv);
-    audioHandler->needMoreData = bufferFilled->ToBoolean()->BooleanValue();
-  }
+  int argc = 2;
+  Handle<Value> argv[] = { Undefined(), actualBuffer };
+  Handle<Value> bufferFilled = musicDeliveryCallback->Call(globalObj, argc, argv);
+  return bufferFilled->ToBoolean()->BooleanValue();
 }
 
-void NodeAudioHandler::afterMusicDelivery(const sp_audioformat *format) {
-  if(audioFifo.samplesInQueue > format->sample_rate) {
-    uv_async_send(&musicCallbackHandle);
-  }
-}
+void NodeAudioHandler::afterMusicDelivery(const sp_audioformat *format) { }
 
 bool NodeAudioHandler::dataNeeded() {
   return needMoreData;
+}
+
+void NodeAudioHandler::setStopped(bool _stopped) {
+  stopped = _stopped;
+  AudioHandler::setStopped(_stopped);
 }
 
 Handle<Value> NodeAudioHandler::setNeedMoreData(const Arguments &args) {
@@ -69,8 +87,7 @@ Handle<Value> NodeAudioHandler::setNeedMoreData(const Arguments &args) {
   if(args.Length() < 1 || !args[0]->IsBoolean()) {
     return scope.Close(V8_EXCEPTION("setNeedMoreData needs a boolean as its first argument."));
   }
-  Spotify* spotify = static_cast<Spotify*>(sp_session_userdata(application->session));
-  NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(spotify->audioHandler.get());
+  NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(application->audioHandler.get());
   bool needMoreData = args[0]->ToBoolean()->BooleanValue();
   audioHandler->needMoreData = needMoreData;
   return scope.Close(Undefined());

@@ -57,8 +57,8 @@ static void handleNotify(uv_async_t* handle, int status) {
 
 void SessionCallbacks::metadata_updated(sp_session* session) {
   //If sp_session_player_load did not load the track it must be retried to play. Bug #26.
-  if(Player::instance->isLoading) {
-    Player::instance->retryPlay();
+  if(application->player->isLoading) {
+    application->player->retryPlay();
   }
   
   V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(metadataUpdatedCallback);

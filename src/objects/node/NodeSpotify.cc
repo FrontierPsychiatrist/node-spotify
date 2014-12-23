@@ -176,24 +176,22 @@ Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorIn
 #ifdef NODE_SPOTIFY_NATIVE_SOUND
 Handle<Value> NodeSpotify::useNativeAudio(const Arguments& args) {
   HandleScope scope;
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
   //Since the old audio handler has to be deleted first, do an empty reset.
-  nodeSpotify->spotify->audioHandler.reset();
-  nodeSpotify->spotify->audioHandler = std::unique_ptr<AudioHandler>(new NativeAudioHandler());
+  application->audioHandler.reset();
+  application->audioHandler = std::unique_ptr<AudioHandler>(new NativeAudioHandler());
   return scope.Close(Undefined());
 }
 #endif
 
 Handle<Value> NodeSpotify::useNodejsAudio(const Arguments &args) {
   HandleScope scope;
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
   if(args.Length() < 1) {
     return scope.Close(V8_EXCEPTION("useNodjsAudio needs a function as its first argument."));
   }
   Handle<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
   //Since the old audio handler has to be deleted first, do an empty reset.
-  nodeSpotify->spotify->audioHandler.reset();
-  nodeSpotify->spotify->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(callback));
+  application->audioHandler.reset();
+  application->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(callback));
 
   Handle<Function> needMoreDataSetter = FunctionTemplate::New(NodeAudioHandler::setNeedMoreData)->GetFunction();
   return scope.Close(needMoreDataSetter);

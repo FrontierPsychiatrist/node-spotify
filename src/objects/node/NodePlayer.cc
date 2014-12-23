@@ -5,9 +5,7 @@
 #include "../../common_macros.h"
 #include "../../utils/V8Utils.h"
 
-NodePlayer::NodePlayer() {
-  player = player->instance;
-}
+NodePlayer::NodePlayer(std::shared_ptr<Player> _player) : player(_player) {}
 
 NodePlayer::~NodePlayer() {
 

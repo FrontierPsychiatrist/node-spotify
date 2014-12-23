@@ -17,6 +17,7 @@ friend class Spotify;
 public:
   AudioHandler();
   virtual ~AudioHandler();
+  virtual void setStopped(bool stopped);
 protected:
   audio_fifo_t audioFifo;
   /**

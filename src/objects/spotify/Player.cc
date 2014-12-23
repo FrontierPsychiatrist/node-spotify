@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "Spotify.h"
 #include "../../exceptions.h"
 #include "../../Application.h"
 
@@ -23,15 +22,14 @@ void Player::stop() {
 
 void Player::pause() {
   sp_session_player_play(application->session, 0);
-  Spotify* spotify = static_cast<Spotify*>(sp_session_userdata(application->session));
-  //TODO: flush audio handler
-  //audio_fifo_flush(&application->audio_fifo);
+  application->audioHandler->setStopped(true);
   isPaused = true;
 }
 
 void Player::resume() {
  if(isPaused) {
     sp_session_player_play(application->session, 1);
+    application->audioHandler->setStopped(false);
     isPaused = false;
   }
 }
@@ -39,11 +37,11 @@ void Player::resume() {
 void Player::play(std::shared_ptr<Track> track) {
 #ifndef NODE_SPOTIFY_NATIVE_SOUND
   //If node-spotify is compiled without native sound we have to check if the user registered a nodejs audio handler.
-  Spotify* spotify = static_cast<Spotify*>(sp_session_userdata(application->session));
-  if(!spotify->audioHandler) {
+  if(!application->audioHandler) {
     throw NoAudioHandlerException();
   }
 #endif
+  application->audioHandler->setStopped(false);
   spotify::framesReceived = 0;
   spotify::currentSecond = 0;
   sp_error error = sp_session_player_load(application->session, track->track);
@@ -75,5 +73,3 @@ void Player::seek(int second) {
 void Player::setCurrentSecond(int second) {
   currentSecond = second;
 }
-
-std::shared_ptr<Player> Player::instance = std::make_shared<Player>();

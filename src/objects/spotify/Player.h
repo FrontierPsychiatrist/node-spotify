@@ -22,8 +22,6 @@ private:
   bool isPaused;
   bool isLoading;
   sp_track* loadingTrack;
-  Player(const Player& other) {};
-  static std::shared_ptr<Player> instance;
   void retryPlay();
 };
 

@@ -16,6 +16,10 @@
 #include <node.h>
 #include <v8.h>
 
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+#include "audio/NativeAudioHandler.h"
+#endif
+
 Application* application;
 
 static Handle<Object> getInternal() {
@@ -53,7 +57,10 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   //initialize application struct
   application = new Application();
 
-  //configure and create spotify session
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+  application->audioHandler = std::unique_ptr<AudioHandler>(new NativeAudioHandler());
+#endif
+
   v8::Handle<v8::Object> options;
   if(args.Length() < 1) {
     options = v8::Object::New();
@@ -64,7 +71,6 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
     options = args[0]->ToObject();
   }
 
-  //Create nodeSpotify object
   NodeSpotify* nodeSpotify;
   try {
     nodeSpotify = new NodeSpotify(options);
@@ -78,7 +84,8 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   //Set some fields on the nodeSpotify object
   spotifyObject->Set(v8::String::NewSymbol("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
   spotifyObject->Set(v8::String::NewSymbol("internal"), getInternal());
-  NodePlayer* nodePlayer = new NodePlayer();
+  application->player = std::make_shared<Player>();
+  NodePlayer* nodePlayer = new NodePlayer(application->player);
   spotifyObject->Set(v8::String::NewSymbol("player"), nodePlayer->getV8Object());
   return scope.Close(spotifyObject);
 };

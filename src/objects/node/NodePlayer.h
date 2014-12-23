@@ -14,7 +14,7 @@ private:
   std::shared_ptr<Player> player;
   NodePlayer(const NodePlayer& other);
 public:
-  NodePlayer();
+  NodePlayer(std::shared_ptr<Player> player);
   ~NodePlayer();
   static Handle<Value> stop(const Arguments& args);
   static Handle<Value> pause(const Arguments& args);
