@@ -26,7 +26,7 @@ public:
   std::vector<std::shared_ptr<Track>> tracks();
   std::vector<std::shared_ptr<Track>> tophitTracks();
   std::vector<std::unique_ptr<Album>> albums();
-  std::vector<std::shared_ptr<Artist>> similarArtists();
+  std::vector<std::unique_ptr<Artist>> similarArtists();
   std::string biography();
   void browse(sp_artistbrowse_type artistbrowseType);
   bool isLoaded();

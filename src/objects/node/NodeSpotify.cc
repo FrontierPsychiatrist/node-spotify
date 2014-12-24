@@ -87,7 +87,7 @@ Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
       case SP_LINKTYPE_ARTIST:
       {
         sp_artist* artist = sp_link_as_artist(parsedLink);
-        NodeArtist* nodeArtist = new NodeArtist(std::make_shared<Artist>(artist));
+        NodeArtist* nodeArtist = new NodeArtist(std::unique_ptr<Artist>(new Artist(artist)));
         out = nodeArtist->getV8Object();
         break;
       }

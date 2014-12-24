@@ -27,7 +27,7 @@ public:
 
   std::string name();
   std::string link();
-  std::vector<std::shared_ptr<Artist>> artists();
+  std::vector<std::unique_ptr<Artist>> artists();
   std::unique_ptr<Album> album();
   int duration();
   bool starred();

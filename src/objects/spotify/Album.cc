@@ -83,10 +83,10 @@ std::vector<std::string> Album::copyrights() {
   return copyrights;
 }
 
-std::shared_ptr<Artist> Album::artist() {
-  std::shared_ptr<Artist> artist;
+std::unique_ptr<Artist> Album::artist() {
+  std::unique_ptr<Artist> artist;
   if(sp_albumbrowse_is_loaded(albumBrowse)) {
-    artist = std::make_shared<Artist>(sp_albumbrowse_artist(albumBrowse));
+    artist = std::unique_ptr<Artist>(new Artist(sp_albumbrowse_artist(albumBrowse)));
   }
   return artist;
 }

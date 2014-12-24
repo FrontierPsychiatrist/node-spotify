@@ -44,8 +44,8 @@ std::unique_ptr<Album> Search::getAlbum(int position) {
   return album;
 }
 
-std::shared_ptr<Artist> Search::getArtist(int position) {
-  auto artist = std::make_shared<Artist>(sp_search_artist(search, position));
+std::unique_ptr<Artist> Search::getArtist(int position) {
+  auto artist = std::unique_ptr<Artist>(new Artist(sp_search_artist(search, position)));
   return artist;
 }
 

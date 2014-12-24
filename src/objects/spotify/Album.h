@@ -26,7 +26,7 @@ public:
   std::vector<std::shared_ptr<Track>> tracks();
   std::string review();
   std::vector<std::string> copyrights();
-  std::shared_ptr<Artist> artist();
+  std::unique_ptr<Artist> artist();
   void browse();
   bool isLoaded();
 private:
