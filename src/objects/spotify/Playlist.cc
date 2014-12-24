@@ -31,10 +31,10 @@ Playlist::~Playlist() {
   sp_playlist_release(playlist);
 }
 
-std::shared_ptr<User> Playlist::owner() {
-  std::shared_ptr<User> owner;
+std::unique_ptr<User> Playlist::owner() {
+  std::unique_ptr<User> owner;
   if(sp_playlist_is_loaded(playlist)) {
-    owner = std::make_shared<User>(sp_playlist_owner(playlist));
+    owner = std::unique_ptr<User>(new User(sp_playlist_owner(playlist)));
   }
   return owner;
 }

@@ -8,11 +8,11 @@ TrackExtended::~TrackExtended() {
   sp_playlist_release(playlist);
 }
 
-std::shared_ptr<User> TrackExtended::creator() {
-  std::shared_ptr<User> creator;
+std::unique_ptr<User> TrackExtended::creator() {
+  std::unique_ptr<User> creator;
   sp_user* spCreator = sp_playlist_track_creator(playlist, position);
   if(spCreator != nullptr) {
-    creator = std::make_shared<User>(spCreator);
+    creator = std::unique_ptr<User>(new User(spCreator));
   }
   return creator;
 }

@@ -58,7 +58,7 @@ void PlaylistCallbacksHolder::tracksRemoved(sp_playlist* spPlaylist, const int *
 void PlaylistCallbacksHolder::trackCreatedChanged(sp_playlist* spPlaylist, int position, sp_user* spUser, int when, void* userdata) {
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
   double date = (double)when * 1000;
-  NodeUser* nodeUser = new NodeUser(std::make_shared<User>(spUser));
+  NodeUser* nodeUser = new NodeUser(std::unique_ptr<User>(new User(spUser)));
   holder->call(holder->trackCreatedChangedCallback, { Undefined(), holder->userdata->getV8Object(), Integer::New(position), nodeUser->getV8Object(), Date::New(date) });
 }
 

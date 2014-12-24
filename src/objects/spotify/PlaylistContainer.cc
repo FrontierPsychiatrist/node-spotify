@@ -69,7 +69,7 @@ bool PlaylistContainer::isLoaded() {
   return sp_playlistcontainer_is_loaded(playlistContainer);
 }
 
-std::shared_ptr<User> PlaylistContainer::owner() {
-  auto owner = std::make_shared<User>(sp_playlistcontainer_owner(playlistContainer));
+std::unique_ptr<User> PlaylistContainer::owner() {
+  auto owner = std::unique_ptr<User>(new User(sp_playlistcontainer_owner(playlistContainer)));
   return owner;
 }

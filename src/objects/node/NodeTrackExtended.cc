@@ -28,10 +28,9 @@ Handle<Function> NodeTrackExtended::getConstructor() {
 Handle<Value> NodeTrackExtended::getCreator(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.Holder());
-  std::shared_ptr<User> creator = nodeTrackExtended->trackExtended->creator();
   Handle<Value> nodeCreator = Undefined();
-  if(creator.use_count() > 0) {
-    NodeUser* nodeUser = new NodeUser(creator);
+  if(nodeTrackExtended->trackExtended->creator()) {
+    NodeUser* nodeUser = new NodeUser(nodeTrackExtended->trackExtended->creator());
     nodeCreator = nodeUser->getV8Object();
   }
   return scope.Close(nodeCreator);

@@ -11,9 +11,9 @@ using namespace v8;
 
 class NodeUser : public NodeWrapped<NodeUser> {
 private:
-  std::shared_ptr<User> user;
+  std::unique_ptr<User> user;
 public:
-  NodeUser(std::shared_ptr<User> user);
+  NodeUser(std::unique_ptr<User> user);
   ~NodeUser();
   static Handle<Value> getCanonicalName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getDisplayName(Local<String> property, const AccessorInfo& info);

@@ -142,7 +142,7 @@ Handle<Value> NodePlaylist::getOwner(Local<String> property, const AccessorInfo&
   HandleScope scope;
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.Holder());
   Handle<Value> owner;
-  if(nodePlaylist->playlist->owner().use_count() > 0) {
+  if(nodePlaylist->playlist->owner()) {
     owner = (new NodeUser(nodePlaylist->playlist->owner()))->getV8Object();
   }
   return scope.Close(owner);
