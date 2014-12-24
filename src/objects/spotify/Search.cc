@@ -39,8 +39,8 @@ std::shared_ptr<Track> Search::getTrack(int position) {
   return track;
 }
 
-std::shared_ptr<Album> Search::getAlbum(int position) {
-  auto album = std::make_shared<Album>(sp_search_album(search, position));
+std::unique_ptr<Album> Search::getAlbum(int position) {
+  auto album = std::unique_ptr<Album>(new Album(sp_search_album(search, position)));
   return album;
 }
 

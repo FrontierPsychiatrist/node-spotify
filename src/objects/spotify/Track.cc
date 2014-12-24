@@ -42,15 +42,15 @@ std::vector<std::shared_ptr<Artist>> Track::artists() {
   return artists;
 }
 
-std::shared_ptr<Album> Track::album() {
-  std::shared_ptr<Album> album;
+std::unique_ptr<Album> Track::album() {
+  std::unique_ptr<Album> album;
   if(sp_track_is_loaded(track)) {
     sp_album* spAlbum = sp_track_album(track);
     if(spAlbum != nullptr) {
-      album = std::make_shared<Album>(spAlbum);
+      album = std::unique_ptr<Album>(new Album(spAlbum));
     }
   }
-  return album;
+  return std::move(album);
 }
 
 int Track::duration() {

@@ -72,13 +72,13 @@ std::vector<std::shared_ptr<Track>> Artist::tophitTracks() {
   return tophitTracks;
 }
 
-std::vector<std::shared_ptr<Album>> Artist::albums() {
-  std::vector<std::shared_ptr<Album>> albums;
+std::vector<std::unique_ptr<Album>> Artist::albums() {
+  std::vector<std::unique_ptr<Album>> albums;
   if(sp_artistbrowse_is_loaded(artistBrowse)) {
     int numAlbums = sp_artistbrowse_num_albums(artistBrowse);
     albums.resize(numAlbums);
     for(int i = 0; i < numAlbums; i++) {
-      albums[i] = std::make_shared<Album>(sp_artistbrowse_album(artistBrowse, i));
+      albums[i] = std::unique_ptr<Album>(new Album(sp_artistbrowse_album(artistBrowse, i)));
     }
   }
   return albums;

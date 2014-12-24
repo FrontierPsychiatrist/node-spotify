@@ -80,7 +80,7 @@ Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
       case SP_LINKTYPE_ALBUM:
       {
         sp_album* album = sp_link_as_album(parsedLink);
-        NodeAlbum* nodeAlbum = new NodeAlbum(std::make_shared<Album>(album));
+        NodeAlbum* nodeAlbum = new NodeAlbum(std::unique_ptr<Album>(new Album(album)));
         out = nodeAlbum->getV8Object();
         break;
       }

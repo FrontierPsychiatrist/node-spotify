@@ -48,7 +48,7 @@ Handle<Value> NodeTrack::getArtists(Local<String> property, const AccessorInfo& 
 Handle<Value> NodeTrack::getAlbum(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.Holder());
-  if(nodeTrack->track->album().use_count() > 0) {
+  if(nodeTrack->track->album()) {
     NodeAlbum* nodeAlbum = new NodeAlbum(nodeTrack->track->album());
     return scope.Close(nodeAlbum->getV8Object());
   } else {

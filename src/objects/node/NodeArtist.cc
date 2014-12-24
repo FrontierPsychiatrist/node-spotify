@@ -76,10 +76,10 @@ Handle<Value> NodeArtist::getTophitTracks(Local<String> property, const Accessor
 Handle<Value> NodeArtist::getAlbums(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-  std::vector<std::shared_ptr<Album>> albums = nodeArtist->artist->albums();
+  std::vector<std::unique_ptr<Album>> albums = nodeArtist->artist->albums();
   Local<Array> nodeAlbums = Array::New(albums.size());
   for(int i = 0; i < (int)albums.size(); i++) {
-    NodeAlbum* nodeAlbum = new NodeAlbum(albums[i]);
+    NodeAlbum* nodeAlbum = new NodeAlbum(std::move(albums[i]));
     nodeAlbums->Set(Number::New(i), nodeAlbum->getV8Object());
   }
   return scope.Close(nodeAlbums);
