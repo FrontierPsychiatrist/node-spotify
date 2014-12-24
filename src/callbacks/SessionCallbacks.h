@@ -11,6 +11,7 @@ public:
   static void notifyMainThread(sp_session* session);
   static void loggedIn(sp_session* session, sp_error error);
   static void loggedOut(sp_session* session);
+  static void playTokenLost(sp_session* session);
   static void end_of_track(sp_session* session);
   static void init();
   static void metadata_updated(sp_session* session);
@@ -21,6 +22,7 @@ public:
   static v8::Handle<v8::Function> logoutCallback;
   static v8::Handle<v8::Function> metadataUpdatedCallback;
   static v8::Handle<v8::Function> endOfTrackCallback;
+  static v8::Handle<v8::Function> playTokenLostCallback;
 };
 
 #endif

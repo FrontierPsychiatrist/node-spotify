@@ -19,6 +19,7 @@ v8::Handle<v8::Function> SessionCallbacks::loginCallback;
 v8::Handle<v8::Function> SessionCallbacks::logoutCallback;
 v8::Handle<v8::Function> SessionCallbacks::metadataUpdatedCallback;
 v8::Handle<v8::Function> SessionCallbacks::endOfTrackCallback;
+v8::Handle<v8::Function> SessionCallbacks::playTokenLostCallback;
 
 void SessionCallbacks::init() {
   processEventsTimer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
@@ -87,6 +88,12 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, voi
   //Issue 35, rootPlaylistContainerLoaded can be called multiple times throughout the lifetime of a session.
   //loginCallback must only be called once.
   sp_playlistcontainer_remove_callbacks(sp, &rootPlaylistContainerCallbacks, nullptr);    
+}
+
+void SessionCallbacks::playTokenLost(sp_session *session) {
+  application->audioHandler->setStopped(true);
+  application->player->isPaused = true;
+  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(playTokenLostCallback);
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {

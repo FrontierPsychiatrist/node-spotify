@@ -214,9 +214,11 @@ Handle<Value> NodeSpotify::on(const Arguments& args) {
   Handle<String> metadataUpdatedKey = String::New("metadataUpdated");
   Handle<String> readyKey = String::New("ready");
   Handle<String> logoutKey = String::New("logout");
+  Handle<String> playTokenLostKey = String::New("playTokenLost");
   SessionCallbacks::metadataUpdatedCallback = V8Utils::getFunctionFromObject(callbacks, metadataUpdatedKey);
   SessionCallbacks::loginCallback = V8Utils::getFunctionFromObject(callbacks, readyKey);
   SessionCallbacks::logoutCallback = V8Utils::getFunctionFromObject(callbacks, logoutKey);
+  SessionCallbacks::playTokenLostCallback = V8Utils::getFunctionFromObject(callbacks, playTokenLostKey);
   return scope.Close(Undefined());
 }
 
