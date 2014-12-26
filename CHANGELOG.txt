@@ -1,3 +1,16 @@
+0.7.0
+-----
+* FEATURE: audio handler to receive the audio in JavaScript
+* FEATURE: Links to local tracks are now parseable by spotify.createFromLink
+* FEATURE: playTokeLost callback is now settable.
+* CHANGE: Results of a search are now accessible via methods, properties
+  deprecated (e.g. getTrack(1) instead of tracks[1])
+* CHANGE: If adding tracks to a playlist fails an error is thrown
+* CHANGE: The ready callback is now called with an error object if login fails
+* FIX: Playlist placeholders don't crash node-spotify anymore
+* FIX: a crash in search and browse for album and artists
+* FIX: currentSecond in player was wrong after calling stop()
+
 0.6.0
 -----
 * CHANGE: callback registering is now the same for playlists, playlist containers, the spotify object and the player and does
