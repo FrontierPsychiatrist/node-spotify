@@ -15,7 +15,7 @@ private:
 public:
   TrackExtended(sp_track* track, sp_playlist* playlist, int position);
   virtual ~TrackExtended();
-  std::shared_ptr<User> creator();
+  std::unique_ptr<User> creator();
   bool seen();
   void seen(bool seen);
   std::string message();

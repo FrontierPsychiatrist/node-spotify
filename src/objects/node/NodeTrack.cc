@@ -35,8 +35,8 @@ Handle<Value> NodeTrack::getArtists(Local<String> property, const AccessorInfo& 
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.Holder());
   Local<Array> jsArtists = Array::New(nodeTrack->track->artists().size());
   for(int i = 0; i < (int)nodeTrack->track->artists().size(); i++) {
-    if(nodeTrack->track->artists()[i].use_count() > 0) {
-      NodeArtist* nodeArtist = new NodeArtist(nodeTrack->track->artists()[i]);
+    if(nodeTrack->track->artists()[i]) {
+      NodeArtist* nodeArtist = new NodeArtist(std::move(nodeTrack->track->artists()[i]));
       jsArtists->Set(Number::New(i), nodeArtist->getV8Object() );
     } else {
       jsArtists->Set(Number::New(i), Undefined() );
@@ -48,7 +48,7 @@ Handle<Value> NodeTrack::getArtists(Local<String> property, const AccessorInfo& 
 Handle<Value> NodeTrack::getAlbum(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.Holder());
-  if(nodeTrack->track->album().use_count() > 0) {
+  if(nodeTrack->track->album()) {
     NodeAlbum* nodeAlbum = new NodeAlbum(nodeTrack->track->album());
     return scope.Close(nodeAlbum->getV8Object());
   } else {

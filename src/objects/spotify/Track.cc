@@ -29,28 +29,28 @@ std::string Track::link() {
   return link;
 }
 
-std::vector<std::shared_ptr<Artist>> Track::artists() {
-  std::vector<std::shared_ptr<Artist>> artists;
+std::vector<std::unique_ptr<Artist>> Track::artists() {
+  std::vector<std::unique_ptr<Artist>> artists;
   if(sp_track_is_loaded(track)) {
     int numArtists = sp_track_num_artists(track);
     artists.resize(numArtists);
     for(int i = 0; i < numArtists; i++) {
       sp_artist* spArtist = sp_track_artist(track, i);
-      artists[i] = std::make_shared<Artist>(spArtist);
+      artists[i] = std::unique_ptr<Artist>(new Artist(spArtist));
     }
   }
   return artists;
 }
 
-std::shared_ptr<Album> Track::album() {
-  std::shared_ptr<Album> album;
+std::unique_ptr<Album> Track::album() {
+  std::unique_ptr<Album> album;
   if(sp_track_is_loaded(track)) {
     sp_album* spAlbum = sp_track_album(track);
     if(spAlbum != nullptr) {
-      album = std::make_shared<Album>(spAlbum);
+      album = std::unique_ptr<Album>(new Album(spAlbum));
     }
   }
-  return album;
+  return std::move(album);
 }
 
 int Track::duration() {

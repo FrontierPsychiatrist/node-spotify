@@ -23,7 +23,7 @@ public:
   ~Playlist();
 
   std::shared_ptr<TrackExtended> getTrack(int position);
-  std::shared_ptr<User> owner();
+  std::unique_ptr<User> owner();
   virtual std::string name();
   void name(std::string _name);
   std::string link();

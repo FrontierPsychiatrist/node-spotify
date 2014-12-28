@@ -12,7 +12,7 @@ using namespace v8;
 
 class NodeSearch : public NodeWrapped<NodeSearch>, public V8Browseable {
 private:
-  std::shared_ptr<Search> search;
+  std::unique_ptr<Search> search;
   std::string searchQuery;
   int trackOffset, albumOffset, artistOffset, playlistOffset;
   int trackLimit, albumLimit, artistLimit, playlistLimit;

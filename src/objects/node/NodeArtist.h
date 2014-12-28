@@ -12,9 +12,9 @@ using namespace v8;
 
 class NodeArtist : public NodeWrapped<NodeArtist>, public V8Browseable {
 private:
-  std::shared_ptr<Artist> artist;
+  std::unique_ptr<Artist> artist;
 public:
-  NodeArtist(std::shared_ptr<Artist> artist);
+  NodeArtist(std::unique_ptr<Artist> artist);
   ~NodeArtist();
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);

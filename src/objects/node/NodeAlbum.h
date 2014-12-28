@@ -13,9 +13,9 @@ using namespace v8;
 class NodeAlbum : public NodeWrapped<NodeAlbum>, public V8Browseable {
 friend class AlbumBrowseCallbacks;
 private:
-  std::shared_ptr<Album> album;
+  std::unique_ptr<Album> album;
 public:
-  NodeAlbum(std::shared_ptr<Album> album);
+  NodeAlbum(std::unique_ptr<Album> album);
   ~NodeAlbum();
   static void init();
   static Handle<Value> getName(Local<String> property, const AccessorInfo& info);

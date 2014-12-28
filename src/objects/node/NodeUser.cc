@@ -2,9 +2,9 @@
 #include "NodePlaylistContainer.h"
 #include "NodePlaylist.h"
 
-NodeUser::NodeUser(std::shared_ptr<User> _user) : user(_user) {};
+NodeUser::NodeUser(std::unique_ptr<User> _user) : user(std::move(_user)) {}
 
-NodeUser::~NodeUser() {};
+NodeUser::~NodeUser() {}
 
 Handle<Value> NodeUser::getLink(Local<String> property, const AccessorInfo& info) {
   NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.Holder());

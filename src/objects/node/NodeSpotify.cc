@@ -80,21 +80,21 @@ Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
       case SP_LINKTYPE_ALBUM:
       {
         sp_album* album = sp_link_as_album(parsedLink);
-        NodeAlbum* nodeAlbum = new NodeAlbum(std::make_shared<Album>(album));
+        NodeAlbum* nodeAlbum = new NodeAlbum(std::unique_ptr<Album>(new Album(album)));
         out = nodeAlbum->getV8Object();
         break;
       }
       case SP_LINKTYPE_ARTIST:
       {
         sp_artist* artist = sp_link_as_artist(parsedLink);
-        NodeArtist* nodeArtist = new NodeArtist(std::make_shared<Artist>(artist));
+        NodeArtist* nodeArtist = new NodeArtist(std::unique_ptr<Artist>(new Artist(artist)));
         out = nodeArtist->getV8Object();
         break;
       }
       case SP_LINKTYPE_PROFILE:
       {
         sp_user* user = sp_link_as_user(parsedLink);
-        NodeUser* nodeUser = new NodeUser(std::make_shared<User>(user));
+        NodeUser* nodeUser = new NodeUser(std::unique_ptr<User>(new User(user)));
         out = nodeUser->getV8Object();
         break;
       }
@@ -163,7 +163,7 @@ Handle<Value> NodeSpotify::getRememberedUser(Local<String> property, const Acces
 Handle<Value> NodeSpotify::getSessionUser(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.Holder());
-  NodeUser* nodeUser = new NodeUser(nodeSpotify->spotify->sessionUser());
+  NodeUser* nodeUser = new NodeUser(std::move(nodeSpotify->spotify->sessionUser()));
   return scope.Close(nodeUser->getV8Object());
 }
 

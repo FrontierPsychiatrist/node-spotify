@@ -86,7 +86,7 @@ std::string Spotify::rememberedUser() {
   return rememberedUserString;
 }
 
-std::shared_ptr<User> Spotify::sessionUser() {
-  auto user = std::make_shared<User>(sp_session_user(session));
+std::unique_ptr<User> Spotify::sessionUser() {
+  auto user = std::unique_ptr<User>(new User(sp_session_user(session)));
   return user;
 }

@@ -3,7 +3,7 @@
 #include "NodeArtist.h"
 #include "../spotify/Track.h"
 
-NodeAlbum::NodeAlbum(std::shared_ptr<Album> _album) : album(_album) {
+NodeAlbum::NodeAlbum(std::unique_ptr<Album> _album) : album(std::move(_album)) {
   album->nodeObject = this;
 };
 

@@ -2,9 +2,9 @@
 #include "NodeTrack.h"
 #include "NodeAlbum.h"
 
-NodeArtist::NodeArtist(std::shared_ptr<Artist> _artist) : artist(_artist) {
+NodeArtist::NodeArtist(std::unique_ptr<Artist> _artist) : artist(std::move(_artist)) {
   artist->nodeObject = this;
-};
+}
 
 NodeArtist::~NodeArtist() {
   if(artist->nodeObject == this) {
@@ -76,10 +76,10 @@ Handle<Value> NodeArtist::getTophitTracks(Local<String> property, const Accessor
 Handle<Value> NodeArtist::getAlbums(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-  std::vector<std::shared_ptr<Album>> albums = nodeArtist->artist->albums();
+  std::vector<std::unique_ptr<Album>> albums = nodeArtist->artist->albums();
   Local<Array> nodeAlbums = Array::New(albums.size());
   for(int i = 0; i < (int)albums.size(); i++) {
-    NodeAlbum* nodeAlbum = new NodeAlbum(albums[i]);
+    NodeAlbum* nodeAlbum = new NodeAlbum(std::move(albums[i]));
     nodeAlbums->Set(Number::New(i), nodeAlbum->getV8Object());
   }
   return scope.Close(nodeAlbums);
@@ -88,10 +88,10 @@ Handle<Value> NodeArtist::getAlbums(Local<String> property, const AccessorInfo& 
 Handle<Value> NodeArtist::getSimilarArtists(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-  std::vector<std::shared_ptr<Artist>> similarArtists = nodeArtist->artist->similarArtists();
+  std::vector<std::unique_ptr<Artist>> similarArtists = nodeArtist->artist->similarArtists();
   Local<Array> nodeSimilarArtists = Array::New(similarArtists.size());
   for(int i = 0; i < (int)similarArtists.size(); i++) {
-    NodeArtist* nodeArtist = new NodeArtist(similarArtists[i]);
+    NodeArtist* nodeArtist = new NodeArtist(std::move(similarArtists[i]));
     nodeSimilarArtists->Set(Number::New(i), nodeArtist->getV8Object());
   }
   return scope.Close(nodeSimilarArtists);

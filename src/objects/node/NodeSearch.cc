@@ -32,7 +32,7 @@ Handle<Value> NodeSearch::execute(const Arguments& args) {
   nodeSearch->makePersistent();
   Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
   nodeSearch->browseCompleteCallback = callback;
-  nodeSearch->search = std::make_shared<Search>();
+  nodeSearch->search = std::unique_ptr<Search>(new Search());
   nodeSearch->search->nodeObject = nodeSearch;
   nodeSearch->search->execute(nodeSearch->searchQuery, nodeSearch->trackOffset, nodeSearch->trackLimit,
     nodeSearch->albumOffset, nodeSearch->albumLimit,

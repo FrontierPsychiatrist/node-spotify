@@ -18,8 +18,8 @@ public:
   Search(const Search& other);
   ~Search();
   std::shared_ptr<Track> getTrack(int position);
-  std::shared_ptr<Album> getAlbum(int position);
-  std::shared_ptr<Artist> getArtist(int position);
+  std::unique_ptr<Album> getAlbum(int position);
+  std::unique_ptr<Artist> getArtist(int position);
   std::shared_ptr<Playlist> getPlaylist(int position);
   void execute(std::string query, int trackOffset, int trackLimit,
     int albumOffset, int albumLimit,
