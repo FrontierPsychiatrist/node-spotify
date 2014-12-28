@@ -55,7 +55,7 @@ function addMethodsToPrototypes(sp) {
   });
 
   sp.internal.protos.Playlist.prototype.getTracks = function() {
-    arrayGetter('Track', this);
+    return arrayGetter('Track', this);
   }
 
   sp.internal.protos.PlaylistContainer.prototype.getPlaylists = function () {
