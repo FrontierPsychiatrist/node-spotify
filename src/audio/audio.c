@@ -28,6 +28,12 @@
 #include "audio.h"
 #include <stdlib.h>
 
+int audio_stopThread;
+
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+static uv_thread_t audioThread;
+#endif
+
 audio_fifo_data_t* audio_get(audio_fifo_t* audioFifo) {
   uv_mutex_lock(&audioFifo->audioQueueMutex);
 
@@ -67,3 +73,45 @@ void audio_stop(audio_fifo_t *audioFifo) {
   audio_fifo_flush(audioFifo);
   uv_mutex_destroy(&audioFifo->audioQueueMutex);
 }
+
+#ifdef NODE_SPOTIFY_NATIVE_SOUND
+/**
+Gets the audio data from the queue. If there is none, waits for the condition variable to trigger.
+**/
+audio_fifo_data_t* audio_get_native(audio_fifo_t* audioFifo) {
+  audio_fifo_data_t* audioData;
+  uv_mutex_lock(&audioFifo->audioQueueMutex);
+
+  while( !audio_stopThread && !(audioData = TAILQ_FIRST(&audioFifo->queue)) ) {
+    uv_cond_wait(&audioFifo->audioCondition, &audioFifo->audioQueueMutex);
+  }
+
+  if(audio_stopThread) {
+    uv_mutex_unlock(&audioFifo->audioQueueMutex);
+    return NULL;
+  }
+
+  TAILQ_REMOVE(&audioFifo->queue, audioData, link);
+  audioFifo->samplesInQueue -= audioData->numberOfSamples;
+
+  uv_mutex_unlock(&audioFifo->audioQueueMutex);
+  return audioData;
+}
+
+void audio_init_native(audio_fifo_t* audioFifo) {
+  audio_stopThread = 0;
+  uv_cond_init(&audioFifo->audioCondition);
+  uv_thread_create(&audioThread, audio_start, audioFifo);
+}
+
+void audio_stop_native(audio_fifo_t* audioFifo) {
+  audio_stopThread  = 1;
+  //Notify audio_get_native to return in case it is waiting for data
+  uv_mutex_lock(&audioFifo->audioQueueMutex);
+  uv_cond_signal(&audioFifo->audioCondition);
+  uv_mutex_unlock(&audioFifo->audioQueueMutex);
+  audio_fifo_flush(audioFifo);
+  uv_thread_join(&audioThread);
+  uv_cond_destroy(&audioFifo->audioCondition);
+}
+#endif

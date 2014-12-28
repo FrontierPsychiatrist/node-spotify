@@ -53,8 +53,10 @@ extern void audio_fifo_flush(audio_fifo_t *audioFifo);
 /**
 Initializes the native audio system and the condition variable.
 **/
-extern void audio_init_native(audio_fifo_t *audioFifo);
-extern void audio_stop_native(audio_fifo_t* audioFifo);
+void audio_init_native(audio_fifo_t *audioFifo);
+void audio_stop_native(audio_fifo_t* audioFifo);
+audio_fifo_data_t* audio_get_native(audio_fifo_t* audioFifo);
+void audio_start(void* aux);
 #endif
 
 /**

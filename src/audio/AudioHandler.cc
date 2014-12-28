@@ -4,6 +4,10 @@
 
 #include <stdlib.h>
 
+#ifdef OS_LINUX //For memcpy
+#include <string.h>
+#endif
+
 extern Application* application;
 
 AudioHandler::AudioHandler() {

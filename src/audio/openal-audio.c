@@ -38,35 +38,11 @@
 
 #define NUM_BUFFERS 3
 
-static uv_thread_t audioThread;
-static int stopThread;
+extern int audio_stopThread;
 
 static void error_exit(const char *msg) {
   puts(msg);
   exit(1);
-}
-
-/**
-Gets the audio data from the queue. If there is none, waits for the condition variable to trigger.
-**/
-static audio_fifo_data_t* audio_get_native(audio_fifo_t* audioFifo) {
-  audio_fifo_data_t* audioData;
-  uv_mutex_lock(&audioFifo->audioQueueMutex);
-
-  while( !stopThread && !(audioData = TAILQ_FIRST(&audioFifo->queue)) ) {
-    uv_cond_wait(&audioFifo->audioCondition, &audioFifo->audioQueueMutex);
-  }
-
-  if(stopThread) {
-    uv_mutex_unlock(&audioFifo->audioQueueMutex);
-    return NULL;
-  }
-
-  TAILQ_REMOVE(&audioFifo->queue, audioData, link);
-  audioFifo->samplesInQueue -= audioData->numberOfSamples;
-
-  uv_mutex_unlock(&audioFifo->audioQueueMutex);
-  return audioData;
 }
 
 static int queue_buffer(ALuint source, audio_fifo_t *audioFifo, ALuint buffer) {
@@ -84,7 +60,7 @@ static int queue_buffer(ALuint source, audio_fifo_t *audioFifo, ALuint buffer) {
   return 1;
 }
 
-static void audio_start(void *aux) {
+void audio_start(void *aux) {
   audio_fifo_t *audioFifo = aux;
   audio_fifo_data_t *audioData;
   unsigned int frame = 0;
@@ -116,9 +92,9 @@ static void audio_start(void *aux) {
   if(prebuffer == 1) {
     prebuffer = queue_buffer(source, audioFifo, buffers[2]);
   }
-  for (;!stopThread;) {
+  for (;!audio_stopThread;) {
     alSourcePlay(source);
-    for (;!stopThread;) {
+    for (;!audio_stopThread;) {
       /* Wait for some audio to play */
       do {
         alGetSourcei(source, AL_BUFFERS_PROCESSED, &processed);
@@ -163,7 +139,7 @@ static void audio_start(void *aux) {
       }
       frame++;
     }
-    if(!stopThread) {
+    if(!audio_stopThread) {
       /* Format or rate changed, so we need to reset all buffers */
       alSourcei(source, AL_BUFFER, 0);
       alSourceStop(source);
@@ -188,21 +164,4 @@ static void audio_start(void *aux) {
   alcDestroyContext(context);
   alcCloseDevice(device);
   //TODO: find out what of this is necessary.
-}
-
-void audio_init_native(audio_fifo_t* audioFifo) {
-  stopThread = 0;
-  uv_cond_init(&audioFifo->audioCondition);
-  uv_thread_create(&audioThread, audio_start, audioFifo);
-}
-
-void audio_stop_native(audio_fifo_t* audioFifo) {
-	stopThread = 1;
-  //Notify audio_get_native to return in case it is waiting for data
-  uv_mutex_lock(&audioFifo->audioQueueMutex);
-  uv_cond_signal(&audioFifo->audioCondition);
-  uv_mutex_unlock(&audioFifo->audioQueueMutex);
-  audio_fifo_flush(audioFifo);
-  uv_thread_join(&audioThread);
-  uv_cond_destroy(&audioFifo->audioCondition);
 }
