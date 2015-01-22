@@ -34,6 +34,7 @@ public:
   void setStarred(bool starred);
   int popularity();
   bool isLoaded();
+  int getAvailability();
 private:
   sp_track* track;
 };

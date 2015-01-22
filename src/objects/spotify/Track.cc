@@ -69,6 +69,14 @@ bool Track::starred() {
   return starred;
 }
 
+int Track::getAvailability() {
+  int trackAvailability = 0;
+  if(sp_track_is_loaded(track)) {
+    trackAvailability = sp_track_get_availability(application->session, track);
+  }
+  return trackAvailability;
+}
+
 int Track::popularity() {
   int popularity = -1;
   if(sp_track_is_loaded(track)) {

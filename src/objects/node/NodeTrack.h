@@ -25,6 +25,7 @@ public:
   static Handle<Value> getStarred(Local<String> property, const AccessorInfo& info);
   static Handle<Value> getPopularity(Local<String> property, const AccessorInfo& info);
   static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
+  static Handle<Value> getAvailability(Local<String> property, const AccessorInfo& info);
   static void setStarred(Local<String> property, Local<Value> value, const AccessorInfo& info);
   static Handle<FunctionTemplate> init();
 };
