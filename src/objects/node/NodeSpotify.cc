@@ -178,6 +178,13 @@ Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorIn
   constants->Set(String::NewSymbol("PLAYLIST_TYPE_START_FOLDER"), Number::New(SP_PLAYLIST_TYPE_START_FOLDER));
   constants->Set(String::NewSymbol("PLAYLIST_TYPE_END_FOLDER"), Number::New(SP_PLAYLIST_TYPE_END_FOLDER));
   constants->Set(String::NewSymbol("PLAYLIST_TYPE_PLACEHOLDER"), Number::New(SP_PLAYLIST_TYPE_PLACEHOLDER));
+
+
+  constants->Set(String::NewSymbol("SP_TRACK_AVAILABILITY_UNAVAILABLE"), Number::New(SP_TRACK_AVAILABILITY_UNAVAILABLE));
+  constants->Set(String::NewSymbol("SP_TRACK_AVAILABILITY_AVAILABLE"), Number::New(SP_TRACK_AVAILABILITY_AVAILABLE));
+  constants->Set(String::NewSymbol("SP_TRACK_AVAILABILITY_NOT_STREAMABLE"), Number::New(SP_TRACK_AVAILABILITY_NOT_STREAMABLE));
+  constants->Set(String::NewSymbol("SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST"), Number::New(SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST));
+
   return scope.Close(constants);
 }
 

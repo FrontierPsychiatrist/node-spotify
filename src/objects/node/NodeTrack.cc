@@ -25,6 +25,11 @@ Handle<Value> NodeTrack::getDuration(Local<String> property, const AccessorInfo&
   return Integer::New(nodeTrack->track->duration()/1000);
 }
 
+Handle<Value> NodeTrack::getAvailability(Local<String> property, const AccessorInfo& info) {
+  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.Holder());
+  return Integer::New(nodeTrack->track->getAvailability());
+}
+
 Handle<Value> NodeTrack::getPopularity(Local<String> property, const AccessorInfo& info) {
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.Holder());
   return Integer::New(nodeTrack->track->popularity());
@@ -84,6 +89,7 @@ Handle<FunctionTemplate> NodeTrack::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("starred"), getStarred, setStarred);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("popularity"), getPopularity);
   constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
+  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("availability"), getAvailability);
   constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
   return scope.Close(constructorTemplate);
 }
