@@ -38,6 +38,10 @@
       "native_audio%": 'true'
     },
     "conditions": [
+      ["target_arch=='arm'", {
+        "cflags": [""],
+        "include_dirs": ["/home/moritz/libspotify-12.1.103-Linux-armv6/include/"]
+      }],
       ["OS=='mac'", {
         "xcode_settings": {
           "OTHER_CPLUSPLUSFLAGS" : ["-std=c++11", "-stdlib=libc++"],
