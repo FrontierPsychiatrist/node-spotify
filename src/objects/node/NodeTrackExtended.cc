@@ -2,7 +2,7 @@
 #include "NodeUser.h"
 
 //Since NodeWrapped uses a templating technique to assign the static constructor to each childclass we need to improvise here.
-Handle<Function> NodeTrackExtended::constructor;
+Persistent<FunctionTemplate> NodeTrackExtended::constructorTemplate;
 
 NodeTrackExtended::NodeTrackExtended(std::shared_ptr<TrackExtended> _trackExtended) : NodeTrack(_trackExtended), trackExtended(_trackExtended) {
 }
@@ -15,7 +15,7 @@ Handle<Object> NodeTrackExtended::getV8Object() {
   We need rewrite this method because we need to use our own constructor, not the one from NodeTrack.
 **/
 Handle<Object> NodeTrackExtended::createInstance() {
-  Local<Object> object = NanNew(constructor)->NewInstance();
+  Local<Object> object = getConstructor()->NewInstance();
   NanSetInternalFieldPointer(object, 0, this);
   return object;
 }
@@ -24,7 +24,7 @@ Handle<Object> NodeTrackExtended::createInstance() {
   Same for this... we need to rewrite so NodeTrackExtended::constructor is used and not NodeTrack::constructor.
 **/
 Handle<Function> NodeTrackExtended::getConstructor() {
-  return constructor;
+  return NanNew(constructorTemplate)->GetFunction();
 }
 
 NAN_GETTER(NodeTrackExtended::getCreator) {
@@ -72,5 +72,5 @@ void NodeTrackExtended::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("seen"), getSeen, setSeen);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("createTime"), getCreateTime);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("message"), getMessage);
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodeTrackExtended::constructorTemplate, constructorTemplate);
 }

@@ -154,5 +154,5 @@ void NodePlaylistContainer::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "deletePlaylist", deletePlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "movePlaylist", movePlaylist);
 
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodePlaylistContainer::constructorTemplate, constructorTemplate);
 }

@@ -210,5 +210,5 @@ void NodePlaylist::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "removeTracks", removeTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "reorderTracks", reorderTracks);
 
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodePlaylist::constructorTemplate, constructorTemplate);
 }

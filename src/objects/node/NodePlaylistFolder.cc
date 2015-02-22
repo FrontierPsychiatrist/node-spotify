@@ -25,5 +25,5 @@ void NodePlaylistFolder::init() {
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("PlaylistFolder");
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("name"), getName);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("type"), getType);
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodePlaylistFolder::constructorTemplate, constructorTemplate);
 }

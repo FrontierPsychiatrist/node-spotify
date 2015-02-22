@@ -161,7 +161,7 @@ NAN_GETTER(NodeSpotify::getSessionUser) {
   NanScope();
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
   NodeUser* nodeUser = new NodeUser(std::move(nodeSpotify->spotify->sessionUser()));
-  NanReturnValue(nodeUser->getV8Object());
+  NanReturnValue(nodeUser->createInstance());
 }
 
 NAN_GETTER(NodeSpotify::getConstants) {
@@ -242,5 +242,5 @@ void NodeSpotify::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistContainer"), getPlaylistContainer);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("constants"), getConstants);
 
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodeSpotify::constructorTemplate, constructorTemplate);
 }

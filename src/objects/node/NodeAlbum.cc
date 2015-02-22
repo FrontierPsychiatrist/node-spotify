@@ -102,5 +102,5 @@ void NodeAlbum::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCoverBase64", getCoverBase64);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "browse", browse);
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodeAlbum::constructorTemplate, constructorTemplate);
 }

@@ -97,6 +97,6 @@ Handle<FunctionTemplate> NodeTrack::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("popularity"), getPopularity);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("availability"), getAvailability);
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodeTrack::constructorTemplate, constructorTemplate);
   return NanEscapeScope(constructorTemplate);
 }

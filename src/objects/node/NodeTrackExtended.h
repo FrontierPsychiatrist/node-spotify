@@ -24,7 +24,7 @@ public:
   Handle<Object> getV8Object();
   Handle<Object> createInstance();
 protected:
-  static Handle<Function> constructor;
+  static Persistent<FunctionTemplate> constructorTemplate;
 };
 
 #endif

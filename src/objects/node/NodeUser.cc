@@ -55,5 +55,5 @@ void NodeUser::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistContainer"), getPublishedPlaylistsContainer);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("starredPlaylist"), getStarredPlaylist);
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodeUser::constructorTemplate, constructorTemplate);
 }

@@ -105,5 +105,5 @@ void NodePlayer::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "seek", seek);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("currentSecond"), &getCurrentSecond);
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodePlayer::constructorTemplate, constructorTemplate);
 }

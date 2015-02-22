@@ -79,14 +79,14 @@ NAN_METHOD(CreateNodespotify) {
   } catch (const SessionCreationException& e) {
     NanThrowError(e.message.c_str());
   }
-  v8::Handle<Object> spotifyObject = nodeSpotify->getV8Object();
+  v8::Handle<Object> spotifyObject = nodeSpotify->createInstance();
 
   //Set some fields on the nodeSpotify object
   spotifyObject->Set(NanNew<String>("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
   spotifyObject->Set(NanNew<String>("internal"), getInternal());
   application->player = std::make_shared<Player>();
   NodePlayer* nodePlayer = new NodePlayer(application->player);
-  spotifyObject->Set(NanNew<String>("player"), nodePlayer->getV8Object());
+  spotifyObject->Set(NanNew<String>("player"), nodePlayer->createInstance());
   NanReturnValue(spotifyObject);
 };
 

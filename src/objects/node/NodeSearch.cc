@@ -326,6 +326,5 @@ void NodeSearch::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("artistLimit"), getArtistLimit, setArtistLimit);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistOffset"), getPlaylistOffset, setPlaylistOffset);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistLimit"), getPlaylistLimit, setPlaylistLimit);
-  constructor = constructorTemplate->GetFunction();
-  NanReturnUndefined();
+  NanAssignPersistent(NodeSearch::constructorTemplate, constructorTemplate);
 }

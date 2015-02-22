@@ -116,5 +116,5 @@ void NodeArtist::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "browse", browse);
-  constructor = constructorTemplate->GetFunction();
+  NanAssignPersistent(NodeArtist::constructorTemplate, constructorTemplate);
 }

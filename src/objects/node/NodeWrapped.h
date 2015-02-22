@@ -25,28 +25,29 @@ public:
   }
 
   virtual v8::Handle<v8::Object> createInstance() {
-    v8::Local<v8::Object> object = NanNew(constructor)->NewInstance();
+    v8::Local<v8::Object> object = getConstructor()->NewInstance();
     NanSetInternalFieldPointer(object, 0, this);
     return object;
   }
 
   static v8::Handle<v8::Function> getConstructor() {
-    return constructor;
+    return NanNew(constructorTemplate)->GetFunction();
   }
 protected:
-  static v8::Handle<v8::Function> constructor;
+  static v8::Persistent<v8::FunctionTemplate> constructorTemplate;
 
   /**
    * Basic init method for a wrapped node object.
    */
   static v8::Handle<v8::FunctionTemplate> init(const char* className) {
+    NanEscapableScope();
     v8::Local<v8::FunctionTemplate> constructorTemplate = NanNew<v8::FunctionTemplate>();
     constructorTemplate->SetClassName(NanNew<v8::String>(className));
     constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-    return constructorTemplate;
+    return NanEscapeScope(constructorTemplate);
   }
 };
 
-//The constructor must be static per template instance not fro all NodeWrapped subclasses.
-template <class T> v8::Handle<v8::Function> NodeWrapped<T>::constructor;
+//The constructor template must be static per template instance not for all NodeWrapped subclasses.
+template <class T> v8::Persistent<v8::FunctionTemplate> NodeWrapped<T>::constructorTemplate;
 #endif
