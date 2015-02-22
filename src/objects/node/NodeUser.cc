@@ -6,54 +6,54 @@ NodeUser::NodeUser(std::unique_ptr<User> _user) : user(std::move(_user)) {}
 
 NodeUser::~NodeUser() {}
 
-Handle<Value> NodeUser::getLink(Local<String> property, const AccessorInfo& info) {
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.Holder());
-  return String::New(nodeUser->user->link().c_str());
+NAN_GETTER(NodeUser::getLink) {
+  NanScope();
+  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
+  NanReturnValue(NanNew<String>(nodeUser->user->link().c_str()));
 }
 
-Handle<Value> NodeUser::getCanonicalName(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.Holder());
-  return scope.Close(String::New(nodeUser->user->canonicalName().c_str()));
+NAN_GETTER(NodeUser::getCanonicalName) {
+  NanScope();
+  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
+  NanReturnValue(NanNew<String>(nodeUser->user->canonicalName().c_str()));
 }
 
-Handle<Value> NodeUser::getDisplayName(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.Holder());
-  return scope.Close(String::New(nodeUser->user->displayName().c_str()));
+NAN_GETTER(NodeUser::getDisplayName) {
+  NanScope();
+  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
+  NanReturnValue(NanNew<String>(nodeUser->user->displayName().c_str()));
 }
 
-Handle<Value> NodeUser::isLoaded(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.Holder());
-  return scope.Close(Boolean::New(nodeUser->user->isLoaded()));
+NAN_GETTER(NodeUser::isLoaded) {
+  NanScope();
+  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
+  NanReturnValue(NanNew<Boolean>(nodeUser->user->isLoaded()));
 }
 
-Handle<Value> NodeUser::getPublishedPlaylistsContainer(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.Holder());
+NAN_GETTER(NodeUser::getPublishedPlaylistsContainer) {
+  NanScope();
+  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
   auto playlistContainer = nodeUser->user->publishedPlaylists();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(playlistContainer);
-  return scope.Close(nodePlaylistContainer->getV8Object());
+  NanReturnValue(nodePlaylistContainer->getV8Object());
 }
 
-Handle<Value> NodeUser::getStarredPlaylist(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.Holder());
+NAN_GETTER(NodeUser::getStarredPlaylist) {
+  NanScope();
+  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
   auto playlist = nodeUser->user->starredPlaylist();
   NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
-  return scope.Close(nodePlaylist->getV8Object()); 
+  NanReturnValue(nodePlaylist->getV8Object()); 
 }
 
 void NodeUser::init() {
-  HandleScope scope;
+  NanScope();
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("User");
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("canonicalName"), getCanonicalName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("displayName"), getDisplayName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPublishedPlaylistsContainer);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("starredPlaylist"), getStarredPlaylist);
-  constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
-  scope.Close(Undefined());
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("canonicalName"), getCanonicalName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("displayName"), getDisplayName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistContainer"), getPublishedPlaylistsContainer);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("starredPlaylist"), getStarredPlaylist);
+  constructor = constructorTemplate->GetFunction();
 }
