@@ -20,7 +20,11 @@ NodeAudioHandler::~NodeAudioHandler() {
   uv_timer_stop(&musicTimer);
 }
 
+#if NODE_VERSION_AT_LEAST(0, 11, 0)
 void NodeAudioHandler::musicTimeout(uv_timer_t* timer) {
+#else
+void NodeAudioHandler::musicTimeout(uv_timer_t* timer, int status) {
+#endif
   NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(timer->data);
   audio_fifo_t *audioFifo = &audioHandler->audioFifo;
   audio_fifo_data_t* audioData;

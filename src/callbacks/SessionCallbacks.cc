@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include <uv.h>
+#include <node_version.h>
 
 extern Application* application;
 static void handleNotify(uv_async_t* handle);
@@ -31,9 +32,16 @@ void SessionCallbacks::init() {
 /**
  * If the timer for sp_session_process_events has run out this method will be called.
  **/
+#if NODE_VERSION_AT_LEAST(0, 11, 0)
 static void processEventsTimeout(uv_timer_t* timer) {
   handleNotify(notifyHandle.get());
 }
+#else
+static void processEventsTimeout(uv_timer_t* timer, int status) {
+  handleNotify(notifyHandle.get(), 0);
+}
+#endif
+
 
 /**
  * This is a callback function that will be called by spotify.
@@ -47,7 +55,11 @@ void SessionCallbacks::notifyMainThread(sp_session* session) {
  * async callback handle function for process events.
  * This function will always be called in the thread in which the sp_session was created.
  **/
+#if NODE_VERSION_AT_LEAST(0, 11, 0)
 static void handleNotify(uv_async_t* handle) {
+#else
+static void handleNotify(uv_async_t* handle, int status) {
+#endif
   uv_timer_stop(processEventsTimer.get()); //a new timeout will be set at the end
   int nextTimeout = 0;
   while(nextTimeout == 0) {
