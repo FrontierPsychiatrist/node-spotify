@@ -2,20 +2,22 @@
 #include "NodeUser.h"
 
 //Since NodeWrapped uses a templating technique to assign the static constructor to each childclass we need to improvise here.
-Persistent<Function> NodeTrackExtended::constructor;
+Handle<Function> NodeTrackExtended::constructor;
 
 NodeTrackExtended::NodeTrackExtended(std::shared_ptr<TrackExtended> _trackExtended) : NodeTrack(_trackExtended), trackExtended(_trackExtended) {
+}
+
+Handle<Object> NodeTrackExtended::getV8Object() {
+  return NanObjectWrapHandle(this);
 }
 
 /**
   We need rewrite this method because we need to use our own constructor, not the one from NodeTrack.
 **/
-Handle<Object> NodeTrackExtended::getV8Object() {
-  if(handle_.IsEmpty()) {
-    Local<Object> o = Local<Object>::New(constructor->NewInstance());
-    this->Wrap(o);
-  }
-  return handle_;
+Handle<Object> NodeTrackExtended::createInstance() {
+  Local<Object> object = NanNew(constructor)->NewInstance();
+  NanSetInternalFieldPointer(object, 0, this);
+  return object;
 }
 
 /**
@@ -25,51 +27,50 @@ Handle<Function> NodeTrackExtended::getConstructor() {
   return constructor;
 }
 
-Handle<Value> NodeTrackExtended::getCreator(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.Holder());
-  Handle<Value> nodeCreator = Undefined();
+NAN_GETTER(NodeTrackExtended::getCreator) {
+  NanScope();
+  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(args.This());
+  Handle<Value> nodeCreator = NanUndefined();
   if(nodeTrackExtended->trackExtended->creator()) {
     NodeUser* nodeUser = new NodeUser(nodeTrackExtended->trackExtended->creator());
     nodeCreator = nodeUser->getV8Object();
   }
-  return scope.Close(nodeCreator);
+  NanReturnValue(nodeCreator);
 }
 
-Handle<Value> NodeTrackExtended::getSeen(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.Holder());
-  return scope.Close(Boolean::New(nodeTrackExtended->trackExtended->seen()));
+NAN_GETTER(NodeTrackExtended::getSeen) {
+  NanScope();
+  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(args.This());
+  NanReturnValue(NanNew<Boolean>(nodeTrackExtended->trackExtended->seen()));
 }
 
-void NodeTrackExtended::setSeen(Local<String> property, Local<Value> value, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.Holder());
+NAN_SETTER(NodeTrackExtended::setSeen) {
+  NanScope();
+  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(args.This());
   nodeTrackExtended->trackExtended->seen(value->ToBoolean()->Value());
-  scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-Handle<Value> NodeTrackExtended::getCreateTime(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.Holder());
-  return scope.Close(Date::New(nodeTrackExtended->trackExtended->createTime() * 1000));
+NAN_GETTER(NodeTrackExtended::getCreateTime) {
+  NanScope();
+  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(args.This());
+  NanReturnValue(NanNew<Date>(nodeTrackExtended->trackExtended->createTime() * 1000));
 }
 
-Handle<Value> NodeTrackExtended::getMessage(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.Holder());
-  return scope.Close(String::New(nodeTrackExtended->trackExtended->message().c_str()));
+NAN_GETTER(NodeTrackExtended::getMessage) {
+  NanScope();
+  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(args.This());
+  NanReturnValue(NanNew<String>(nodeTrackExtended->trackExtended->message().c_str()));
 }
 
 void NodeTrackExtended::init() {
-  HandleScope scope;
+  NanScope();
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("TrackExtended");
   Handle<FunctionTemplate> nodeTrackTemplate = NodeTrack::init();
   constructorTemplate->Inherit(nodeTrackTemplate);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("creator"), getCreator);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("seen"), getSeen, setSeen);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("createTime"), getCreateTime);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("message"), getMessage);
-  constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
-  scope.Close(Undefined());
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("creator"), getCreator);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("seen"), getSeen, setSeen);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("createTime"), getCreateTime);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("message"), getMessage);
+  constructor = constructorTemplate->GetFunction();
 }
