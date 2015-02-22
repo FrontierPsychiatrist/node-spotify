@@ -17,7 +17,7 @@ NAN_GETTER(NodePlaylistContainer::getOwner) {
   NanScope();
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   NodeUser* nodeUser = new NodeUser(nodePlaylistContainer->playlistContainer->owner());
-  NanReturnValue(nodeUser->getV8Object());
+  NanReturnValue(nodeUser->createInstance());
 }
 
 NAN_GETTER(NodePlaylistContainer::getNumPlaylists) {
@@ -41,10 +41,10 @@ NAN_METHOD(NodePlaylistContainer::getPlaylist) {
   Handle<Value> outNodePlaylist;
   if(!playlist->isFolder) {
     NodePlaylist* nodePlaylist = new NodePlaylist(std::static_pointer_cast<Playlist>(playlist));
-    outNodePlaylist = nodePlaylist->getV8Object();
+    outNodePlaylist = nodePlaylist->createInstance();
   } else {
     NodePlaylistFolder* nodePlaylistFolder = new NodePlaylistFolder(std::static_pointer_cast<PlaylistFolder>(playlist));
-    outNodePlaylist = nodePlaylistFolder->getV8Object();
+    outNodePlaylist = nodePlaylistFolder->createInstance();
   }
 
   NanReturnValue(outNodePlaylist);

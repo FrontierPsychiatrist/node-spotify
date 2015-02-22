@@ -213,7 +213,7 @@ NAN_METHOD(NodeSearch::getTrack) {
   }
 
   NodeTrack* nodeTrack = new NodeTrack(nodeSearch->search->getTrack(position));
-  NanReturnValue(nodeTrack->getV8Object());
+  NanReturnValue(nodeTrack->createInstance());
 }
 
 NAN_METHOD(NodeSearch::getAlbum) {
@@ -229,7 +229,7 @@ NAN_METHOD(NodeSearch::getAlbum) {
   }
 
   NodeAlbum* nodeAlbum = new NodeAlbum(nodeSearch->search->getAlbum(position));
-  NanReturnValue(nodeAlbum->getV8Object());
+  NanReturnValue(nodeAlbum->createInstance());
 }
 
 NAN_METHOD(NodeSearch::getArtist) {
@@ -245,7 +245,7 @@ NAN_METHOD(NodeSearch::getArtist) {
   }
 
   NodeArtist* nodeArtist = new NodeArtist(nodeSearch->search->getArtist(position));
-  NanReturnValue(nodeArtist->getV8Object());
+  NanReturnValue(nodeArtist->createInstance());
 }
 
 NAN_METHOD(NodeSearch::getPlaylist) {
@@ -261,7 +261,7 @@ NAN_METHOD(NodeSearch::getPlaylist) {
   }
 
   NodePlaylist* nodePlaylist = new NodePlaylist(nodeSearch->search->getPlaylist(position));
-  NanReturnValue(nodePlaylist->getV8Object());
+  NanReturnValue(nodePlaylist->createInstance());
 }
 
 NAN_GETTER(NodeSearch::getTotalTracks) {

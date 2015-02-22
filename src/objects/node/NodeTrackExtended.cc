@@ -33,7 +33,7 @@ NAN_GETTER(NodeTrackExtended::getCreator) {
   Handle<Value> nodeCreator = NanUndefined();
   if(nodeTrackExtended->trackExtended->creator()) {
     NodeUser* nodeUser = new NodeUser(nodeTrackExtended->trackExtended->creator());
-    nodeCreator = nodeUser->getV8Object();
+    nodeCreator = nodeUser->createInstance();
   }
   NanReturnValue(nodeCreator);
 }

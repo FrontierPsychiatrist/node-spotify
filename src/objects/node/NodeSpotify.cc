@@ -73,28 +73,28 @@ NAN_METHOD(NodeSpotify::createFromLink) {
       {
         sp_track* track = sp_link_as_track(parsedLink);
         NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(track));
-        out = nodeTrack->getV8Object();
+        out = nodeTrack->createInstance();
         break;
       }
       case SP_LINKTYPE_ALBUM:
       {
         sp_album* album = sp_link_as_album(parsedLink);
         NodeAlbum* nodeAlbum = new NodeAlbum(std::unique_ptr<Album>(new Album(album)));
-        out = nodeAlbum->getV8Object();
+        out = nodeAlbum->createInstance();
         break;
       }
       case SP_LINKTYPE_ARTIST:
       {
         sp_artist* artist = sp_link_as_artist(parsedLink);
         NodeArtist* nodeArtist = new NodeArtist(std::unique_ptr<Artist>(new Artist(artist)));
-        out = nodeArtist->getV8Object();
+        out = nodeArtist->createInstance();
         break;
       }
       case SP_LINKTYPE_PROFILE:
       {
         sp_user* user = sp_link_as_user(parsedLink);
         NodeUser* nodeUser = new NodeUser(std::unique_ptr<User>(new User(user)));
-        out = nodeUser->getV8Object();
+        out = nodeUser->createInstance();
         break;
       }
       case SP_LINKTYPE_PLAYLIST:
@@ -102,14 +102,14 @@ NAN_METHOD(NodeSpotify::createFromLink) {
         sp_playlist* spPlaylist = sp_playlist_create(application->session, parsedLink);
         auto playlist = Playlist::fromCache(spPlaylist);
         NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
-        out = nodePlaylist->getV8Object();
+        out = nodePlaylist->createInstance();
         break;
       }
       case SP_LINKTYPE_LOCALTRACK:
       {
         sp_track* track = sp_link_as_track(parsedLink);
         NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(track));
-        out = nodeTrack->getV8Object();
+        out = nodeTrack->createInstance();
         break;
       }
       default:
@@ -148,7 +148,7 @@ NAN_METHOD(NodeSpotify::logout) {
 NAN_GETTER(NodeSpotify::getPlaylistContainer) {
   NanScope();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(application->playlistContainer);
-  NanReturnValue(nodePlaylistContainer->getV8Object());
+  NanReturnValue(nodePlaylistContainer->createInstance());
 }
 
 NAN_GETTER(NodeSpotify::getRememberedUser) {

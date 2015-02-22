@@ -35,7 +35,7 @@ NAN_GETTER(NodeUser::getPublishedPlaylistsContainer) {
   NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
   auto playlistContainer = nodeUser->user->publishedPlaylists();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(playlistContainer);
-  NanReturnValue(nodePlaylistContainer->getV8Object());
+  NanReturnValue(nodePlaylistContainer->createInstance());
 }
 
 NAN_GETTER(NodeUser::getStarredPlaylist) {
@@ -43,7 +43,7 @@ NAN_GETTER(NodeUser::getStarredPlaylist) {
   NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
   auto playlist = nodeUser->user->starredPlaylist();
   NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
-  NanReturnValue(nodePlaylist->getV8Object()); 
+  NanReturnValue(nodePlaylist->createInstance());
 }
 
 void NodeUser::init() {

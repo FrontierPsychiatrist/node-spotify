@@ -59,7 +59,7 @@ NAN_GETTER(NodeAlbum::getTracks) {
   Handle<Array> nodeTracks = NanNew<Array>(tracks.size());
   for(int i = 0; i < (int)tracks.size(); i++) {
     NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
-    nodeTracks->Set(NanNew<Number>(i), nodeTrack->getV8Object());
+    nodeTracks->Set(NanNew<Number>(i), nodeTrack->createInstance());
   }
   NanReturnUndefined();
 }
@@ -85,7 +85,7 @@ NAN_GETTER(NodeAlbum::getArtist) {
   NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(args.This());
   NodeArtist* nodeArtist = new NodeArtist(nodeAlbum->album->artist());
-  NanReturnValue(nodeArtist->getV8Object());
+  NanReturnValue(nodeArtist->createInstance());
 }
 
 NAN_GETTER(NodeAlbum::isLoaded) {

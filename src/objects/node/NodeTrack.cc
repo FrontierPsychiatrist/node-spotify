@@ -47,9 +47,9 @@ NAN_GETTER(NodeTrack::getArtists) {
   for(int i = 0; i < (int)nodeTrack->track->artists().size(); i++) {
     if(nodeTrack->track->artists()[i]) {
       NodeArtist* nodeArtist = new NodeArtist(std::move(nodeTrack->track->artists()[i]));
-      jsArtists->Set(NanNew<Number>(i), nodeArtist->getV8Object() );
+      jsArtists->Set(NanNew<Number>(i), nodeArtist->createInstance());
     } else {
-      jsArtists->Set(NanNew<Number>(i), NanUndefined() );
+      jsArtists->Set(NanNew<Number>(i), NanUndefined());
     }
   }
   NanReturnValue(jsArtists);
@@ -60,7 +60,7 @@ NAN_GETTER(NodeTrack::getAlbum) {
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
   if(nodeTrack->track->album()) {
     NodeAlbum* nodeAlbum = new NodeAlbum(nodeTrack->track->album());
-    NanReturnValue(nodeAlbum->getV8Object());
+    NanReturnValue(nodeAlbum->createInstance());
   } else {
     NanReturnUndefined();
   }

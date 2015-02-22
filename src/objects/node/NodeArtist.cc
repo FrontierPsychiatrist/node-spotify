@@ -30,7 +30,6 @@ NAN_METHOD(NodeArtist::browse) {
   if(nodeArtist->artist->artistBrowse == nullptr) {
     nodeArtist->makePersistent();
     sp_artistbrowse_type artistbrowseType = static_cast<sp_artistbrowse_type>(args[0]->ToNumber()->IntegerValue());
-    //FIXME Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
     nodeArtist->browseCompleteCallback = std::unique_ptr<NanCallback>(new NanCallback(args[1].As<Function>()));
 
     //Mutate the V8 object.
@@ -56,7 +55,7 @@ NAN_GETTER(NodeArtist::getTracks) {
   Local<Array> nodeTracks = NanNew<Array>(tracks.size());
   for(int i = 0; i < (int)tracks.size(); i++) {
     NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
-    nodeTracks->Set(NanNew<Number>(i), nodeTrack->getV8Object());
+    nodeTracks->Set(NanNew<Number>(i), nodeTrack->createInstance());
   }
   NanReturnValue(nodeTracks);
 }
@@ -68,7 +67,7 @@ NAN_GETTER(NodeArtist::getTophitTracks) {
   Local<Array> nodeTophitTracks = NanNew<Array>(tophitTracks.size());
   for(int i = 0; i < (int)tophitTracks.size(); i++) {
     NodeTrack* nodeTrack = new NodeTrack(tophitTracks[i]);
-    nodeTophitTracks->Set(NanNew<Number>(i), nodeTrack->getV8Object());
+    nodeTophitTracks->Set(NanNew<Number>(i), nodeTrack->createInstance());
   }
   NanReturnValue(nodeTophitTracks);
 }
@@ -80,7 +79,7 @@ NAN_GETTER(NodeArtist::getAlbums) {
   Local<Array> nodeAlbums = NanNew<Array>(albums.size());
   for(int i = 0; i < (int)albums.size(); i++) {
     NodeAlbum* nodeAlbum = new NodeAlbum(std::move(albums[i]));
-    nodeAlbums->Set(NanNew<Number>(i), nodeAlbum->getV8Object());
+    nodeAlbums->Set(NanNew<Number>(i), nodeAlbum->createInstance());
   }
   NanReturnValue(nodeAlbums);
 }
@@ -92,7 +91,7 @@ NAN_GETTER(NodeArtist::getSimilarArtists) {
   Local<Array> nodeSimilarArtists = NanNew<Array>(similarArtists.size());
   for(int i = 0; i < (int)similarArtists.size(); i++) {
     NodeArtist* nodeArtist = new NodeArtist(std::move(similarArtists[i]));
-    nodeSimilarArtists->Set(NanNew<Number>(i), nodeArtist->getV8Object());
+    nodeSimilarArtists->Set(NanNew<Number>(i), nodeArtist->createInstance());
   }
   NanReturnValue(nodeSimilarArtists);
 }

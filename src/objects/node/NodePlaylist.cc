@@ -73,7 +73,7 @@ NAN_METHOD(NodePlaylist::getTrack) {
   }
   std::shared_ptr<TrackExtended> track = nodePlaylist->playlist->getTrack(position);
   NodeTrackExtended* nodeTrack = new NodeTrackExtended(track);
-  NanReturnValue(nodeTrack->getV8Object());
+  NanReturnValue(nodeTrack->createInstance());
 }
 
 NAN_METHOD(NodePlaylist::addTracks) {
@@ -151,7 +151,7 @@ NAN_GETTER(NodePlaylist::getOwner) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   Handle<Value> owner;
   if(nodePlaylist->playlist->owner()) {
-    owner = (new NodeUser(nodePlaylist->playlist->owner()))->getV8Object();
+    owner = (new NodeUser(nodePlaylist->playlist->owner()))->createInstance();
   }
   NanReturnValue(owner);
 }
