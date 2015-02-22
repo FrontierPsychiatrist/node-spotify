@@ -5,7 +5,7 @@
 #include "V8Browseable.h"
 #include "../spotify/Search.h"
 
-#include <v8.h>
+#include <nan.h>
 #include <memory>
 
 using namespace v8;
@@ -22,38 +22,38 @@ public:
   NodeSearch(const char* _query, int offset);
   NodeSearch(const char* _query, int offset, int limit);
 
-  static Handle<Value> getTrackOffset(Local<String> property, const AccessorInfo& info);
-  static void setTrackOffset(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getAlbumOffset(Local<String> property, const AccessorInfo& info);
-  static void setAlbumOffset(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getArtistOffset(Local<String> property, const AccessorInfo& info);
-  static void setArtistOffset(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getPlaylistOffset(Local<String> property, const AccessorInfo& info);
-  static void setPlaylistOffset(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getTrackLimit(Local<String> property, const AccessorInfo& info);
-  static void setTrackLimit(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getAlbumLimit(Local<String> property, const AccessorInfo& info);
-  static void setAlbumLimit(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getArtistLimit(Local<String> property, const AccessorInfo& info);
-  static void setArtistLimit(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getPlaylistLimit(Local<String> property, const AccessorInfo& info);
-  static void setPlaylistLimit(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> didYouMean(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getTotalTracks(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getNumTracks(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getTotalAlbums(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getNumAlbums(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getTotalArtists(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getNumArtists(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getTotalPlaylists(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getNumPlaylists(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> New(const Arguments& args);
-  static Handle<Value> execute(const Arguments& args);
-  static Handle<Value> getTrack(const Arguments& args);
-  static Handle<Value> getAlbum(const Arguments& args);
-  static Handle<Value> getArtist(const Arguments& args);
-  static Handle<Value> getPlaylist(const Arguments& args);
-  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
+  static NAN_GETTER(getTrackOffset);
+  static NAN_SETTER(setTrackOffset);
+  static NAN_GETTER(getAlbumOffset);
+  static NAN_SETTER(setAlbumOffset);
+  static NAN_GETTER(getArtistOffset);
+  static NAN_SETTER(setArtistOffset);
+  static NAN_GETTER(getPlaylistOffset);
+  static NAN_SETTER(setPlaylistOffset);
+  static NAN_GETTER(getTrackLimit);
+  static NAN_SETTER(setTrackLimit);
+  static NAN_GETTER(getAlbumLimit);
+  static NAN_SETTER(setAlbumLimit);
+  static NAN_GETTER(getArtistLimit);
+  static NAN_SETTER(setArtistLimit);
+  static NAN_GETTER(getPlaylistLimit);
+  static NAN_SETTER(setPlaylistLimit);
+  static NAN_GETTER(didYouMean);
+  static NAN_GETTER(getTotalTracks);
+  static NAN_GETTER(getNumTracks);
+  static NAN_GETTER(getTotalAlbums);
+  static NAN_GETTER(getNumAlbums);
+  static NAN_GETTER(getTotalArtists);
+  static NAN_GETTER(getNumArtists);
+  static NAN_GETTER(getTotalPlaylists);
+  static NAN_GETTER(getNumPlaylists);
+  static NAN_METHOD(New);
+  static NAN_METHOD(execute);
+  static NAN_METHOD(getTrack);
+  static NAN_METHOD(getAlbum);
+  static NAN_METHOD(getArtist);
+  static NAN_METHOD(getPlaylist);
+  static NAN_GETTER(getLink);
   static void init();
 };
 

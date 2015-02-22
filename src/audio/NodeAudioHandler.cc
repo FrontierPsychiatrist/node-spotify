@@ -9,8 +9,8 @@ using namespace v8;
 
 extern Application* application;
 
-NodeAudioHandler::NodeAudioHandler(Handle<Function> _musicDeliveryCallback) :
-  AudioHandler(), musicDeliveryCallback(_musicDeliveryCallback), needMoreData(true), stopped(false), musicTimerRepeat(20) {
+NodeAudioHandler::NodeAudioHandler(std::unique_ptr<NanCallback> _musicDeliveryCallback) :
+  AudioHandler(), musicDeliveryCallback(std::move(_musicDeliveryCallback)), needMoreData(true), stopped(false), musicTimerRepeat(20) {
   uv_timer_init(uv_default_loop(), &musicTimer);
   musicTimer.data = this;
   uv_timer_start(&musicTimer, &musicTimeout, 0, musicTimerRepeat);
@@ -20,7 +20,7 @@ NodeAudioHandler::~NodeAudioHandler() {
   uv_timer_stop(&musicTimer);
 }
 
-void NodeAudioHandler::musicTimeout(uv_timer_t* timer, int status) {
+void NodeAudioHandler::musicTimeout(uv_timer_t* timer) {
   NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(timer->data);
   audio_fifo_t *audioFifo = &audioHandler->audioFifo;
   audio_fifo_data_t* audioData;
@@ -47,25 +47,26 @@ static void free_data(char* data, void* hint) {
  * @return true if the callback needs more data.
  */
 bool NodeAudioHandler::callMusicDeliveryCallback(audio_fifo_data_t* audioData) {
-  static Local<String> numberOfSamplesKey = String::NewSymbol("numberOfSamples");
-  static Local<String> sampleRateKey = String::NewSymbol("sampleRate");
-  static Local<String> channelsKey = String::NewSymbol("channels");
+  static Local<String> numberOfSamplesKey = NanNew<String>("numberOfSamples");
+  static Local<String> sampleRateKey = NanNew<String>("sampleRate");
+  static Local<String> channelsKey = NanNew<String>("channels");
 
   size_t size = audioData->numberOfSamples * sizeof(int16_t) * audioData->channels;
-  node::Buffer *slowBuffer = node::Buffer::New((char*)audioData->samples, size, free_data, audioData);
+  Local<Object> actualBuffer = NanNewBufferHandle((char*)audioData->samples, size, free_data, audioData);
+  //node::Buffer *slowBuffer = node::Buffer::New((char*)audioData->samples, size, free_data, audioData);
 
-  Local<Object> globalObj = Context::GetCurrent()->Global();
-  Local<Function> ctor = Local<Function>::Cast(globalObj->Get(String::New("Buffer")));
-  Handle<Value> constructorArgs[3] = { slowBuffer->handle_, Integer::New(size), Integer::New(0)};
-  Handle<Object> actualBuffer = ctor->NewInstance(3, constructorArgs);
+  //Local<Object> globalObj = Context::GetCurrent()->Global();
+  //Local<Function> ctor = Local<Function>::Cast(globalObj->Get(String::New("Buffer")));
+  //Handle<Value> constructorArgs[3] = { slowBuffer->handle_, Integer::New(size), Integer::New(0)};
+  //Handle<Object> actualBuffer = ctor->NewInstance(3, constructorArgs);
 
-  actualBuffer->Set(numberOfSamplesKey, Integer::New(audioData->numberOfSamples));
-  actualBuffer->Set(sampleRateKey, Integer::New(audioData->sampleRate));
-  actualBuffer->Set(channelsKey, Integer::New(audioData->channels));
+  actualBuffer->Set(numberOfSamplesKey, NanNew<Integer>(audioData->numberOfSamples));
+  actualBuffer->Set(sampleRateKey, NanNew<Integer>(audioData->sampleRate));
+  actualBuffer->Set(channelsKey, NanNew<Integer>(audioData->channels));
 
   int argc = 2;
-  Handle<Value> argv[] = { Undefined(), actualBuffer };
-  Handle<Value> bufferFilled = musicDeliveryCallback->Call(globalObj, argc, argv);
+  Handle<Value> argv[] = { NanUndefined(), actualBuffer };
+  Handle<Value> bufferFilled = musicDeliveryCallback->Call(argc, argv);
   return bufferFilled->ToBoolean()->BooleanValue();
 }
 
@@ -80,13 +81,13 @@ void NodeAudioHandler::setStopped(bool _stopped) {
   AudioHandler::setStopped(_stopped);
 }
 
-Handle<Value> NodeAudioHandler::setNeedMoreData(const Arguments &args) {
-  HandleScope scope;
+NAN_METHOD(NodeAudioHandler::setNeedMoreData) {
+  NanScope();
   if(args.Length() < 1 || !args[0]->IsBoolean()) {
-    return scope.Close(V8_EXCEPTION("setNeedMoreData needs a boolean as its first argument."));
+    NanThrowError("setNeedMoreData needs a boolean as its first argument.");
   }
   NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(application->audioHandler.get());
   bool needMoreData = args[0]->ToBoolean()->BooleanValue();
   audioHandler->needMoreData = needMoreData;
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }

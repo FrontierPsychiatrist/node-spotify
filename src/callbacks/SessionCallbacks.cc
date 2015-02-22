@@ -3,23 +3,23 @@
 #include "../common_macros.h"
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/spotify/Player.h"
-#include "../utils/V8Utils.h"
 
 #include <string.h>
+#include <uv.h>
 
 extern Application* application;
-static void handleNotify(uv_async_t* handle, int status);
+static void handleNotify(uv_async_t* handle);
 
 static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks;
 //Timer to call sp_session_process_events after a timeout
 static std::unique_ptr<uv_timer_t> processEventsTimer;
 static std::unique_ptr<uv_async_t> notifyHandle;
 
-v8::Handle<v8::Function> SessionCallbacks::loginCallback;
-v8::Handle<v8::Function> SessionCallbacks::logoutCallback;
-v8::Handle<v8::Function> SessionCallbacks::metadataUpdatedCallback;
-v8::Handle<v8::Function> SessionCallbacks::endOfTrackCallback;
-v8::Handle<v8::Function> SessionCallbacks::playTokenLostCallback;
+std::unique_ptr<NanCallback> SessionCallbacks::loginCallback;
+std::unique_ptr<NanCallback> SessionCallbacks::logoutCallback;
+std::unique_ptr<NanCallback> SessionCallbacks::metadataUpdatedCallback;
+std::unique_ptr<NanCallback> SessionCallbacks::endOfTrackCallback;
+std::unique_ptr<NanCallback> SessionCallbacks::playTokenLostCallback;
 
 void SessionCallbacks::init() {
   processEventsTimer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
@@ -31,8 +31,8 @@ void SessionCallbacks::init() {
 /**
  * If the timer for sp_session_process_events has run out this method will be called.
  **/
-static void processEventsTimeout(uv_timer_t* timer, int status) {
-  handleNotify(notifyHandle.get(), 0);
+static void processEventsTimeout(uv_timer_t* timer) {
+  handleNotify(notifyHandle.get());
 }
 
 /**
@@ -47,7 +47,7 @@ void SessionCallbacks::notifyMainThread(sp_session* session) {
  * async callback handle function for process events.
  * This function will always be called in the thread in which the sp_session was created.
  **/
-static void handleNotify(uv_async_t* handle, int status) {
+static void handleNotify(uv_async_t* handle) {
   uv_timer_stop(processEventsTimer.get()); //a new timeout will be set at the end
   int nextTimeout = 0;
   while(nextTimeout == 0) {
@@ -62,14 +62,16 @@ void SessionCallbacks::metadata_updated(sp_session* session) {
     application->player->retryPlay();
   }
   
-  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(metadataUpdatedCallback);
+  if(!metadataUpdatedCallback->IsEmpty()) {
+    metadataUpdatedCallback->Call(0, {});
+  }
 }
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   if(SP_ERROR_OK != error) {
     unsigned int argc = 1;
-    v8::Handle<v8::Value> argv[1] = { v8::Exception::Error(v8::String::New(sp_error_message(error))) };
-    loginCallback->Call( v8::Context::GetCurrent()->Global(), argc, argv );
+    v8::Handle<v8::Value> argv[1] = { NanError(sp_error_message(error)) };
+    loginCallback->Call( argc, argv );
     return;
   }
 
@@ -84,7 +86,9 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
  * This is the "ready" hook for users. Playlists should be available at this point.
  **/
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata) {
-  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(loginCallback);
+  if(!loginCallback->IsEmpty()) {
+    loginCallback->Call(0, {});
+  }
   //Issue 35, rootPlaylistContainerLoaded can be called multiple times throughout the lifetime of a session.
   //loginCallback must only be called once.
   sp_playlistcontainer_remove_callbacks(sp, &rootPlaylistContainerCallbacks, nullptr);    
@@ -93,9 +97,13 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, voi
 void SessionCallbacks::playTokenLost(sp_session *session) {
   application->audioHandler->setStopped(true);
   application->player->isPaused = true;
-  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(playTokenLostCallback);
+  if(!playTokenLostCallback->IsEmpty()) {
+    playTokenLostCallback->Call(0, {});
+  }
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
-  V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(logoutCallback);
+  if(!logoutCallback->IsEmpty()) {
+    logoutCallback->Call(0, {});
+  }
 }

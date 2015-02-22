@@ -4,7 +4,7 @@
 #include "NodeTrack.h"
 #include "../spotify/TrackExtended.h"
 
-#include <v8.h>
+#include <nan.h>
 #include <memory>
 
 using namespace v8;
@@ -14,16 +14,16 @@ private:
   std::shared_ptr<TrackExtended> trackExtended;
 public:
   NodeTrackExtended(std::shared_ptr<TrackExtended> trackExtended);
-  static Handle<Value> getCreator(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getSeen(Local<String> property, const AccessorInfo& info);
-  static void setSeen(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getCreateTime(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getMessage(Local<String> property, const AccessorInfo& info);
+  static NAN_GETTER(getCreator);
+  static NAN_GETTER(getSeen);
+  static NAN_SETTER(setSeen);
+  static NAN_GETTER(getCreateTime);
+  static NAN_GETTER(getMessage);
   static void init();
   static Handle<Function> getConstructor();
   Handle<Object> getV8Object();
 protected:
-  static Persistent<Function> constructor;
+  static Handle<Function> constructor;
 };
 
 #endif

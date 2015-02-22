@@ -3,21 +3,21 @@
 
 #include "V8Wrapped.h"
 
-#include <v8.h>
+#include <nan.h>
 
 class V8Browseable : public virtual V8Wrapped {
 public:
   void callBrowseComplete() {
-    unsigned int argc = 2;
-    v8::Handle<v8::Value> argv[2] = {v8::Undefined(), this->getV8Object()};
-    browseCompleteCallback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-    persistentHandle.Dispose();
+    NanScope();
+    v8::Handle<v8::Value> argv[2] = {NanUndefined(), NanNew(this->getV8Object())};
+    browseCompleteCallback->Call(2, argv);
   }
 protected:
   void makePersistent() {
-    persistentHandle = v8::Persistent<v8::Object>::New(this->getV8Object());
+    NanAssignPersistent(persistentHandle, this->getV8Object());
+    //FIXME persistentHandle = v8::Persistent<v8::Object>::New(this->getV8Object());
   }
-  v8::Handle<v8::Function> browseCompleteCallback;
+  std::unique_ptr<NanCallback> browseCompleteCallback;
 private:
   v8::Persistent<v8::Object> persistentHandle;
 };

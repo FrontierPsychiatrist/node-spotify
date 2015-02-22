@@ -12,110 +12,109 @@ NodeArtist::~NodeArtist() {
   }
 }
 
-Handle<Value> NodeArtist::getName(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-  return scope.Close(String::New(nodeArtist->artist->name().c_str()));
+NAN_GETTER(NodeArtist::getName) {
+  NanScope();
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NanReturnValue(NanNew<String>(nodeArtist->artist->name().c_str()));
 }
 
-Handle<Value> NodeArtist::getLink(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-  return scope.Close(String::New(nodeArtist->artist->link().c_str()));
+NAN_GETTER(NodeArtist::getLink) {
+  NanScope();
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NanReturnValue(NanNew<String>(nodeArtist->artist->link().c_str()));
 }
 
-Handle<Value> NodeArtist::browse(const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(NodeArtist::browse) {
+  NanScope();
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
   if(nodeArtist->artist->artistBrowse == nullptr) {
     nodeArtist->makePersistent();
     sp_artistbrowse_type artistbrowseType = static_cast<sp_artistbrowse_type>(args[0]->ToNumber()->IntegerValue());
-    Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
-    nodeArtist->browseCompleteCallback = callback;
+    //Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
+    nodeArtist->browseCompleteCallback = std::unique_ptr<NanCallback>(new NanCallback(args[1].As<Function>()));
 
     //Mutate the V8 object.
     Handle<Object> nodeArtistV8 = nodeArtist->getV8Object();
-    nodeArtistV8->SetAccessor(String::NewSymbol("tracks"), getTracks);
-    nodeArtistV8->SetAccessor(String::NewSymbol("tophitTracks"), getTophitTracks);
-    nodeArtistV8->SetAccessor(String::NewSymbol("albums"), getAlbums);
-    nodeArtistV8->SetAccessor(String::NewSymbol("similarArtists"), getSimilarArtists);
-    nodeArtistV8->SetAccessor(String::NewSymbol("biography"), getBiography);
+    nodeArtistV8->SetAccessor(NanNew<String>("tracks"), getTracks);
+    nodeArtistV8->SetAccessor(NanNew<String>("tophitTracks"), getTophitTracks);
+    nodeArtistV8->SetAccessor(NanNew<String>("albums"), getAlbums);
+    nodeArtistV8->SetAccessor(NanNew<String>("similarArtists"), getSimilarArtists);
+    nodeArtistV8->SetAccessor(NanNew<String>("biography"), getBiography);
     //TODO: portraits
 
     nodeArtist->artist->browse(artistbrowseType);
   } else {
     nodeArtist->callBrowseComplete();
   }
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-Handle<Value> NodeArtist::getTracks(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
+NAN_GETTER(NodeArtist::getTracks) {
+  NanScope();
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
   std::vector<std::shared_ptr<Track>> tracks = nodeArtist->artist->tracks();
-  Local<Array> nodeTracks = Array::New(tracks.size());
+  Local<Array> nodeTracks = NanNew<Array>(tracks.size());
   for(int i = 0; i < (int)tracks.size(); i++) {
     NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
-    nodeTracks->Set(Number::New(i), nodeTrack->getV8Object());
+    nodeTracks->Set(NanNew<Number>(i), nodeTrack->getV8Object());
   }
-  return scope.Close(nodeTracks);
+  NanReturnValue(nodeTracks);
 }
 
-Handle<Value> NodeArtist::getTophitTracks(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
+NAN_GETTER(NodeArtist::getTophitTracks) {
+  NanScope();
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
   std::vector<std::shared_ptr<Track>> tophitTracks = nodeArtist->artist->tophitTracks();
-  Local<Array> nodeTophitTracks = Array::New(tophitTracks.size());
+  Local<Array> nodeTophitTracks = NanNew<Array>(tophitTracks.size());
   for(int i = 0; i < (int)tophitTracks.size(); i++) {
     NodeTrack* nodeTrack = new NodeTrack(tophitTracks[i]);
-    nodeTophitTracks->Set(Number::New(i), nodeTrack->getV8Object());
+    nodeTophitTracks->Set(NanNew<Number>(i), nodeTrack->getV8Object());
   }
-  return scope.Close(nodeTophitTracks);
+  NanReturnValue(nodeTophitTracks);
 }
 
-Handle<Value> NodeArtist::getAlbums(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
+NAN_GETTER(NodeArtist::getAlbums) {
+  NanScope();
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
   std::vector<std::unique_ptr<Album>> albums = nodeArtist->artist->albums();
-  Local<Array> nodeAlbums = Array::New(albums.size());
+  Local<Array> nodeAlbums = NanNew<Array>(albums.size());
   for(int i = 0; i < (int)albums.size(); i++) {
     NodeAlbum* nodeAlbum = new NodeAlbum(std::move(albums[i]));
-    nodeAlbums->Set(Number::New(i), nodeAlbum->getV8Object());
+    nodeAlbums->Set(NanNew<Number>(i), nodeAlbum->getV8Object());
   }
-  return scope.Close(nodeAlbums);
+  NanReturnValue(nodeAlbums);
 }
 
-Handle<Value> NodeArtist::getSimilarArtists(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
+NAN_GETTER(NodeArtist::getSimilarArtists) {
+  NanScope();
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
   std::vector<std::unique_ptr<Artist>> similarArtists = nodeArtist->artist->similarArtists();
-  Local<Array> nodeSimilarArtists = Array::New(similarArtists.size());
+  Local<Array> nodeSimilarArtists = NanNew<Array>(similarArtists.size());
   for(int i = 0; i < (int)similarArtists.size(); i++) {
     NodeArtist* nodeArtist = new NodeArtist(std::move(similarArtists[i]));
-    nodeSimilarArtists->Set(Number::New(i), nodeArtist->getV8Object());
+    nodeSimilarArtists->Set(NanNew<Number>(i), nodeArtist->getV8Object());
   }
-  return scope.Close(nodeSimilarArtists);
+  NanReturnValue(nodeSimilarArtists);
 }
 
-Handle<Value> NodeArtist::getBiography(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
+NAN_GETTER(NodeArtist::getBiography) {
+  NanScope();
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
   std::string biography = nodeArtist->artist->biography();
-  return scope.Close(String::New(biography.c_str()));
+  NanReturnValue(NanNew<String>(biography.c_str()));
 }
 
-Handle<Value> NodeArtist::isLoaded(Local<String> property, const AccessorInfo& info) {
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.Holder());
-  return Boolean::New(nodeArtist->artist->isLoaded());
+NAN_GETTER(NodeArtist::isLoaded) {
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NanReturnValue(NanNew<Boolean>(nodeArtist->artist->isLoaded()));
 }
 
 void NodeArtist::init() {
-  HandleScope scope;
+  NanScope();
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Artist");
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("link"), getLink);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("isLoaded"), isLoaded);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("name"), getName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "browse", browse);
-  constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
-  scope.Close(Undefined());
+  constructor = constructorTemplate->GetFunction();
 }

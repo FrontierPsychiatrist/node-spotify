@@ -5,7 +5,7 @@
 #include "V8Wrapped.h"
 #include "../spotify/Artist.h"
 
-#include <v8.h>
+#include <nan.h>
 #include <memory>
 
 using namespace v8;
@@ -16,15 +16,15 @@ private:
 public:
   NodeArtist(std::unique_ptr<Artist> artist);
   ~NodeArtist();
-  static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> browse(const Arguments& args);
-  static Handle<Value> getTracks(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getTophitTracks(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getAlbums(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getSimilarArtists(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getBiography(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
+  static NAN_GETTER(getName);
+  static NAN_GETTER(getLink);
+  static NAN_METHOD(browse);
+  static NAN_GETTER(getTracks);
+  static NAN_GETTER(getTophitTracks);
+  static NAN_GETTER(getAlbums);
+  static NAN_GETTER(getSimilarArtists);
+  static NAN_GETTER(getBiography);
+  static NAN_GETTER(isLoaded);
   static void init();
 };
 

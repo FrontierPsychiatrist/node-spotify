@@ -4,8 +4,9 @@
 #include "../objects/node/V8Wrapped.h"
 
 #include <libspotify/api.h>
-#include <v8.h>
+#include <nan.h>
 #include <initializer_list>
+#include <memory>
 
 using namespace v8;
 
@@ -14,7 +15,7 @@ private:
   V8Wrapped* userdata;
   sp_playlist* playlist;
   sp_playlist_callbacks* playlistCallbacks;
-  void call(Handle<Function> callback, std::initializer_list<Handle<Value>> args);
+  void call(std::unique_ptr<NanCallback>& callback, std::initializer_list<Handle<Value>> args);
 public:
   PlaylistCallbacksHolder(V8Wrapped* userdata, sp_playlist* playlist);
   ~PlaylistCallbacksHolder();
@@ -28,13 +29,13 @@ public:
   static void trackSeenChanged(sp_playlist* spPlaylist, int position, bool seen, void* userdata);
   static void trackMessageChanged(sp_playlist* spPlaylist, int position, const char* message, void* userdata);
   
-  Handle<Function> playlistRenamedCallback;
-  Handle<Function> tracksAddedCallback;
-  Handle<Function> tracksMovedCallback;
-  Handle<Function> tracksRemovedCallback;
-  Handle<Function> trackCreatedChangedCallback;
-  Handle<Function> trackSeenChangedCallback;
-  Handle<Function> trackMessageChangedCallback;
+  std::unique_ptr<NanCallback> playlistRenamedCallback;
+  std::unique_ptr<NanCallback> tracksAddedCallback;
+  std::unique_ptr<NanCallback> tracksMovedCallback;
+  std::unique_ptr<NanCallback> tracksRemovedCallback;
+  std::unique_ptr<NanCallback> trackCreatedChangedCallback;
+  std::unique_ptr<NanCallback> trackSeenChangedCallback;
+  std::unique_ptr<NanCallback> trackMessageChangedCallback;
   /**
     Register the callbacks with libspotify. Will first remove old registered callbacks.
   **/

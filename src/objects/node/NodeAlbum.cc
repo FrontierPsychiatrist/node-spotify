@@ -13,23 +13,23 @@ NodeAlbum::~NodeAlbum() {
   }
 }
 
-Handle<Value> NodeAlbum::getName(Local<String> property, const AccessorInfo& info) {
+NAN_GETTER(NodeAlbum::getName) {
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
   return String::New(nodeAlbum->album->name().c_str());
 }
 
-Handle<Value> NodeAlbum::getLink(Local<String> property, const AccessorInfo& info) {
+NAN_GETTER(NodeAlbum::getLink) {
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
   return String::New(nodeAlbum->album->link().c_str());
 }
 
-Handle<Value> NodeAlbum::getCoverBase64(const Arguments& args) {
+NAN_GETTER(NodeAlbum::getCoverBase64) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(args.This());
   return scope.Close(String::New(nodeAlbum->album->coverBase64().c_str()));
 }
 
-Handle<Value> NodeAlbum::browse(const Arguments& args) {
+NAN_METHOD(NodeAlbum::browse) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(args.This());
   if(nodeAlbum->album->albumBrowse == nullptr) {
@@ -51,7 +51,7 @@ Handle<Value> NodeAlbum::browse(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
-Handle<Value> NodeAlbum::getTracks(Local<String> property, const AccessorInfo& info) {
+NAN_GETTER(NodeAlbum::getTracks) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
   std::vector<std::shared_ptr<Track>> tracks = nodeAlbum->album->tracks();
@@ -63,14 +63,14 @@ Handle<Value> NodeAlbum::getTracks(Local<String> property, const AccessorInfo& i
   return scope.Close(nodeTracks);
 }
 
-Handle<Value> NodeAlbum::getReview(Local<String> property, const AccessorInfo& info) {
+NAN_GETTER(NodeAlbum::getReview) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
   Handle<String> review = String::New(nodeAlbum->album->review().c_str());
   return scope.Close(review);
 }
 
-Handle<Value> NodeAlbum::getCopyrights(Local<String> property, const AccessorInfo& info) {
+NAN_GETTER(NodeAlbum::getCopyrights) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
   std::vector<std::string> copyrights = nodeAlbum->album->copyrights();
@@ -81,14 +81,14 @@ Handle<Value> NodeAlbum::getCopyrights(Local<String> property, const AccessorInf
   return scope.Close(nodeCopyrights);
 }
 
-Handle<Value> NodeAlbum::getArtist(Local<String> property, const AccessorInfo& info) {
+NAN_GETTER(NodeAlbum::getArtist) {
   HandleScope scope;
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
   NodeArtist* nodeArtist = new NodeArtist(nodeAlbum->album->artist());
   return scope.Close(nodeArtist->getV8Object());
 }
 
-Handle<Value> NodeAlbum::isLoaded(Local<String> property, const AccessorInfo& info) {
+NAN_GETTER(NodeAlbum::isLoaded) {
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.Holder());
   return Boolean::New(nodeAlbum->album->isLoaded());
 }

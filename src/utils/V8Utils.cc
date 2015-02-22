@@ -1,20 +1,14 @@
 #include "V8Utils.h"
 
+using namespace v8;
+
 /**
   Get a field from an object as a persistent function handle. Empty handle if the key does not exist.
 **/
-Handle<Function> V8Utils::getFunctionFromObject(Handle<Object> callbacks, Handle<String> key) {
-  Handle<Function> callback;
+std::unique_ptr<NanCallback> V8Utils::getFunctionFromObject(Handle<Object> callbacks, Handle<String> key) {
+  std::unique_ptr<NanCallback> callback;
   if(callbacks->Has(key)) {
-    callback = Persistent<Function>::New(Handle<Function>::Cast(callbacks->Get(key)));
+    callback = std::unique_ptr<NanCallback>(new NanCallback(callbacks->Get(key).As<Function>()));
   }
   return callback;
-}
-
-void V8Utils::callV8FunctionWithNoArgumentsIfHandleNotEmpty(v8::Handle<v8::Function> function) {
-  if(!function.IsEmpty()) {
-    unsigned int argc = 0;
-    v8::Handle<v8::Value> argv[0];
-    function->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-  }
 }
