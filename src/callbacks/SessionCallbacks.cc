@@ -62,7 +62,7 @@ void SessionCallbacks::metadata_updated(sp_session* session) {
     application->player->retryPlay();
   }
   
-  if(!metadataUpdatedCallback->IsEmpty()) {
+  if(metadataUpdatedCallback && !metadataUpdatedCallback->IsEmpty()) {
     metadataUpdatedCallback->Call(0, {});
   }
 }
@@ -81,12 +81,13 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   application->playlistContainer = std::make_shared<PlaylistContainer>(pc);
   sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, nullptr); 
 }
-
+#include <iostream>
 /**
  * This is the "ready" hook for users. Playlists should be available at this point.
  **/
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata) {
-  if(!loginCallback->IsEmpty()) {
+  if(loginCallback && !loginCallback->IsEmpty()) {
+    std::cout << "Calling logincallback" << std::endl;
     loginCallback->Call(0, {});
   }
   //Issue 35, rootPlaylistContainerLoaded can be called multiple times throughout the lifetime of a session.
@@ -97,13 +98,13 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, voi
 void SessionCallbacks::playTokenLost(sp_session *session) {
   application->audioHandler->setStopped(true);
   application->player->isPaused = true;
-  if(!playTokenLostCallback->IsEmpty()) {
+  if(playTokenLostCallback && !playTokenLostCallback->IsEmpty()) {
     playTokenLostCallback->Call(0, {});
   }
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
-  if(!logoutCallback->IsEmpty()) {
+  if(logoutCallback && !logoutCallback->IsEmpty()) {
     logoutCallback->Call(0, {});
   }
 }
