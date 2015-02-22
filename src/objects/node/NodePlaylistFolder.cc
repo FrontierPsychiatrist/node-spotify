@@ -8,22 +8,22 @@ NodePlaylistFolder::~NodePlaylistFolder() {
 
 }
 
-Handle<Value> NodePlaylistFolder::getName(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.Holder());
-  return scope.Close(String::New(nodePlaylistFolder->playlistFolder->name().c_str()));
+NAN_GETTER(NodePlaylistFolder::getName) {
+  NanScope();
+  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(args.This());
+  NanReturnValue(NanNew<String>(nodePlaylistFolder->playlistFolder->name().c_str()));
 }
 
-Handle<Value> NodePlaylistFolder::getType(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.Holder());
-  return scope.Close(Number::New(nodePlaylistFolder->playlistFolder->type()));
+NAN_GETTER(NodePlaylistFolder::getType) {
+  NanScope();
+  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(args.This());
+  NanReturnValue(NanNew<Number>(nodePlaylistFolder->playlistFolder->type()));
 }
 
 void NodePlaylistFolder::init() {
-  HandleScope scope;
+  NanScope();
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("PlaylistFolder");
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("name"), getName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("type"), getType);
-  constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("name"), getName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("type"), getType);
+  constructor = constructorTemplate->GetFunction();
 }
