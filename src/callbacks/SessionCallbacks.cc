@@ -9,7 +9,12 @@
 #include <node_version.h>
 
 extern Application* application;
+
+#if NODE_VERSION_AT_LEAST(0, 11, 0)
 static void handleNotify(uv_async_t* handle);
+#else
+static void handleNotify(uv_async_t* handle, int status);
+#endif
 
 static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks;
 //Timer to call sp_session_process_events after a timeout
