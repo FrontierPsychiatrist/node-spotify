@@ -104,6 +104,7 @@ NAN_GETTER(NodeArtist::getBiography) {
 }
 
 NAN_GETTER(NodeArtist::isLoaded) {
+  NanScope();
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
   NanReturnValue(NanNew<Boolean>(nodeArtist->artist->isLoaded()));
 }
