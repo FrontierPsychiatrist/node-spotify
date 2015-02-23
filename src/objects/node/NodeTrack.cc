@@ -76,7 +76,6 @@ NAN_SETTER(NodeTrack::setStarred) {
   NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
   nodeTrack->track->setStarred(value->ToBoolean()->Value());
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodeTrack::isLoaded) {

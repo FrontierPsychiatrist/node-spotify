@@ -1,0 +1,43 @@
+gyp info it worked if it ends with ok
+gyp info using node-gyp@1.0.2
+gyp info using node@0.10.28 | linux | arm
+gyp info spawn make
+gyp info spawn args [ 'BUILDTYPE=Release', '-C', 'build' ]
+make: Entering directory '/home/maracuya/spotify-issue-81/node-spotify/build'
+  CXX(target) Release/obj.target/nodespotify/src/callbacks/SessionCallbacks.o
+../src/callbacks/SessionCallbacks.cc: In static member function 'static void SessionCallbacks::init()':
+../src/callbacks/SessionCallbacks.cc:28:68: error: invalid conversion from 'void (*)(uv_async_t*) {aka void (*)(uv_async_s*)}' to 'uv_async_cb {aka void (*)(uv_async_s*, int)}' [-fpermissive]
+   uv_async_init(uv_default_loop(), notifyHandle.get(), handleNotify);
+                                                                    ^
+In file included from ../node_modules/nan/nan.h:23:0,
+                 from ../src/callbacks/SessionCallbacks.h:6,
+                 from ../src/callbacks/SessionCallbacks.cc:1:
+/home/maracuya/.node-gyp/0.10.28/deps/uv/include/uv.h:1192:15: note: initializing argument 3 of 'int uv_async_init(uv_loop_t*, uv_async_t*, uv_async_cb)'
+ UV_EXTERN int uv_async_init(uv_loop_t*, uv_async_t* async,
+               ^
+../src/callbacks/SessionCallbacks.cc: In function 'void processEventsTimeout(uv_timer_t*, int)':
+../src/callbacks/SessionCallbacks.cc:41:37: error: too many arguments to function 'void handleNotify(uv_async_t*)'
+   handleNotify(notifyHandle.get(), 0);
+                                     ^
+../src/callbacks/SessionCallbacks.cc:12:13: note: declared here
+ static void handleNotify(uv_async_t* handle);
+             ^
+../src/callbacks/SessionCallbacks.cc: At global scope:
+../src/callbacks/SessionCallbacks.cc:12:13: warning: 'void handleNotify(uv_async_t*)' declared 'static' but never defined [-Wunused-function]
+../src/callbacks/SessionCallbacks.cc:61:13: warning: 'void handleNotify(uv_async_t*, int)' defined but not used [-Wunused-function]
+ static void handleNotify(uv_async_t* handle, int status) {
+             ^
+nodespotify.target.mk:144: recipe for target 'Release/obj.target/nodespotify/src/callbacks/SessionCallbacks.o' failed
+make: *** [Release/obj.target/nodespotify/src/callbacks/SessionCallbacks.o] Error 1
+make: Leaving directory '/home/maracuya/spotify-issue-81/node-spotify/build'
+gyp ERR! build error 
+gyp ERR! stack Error: `make` failed with exit code: 2
+gyp ERR! stack     at ChildProcess.onExit (/usr/local/lib/node_modules/node-gyp/lib/build.js:267:23)
+gyp ERR! stack     at ChildProcess.EventEmitter.emit (events.js:98:17)
+gyp ERR! stack     at Process.ChildProcess._handle.onexit (child_process.js:807:12)
+gyp ERR! System Linux 3.12.35-1-ARCH
+gyp ERR! command "node" "/usr/local/bin/node-gyp" "build"
+gyp ERR! cwd /home/maracuya/spotify-issue-81/node-spotify
+gyp ERR! node -v v0.10.28
+gyp ERR! node-gyp -v v1.0.2
+gyp ERR! not ok 

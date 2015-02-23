@@ -1,0 +1,38 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'install' ]
+2 info using npm@1.4.9
+3 info using node@v0.10.28
+4 verbose node symlink /usr/local/bin/node
+5 verbose readDependencies using package.json deps
+6 verbose install where, deps [ '/home/maracuya/spotify-issue-81/node-spotify', [ 'nan' ] ]
+7 info preinstall node-spotify@0.7.0
+8 verbose readDependencies using package.json deps
+9 verbose already installed skipping nan@^1.6.2 /home/maracuya/spotify-issue-81/node-spotify
+10 silly resolved []
+11 info build /home/maracuya/spotify-issue-81/node-spotify
+12 verbose linkStuff [ false, false, false, '/home/maracuya/spotify-issue-81' ]
+13 info linkStuff node-spotify@0.7.0
+14 verbose linkBins node-spotify@0.7.0
+15 verbose linkMans node-spotify@0.7.0
+16 verbose rebuildBundles node-spotify@0.7.0
+17 verbose rebuildBundles [ 'nan' ]
+18 info install node-spotify@0.7.0
+19 verbose unsafe-perm in lifecycle true
+20 info node-spotify@0.7.0 Failed to exec install script
+21 error node-spotify@0.7.0 install: `node-gyp rebuild`
+21 error Exit status 1
+22 error Failed at the node-spotify@0.7.0 install script.
+22 error This is most likely a problem with the node-spotify package,
+22 error not with npm itself.
+22 error Tell the author that this fails on your system:
+22 error     node-gyp rebuild
+22 error You can get their info via:
+22 error     npm owner ls node-spotify
+22 error There is likely additional logging output above.
+23 error System Linux 3.12.35-1-ARCH
+24 error command "/usr/local/bin/node" "/usr/local/bin/npm" "install"
+25 error cwd /home/maracuya/spotify-issue-81/node-spotify
+26 error node -v v0.10.28
+27 error npm -v 1.4.9
+28 error code ELIFECYCLE
+29 verbose exit [ 1, true ]
