@@ -73,7 +73,6 @@ NAN_SETTER(NodeSearch::setTrackOffset) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   nodeSearch->trackOffset = value->ToInteger()->Value();
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodeSearch::getAlbumOffset) {
@@ -86,7 +85,6 @@ NAN_SETTER(NodeSearch::setAlbumOffset) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   nodeSearch->albumOffset = value->ToInteger()->Value();
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodeSearch::getArtistOffset) {
@@ -99,7 +97,6 @@ NAN_SETTER(NodeSearch::setArtistOffset) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   nodeSearch->artistOffset = value->ToInteger()->Value();
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodeSearch::getPlaylistOffset) {
@@ -112,7 +109,6 @@ NAN_SETTER(NodeSearch::setPlaylistOffset) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   nodeSearch->playlistOffset = value->ToInteger()->Value();
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodeSearch::getTrackLimit) {
@@ -125,7 +121,6 @@ NAN_SETTER(NodeSearch::setTrackLimit) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   nodeSearch->trackLimit = value->ToInteger()->Value();
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodeSearch::getAlbumLimit) {
@@ -138,7 +133,6 @@ NAN_SETTER(NodeSearch::setAlbumLimit) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   nodeSearch->albumLimit = value->ToInteger()->Value();
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodeSearch::getArtistLimit) {
@@ -151,7 +145,6 @@ NAN_SETTER(NodeSearch::setArtistLimit) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   nodeSearch->artistLimit = value->ToInteger()->Value();
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodeSearch::getPlaylistLimit) {
@@ -164,7 +157,6 @@ NAN_SETTER(NodeSearch::setPlaylistLimit) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   nodeSearch->playlistLimit = value->ToInteger()->Value();
-  NanReturnUndefined();
 }
 
 NAN_METHOD(NodeSearch::New) {
