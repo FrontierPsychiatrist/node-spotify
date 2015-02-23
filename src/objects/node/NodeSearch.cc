@@ -174,7 +174,6 @@ NAN_METHOD(NodeSearch::New) {
     search = new NodeSearch(*searchQuery, offset, limit);
   } else {
     NanThrowError("Please provide an object to the node-spotify initializer function");
-    return; //add a custom return so the compiler does not complain about search being unitialized.
   }
   search->Wrap(args.This());
   NanReturnThis();

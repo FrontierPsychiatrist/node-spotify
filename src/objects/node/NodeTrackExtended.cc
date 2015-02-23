@@ -48,7 +48,6 @@ NAN_SETTER(NodeTrackExtended::setSeen) {
   NanScope();
   NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(args.This());
   nodeTrackExtended->trackExtended->seen(value->ToBoolean()->Value());
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodeTrackExtended::getCreateTime) {
