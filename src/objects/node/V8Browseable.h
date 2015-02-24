@@ -4,6 +4,7 @@
 #include "V8Wrapped.h"
 
 #include <nan.h>
+#include <memory>
 
 class V8Browseable : public virtual V8Wrapped {
 public:

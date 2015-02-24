@@ -21,7 +21,6 @@ NAN_SETTER(NodePlaylist::setName) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   NanUtf8String newName(value);
   nodePlaylist->playlist->name(*newName);
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodePlaylist::getName) {
@@ -34,7 +33,6 @@ NAN_SETTER(NodePlaylist::setCollaborative) {
   NanScope();
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   nodePlaylist->playlist->setCollaborative(value->ToBoolean()->Value());
-  NanReturnUndefined();
 }
 
 NAN_GETTER(NodePlaylist::getCollaborative) {
