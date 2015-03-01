@@ -5,7 +5,7 @@
 
 using namespace v8;
 
-PlaylistContainerCallbacksHolder::PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, V8Wrapped* _userdata) : 
+PlaylistContainerCallbacksHolder::PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, node::ObjectWrap* _userdata) : 
   playlistContainer(pc), userdata(_userdata) {
     playlistContainerCallbacks = new sp_playlistcontainer_callbacks();
   }
@@ -25,7 +25,7 @@ void PlaylistContainerCallbacksHolder::playlistAdded(sp_playlistcontainer* pc, s
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
   sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(pc, position);
   std::shared_ptr<PlaylistBase> playlistBase;
-  V8Wrapped* nodePlaylist;
+  node::ObjectWrap* nodePlaylist;
   if(playlistType == SP_PLAYLIST_TYPE_PLAYLIST) {
     playlistBase = Playlist::fromCache(spPlaylist);
     nodePlaylist = new NodePlaylist(Playlist::fromCache(spPlaylist));
@@ -38,14 +38,14 @@ void PlaylistContainerCallbacksHolder::playlistAdded(sp_playlistcontainer* pc, s
   } else {
     return;
   }
-  holder->call(holder->playlistAddedCallback, {NanUndefined(), nodePlaylist->getV8Object(), NanNew<Number>(position)});
+  holder->call(holder->playlistAddedCallback, {NanUndefined(), NanObjectWrapHandle(nodePlaylist), NanNew<Number>(position)});
 }
 
 void PlaylistContainerCallbacksHolder::playlistRemoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void *userdata) {
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
-  V8Wrapped* nodePlaylist = nullptr;
+  node::ObjectWrap* nodePlaylist = nullptr;
   if(nodePlaylist != nullptr) {
-    holder->call(holder->playlistRemovedCallback, {NanUndefined(), NanNew<Number>(position), nodePlaylist->getV8Object()});
+    holder->call(holder->playlistRemovedCallback, {NanUndefined(), NanNew<Number>(position), NanObjectWrapHandle(nodePlaylist)});
   } else {
     holder->call(holder->playlistRemovedCallback, {NanUndefined(), NanNew<Number>(position)});
   }
@@ -53,9 +53,9 @@ void PlaylistContainerCallbacksHolder::playlistRemoved(sp_playlistcontainer* pc,
 
 void PlaylistContainerCallbacksHolder::playlistMoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, int new_position, void *userdata) {
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
-  V8Wrapped* nodePlaylist = nullptr;
+  node::ObjectWrap* nodePlaylist = nullptr;
   if(nodePlaylist != nullptr) {
-    holder->call(holder->playlistMovedCallback, {NanUndefined(), NanNew<Number>(position), NanNew<Number>(new_position), nodePlaylist->getV8Object()});
+    holder->call(holder->playlistMovedCallback, {NanUndefined(), NanNew<Number>(position), NanNew<Number>(new_position), NanObjectWrapHandle(nodePlaylist)});
   } else {
     holder->call(holder->playlistMovedCallback, {NanUndefined(), NanNew<Number>(position), NanNew<Number>(new_position)});
   }

@@ -7,10 +7,6 @@ Persistent<FunctionTemplate> NodeTrackExtended::constructorTemplate;
 NodeTrackExtended::NodeTrackExtended(std::shared_ptr<TrackExtended> _trackExtended) : NodeTrack(_trackExtended), trackExtended(_trackExtended) {
 }
 
-Handle<Object> NodeTrackExtended::getV8Object() {
-  return NanObjectWrapHandle(this);
-}
-
 /**
   We need rewrite this method because we need to use our own constructor, not the one from NodeTrack.
 **/

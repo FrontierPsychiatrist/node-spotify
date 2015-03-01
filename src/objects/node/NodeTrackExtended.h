@@ -21,7 +21,6 @@ public:
   static NAN_GETTER(getMessage);
   static void init();
   static Handle<Function> getConstructor();
-  Handle<Object> getV8Object();
   Handle<Object> createInstance();
 protected:
   static Persistent<FunctionTemplate> constructorTemplate;

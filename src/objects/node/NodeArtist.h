@@ -1,8 +1,7 @@
 #ifndef _NODE_ARTIST_H
 #define _NODE_ARTIST_H
 
-#include "NodeWrapped.h"
-#include "V8Wrapped.h"
+#include "V8Browseable.h"
 #include "../spotify/Artist.h"
 
 #include <nan.h>
@@ -10,7 +9,7 @@
 
 using namespace v8;
 
-class NodeArtist : public NodeWrapped<NodeArtist>, public V8Browseable {
+class NodeArtist : public V8Browseable<NodeArtist> {
 private:
   std::unique_ptr<Artist> artist;
 public:

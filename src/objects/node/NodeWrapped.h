@@ -8,22 +8,14 @@
 #include <node.h>
 #include <nan.h>
 
-#include "V8Wrapped.h"
-
 /**
  * A class used as a base class for wrapping objects to node objects.
  **/
 template <class T>
-class NodeWrapped : public node::ObjectWrap, public virtual V8Wrapped {
+class NodeWrapped : public node::ObjectWrap {
 public:
   ~NodeWrapped() {}
-  /**
-   * Get a V8 handle with the Javascript object inside.
-   **/
-  virtual v8::Handle<v8::Object> getV8Object() {
-    return NanObjectWrapHandle(this);
-  }
-
+  
   virtual v8::Handle<v8::Object> createInstance() {
     v8::Local<v8::Object> object = getConstructor()->NewInstance();
     this->Wrap(object);

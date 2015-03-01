@@ -1,7 +1,7 @@
 #ifndef _PLAYLIST_CONTAINER_CALLBACKS_H
 #define _PLAYLIST_CONTAINER_CALLBACKS_H
 
-#include "../objects/node/V8Wrapped.h"
+#include <node.h>
 
 #include <initializer_list>
 #include <libspotify/api.h>
@@ -12,10 +12,10 @@ class PlaylistContainerCallbacksHolder {
 private:
   sp_playlistcontainer* playlistContainer;
   sp_playlistcontainer_callbacks* playlistContainerCallbacks;
-  V8Wrapped* userdata;
+  node::ObjectWrap* userdata;
   void call(std::unique_ptr<NanCallback>& callback, std::initializer_list<v8::Handle<v8::Value>> args);
 public:
-  PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, V8Wrapped* userdata);
+  PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, node::ObjectWrap* userdata);
   ~PlaylistContainerCallbacksHolder();
 
   //libspotify callback functions

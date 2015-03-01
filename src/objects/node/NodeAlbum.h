@@ -1,7 +1,6 @@
 #ifndef _NODE_ALBUM_H
 #define _NODE_ALBUM_H
 
-#include "NodeWrapped.h"
 #include "V8Browseable.h"
 #include "../spotify/Album.h"
 
@@ -10,7 +9,7 @@
 
 using namespace v8;
 
-class NodeAlbum : public NodeWrapped<NodeAlbum>, public V8Browseable {
+class NodeAlbum : public V8Browseable<NodeAlbum> {
 friend class AlbumBrowseCallbacks;
 private:
   std::unique_ptr<Album> album;

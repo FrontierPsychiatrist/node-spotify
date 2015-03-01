@@ -1,7 +1,6 @@
 #ifndef _NODE_SEARCH_RESULT_H
 #define _NODE_SEARCH_RESULT_H
 
-#include "NodeWrapped.h"
 #include "V8Browseable.h"
 #include "../spotify/Search.h"
 
@@ -10,7 +9,7 @@
 
 using namespace v8;
 
-class NodeSearch : public NodeWrapped<NodeSearch>, public V8Browseable {
+class NodeSearch : public V8Browseable<NodeSearch> {
 private:
   std::unique_ptr<Search> search;
   std::string searchQuery;
