@@ -61,7 +61,7 @@ NAN_GETTER(NodeAlbum::getTracks) {
     NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
     nodeTracks->Set(NanNew<Number>(i), nodeTrack->createInstance());
   }
-  NanReturnUndefined();
+  NanReturnValue(nodeTracks);
 }
 
 NAN_GETTER(NodeAlbum::getReview) {
