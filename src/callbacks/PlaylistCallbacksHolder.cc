@@ -32,7 +32,7 @@ void PlaylistCallbacksHolder::tracksAdded(sp_playlist* spPlaylist, sp_track *con
   Handle<Array> nodeTracks = NanNew<Array>(num_tracks);
   for(int i = 0; i < num_tracks; i++) {
     NodeTrack* nodeTrackExtended = new NodeTrackExtended(std::make_shared<TrackExtended>(tracks[i], spPlaylist, position + i));
-    nodeTracks->Set(NanNew<Number>(i), NanObjectWrapHandle(nodeTrackExtended));
+    nodeTracks->Set(NanNew<Number>(i), nodeTrackExtended->createInstance());
   }
   holder->call(holder->tracksAddedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata), nodeTracks, NanNew<Number>(position) });
 }
