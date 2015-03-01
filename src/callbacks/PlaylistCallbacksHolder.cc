@@ -75,25 +75,25 @@ void PlaylistCallbacksHolder::trackMessageChanged(sp_playlist* spPlaylist, int p
 void PlaylistCallbacksHolder::setCallbacks() {
   sp_playlist_remove_callbacks(playlist, playlistCallbacks, this);
   
-  if(!playlistRenamedCallback->IsEmpty()) {
+  if(playlistRenamedCallback && !playlistRenamedCallback->IsEmpty()) {
     playlistCallbacks->playlist_renamed = &PlaylistCallbacksHolder::playlistRenamed;  
   }
-  if(!tracksAddedCallback->IsEmpty()) {
+  if(tracksAddedCallback && !tracksAddedCallback->IsEmpty()) {
     playlistCallbacks->tracks_added = &PlaylistCallbacksHolder::tracksAdded;  
   }
-  if(!tracksMovedCallback->IsEmpty()) {
+  if(tracksMovedCallback && !tracksMovedCallback->IsEmpty()) {
     playlistCallbacks->tracks_moved = &PlaylistCallbacksHolder::tracksMoved;  
   }
-  if(!tracksRemovedCallback->IsEmpty()) {
+  if(tracksRemovedCallback && !tracksRemovedCallback->IsEmpty()) {
     playlistCallbacks->tracks_removed = &PlaylistCallbacksHolder::tracksRemoved;  
   }
-  if(!trackCreatedChangedCallback->IsEmpty()) {
+  if(trackCreatedChangedCallback && !trackCreatedChangedCallback->IsEmpty()) {
     playlistCallbacks->track_created_changed = &PlaylistCallbacksHolder::trackCreatedChanged;
   }
-  if(!trackSeenChangedCallback->IsEmpty()) {
+  if(trackSeenChangedCallback && !trackSeenChangedCallback->IsEmpty()) {
     playlistCallbacks->track_seen_changed = &PlaylistCallbacksHolder::trackSeenChanged;
   }
-  if(!trackMessageChangedCallback->IsEmpty()) {
+  if(trackMessageChangedCallback && !trackMessageChangedCallback->IsEmpty()) {
     playlistCallbacks->track_message_changed = &PlaylistCallbacksHolder::trackMessageChanged;
   }
   sp_playlist_add_callbacks(playlist, playlistCallbacks, this);

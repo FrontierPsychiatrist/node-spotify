@@ -63,13 +63,13 @@ void PlaylistContainerCallbacksHolder::playlistMoved(sp_playlistcontainer* pc, s
 
 void PlaylistContainerCallbacksHolder::setCallbacks() {
   sp_playlistcontainer_remove_callbacks(playlistContainer, playlistContainerCallbacks, this);
-  if(!playlistAddedCallback->IsEmpty()) {
+  if(playlistAddedCallback && !playlistAddedCallback->IsEmpty()) {
     playlistContainerCallbacks->playlist_added = &PlaylistContainerCallbacksHolder::playlistAdded;
   }
-  if(!playlistRemovedCallback->IsEmpty()) {
+  if(playlistRemovedCallback && !playlistRemovedCallback->IsEmpty()) {
     playlistContainerCallbacks->playlist_removed = &PlaylistContainerCallbacksHolder::playlistRemoved;
   }
-  if(!playlistMovedCallback->IsEmpty()) {
+  if(playlistMovedCallback && !playlistMovedCallback->IsEmpty()) {
     playlistContainerCallbacks->playlist_moved = &PlaylistContainerCallbacksHolder::playlistMoved;
   }
   sp_playlistcontainer_add_callbacks(playlistContainer, playlistContainerCallbacks, this);
