@@ -39,7 +39,7 @@ NAN_METHOD(NodeAlbum::browse) {
     nodeAlbum->browseCompleteCallback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
 
     //Mutate the V8 object.
-    Handle<Object> nodeAlbumV8 = nodeAlbum->getV8Object();
+    Handle<Object> nodeAlbumV8 = NanObjectWrapHandle(nodeAlbum);
     nodeAlbumV8->SetAccessor(NanNew<String>("tracks"), getTracks);
     nodeAlbumV8->SetAccessor(NanNew<String>("review"), getReview);
     nodeAlbumV8->SetAccessor(NanNew<String>("copyrights"), getCopyrights);

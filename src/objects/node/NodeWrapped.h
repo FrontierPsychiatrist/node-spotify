@@ -26,7 +26,7 @@ public:
 
   virtual v8::Handle<v8::Object> createInstance() {
     v8::Local<v8::Object> object = getConstructor()->NewInstance();
-    NanSetInternalFieldPointer(object, 0, this);
+    this->Wrap(object);
     return object;
   }
 

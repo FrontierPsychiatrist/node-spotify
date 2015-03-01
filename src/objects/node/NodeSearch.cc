@@ -46,7 +46,7 @@ NAN_METHOD(NodeSearch::execute) {
  * These will call libspotify functions and should first be available when the search has been executed.
  **/
 void NodeSearch::setupAdditionalMethods() {
-  Handle<Object> nodeObject = this->getV8Object();
+  Handle<Object> nodeObject = NanObjectWrapHandle(this);
   nodeObject->SetAccessor(NanNew<String>("didYouMean"), didYouMean);
   nodeObject->SetAccessor(NanNew<String>("link"), getLink);
   nodeObject->Set(NanNew<String>("getTrack"), NanNew<FunctionTemplate>(getTrack)->GetFunction());
