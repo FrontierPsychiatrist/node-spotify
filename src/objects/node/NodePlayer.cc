@@ -2,7 +2,6 @@
 #include "NodeTrack.h"
 #include "../../callbacks/SessionCallbacks.h"
 #include "../../exceptions.h"
-#include "../../common_macros.h"
 #include "../../utils/V8Utils.h"
 
 NodePlayer::NodePlayer(std::shared_ptr<Player> _player) : player(_player) {}
@@ -39,18 +38,18 @@ NAN_METHOD(NodePlayer::resume) {
 NAN_METHOD(NodePlayer::play) {
   NanScope();
   if(args.Length() < 1) {
-    NanThrowError("play needs a track as its first argument.");
+    return NanThrowError("play needs a track as its first argument.");
   }
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args[0]->ToObject());
   try {
     nodePlayer->player->play(nodeTrack->track);
   } catch (const TrackNotPlayableException& e) {
-    NanThrowError("Track not playable");
+    return NanThrowError("Track not playable");
   }
 #ifndef NODE_SPOTIFY_NATIVE_SOUND
   catch (const NoAudioHandlerException& e) {
-    NanThrowError("No audio handler registered. Use spotify.useNodejsAudio().");
+    return NanThrowError("No audio handler registered. Use spotify.useNodejsAudio().");
   }
 #endif
 
@@ -60,7 +59,7 @@ NAN_METHOD(NodePlayer::play) {
 NAN_METHOD(NodePlayer::seek) {
   NanScope();
   if(args.Length() < 1 || !args[0]->IsNumber()) {
-    NanThrowError("seek needs an integer as its first argument.");
+    return NanThrowError("seek needs an integer as its first argument.");
   }
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
   int second = args[0]->ToInteger()->Value();
@@ -77,7 +76,7 @@ NAN_GETTER(NodePlayer::getCurrentSecond) {
 NAN_METHOD(NodePlayer::on) {
   NanScope();
   if(args.Length() < 1 || !args[0]->IsObject()) {
-    NanThrowError("on needs an object as its first argument.");
+    return NanThrowError("on needs an object as its first argument.");
   }
   Handle<Object> callbacks = args[0]->ToObject();
   Handle<String> endOfTrackKey = NanNew<String>("endOfTrack");

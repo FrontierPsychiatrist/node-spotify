@@ -1,6 +1,5 @@
 #include "Application.h"
 #include "exceptions.h"
-#include "common_macros.h"
 #include "objects/node/NodeSpotify.h"
 #include "objects/node/NodePlaylist.h"
 #include "objects/node/NodePlaylistContainer.h"
@@ -66,7 +65,7 @@ NAN_METHOD(CreateNodespotify) {
     options = NanNew<Object>();
   } else {
     if(!args[0]->IsObject()) {
-      NanThrowError("Please provide an object to the node-spotify initializer function");
+      return NanThrowError("Please provide an object to the node-spotify initializer function");
     }
     options = args[0]->ToObject();
   }
@@ -75,9 +74,9 @@ NAN_METHOD(CreateNodespotify) {
   try {
     nodeSpotify = new NodeSpotify(options);
   } catch (const FileException& e) {
-    NanThrowError("Appkey file not found");
+    return NanThrowError("Appkey file not found");
   } catch (const SessionCreationException& e) {
-    NanThrowError(e.message.c_str());
+    return NanThrowError(e.message.c_str());
   }
   v8::Handle<Object> spotifyObject = nodeSpotify->createInstance();
 

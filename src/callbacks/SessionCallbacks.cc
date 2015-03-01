@@ -1,6 +1,5 @@
 #include "SessionCallbacks.h"
 #include "../Application.h"
-#include "../common_macros.h"
 #include "../objects/spotify/PlaylistContainer.h"
 #include "../objects/spotify/Player.h"
 
@@ -98,13 +97,12 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   application->playlistContainer = std::make_shared<PlaylistContainer>(pc);
   sp_playlistcontainer_add_callbacks(pc, &rootPlaylistContainerCallbacks, nullptr); 
 }
-#include <iostream>
+
 /**
  * This is the "ready" hook for users. Playlists should be available at this point.
  **/
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata) {
   if(loginCallback && !loginCallback->IsEmpty()) {
-    std::cout << "Calling logincallback" << std::endl;
     loginCallback->Call(0, {});
   }
   //Issue 35, rootPlaylistContainerLoaded can be called multiple times throughout the lifetime of a session.

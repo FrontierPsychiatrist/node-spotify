@@ -4,7 +4,6 @@
 #include "NodeArtist.h"
 #include "NodePlaylist.h"
 #include "../../Application.h"
-#include "../../common_macros.h"
 
 extern Application* application;
 
@@ -26,7 +25,7 @@ NodeSearch::NodeSearch(const char* _searchQuery, int offset, int limit) : search
 NAN_METHOD(NodeSearch::execute) {
   NanScope();
   if(args.Length() < 1) {//TODO: how to check if it is a function? ->IsFunction() does not work, it does not recoginze functions.
-    NanThrowError("execute needs a callback function as its argument.");
+    return NanThrowError("execute needs a callback function as its argument.");
   }
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   nodeSearch->makePersistent();
@@ -173,7 +172,7 @@ NAN_METHOD(NodeSearch::New) {
     int limit = args[2]->ToInteger()->Value();
     search = new NodeSearch(*searchQuery, offset, limit);
   } else {
-    NanThrowError("Please provide an object to the node-spotify initializer function");
+    return NanThrowError("Please provide an object to the node-spotify initializer function");
   }
   search->Wrap(args.This());
   NanReturnThis();
@@ -195,12 +194,12 @@ NAN_METHOD(NodeSearch::getTrack) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   if(args.Length() < 1 || !args[0]->IsNumber()) {
-    NanThrowError("getTrack needs a number as its first argument.");
+    return NanThrowError("getTrack needs a number as its first argument.");
   }
 
   int position = args[0]->ToNumber()->IntegerValue();
   if(position >= nodeSearch->search->numTracks() || position < 0) {
-    NanThrowError("Track index out of bounds");
+    return NanThrowError("Track index out of bounds");
   }
 
   NodeTrack* nodeTrack = new NodeTrack(nodeSearch->search->getTrack(position));
@@ -211,12 +210,12 @@ NAN_METHOD(NodeSearch::getAlbum) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   if(args.Length() < 1 || !args[0]->IsNumber()) {
-    NanThrowError("getAlbum needs a number as its first argument.");
+    return NanThrowError("getAlbum needs a number as its first argument.");
   }
 
   int position = args[0]->ToNumber()->IntegerValue();
   if(position >= nodeSearch->search->numAlbums() || position < 0) {
-    NanThrowError("Album index out of bounds");
+    return NanThrowError("Album index out of bounds");
   }
 
   NodeAlbum* nodeAlbum = new NodeAlbum(nodeSearch->search->getAlbum(position));
@@ -227,12 +226,12 @@ NAN_METHOD(NodeSearch::getArtist) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   if(args.Length() < 1 || !args[0]->IsNumber()) {
-    NanThrowError("getArtist needs a number as its first argument.");
+    return NanThrowError("getArtist needs a number as its first argument.");
   }
 
   int position = args[0]->ToNumber()->IntegerValue();
   if(position >= nodeSearch->search->numArtists() || position < 0) {
-    NanThrowError("Artist index out of bounds");
+    return NanThrowError("Artist index out of bounds");
   }
 
   NodeArtist* nodeArtist = new NodeArtist(nodeSearch->search->getArtist(position));
@@ -243,12 +242,12 @@ NAN_METHOD(NodeSearch::getPlaylist) {
   NanScope();
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(args.This());
   if(args.Length() < 1 || !args[0]->IsNumber()) {
-    NanThrowError("getPlaylist needs a number as its first argument.");
+    return NanThrowError("getPlaylist needs a number as its first argument.");
   }
 
   int position = args[0]->ToNumber()->IntegerValue();
   if(position >= nodeSearch->search->numPlaylists() || position < 0) {
-    NanThrowError("Playlist index out of bounds");
+    return NanThrowError("Playlist index out of bounds");
   }
 
   NodePlaylist* nodePlaylist = new NodePlaylist(nodeSearch->search->getPlaylist(position));

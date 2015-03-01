@@ -4,7 +4,6 @@
 #include "../../audio/NodeAudioHandler.h"
 #include "../../Application.h"
 #include "../../exceptions.h"
-#include "../../common_macros.h"
 #include "../../callbacks/SessionCallbacks.h"
 #include "../spotify/SpotifyOptions.h"
 #include "NodePlaylist.h"
@@ -198,7 +197,7 @@ NAN_METHOD(NodeSpotify::useNativeAudio) {
 NAN_METHOD(NodeSpotify::useNodejsAudio) {
   NanScope();
   if(args.Length() < 1) {
-    NanThrowError("useNodjsAudio needs a function as its first argument.");
+    return NanThrowError("useNodjsAudio needs a function as its first argument.");
   }
   //Since the old audio handler has to be deleted first, do an empty reset.
   application->audioHandler.reset();
@@ -212,7 +211,7 @@ NAN_METHOD(NodeSpotify::useNodejsAudio) {
 NAN_METHOD(NodeSpotify::on) {
   NanScope();
   if(args.Length() < 1 || !args[0]->IsObject()) {
-    NanThrowError("on needs an object as its first argument.");
+    return NanThrowError("on needs an object as its first argument.");
   }
   Handle<Object> callbacks = args[0]->ToObject();
   Handle<String> metadataUpdatedKey = NanNew<String>("metadataUpdated");

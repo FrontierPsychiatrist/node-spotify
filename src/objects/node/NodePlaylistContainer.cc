@@ -3,7 +3,6 @@
 #include "NodePlaylistFolder.h"
 #include "NodeUser.h"
 #include "../../exceptions.h"
-#include "../../common_macros.h"
 #include "../../utils/V8Utils.h"
 
 NodePlaylistContainer::NodePlaylistContainer(std::shared_ptr<PlaylistContainer> _playlistContainer) : playlistContainer(_playlistContainer),
@@ -29,12 +28,12 @@ NAN_GETTER(NodePlaylistContainer::getNumPlaylists) {
 NAN_METHOD(NodePlaylistContainer::getPlaylist) {
   NanScope();
   if(args.Length() < 1 || !args[0]->IsNumber()) {
-    NanThrowError("getPlaylist needs an interger as its first argument.");
+    return NanThrowError("getPlaylist needs an interger as its first argument.");
   }
   int index = args[0]->ToNumber()->IntegerValue();
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   if(index < 0 || index > nodePlaylistContainer->playlistContainer->numPlaylists()) {
-    NanThrowError("Index out of range.");
+    return NanThrowError("Index out of range.");
   }
   std::shared_ptr<PlaylistBase> playlist = nodePlaylistContainer->playlistContainer->getPlaylist(index);
 
@@ -53,14 +52,14 @@ NAN_METHOD(NodePlaylistContainer::getPlaylist) {
 NAN_METHOD(NodePlaylistContainer::addPlaylist) {
   NanScope();
   if(args.Length() < 1 || !args[0]->IsString()) {
-    NanThrowError("addPlaylist needs a string as its argument");
+    return NanThrowError("addPlaylist needs a string as its argument");
   }
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   String::Utf8Value playlistName(args[0]->ToString());
   try {
     nodePlaylistContainer->playlistContainer->addPlaylist(std::string(*playlistName));
   } catch(const PlaylistCreationException& e) {
-    NanThrowError("Playlist creation failed");
+    return NanThrowError("Playlist creation failed");
   }
   NanReturnUndefined();
 }
@@ -68,7 +67,7 @@ NAN_METHOD(NodePlaylistContainer::addPlaylist) {
 NAN_METHOD(NodePlaylistContainer::addFolder) {
   NanScope();
   if(args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsString()) {
-    NanThrowError("addFolder needs a number and a string as arguments.");
+    return NanThrowError("addFolder needs a number and a string as arguments.");
   }
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   int index = args[0]->ToNumber()->IntegerValue();
@@ -76,7 +75,7 @@ NAN_METHOD(NodePlaylistContainer::addFolder) {
   try {
     nodePlaylistContainer->playlistContainer->addFolder(index, std::string(*folderName));
   } catch(const PlaylistCreationException& e) {
-    NanThrowError("Folder creation failed");
+    return NanThrowError("Folder creation failed");
   }
   NanReturnUndefined();
 }
@@ -84,7 +83,7 @@ NAN_METHOD(NodePlaylistContainer::addFolder) {
 NAN_METHOD(NodePlaylistContainer::deletePlaylist) {
   NanScope();
   if(args.Length() < 1 || !args[0]->IsNumber()) {
-    NanThrowError("deletePlaylist needs an integer as its first argument.");
+    return NanThrowError("deletePlaylist needs an integer as its first argument.");
   }
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   int position = args[0]->ToNumber()->IntegerValue();
@@ -95,7 +94,7 @@ NAN_METHOD(NodePlaylistContainer::deletePlaylist) {
 NAN_METHOD(NodePlaylistContainer::movePlaylist) {
   NanScope();
   if(args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsNumber()) {
-    NanThrowError("Move playlist needs 2 numbers as its first arguments.");
+    return NanThrowError("Move playlist needs 2 numbers as its first arguments.");
   }
   int index = args[0]->ToNumber()->IntegerValue();
   int newPosition = args[1]->ToNumber()->IntegerValue();
@@ -103,7 +102,7 @@ NAN_METHOD(NodePlaylistContainer::movePlaylist) {
   try {
     nodePlaylistContainer->playlistContainer->movePlaylist(index, newPosition);
   } catch(const PlaylistNotMoveableException& e) {
-    NanThrowError(e.message.c_str());
+    return NanThrowError(e.message.c_str());
   }
   NanReturnUndefined();
 }
@@ -117,7 +116,7 @@ NAN_GETTER(NodePlaylistContainer::isLoaded) {
 NAN_METHOD(NodePlaylistContainer::on) {
   NanScope();
   if(args.Length() < 1 || !args[0]->IsObject()) {
-    NanThrowError("on needs an object as its first argument.");
+    return NanThrowError("on needs an object as its first argument.");
   }
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
   Handle<Object> callbacks = args[0]->ToObject();

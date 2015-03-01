@@ -1,6 +1,5 @@
 #include "NodePlaylist.h"
 #include "../../exceptions.h"
-#include "../../common_macros.h"
 #include "../spotify/Track.h"
 #include "../spotify/TrackExtended.h"
 #include "NodeTrack.h"
@@ -63,11 +62,11 @@ NAN_METHOD(NodePlaylist::getTrack) {
   NanScope();
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   if(args.Length() < 1 || !args[0]->IsNumber()) {
-    NanThrowError("getTrack needs a number as its first argument.");
+    return NanThrowError("getTrack needs a number as its first argument.");
   }
   int position = args[0]->ToNumber()->IntegerValue();
   if(position >= nodePlaylist->playlist->numTracks() || position < 0) {
-    NanThrowError("Track index out of bounds");
+    return NanThrowError("Track index out of bounds");
   }
   std::shared_ptr<TrackExtended> track = nodePlaylist->playlist->getTrack(position);
   NodeTrackExtended* nodeTrack = new NodeTrackExtended(track);
@@ -77,7 +76,7 @@ NAN_METHOD(NodePlaylist::getTrack) {
 NAN_METHOD(NodePlaylist::addTracks) {
   NanScope();
   if(args.Length() < 2 || !args[0]->IsArray() || !args[1]->IsNumber()) {
-    NanThrowError("addTracks needs an array and a number as its arguments.");
+    return NanThrowError("addTracks needs an array and a number as its arguments.");
   }
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   Handle<Array> trackArray = Handle<Array>::Cast(args[0]);
@@ -91,7 +90,7 @@ NAN_METHOD(NodePlaylist::addTracks) {
   try {
     nodePlaylist->playlist->addTracks(tracks, position);
   } catch(const TracksNotAddedException& e) {
-    NanThrowError(e.message.c_str());
+    return NanThrowError(e.message.c_str());
   }
 
   NanReturnUndefined();
@@ -100,7 +99,7 @@ NAN_METHOD(NodePlaylist::addTracks) {
 NAN_METHOD(NodePlaylist::removeTracks) {
   NanScope();
   if(args.Length() < 1 || !args[0]->IsArray()) {
-    NanThrowError("removeTracks needs an array as its first argument.");
+    return NanThrowError("removeTracks needs an array as its first argument.");
   }
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   Handle<Array> trackPositionsArray = Handle<Array>::Cast(args[0]);
@@ -111,7 +110,7 @@ NAN_METHOD(NodePlaylist::removeTracks) {
   try {
     nodePlaylist->playlist->removeTracks(trackPositions, trackPositionsArray->Length());
   } catch(const TracksNotRemoveableException& e) {
-    NanThrowError("Tracks not removeable, permission denied.");
+    return NanThrowError("Tracks not removeable, permission denied.");
   }
 
   NanReturnUndefined();
@@ -120,7 +119,7 @@ NAN_METHOD(NodePlaylist::removeTracks) {
 NAN_METHOD(NodePlaylist::reorderTracks) {
   NanScope();
   if(args.Length() < 2 || !args[0]->IsArray() || !args[1]->IsNumber()) {
-    NanThrowError("reorderTracks needs an array and a numer as its arguments.");
+    return NanThrowError("reorderTracks needs an array and a numer as its arguments.");
   }
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   Handle<Array> trackPositionsArray = Handle<Array>::Cast(args[0]);
@@ -132,7 +131,7 @@ NAN_METHOD(NodePlaylist::reorderTracks) {
   try {
     nodePlaylist->playlist->reorderTracks(trackPositions, trackPositionsArray->Length(), newPosition);
   } catch(const TracksNotReorderableException& e) {
-    NanThrowError(e.message.c_str());
+    return NanThrowError(e.message.c_str());
   }
 
   NanReturnUndefined();
@@ -161,7 +160,7 @@ NAN_METHOD(NodePlaylist::on) {
   NanScope();
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
   if(args.Length() < 1 || !args[0]->IsObject()) {
-    NanThrowError("on needs an object as its first argument.");
+    return NanThrowError("on needs an object as its first argument.");
   }
   Handle<Object> callbacks = args[0]->ToObject();
   Handle<String> playlistRenamedKey = NanNew<String>("playlistRenamed");

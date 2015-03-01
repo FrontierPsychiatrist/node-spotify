@@ -1,7 +1,6 @@
 #include "NodeAudioHandler.h"
 #include "../objects/spotify/Spotify.h"
 #include "../Application.h"
-#include "../common_macros.h"
 
 #include <node_buffer.h>
 
@@ -88,7 +87,7 @@ void NodeAudioHandler::setStopped(bool _stopped) {
 NAN_METHOD(NodeAudioHandler::setNeedMoreData) {
   NanScope();
   if(args.Length() < 1 || !args[0]->IsBoolean()) {
-    NanThrowError("setNeedMoreData needs a boolean as its first argument.");
+    return NanThrowError("setNeedMoreData needs a boolean as its first argument.");
   }
   NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(application->audioHandler.get());
   bool needMoreData = args[0]->ToBoolean()->BooleanValue();
