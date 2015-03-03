@@ -19,21 +19,21 @@ private:
 public:
   NodePlaylist(std::shared_ptr<Playlist> playlist);
   ~NodePlaylist();
-  static void setName(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
-  static void setCollaborative(Local<String> property, Local<Value> value, const AccessorInfo& info);
-  static Handle<Value> getCollaborative(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getDescription(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getNumTracks(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getTrack(const Arguments& args);
-  static Handle<Value> addTracks(const Arguments& args);
-  static Handle<Value> removeTracks(const Arguments& args);
-  static Handle<Value> reorderTracks(const Arguments& args);
-  static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getOwner(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> on(const Arguments& args);
-  static Handle<Value> off(const Arguments& args);
+  static NAN_SETTER(setName);
+  static NAN_GETTER(getName);
+  static NAN_SETTER(setCollaborative);
+  static NAN_GETTER(getCollaborative);
+  static NAN_GETTER(getLink);
+  static NAN_GETTER(getDescription);
+  static NAN_GETTER(getNumTracks);
+  static NAN_METHOD(getTrack);
+  static NAN_METHOD(addTracks);
+  static NAN_METHOD(removeTracks);
+  static NAN_METHOD(reorderTracks);
+  static NAN_GETTER(isLoaded);
+  static NAN_GETTER(getOwner);
+  static NAN_METHOD(on);
+  static NAN_METHOD(off);
   static void init();
 };
 

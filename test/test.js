@@ -22,7 +22,7 @@ function tests() {
   console.log('Trackname: ' + firstStarredTrack.name);
   console.log('Track is starred: ' + firstStarredTrack.starred);
   console.log('Track link: ' + firstStarredTrack.link);
-  
+  console.log('Track availability: ' + firstStarredTrack.availability);
   /* Album */ 
   var album = firstStarredTrack.album;
   console.log('Albumname: ' + album.name);

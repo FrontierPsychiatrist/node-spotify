@@ -6,45 +6,40 @@
 
 #include <uv.h>
 #include <node.h>
-
-#include "V8Wrapped.h"
+#include <nan.h>
 
 /**
  * A class used as a base class for wrapping objects to node objects.
  **/
 template <class T>
-class NodeWrapped : public node::ObjectWrap, public virtual V8Wrapped {
+class NodeWrapped : public node::ObjectWrap {
 public:
   ~NodeWrapped() {}
-  /**
-   * Get a V8 handle with the Javascript object inside.
-   **/
-  virtual v8::Handle<v8::Object> getV8Object() {
-    //check if the handle from ObjectWrap has been initialized and if not wrap the object in a new JS instance
-    if(handle_.IsEmpty()) {
-      v8::Local<v8::Object> o = v8::Local<v8::Object>::New(constructor->NewInstance());
-      this->Wrap(o);
-    }
-    return handle_;
+  
+  virtual v8::Handle<v8::Object> createInstance() {
+    v8::Local<v8::Object> object = getConstructor()->NewInstance();
+    this->Wrap(object);
+    return object;
   }
 
   static v8::Handle<v8::Function> getConstructor() {
-    return constructor;
+    return NanNew(constructorTemplate)->GetFunction();
   }
 protected:
-  static v8::Persistent<v8::Function> constructor;
+  static v8::Persistent<v8::FunctionTemplate> constructorTemplate;
 
   /**
    * Basic init method for a wrapped node object.
    */
   static v8::Handle<v8::FunctionTemplate> init(const char* className) {
-    v8::Local<v8::FunctionTemplate> constructorTemplate = v8::FunctionTemplate::New();
-    constructorTemplate->SetClassName(v8::String::NewSymbol(className));
+    NanEscapableScope();
+    v8::Local<v8::FunctionTemplate> constructorTemplate = NanNew<v8::FunctionTemplate>();
+    constructorTemplate->SetClassName(NanNew<v8::String>(className));
     constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-    return constructorTemplate;
+    return NanEscapeScope(constructorTemplate);
   }
 };
 
-//The constructor must be static per template instance not fro all NodeWrapped subclasses.
-template <class T> v8::Persistent<v8::Function> NodeWrapped<T>::constructor;
+//The constructor template must be static per template instance not for all NodeWrapped subclasses.
+template <class T> v8::Persistent<v8::FunctionTemplate> NodeWrapped<T>::constructorTemplate;
 #endif

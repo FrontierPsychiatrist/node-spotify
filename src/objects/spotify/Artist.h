@@ -12,6 +12,7 @@
 
 class Track;
 class Album;
+class NodeArtist;
 
 class Artist {
 friend class NodeArtist;
@@ -33,7 +34,7 @@ public:
 private:
   sp_artist* artist;
   sp_artistbrowse* artistBrowse;
-  V8Browseable* nodeObject;
+  V8Browseable<NodeArtist>* nodeObject;
 };
 
 #endif

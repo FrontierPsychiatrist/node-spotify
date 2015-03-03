@@ -1,18 +1,24 @@
 {
-  "name" : "node-spotify",
-  "version": "0.7.0",
+  "name": "node-spotify",
+  "version": "0.7.1",
   "description": "A wrapper for libspotify",
-  "keywords": ["spotify", "music"],
+  "keywords": [
+    "spotify",
+    "music"
+  ],
   "homepage": "http://www.node-spotify.com",
-  "bugs" : {
-    "url" : "https://github.com/FrontierPsychiatrist/node-spotify/issues",
+  "bugs": {
+    "url": "https://github.com/FrontierPsychiatrist/node-spotify/issues",
     "email": "moritz.schulze@gmail.com"
   },
-  "license" : "MIT",
-  "author" : "Moritz Schulze <moritz.schulze@gmail.com> (http://www.node-spotify.com)",
+  "license": "MIT",
+  "author": "Moritz Schulze <moritz.schulze@gmail.com> (http://www.node-spotify.com)",
   "main": "./build/Release/spotify.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/FrontierPsychiatrist/node-spotify"
+  },
+  "dependencies": {
+    "nan": "^1.6.2"
   }
 }

@@ -5,7 +5,7 @@
 #include "../spotify/PlaylistContainer.h"
 #include "../../callbacks/PlaylistContainerCallbacksHolder.h"
 
-#include <v8.h>
+#include <nan.h>
 #include <memory>
 
 using namespace v8;
@@ -17,16 +17,16 @@ private:
 public:
   NodePlaylistContainer(std::shared_ptr<PlaylistContainer> playlistContainer);
   ~NodePlaylistContainer();
-  static Handle<Value> getOwner(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getPlaylist(const Arguments& args);
-  static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getNumPlaylists(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> addPlaylist(const Arguments& args);
-  static Handle<Value> addFolder(const Arguments& args);
-  static Handle<Value> deletePlaylist(const Arguments& args);
-  static Handle<Value> movePlaylist(const Arguments& args);
-  static Handle<Value> on(const Arguments& args);
-  static Handle<Value> off(const Arguments& args);
+  static NAN_GETTER(getOwner);
+  static NAN_METHOD(getPlaylist);
+  static NAN_GETTER(isLoaded);
+  static NAN_GETTER(getNumPlaylists);
+  static NAN_METHOD(addPlaylist);
+  static NAN_METHOD(addFolder);
+  static NAN_METHOD(deletePlaylist);
+  static NAN_METHOD(movePlaylist);
+  static NAN_METHOD(on);
+  static NAN_METHOD(off);
   static void init();
 };
 

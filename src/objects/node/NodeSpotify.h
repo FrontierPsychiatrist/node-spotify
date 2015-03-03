@@ -13,18 +13,18 @@ class NodeSpotify : public NodeWrapped<NodeSpotify> {
 public:
   NodeSpotify(Handle<Object> option);
   ~NodeSpotify();
-  static Handle<Value> login(const Arguments& args);
-  static Handle<Value> logout(const Arguments& args);
-  static Handle<Value> getPlaylistContainer(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getRememberedUser(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getSessionUser(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> createFromLink(const Arguments& args);
-  static Handle<Value> getConstants(Local<String> property, const AccessorInfo& info);
+  static NAN_METHOD(login);
+  static NAN_METHOD(logout);
+  static NAN_GETTER(getPlaylistContainer);
+  static NAN_GETTER(getRememberedUser);
+  static NAN_GETTER(getSessionUser);
+  static NAN_METHOD(createFromLink);
+  static NAN_GETTER(getConstants);
 #ifdef NODE_SPOTIFY_NATIVE_SOUND
-  static Handle<Value> useNativeAudio(const Arguments& args);
+  static NAN_METHOD(useNativeAudio);
 #endif
-  static Handle<Value> useNodejsAudio(const Arguments& args);
-  static Handle<Value> on(const Arguments& other);
+  static NAN_METHOD(useNodejsAudio);
+  static NAN_METHOD(on);
   static void init();
 private:
   std::unique_ptr<Spotify> spotify;
