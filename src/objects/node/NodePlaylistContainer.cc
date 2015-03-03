@@ -32,7 +32,7 @@ NAN_METHOD(NodePlaylistContainer::getPlaylist) {
   }
   int index = args[0]->ToNumber()->IntegerValue();
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(args.This());
-  if(index < 0 || index > nodePlaylistContainer->playlistContainer->numPlaylists()) {
+  if(index < 0 || index >= nodePlaylistContainer->playlistContainer->numPlaylists()) {
     return NanThrowError("Index out of range.");
   }
   std::shared_ptr<PlaylistBase> playlist = nodePlaylistContainer->playlistContainer->getPlaylist(index);
