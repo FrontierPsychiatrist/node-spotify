@@ -3,9 +3,9 @@
 #include "../objects/node/NodePlaylistFolder.h"
 #include "../objects/spotify/Playlist.h"
 
-#include <memory>
+using namespace v8;
 
-PlaylistContainerCallbacksHolder::PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, V8Wrapped* _userdata) : 
+PlaylistContainerCallbacksHolder::PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, node::ObjectWrap* _userdata) : 
   playlistContainer(pc), userdata(_userdata) {
     playlistContainerCallbacks = new sp_playlistcontainer_callbacks();
   }
@@ -15,61 +15,64 @@ PlaylistContainerCallbacksHolder::~PlaylistContainerCallbacksHolder() {
   delete playlistContainerCallbacks;
 }
 
-void PlaylistContainerCallbacksHolder::call(Handle<Function> callback, std::initializer_list<Handle<Value>> args) {  
+void PlaylistContainerCallbacksHolder::call(std::unique_ptr<NanCallback>& callback, std::initializer_list<Handle<Value>> args) {
   unsigned int argc = args.size();
   Handle<Value>* argv = const_cast<Handle<Value>*>(args.begin());
-  callback->Call(Context::GetCurrent()->Global(), argc, argv);
+  callback->Call(argc, argv);
 }
 
 void PlaylistContainerCallbacksHolder::playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata) {
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
   sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(pc, position);
   std::shared_ptr<PlaylistBase> playlistBase;
-  V8Wrapped* nodePlaylist;
+  Handle<Object> playlistV8;
   if(playlistType == SP_PLAYLIST_TYPE_PLAYLIST) {
     playlistBase = Playlist::fromCache(spPlaylist);
-    nodePlaylist = new NodePlaylist(Playlist::fromCache(spPlaylist));
+    NodeWrapped<NodePlaylist>* nodePlaylist = new NodePlaylist(Playlist::fromCache(spPlaylist));
+    playlistV8 = nodePlaylist->createInstance();
   } else if(playlistType == SP_PLAYLIST_TYPE_START_FOLDER) {
     char buf[256];
     sp_playlistcontainer_playlist_folder_name(pc, position, buf, 256);
-    nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>(buf, playlistType));
+    NodeWrapped<NodePlaylistFolder>* nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>(buf, playlistType));
+    playlistV8 = nodePlaylist->createInstance();
   } else if(playlistType == SP_PLAYLIST_TYPE_END_FOLDER) {
-    nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>(playlistType));
+    NodeWrapped<NodePlaylistFolder>* nodePlaylist = new NodePlaylistFolder(std::make_shared<PlaylistFolder>(playlistType));
+    playlistV8 = nodePlaylist->createInstance();
   } else {
     return;
   }
-  holder->call(holder->playlistAddedCallback, {Undefined(), nodePlaylist->getV8Object(), Number::New(position)});
+  holder->call(holder->playlistAddedCallback, {NanUndefined(), playlistV8, NanNew<Number>(position)});
 }
 
 void PlaylistContainerCallbacksHolder::playlistRemoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void *userdata) {
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
-  V8Wrapped* nodePlaylist = nullptr;
+  node::ObjectWrap* nodePlaylist = nullptr; //FIXME what??
   if(nodePlaylist != nullptr) {
-    holder->call(holder->playlistRemovedCallback, {Undefined(), Number::New(position), nodePlaylist->getV8Object()});
+    holder->call(holder->playlistRemovedCallback, {NanUndefined(), NanNew<Number>(position), NanObjectWrapHandle(nodePlaylist)});
   } else {
-    holder->call(holder->playlistRemovedCallback, {Undefined(), Number::New(position)});
+    holder->call(holder->playlistRemovedCallback, {NanUndefined(), NanNew<Number>(position)});
   }
 }
 
 void PlaylistContainerCallbacksHolder::playlistMoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, int new_position, void *userdata) {
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
-  V8Wrapped* nodePlaylist = nullptr;
+  node::ObjectWrap* nodePlaylist = nullptr; //FIXME what?
   if(nodePlaylist != nullptr) {
-    holder->call(holder->playlistMovedCallback, {Undefined(), Number::New(position), Number::New(new_position), nodePlaylist->getV8Object()});
+    holder->call(holder->playlistMovedCallback, {NanUndefined(), NanNew<Number>(position), NanNew<Number>(new_position), NanObjectWrapHandle(nodePlaylist)});
   } else {
-    holder->call(holder->playlistMovedCallback, {Undefined(), Number::New(position), Number::New(new_position)});
+    holder->call(holder->playlistMovedCallback, {NanUndefined(), NanNew<Number>(position), NanNew<Number>(new_position)});
   }
 }
 
 void PlaylistContainerCallbacksHolder::setCallbacks() {
   sp_playlistcontainer_remove_callbacks(playlistContainer, playlistContainerCallbacks, this);
-  if(!playlistAddedCallback.IsEmpty() && playlistAddedCallback->IsCallable()) {
+  if(playlistAddedCallback && !playlistAddedCallback->IsEmpty()) {
     playlistContainerCallbacks->playlist_added = &PlaylistContainerCallbacksHolder::playlistAdded;
   }
-  if(!playlistRemovedCallback.IsEmpty() && playlistRemovedCallback->IsCallable()) {
+  if(playlistRemovedCallback && !playlistRemovedCallback->IsEmpty()) {
     playlistContainerCallbacks->playlist_removed = &PlaylistContainerCallbacksHolder::playlistRemoved;
   }
-  if(!playlistMovedCallback.IsEmpty() && playlistMovedCallback->IsCallable()) {
+  if(playlistMovedCallback && !playlistMovedCallback->IsEmpty()) {
     playlistContainerCallbacks->playlist_moved = &PlaylistContainerCallbacksHolder::playlistMoved;
   }
   sp_playlistcontainer_add_callbacks(playlistContainer, playlistContainerCallbacks, this);

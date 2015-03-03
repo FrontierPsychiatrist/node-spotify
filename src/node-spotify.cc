@@ -1,6 +1,5 @@
 #include "Application.h"
 #include "exceptions.h"
-#include "common_macros.h"
 #include "objects/node/NodeSpotify.h"
 #include "objects/node/NodePlaylist.h"
 #include "objects/node/NodePlaylistContainer.h"
@@ -14,7 +13,7 @@
 #include "objects/node/NodeUser.h"
 
 #include <node.h>
-#include <v8.h>
+#include <nan.h>
 
 #ifdef NODE_SPOTIFY_NATIVE_SOUND
 #include "audio/NativeAudioHandler.h"
@@ -23,23 +22,23 @@
 Application* application;
 
 static Handle<Object> getInternal() {
-  Local<Object> internal = Object::New();
-  Local<Object> protos = Object::New();
-  protos->Set(v8::String::NewSymbol("Playlist"), NodePlaylist::getConstructor());
-  protos->Set(v8::String::NewSymbol("Track"), NodeTrack::getConstructor());
-  protos->Set(v8::String::NewSymbol("TrackExtended"), NodeTrackExtended::getConstructor());
-  protos->Set(v8::String::NewSymbol("PlaylistContainer"), NodePlaylistContainer::getConstructor());
-  protos->Set(v8::String::NewSymbol("Artist"), NodeArtist::getConstructor());
-  protos->Set(v8::String::NewSymbol("Album"), NodeAlbum::getConstructor());
-  protos->Set(v8::String::NewSymbol("User"), NodeUser::getConstructor());
-  protos->Set(v8::String::NewSymbol("PlaylistFolder"), NodePlaylistFolder::getConstructor());
-  internal->Set(v8::String::NewSymbol("protos"), protos);
+  Local<Object> internal = NanNew<Object>();
+  Local<Object> protos = NanNew<Object>();
+  protos->Set(NanNew<String>("Playlist"), NodePlaylist::getConstructor());
+  protos->Set(NanNew<String>("Track"), NodeTrack::getConstructor());
+  protos->Set(NanNew<String>("TrackExtended"), NodeTrackExtended::getConstructor());
+  protos->Set(NanNew<String>("PlaylistContainer"), NodePlaylistContainer::getConstructor());
+  protos->Set(NanNew<String>("Artist"), NodeArtist::getConstructor());
+  protos->Set(NanNew<String>("Album"), NodeAlbum::getConstructor());
+  protos->Set(NanNew<String>("User"), NodeUser::getConstructor());
+  protos->Set(NanNew<String>("PlaylistFolder"), NodePlaylistFolder::getConstructor());
+  internal->Set(NanNew<String>("protos"), protos);
 
   return internal;
 }
 
-v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(CreateNodespotify) {
+  NanScope();
 
   //initiate the javascript ctors and prototypes
   NodePlaylist::init();
@@ -63,10 +62,10 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
 
   v8::Handle<v8::Object> options;
   if(args.Length() < 1) {
-    options = v8::Object::New();
+    options = NanNew<Object>();
   } else {
     if(!args[0]->IsObject()) {
-      return scope.Close(V8_EXCEPTION("Please provide an object to the node-spotify initializer function"));
+      return NanThrowError("Please provide an object to the node-spotify initializer function");
     }
     options = args[0]->ToObject();
   }
@@ -75,23 +74,23 @@ v8::Handle<v8::Value> CreateNodespotify(const v8::Arguments& args) {
   try {
     nodeSpotify = new NodeSpotify(options);
   } catch (const FileException& e) {
-    return scope.Close(V8_EXCEPTION("Appkey file not found"));
+    return NanThrowError("Appkey file not found");
   } catch (const SessionCreationException& e) {
-    return scope.Close(V8_EXCEPTION(e.message.c_str()));
+    return NanThrowError(e.message.c_str());
   }
-  v8::Handle<Object> spotifyObject = nodeSpotify->getV8Object();
+  v8::Handle<Object> spotifyObject = nodeSpotify->createInstance();
 
   //Set some fields on the nodeSpotify object
-  spotifyObject->Set(v8::String::NewSymbol("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
-  spotifyObject->Set(v8::String::NewSymbol("internal"), getInternal());
+  spotifyObject->Set(NanNew<String>("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
+  spotifyObject->Set(NanNew<String>("internal"), getInternal());
   application->player = std::make_shared<Player>();
   NodePlayer* nodePlayer = new NodePlayer(application->player);
-  spotifyObject->Set(v8::String::NewSymbol("player"), nodePlayer->getV8Object());
-  return scope.Close(spotifyObject);
+  spotifyObject->Set(NanNew<String>("player"), nodePlayer->createInstance());
+  NanReturnValue(spotifyObject);
 };
 
 static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Object> module) {
-  module->Set(v8::String::NewSymbol("exports"), v8::FunctionTemplate::New(CreateNodespotify)->GetFunction());
+  module->Set(NanNew<String>("exports"), NanNew<FunctionTemplate>(CreateNodespotify)->GetFunction());
 }
 
 NODE_MODULE(nodespotify, init)

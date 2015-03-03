@@ -1,22 +1,21 @@
 #ifndef _PLAYLIST_CONTAINER_CALLBACKS_H
 #define _PLAYLIST_CONTAINER_CALLBACKS_H
 
-#include "../objects/node/V8Wrapped.h"
+#include <node.h>
 
 #include <initializer_list>
 #include <libspotify/api.h>
-#include <v8.h>
-
-using namespace v8;
+#include <nan.h>
+#include <memory>
 
 class PlaylistContainerCallbacksHolder {
 private:
   sp_playlistcontainer* playlistContainer;
   sp_playlistcontainer_callbacks* playlistContainerCallbacks;
-  V8Wrapped* userdata;
-  void call(Handle<Function> callback, std::initializer_list<Handle<Value>> args);
+  node::ObjectWrap* userdata;
+  void call(std::unique_ptr<NanCallback>& callback, std::initializer_list<v8::Handle<v8::Value>> args);
 public:
-  PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, V8Wrapped* userdata);
+  PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, node::ObjectWrap* userdata);
   ~PlaylistContainerCallbacksHolder();
 
   //libspotify callback functions
@@ -24,9 +23,9 @@ public:
   static void playlistRemoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, void *userdata);
   static void playlistMoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, int new_position, void *userdata);
 
-  Handle<Function> playlistAddedCallback;
-  Handle<Function> playlistRemovedCallback;
-  Handle<Function> playlistMovedCallback;
+  std::unique_ptr<NanCallback> playlistAddedCallback;
+  std::unique_ptr<NanCallback> playlistRemovedCallback;
+  std::unique_ptr<NanCallback> playlistMovedCallback;
 
   void setCallbacks();
   void unsetCallbacks();

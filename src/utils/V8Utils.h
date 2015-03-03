@@ -1,14 +1,12 @@
 #ifndef _V8_UTILS_H
 #define _V8_UTILS_H
 
-#include <v8.h>
-
-using namespace v8;
+#include <nan.h>
+#include <memory>
 
 class V8Utils {
 public:
-  static Handle<Function> getFunctionFromObject(Handle<Object> callbacks, Handle<String> key); 
-  static void callV8FunctionWithNoArgumentsIfHandleNotEmpty(Handle<Function> function);
+  static std::unique_ptr<NanCallback> getFunctionFromObject(v8::Handle<v8::Object> callbacks, v8::Handle<v8::String> key);
 };
 
 #endif

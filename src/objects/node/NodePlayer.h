@@ -16,14 +16,14 @@ private:
 public:
   NodePlayer(std::shared_ptr<Player> player);
   ~NodePlayer();
-  static Handle<Value> stop(const Arguments& args);
-  static Handle<Value> pause(const Arguments& args);
-  static Handle<Value> resume(const Arguments& args);
-  static Handle<Value> play(const Arguments& args);
-  static Handle<Value> getCurrentSecond(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> seek(const Arguments& args);
-  static Handle<Value> on(const Arguments& args);
-  static Handle<Value> off(const Arguments& args);
+  static NAN_METHOD(stop);
+  static NAN_METHOD(pause);
+  static NAN_METHOD(resume);
+  static NAN_METHOD(play);
+  static NAN_GETTER(getCurrentSecond);
+  static NAN_METHOD(seek);
+  static NAN_METHOD(on);
+  static NAN_METHOD(off);
   static void init();
 };
 

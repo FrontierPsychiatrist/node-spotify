@@ -26,6 +26,9 @@
       "src/objects/node/NodePlaylistContainer.cc", "src/objects/node/NodeUser.cc",
       "src/objects/node/NodeTrackExtended.cc"
     ],
+    "include_dirs": [
+      "<!(node -e \"require('nan')\")"
+    ],
     "link_settings" : {
       "libraries": ["-lspotify"]
     },

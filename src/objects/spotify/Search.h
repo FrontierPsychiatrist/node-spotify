@@ -10,6 +10,8 @@
 #include <memory>
 #include <string>
 
+class NodeSearch;
+
 class Search {
 friend class NodeSearch;
 friend class SearchCallbacks;
@@ -37,7 +39,7 @@ public:
   int totalPlaylists();
 private:
   sp_search* search;
-  V8Browseable* nodeObject;
+  V8Browseable<NodeSearch>* nodeObject;
 };
 
 #endif

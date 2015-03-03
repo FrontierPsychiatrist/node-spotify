@@ -4,7 +4,7 @@
 #include "NodeWrapped.h"
 #include "../spotify/User.h"
 
-#include <v8.h>
+#include <nan.h>
 #include <memory>
 
 using namespace v8;
@@ -15,12 +15,12 @@ private:
 public:
   NodeUser(std::unique_ptr<User> user);
   ~NodeUser();
-  static Handle<Value> getCanonicalName(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getDisplayName(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getPublishedPlaylistsContainer(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getStarredPlaylist(Local<String> property, const AccessorInfo& info);
+  static NAN_GETTER(getCanonicalName);
+  static NAN_GETTER(getDisplayName);
+  static NAN_GETTER(isLoaded);
+  static NAN_GETTER(getLink);
+  static NAN_GETTER(getPublishedPlaylistsContainer);
+  static NAN_GETTER(getStarredPlaylist);
   static void init();
 };
 

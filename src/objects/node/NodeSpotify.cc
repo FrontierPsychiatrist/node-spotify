@@ -4,7 +4,6 @@
 #include "../../audio/NodeAudioHandler.h"
 #include "../../Application.h"
 #include "../../exceptions.h"
-#include "../../common_macros.h"
 #include "../../callbacks/SessionCallbacks.h"
 #include "../spotify/SpotifyOptions.h"
 #include "NodePlaylist.h"
@@ -29,11 +28,11 @@ NodeSpotify::NodeSpotify(Handle<Object> options) {
   SessionCallbacks::init();
 
   SpotifyOptions _options;
-  HandleScope scope;
-  Handle<String> settingsFolderKey = String::New("settingsFolder");
-  Handle<String> cacheFolderKey = String::New("cacheFolder");
-  Handle<String> traceFileKey = String::New("traceFile");
-  Handle<String> appkeyFileKey = String::New("appkeyFile");
+  NanScope();
+  Handle<String> settingsFolderKey = NanNew<String>("settingsFolder");
+  Handle<String> cacheFolderKey = NanNew<String>("cacheFolder");
+  Handle<String> traceFileKey = NanNew<String>("traceFile");
+  Handle<String> appkeyFileKey = NanNew<String>("appkeyFile");
   if(options->Has(settingsFolderKey)) {
     String::Utf8Value settingsFolderValue(options->Get(settingsFolderKey)->ToString());
     _options.settingsFolder = *settingsFolderValue;
@@ -55,15 +54,14 @@ NodeSpotify::NodeSpotify(Handle<Object> options) {
     _options.appkeyFile = *appkeyFileValue;
   }
   spotify = std::unique_ptr<Spotify>(new Spotify(_options));
-  scope.Close(Undefined());
 }
 
 NodeSpotify::~NodeSpotify() {
 
 }
 
-Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(NodeSpotify::createFromLink) {
+  NanScope();
   Handle<Value> out;
   String::Utf8Value linkToParse(args[0]->ToString());
   sp_link* parsedLink = sp_link_create_from_string(*linkToParse);
@@ -74,28 +72,28 @@ Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
       {
         sp_track* track = sp_link_as_track(parsedLink);
         NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(track));
-        out = nodeTrack->getV8Object();
+        out = nodeTrack->createInstance();
         break;
       }
       case SP_LINKTYPE_ALBUM:
       {
         sp_album* album = sp_link_as_album(parsedLink);
         NodeAlbum* nodeAlbum = new NodeAlbum(std::unique_ptr<Album>(new Album(album)));
-        out = nodeAlbum->getV8Object();
+        out = nodeAlbum->createInstance();
         break;
       }
       case SP_LINKTYPE_ARTIST:
       {
         sp_artist* artist = sp_link_as_artist(parsedLink);
         NodeArtist* nodeArtist = new NodeArtist(std::unique_ptr<Artist>(new Artist(artist)));
-        out = nodeArtist->getV8Object();
+        out = nodeArtist->createInstance();
         break;
       }
       case SP_LINKTYPE_PROFILE:
       {
         sp_user* user = sp_link_as_user(parsedLink);
         NodeUser* nodeUser = new NodeUser(std::unique_ptr<User>(new User(user)));
-        out = nodeUser->getV8Object();
+        out = nodeUser->createInstance();
         break;
       }
       case SP_LINKTYPE_PLAYLIST:
@@ -103,28 +101,28 @@ Handle<Value> NodeSpotify::createFromLink(const Arguments& args) {
         sp_playlist* spPlaylist = sp_playlist_create(application->session, parsedLink);
         auto playlist = Playlist::fromCache(spPlaylist);
         NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
-        out = nodePlaylist->getV8Object();
+        out = nodePlaylist->createInstance();
         break;
       }
       case SP_LINKTYPE_LOCALTRACK:
       {
         sp_track* track = sp_link_as_track(parsedLink);
         NodeTrack* nodeTrack = new NodeTrack(std::make_shared<Track>(track));
-        out = nodeTrack->getV8Object();
+        out = nodeTrack->createInstance();
         break;
       }
       default:
-        out = Undefined();
+        out = NanUndefined();
     }
     sp_link_release(parsedLink);
   } else {
-    out = Undefined();
+    out = NanUndefined();
   }
-  return scope.Close(out);
+  NanReturnValue(out);
 }
 
-Handle<Value> NodeSpotify::login(const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(NodeSpotify::login) {
+  NanScope();
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
   String::Utf8Value v8User(args[0]->ToString());
   String::Utf8Value v8Password(args[1]->ToString());
@@ -133,104 +131,102 @@ Handle<Value> NodeSpotify::login(const Arguments& args) {
   std::string user(*v8User);
   std::string password(*v8Password);
   nodeSpotify->spotify->login(user, password, rememberMe, withRemembered);
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-Handle<Value> NodeSpotify::logout(const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(NodeSpotify::logout) {
+  NanScope();
   if(args.Length() > 0) {
-    Handle<Function> fun = Handle<Function>::Cast(args[0]);
-    Persistent<Function> p = Persistent<Function>::New(fun);
-    SessionCallbacks::logoutCallback = p;
+    SessionCallbacks::logoutCallback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
   }
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
   nodeSpotify->spotify->logout();
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-Handle<Value> NodeSpotify::getPlaylistContainer(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
+NAN_GETTER(NodeSpotify::getPlaylistContainer) {
+  NanScope();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(application->playlistContainer);
-  return scope.Close(nodePlaylistContainer->getV8Object());
+  NanReturnValue(nodePlaylistContainer->createInstance());
 }
 
-Handle<Value> NodeSpotify::getRememberedUser(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.Holder());
-  return scope.Close(String::New(nodeSpotify->spotify->rememberedUser().c_str()));
+NAN_GETTER(NodeSpotify::getRememberedUser) {
+  NanScope();
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NanReturnValue(NanNew<String>(nodeSpotify->spotify->rememberedUser().c_str()));
 }
 
-Handle<Value> NodeSpotify::getSessionUser(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.Holder());
+NAN_GETTER(NodeSpotify::getSessionUser) {
+  NanScope();
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
   NodeUser* nodeUser = new NodeUser(std::move(nodeSpotify->spotify->sessionUser()));
-  return scope.Close(nodeUser->getV8Object());
+  NanReturnValue(nodeUser->createInstance());
 }
 
-Handle<Value> NodeSpotify::getConstants(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  Local<Object> constants = Object::New();
-  constants->Set(String::NewSymbol("ARTISTBROWSE_FULL"), Number::New(SP_ARTISTBROWSE_FULL));
-  constants->Set(String::NewSymbol("ARTISTBROWSE_NO_TRACKS"), Number::New(SP_ARTISTBROWSE_NO_TRACKS));
-  constants->Set(String::NewSymbol("ARTISTBROWSE_NO_ALBUMS"), Number::New(SP_ARTISTBROWSE_NO_ALBUMS));
+NAN_GETTER(NodeSpotify::getConstants) {
+  NanScope();
+  Local<Object> constants = NanNew<Object>();
+  constants->Set(NanNew<String>("ARTISTBROWSE_FULL"), NanNew<Number>(SP_ARTISTBROWSE_FULL));
+  constants->Set(NanNew<String>("ARTISTBROWSE_NO_TRACKS"), NanNew<Number>(SP_ARTISTBROWSE_NO_TRACKS));
+  constants->Set(NanNew<String>("ARTISTBROWSE_NO_ALBUMS"), NanNew<Number>(SP_ARTISTBROWSE_NO_ALBUMS));
 
-  constants->Set(String::NewSymbol("PLAYLIST_TYPE_PLAYLIST"), Number::New(SP_PLAYLIST_TYPE_PLAYLIST));
-  constants->Set(String::NewSymbol("PLAYLIST_TYPE_START_FOLDER"), Number::New(SP_PLAYLIST_TYPE_START_FOLDER));
-  constants->Set(String::NewSymbol("PLAYLIST_TYPE_END_FOLDER"), Number::New(SP_PLAYLIST_TYPE_END_FOLDER));
-  constants->Set(String::NewSymbol("PLAYLIST_TYPE_PLACEHOLDER"), Number::New(SP_PLAYLIST_TYPE_PLACEHOLDER));
+  constants->Set(NanNew<String>("PLAYLIST_TYPE_PLAYLIST"), NanNew<Number>(SP_PLAYLIST_TYPE_PLAYLIST));
+  constants->Set(NanNew<String>("PLAYLIST_TYPE_START_FOLDER"), NanNew<Number>(SP_PLAYLIST_TYPE_START_FOLDER));
+  constants->Set(NanNew<String>("PLAYLIST_TYPE_END_FOLDER"), NanNew<Number>(SP_PLAYLIST_TYPE_END_FOLDER));
+  constants->Set(NanNew<String>("PLAYLIST_TYPE_PLACEHOLDER"), NanNew<Number>(SP_PLAYLIST_TYPE_PLACEHOLDER));
 
 
-  constants->Set(String::NewSymbol("SP_TRACK_AVAILABILITY_UNAVAILABLE"), Number::New(SP_TRACK_AVAILABILITY_UNAVAILABLE));
-  constants->Set(String::NewSymbol("SP_TRACK_AVAILABILITY_AVAILABLE"), Number::New(SP_TRACK_AVAILABILITY_AVAILABLE));
-  constants->Set(String::NewSymbol("SP_TRACK_AVAILABILITY_NOT_STREAMABLE"), Number::New(SP_TRACK_AVAILABILITY_NOT_STREAMABLE));
-  constants->Set(String::NewSymbol("SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST"), Number::New(SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST));
+  constants->Set(NanNew<String>("SP_TRACK_AVAILABILITY_UNAVAILABLE"), NanNew<Number>(SP_TRACK_AVAILABILITY_UNAVAILABLE));
+  constants->Set(NanNew<String>("SP_TRACK_AVAILABILITY_AVAILABLE"), NanNew<Number>(SP_TRACK_AVAILABILITY_AVAILABLE));
+  constants->Set(NanNew<String>("SP_TRACK_AVAILABILITY_NOT_STREAMABLE"), NanNew<Number>(SP_TRACK_AVAILABILITY_NOT_STREAMABLE));
+  constants->Set(NanNew<String>("SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST"), NanNew<Number>(SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST));
 
-  return scope.Close(constants);
+  NanReturnValue(constants);
 }
 
 #ifdef NODE_SPOTIFY_NATIVE_SOUND
-Handle<Value> NodeSpotify::useNativeAudio(const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(NodeSpotify::useNativeAudio) {
+  NanScope();
   //Since the old audio handler has to be deleted first, do an empty reset.
   application->audioHandler.reset();
   application->audioHandler = std::unique_ptr<AudioHandler>(new NativeAudioHandler());
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 #endif
 
-Handle<Value> NodeSpotify::useNodejsAudio(const Arguments &args) {
-  HandleScope scope;
+NAN_METHOD(NodeSpotify::useNodejsAudio) {
+  NanScope();
   if(args.Length() < 1) {
-    return scope.Close(V8_EXCEPTION("useNodjsAudio needs a function as its first argument."));
+    return NanThrowError("useNodjsAudio needs a function as its first argument.");
   }
-  Handle<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[0]));
   //Since the old audio handler has to be deleted first, do an empty reset.
   application->audioHandler.reset();
-  application->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(callback));
+  auto callback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
+  application->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(std::move(callback)));
 
-  Handle<Function> needMoreDataSetter = FunctionTemplate::New(NodeAudioHandler::setNeedMoreData)->GetFunction();
-  return scope.Close(needMoreDataSetter);
+  Handle<Function> needMoreDataSetter = NanNew<FunctionTemplate>(NodeAudioHandler::setNeedMoreData)->GetFunction();
+  NanReturnValue(needMoreDataSetter);
 }
 
-Handle<Value> NodeSpotify::on(const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(NodeSpotify::on) {
+  NanScope();
   if(args.Length() < 1 || !args[0]->IsObject()) {
-    return scope.Close(V8_EXCEPTION("on needs an object as its first argument."));
+    return NanThrowError("on needs an object as its first argument.");
   }
   Handle<Object> callbacks = args[0]->ToObject();
-  Handle<String> metadataUpdatedKey = String::New("metadataUpdated");
-  Handle<String> readyKey = String::New("ready");
-  Handle<String> logoutKey = String::New("logout");
-  Handle<String> playTokenLostKey = String::New("playTokenLost");
+  Handle<String> metadataUpdatedKey = NanNew<String>("metadataUpdated");
+  Handle<String> readyKey = NanNew<String>("ready");
+  Handle<String> logoutKey = NanNew<String>("logout");
+  Handle<String> playTokenLostKey = NanNew<String>("playTokenLost");
   SessionCallbacks::metadataUpdatedCallback = V8Utils::getFunctionFromObject(callbacks, metadataUpdatedKey);
   SessionCallbacks::loginCallback = V8Utils::getFunctionFromObject(callbacks, readyKey);
   SessionCallbacks::logoutCallback = V8Utils::getFunctionFromObject(callbacks, logoutKey);
   SessionCallbacks::playTokenLostCallback = V8Utils::getFunctionFromObject(callbacks, playTokenLostKey);
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
 void NodeSpotify::init() {
-  HandleScope scope;
+  NanScope();
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "login", login);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "logout", logout);
@@ -240,11 +236,10 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "useNativeAudio", useNativeAudio);
 #endif
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "useNodejsAudio", useNodejsAudio);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("rememberedUser"), getRememberedUser);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("sessionUser"), getSessionUser);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("playlistContainer"), getPlaylistContainer);
-  constructorTemplate->InstanceTemplate()->SetAccessor(String::NewSymbol("constants"), getConstants);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("rememberedUser"), getRememberedUser);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("sessionUser"), getSessionUser);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistContainer"), getPlaylistContainer);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("constants"), getConstants);
 
-  constructor = Persistent<Function>::New(constructorTemplate->GetFunction());
-  scope.Close(Undefined());
+  NanAssignPersistent(NodeSpotify::constructorTemplate, constructorTemplate);
 }

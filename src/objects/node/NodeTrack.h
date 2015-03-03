@@ -4,7 +4,7 @@
 #include "NodeWrapped.h"
 #include "../spotify/Track.h"
 
-#include <v8.h>
+#include <nan.h>
 #include <memory>
 
 using namespace v8;
@@ -17,16 +17,16 @@ private:
 public:
   NodeTrack(std::shared_ptr<Track> track);
   ~NodeTrack();
-  static Handle<Value> getName(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getLink(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getArtists(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getDuration(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getAlbum(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getStarred(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getPopularity(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> isLoaded(Local<String> property, const AccessorInfo& info);
-  static Handle<Value> getAvailability(Local<String> property, const AccessorInfo& info);
-  static void setStarred(Local<String> property, Local<Value> value, const AccessorInfo& info);
+  static NAN_GETTER(getName);
+  static NAN_GETTER(getLink);
+  static NAN_GETTER(getArtists);
+  static NAN_GETTER(getDuration);
+  static NAN_GETTER(getAlbum);
+  static NAN_GETTER(getStarred);
+  static NAN_GETTER(getPopularity);
+  static NAN_GETTER(isLoaded);
+  static NAN_GETTER(getAvailability);
+  static NAN_SETTER(setStarred);
   static Handle<FunctionTemplate> init();
 };
 

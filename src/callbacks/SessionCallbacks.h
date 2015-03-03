@@ -2,9 +2,8 @@
 #define _SPOTIFY_SERVICE_SESSION_CALLBACKS_H
 
 #include <libspotify/api.h>
-#include <uv.h>
 #include <memory>
-#include <v8.h>
+#include <nan.h>
 
 class SessionCallbacks {
 public:
@@ -18,11 +17,11 @@ public:
   static void start_playback(sp_session* session);
   static void stop_playback(sp_session* session);
   static void rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata);
-  static v8::Handle<v8::Function> loginCallback;
-  static v8::Handle<v8::Function> logoutCallback;
-  static v8::Handle<v8::Function> metadataUpdatedCallback;
-  static v8::Handle<v8::Function> endOfTrackCallback;
-  static v8::Handle<v8::Function> playTokenLostCallback;
+  static std::unique_ptr<NanCallback> loginCallback;
+  static std::unique_ptr<NanCallback> logoutCallback;
+  static std::unique_ptr<NanCallback> metadataUpdatedCallback;
+  static std::unique_ptr<NanCallback> endOfTrackCallback;
+  static std::unique_ptr<NanCallback> playTokenLostCallback;
 };
 
 #endif

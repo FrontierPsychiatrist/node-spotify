@@ -7,7 +7,7 @@
 
 #include <memory>
 
-PlaylistCallbacksHolder::PlaylistCallbacksHolder(V8Wrapped* _userdata, sp_playlist* _playlist) : userdata(_userdata), playlist(_playlist) {
+PlaylistCallbacksHolder::PlaylistCallbacksHolder(node::ObjectWrap* _userdata, sp_playlist* _playlist) : userdata(_userdata), playlist(_playlist) {
   playlistCallbacks = new sp_playlist_callbacks();
 }
 
@@ -16,84 +16,84 @@ PlaylistCallbacksHolder::~PlaylistCallbacksHolder() {
   delete playlistCallbacks;
 }
 
-void PlaylistCallbacksHolder::call(Handle<Function> callback, std::initializer_list<Handle<Value>> args) {  
+void PlaylistCallbacksHolder::call(std::unique_ptr<NanCallback>& callback, std::initializer_list<Handle<Value>> args) {
   unsigned int argc = args.size();
   Handle<Value>* argv = const_cast<Handle<Value>*>(args.begin());
-  callback->Call(Context::GetCurrent()->Global(), argc, argv);
+  callback->Call(argc, argv);
 }
 
 void PlaylistCallbacksHolder::playlistRenamed(sp_playlist* spPlaylist, void* userdata) {
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
-  holder->call(holder->playlistRenamedCallback, { Undefined(), holder->userdata->getV8Object() });
+  holder->call(holder->playlistRenamedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata) });
 }
 
 void PlaylistCallbacksHolder::tracksAdded(sp_playlist* spPlaylist, sp_track *const *tracks, int num_tracks, int position, void *userdata) {
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
-  Handle<Array> nodeTracks = Array::New(num_tracks);
+  Handle<Array> nodeTracks = NanNew<Array>(num_tracks);
   for(int i = 0; i < num_tracks; i++) {
     NodeTrack* nodeTrackExtended = new NodeTrackExtended(std::make_shared<TrackExtended>(tracks[i], spPlaylist, position + i));
-    nodeTracks->Set(Number::New(i), nodeTrackExtended->getV8Object());
+    nodeTracks->Set(NanNew<Number>(i), nodeTrackExtended->createInstance());
   }
-  holder->call(holder->tracksAddedCallback, { Undefined(), holder->userdata->getV8Object(), nodeTracks, Number::New(position) });
+  holder->call(holder->tracksAddedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata), nodeTracks, NanNew<Number>(position) });
 }
 
 void PlaylistCallbacksHolder::tracksMoved(sp_playlist* spPlaylist, const int* tracks, int num_tracks, int new_position, void *userdata) {
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
-  Handle<Array> movedTrackIndices = Array::New(num_tracks);
+  Handle<Array> movedTrackIndices = NanNew<Array>(num_tracks);
   for(int i = 0; i < num_tracks; i++) {
-    movedTrackIndices->Set(Number::New(i), Number::New(tracks[i]));
+    movedTrackIndices->Set(NanNew<Number>(i), NanNew<Number>(tracks[i]));
   }
-  holder->call(holder->tracksMovedCallback, { Undefined(), holder->userdata->getV8Object(), movedTrackIndices, Number::New(new_position) });
+  holder->call(holder->tracksMovedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata), movedTrackIndices, NanNew<Number>(new_position) });
 }
 
 void PlaylistCallbacksHolder::tracksRemoved(sp_playlist* spPlaylist, const int *tracks, int num_tracks, void *userdata) {
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
-  Handle<Array> removedTrackIndexes = Array::New(num_tracks);
+  Handle<Array> removedTrackIndexes = NanNew<Array>(num_tracks);
   for(int i = 0; i < num_tracks; i++) {
-    removedTrackIndexes->Set(Number::New(i), Number::New(tracks[i]));
+    removedTrackIndexes->Set(NanNew<Number>(i), NanNew<Number>(tracks[i]));
   }
-  holder->call(holder->tracksRemovedCallback, { Undefined(), holder->userdata->getV8Object(), removedTrackIndexes });
+  holder->call(holder->tracksRemovedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata), removedTrackIndexes });
 }
 
 void PlaylistCallbacksHolder::trackCreatedChanged(sp_playlist* spPlaylist, int position, sp_user* spUser, int when, void* userdata) {
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
   double date = (double)when * 1000;
   NodeUser* nodeUser = new NodeUser(std::unique_ptr<User>(new User(spUser)));
-  holder->call(holder->trackCreatedChangedCallback, { Undefined(), holder->userdata->getV8Object(), Integer::New(position), nodeUser->getV8Object(), Date::New(date) });
+  holder->call(holder->trackCreatedChangedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata), NanNew<Integer>(position), NanObjectWrapHandle(nodeUser), NanNew<Date>(date) });
 }
 
 void PlaylistCallbacksHolder::trackSeenChanged(sp_playlist* spPlaylist, int position, bool seen, void* userdata) {
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
-  holder->call(holder->trackSeenChangedCallback, { Undefined(), holder->userdata->getV8Object(), Integer::New(position), Boolean::New(seen) });
+  holder->call(holder->trackSeenChangedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata), NanNew<Integer>(position), NanNew<Boolean>(seen) });
 }
 
 void PlaylistCallbacksHolder::trackMessageChanged(sp_playlist* spPlaylist, int position, const char* message, void* userdata) {
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
-  holder->call(holder->trackMessageChangedCallback, { Undefined(), holder->userdata->getV8Object(), Integer::New(position), String::New(message) });
+  holder->call(holder->trackMessageChangedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata), NanNew<Integer>(position), NanNew<String>(message) });
 }
 
 void PlaylistCallbacksHolder::setCallbacks() {
   sp_playlist_remove_callbacks(playlist, playlistCallbacks, this);
   
-  if(!playlistRenamedCallback.IsEmpty() && playlistRenamedCallback->IsCallable()) {
+  if(playlistRenamedCallback && !playlistRenamedCallback->IsEmpty()) {
     playlistCallbacks->playlist_renamed = &PlaylistCallbacksHolder::playlistRenamed;  
   }
-  if(!tracksAddedCallback.IsEmpty() && tracksAddedCallback->IsCallable()) {
+  if(tracksAddedCallback && !tracksAddedCallback->IsEmpty()) {
     playlistCallbacks->tracks_added = &PlaylistCallbacksHolder::tracksAdded;  
   }
-  if(!tracksMovedCallback.IsEmpty() && tracksMovedCallback->IsCallable()) {
+  if(tracksMovedCallback && !tracksMovedCallback->IsEmpty()) {
     playlistCallbacks->tracks_moved = &PlaylistCallbacksHolder::tracksMoved;  
   }
-  if(!tracksRemovedCallback.IsEmpty() && tracksRemovedCallback->IsCallable()) {
+  if(tracksRemovedCallback && !tracksRemovedCallback->IsEmpty()) {
     playlistCallbacks->tracks_removed = &PlaylistCallbacksHolder::tracksRemoved;  
   }
-  if(!trackCreatedChangedCallback.IsEmpty() && trackCreatedChangedCallback->IsCallable()) {
+  if(trackCreatedChangedCallback && !trackCreatedChangedCallback->IsEmpty()) {
     playlistCallbacks->track_created_changed = &PlaylistCallbacksHolder::trackCreatedChanged;
   }
-  if(!trackSeenChangedCallback.IsEmpty() && trackSeenChangedCallback->IsCallable()) {
+  if(trackSeenChangedCallback && !trackSeenChangedCallback->IsEmpty()) {
     playlistCallbacks->track_seen_changed = &PlaylistCallbacksHolder::trackSeenChanged;
   }
-  if(!trackMessageChangedCallback.IsEmpty() && trackMessageChangedCallback->IsCallable()) {
+  if(trackMessageChangedCallback && !trackMessageChangedCallback->IsEmpty()) {
     playlistCallbacks->track_message_changed = &PlaylistCallbacksHolder::trackMessageChanged;
   }
   sp_playlist_add_callbacks(playlist, playlistCallbacks, this);
