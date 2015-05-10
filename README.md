@@ -1,5 +1,13 @@
 node-spotify
 ============
+*Important note*
+----------------
+Spotify has declared [1] libspotify, which this project is based on as "no longer under active development". A newer library will be released "later this year".
+
+I hope to find the time to still add some features and remove bugs from node-spotify. When the new library is out I also want to check if a transition to it is feasible without changing the API too much.
+
+[1] https://developer.spotify.com/technologies/libspotify/
+
 Overview
 --------
 node-spotify is a node.js module to use the Spotify API in an easy manner from node.js.
