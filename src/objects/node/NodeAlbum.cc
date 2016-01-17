@@ -25,6 +25,12 @@ NAN_GETTER(NodeAlbum::getLink) {
   NanReturnValue(NanNew<String>(nodeAlbum->album->link().c_str()));
 }
 
+NAN_GETTER(NodeAlbum::getCoverLink) {
+  NanScope();
+  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(args.This());
+  NanReturnValue(NanNew<String>(nodeAlbum->album->coverLink().c_str()));
+}
+
 NAN_METHOD(NodeAlbum::getCoverBase64) {
   NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(args.This());
@@ -99,6 +105,7 @@ void NodeAlbum::init() {
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Album");
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("name"), getName);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("cover"), getCoverLink);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getCoverBase64", getCoverBase64);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "browse", browse);
