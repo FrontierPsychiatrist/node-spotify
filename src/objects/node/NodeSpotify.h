@@ -18,6 +18,7 @@ public:
   static NAN_GETTER(getPlaylistContainer);
   static NAN_GETTER(getRememberedUser);
   static NAN_GETTER(getSessionUser);
+  static NAN_GETTER(getSessionUserCountry);
   static NAN_METHOD(createFromLink);
   static NAN_GETTER(getConstants);
 #ifdef NODE_SPOTIFY_NATIVE_SOUND

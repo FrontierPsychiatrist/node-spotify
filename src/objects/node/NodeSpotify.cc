@@ -163,6 +163,12 @@ NAN_GETTER(NodeSpotify::getSessionUser) {
   NanReturnValue(nodeUser->createInstance());
 }
 
+NAN_GETTER(NodeSpotify::getSessionUserCountry) {
+  NanScope();
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NanReturnValue(NanNew<String>(nodeSpotify->spotify->sessionUserCountry().c_str()));
+}
+
 NAN_GETTER(NodeSpotify::getConstants) {
   NanScope();
   Local<Object> constants = NanNew<Object>();
@@ -238,6 +244,7 @@ void NodeSpotify::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "useNodejsAudio", useNodejsAudio);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("rememberedUser"), getRememberedUser);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("sessionUser"), getSessionUser);
+  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("country"), getSessionUserCountry);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistContainer"), getPlaylistContainer);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("constants"), getConstants);
 

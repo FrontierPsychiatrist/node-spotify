@@ -90,3 +90,10 @@ std::unique_ptr<User> Spotify::sessionUser() {
   auto user = std::unique_ptr<User>(new User(sp_session_user(session)));
   return user;
 }
+
+std::string Spotify::sessionUserCountry() {
+  int code = sp_session_user_country(session);
+  char *str;
+  asprintf(&str, "%c%c", code >> 8, code & 0xff);
+  return str;
+}
