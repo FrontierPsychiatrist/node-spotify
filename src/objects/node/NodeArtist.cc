@@ -14,19 +14,19 @@ NodeArtist::~NodeArtist() {
 
 NAN_GETTER(NodeArtist::getName) {
   NanScope();
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   NanReturnValue(NanNew<String>(nodeArtist->artist->name().c_str()));
 }
 
 NAN_GETTER(NodeArtist::getLink) {
   NanScope();
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   NanReturnValue(NanNew<String>(nodeArtist->artist->link().c_str()));
 }
 
 NAN_METHOD(NodeArtist::browse) {
   NanScope();
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   if(nodeArtist->artist->artistBrowse == nullptr) {
     nodeArtist->makePersistent();
     sp_artistbrowse_type artistbrowseType = static_cast<sp_artistbrowse_type>(args[0]->ToNumber()->IntegerValue());
@@ -50,7 +50,7 @@ NAN_METHOD(NodeArtist::browse) {
 
 NAN_GETTER(NodeArtist::getTracks) {
   NanScope();
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   std::vector<std::shared_ptr<Track>> tracks = nodeArtist->artist->tracks();
   Local<Array> nodeTracks = NanNew<Array>(tracks.size());
   for(int i = 0; i < (int)tracks.size(); i++) {
@@ -62,7 +62,7 @@ NAN_GETTER(NodeArtist::getTracks) {
 
 NAN_GETTER(NodeArtist::getTophitTracks) {
   NanScope();
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   std::vector<std::shared_ptr<Track>> tophitTracks = nodeArtist->artist->tophitTracks();
   Local<Array> nodeTophitTracks = NanNew<Array>(tophitTracks.size());
   for(int i = 0; i < (int)tophitTracks.size(); i++) {
@@ -74,7 +74,7 @@ NAN_GETTER(NodeArtist::getTophitTracks) {
 
 NAN_GETTER(NodeArtist::getAlbums) {
   NanScope();
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   std::vector<std::unique_ptr<Album>> albums = nodeArtist->artist->albums();
   Local<Array> nodeAlbums = NanNew<Array>(albums.size());
   for(int i = 0; i < (int)albums.size(); i++) {
@@ -86,7 +86,7 @@ NAN_GETTER(NodeArtist::getAlbums) {
 
 NAN_GETTER(NodeArtist::getSimilarArtists) {
   NanScope();
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   std::vector<std::unique_ptr<Artist>> similarArtists = nodeArtist->artist->similarArtists();
   Local<Array> nodeSimilarArtists = NanNew<Array>(similarArtists.size());
   for(int i = 0; i < (int)similarArtists.size(); i++) {
@@ -98,14 +98,14 @@ NAN_GETTER(NodeArtist::getSimilarArtists) {
 
 NAN_GETTER(NodeArtist::getBiography) {
   NanScope();
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   std::string biography = nodeArtist->artist->biography();
   NanReturnValue(NanNew<String>(biography.c_str()));
 }
 
 NAN_GETTER(NodeArtist::isLoaded) {
   NanScope();
-  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(args.This());
+  NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   NanReturnValue(NanNew<Boolean>(nodeArtist->artist->isLoaded()));
 }
 

@@ -10,13 +10,13 @@ NodePlaylistFolder::~NodePlaylistFolder() {
 
 NAN_GETTER(NodePlaylistFolder::getName) {
   NanScope();
-  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(args.This());
+  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.This());
   NanReturnValue(NanNew<String>(nodePlaylistFolder->playlistFolder->name().c_str()));
 }
 
 NAN_GETTER(NodePlaylistFolder::getType) {
   NanScope();
-  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(args.This());
+  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.This());
   NanReturnValue(NanNew<Number>(nodePlaylistFolder->playlistFolder->type()));
 }
 

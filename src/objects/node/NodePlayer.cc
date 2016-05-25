@@ -16,21 +16,21 @@ NodePlayer::NodePlayer(const NodePlayer& other) {
 
 NAN_METHOD(NodePlayer::pause) {
   NanScope();
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
+  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   nodePlayer->player->pause();
   NanReturnUndefined();
 }
 
 NAN_METHOD(NodePlayer::stop) {
   NanScope();
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
+  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   nodePlayer->player->stop();
   NanReturnUndefined();
 }
 
 NAN_METHOD(NodePlayer::resume) {
   NanScope();
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
+  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   nodePlayer->player->resume();
   NanReturnUndefined();
 }
@@ -40,7 +40,7 @@ NAN_METHOD(NodePlayer::play) {
   if(args.Length() < 1) {
     return NanThrowError("play needs a track as its first argument.");
   }
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
+  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args[0]->ToObject());
   try {
     nodePlayer->player->play(nodeTrack->track);
@@ -61,7 +61,7 @@ NAN_METHOD(NodePlayer::seek) {
   if(args.Length() < 1 || !args[0]->IsNumber()) {
     return NanThrowError("seek needs an integer as its first argument.");
   }
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
+  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   int second = args[0]->ToInteger()->Value();
   nodePlayer->player->seek(second);
   NanReturnUndefined();
@@ -69,7 +69,7 @@ NAN_METHOD(NodePlayer::seek) {
 
 NAN_GETTER(NodePlayer::getCurrentSecond) {
   NanScope();
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(args.This());
+  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   NanReturnValue(NanNew<Integer>(nodePlayer->player->currentSecond));
 }
 

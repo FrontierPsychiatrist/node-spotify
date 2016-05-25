@@ -123,7 +123,7 @@ NAN_METHOD(NodeSpotify::createFromLink) {
 
 NAN_METHOD(NodeSpotify::login) {
   NanScope();
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.This());
   String::Utf8Value v8User(args[0]->ToString());
   String::Utf8Value v8Password(args[1]->ToString());
   bool rememberMe = args[2]->ToBoolean()->Value();
@@ -139,7 +139,7 @@ NAN_METHOD(NodeSpotify::logout) {
   if(args.Length() > 0) {
     SessionCallbacks::logoutCallback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
   }
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.This());
   nodeSpotify->spotify->logout();
   NanReturnUndefined();
 }
@@ -152,13 +152,13 @@ NAN_GETTER(NodeSpotify::getPlaylistContainer) {
 
 NAN_GETTER(NodeSpotify::getRememberedUser) {
   NanScope();
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.This());
   NanReturnValue(NanNew<String>(nodeSpotify->spotify->rememberedUser().c_str()));
 }
 
 NAN_GETTER(NodeSpotify::getSessionUser) {
   NanScope();
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.This());
   NodeUser* nodeUser = new NodeUser(std::move(nodeSpotify->spotify->sessionUser()));
   NanReturnValue(nodeUser->createInstance());
 }
