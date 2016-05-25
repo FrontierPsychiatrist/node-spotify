@@ -61,7 +61,6 @@ NodeSpotify::~NodeSpotify() {
 }
 
 NAN_METHOD(NodeSpotify::createFromLink) {
-  NanScope();
   Handle<Value> out;
   String::Utf8Value linkToParse(args[0]->ToString());
   sp_link* parsedLink = sp_link_create_from_string(*linkToParse);
@@ -122,7 +121,6 @@ NAN_METHOD(NodeSpotify::createFromLink) {
 }
 
 NAN_METHOD(NodeSpotify::login) {
-  NanScope();
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.This());
   String::Utf8Value v8User(args[0]->ToString());
   String::Utf8Value v8Password(args[1]->ToString());
@@ -135,7 +133,6 @@ NAN_METHOD(NodeSpotify::login) {
 }
 
 NAN_METHOD(NodeSpotify::logout) {
-  NanScope();
   if(args.Length() > 0) {
     SessionCallbacks::logoutCallback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
   }
@@ -145,26 +142,22 @@ NAN_METHOD(NodeSpotify::logout) {
 }
 
 NAN_GETTER(NodeSpotify::getPlaylistContainer) {
-  NanScope();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(application->playlistContainer);
   NanReturnValue(nodePlaylistContainer->createInstance());
 }
 
 NAN_GETTER(NodeSpotify::getRememberedUser) {
-  NanScope();
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.This());
   NanReturnValue(NanNew<String>(nodeSpotify->spotify->rememberedUser().c_str()));
 }
 
 NAN_GETTER(NodeSpotify::getSessionUser) {
-  NanScope();
   NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(info.This());
   NodeUser* nodeUser = new NodeUser(std::move(nodeSpotify->spotify->sessionUser()));
   NanReturnValue(nodeUser->createInstance());
 }
 
 NAN_GETTER(NodeSpotify::getConstants) {
-  NanScope();
   Local<Object> constants = NanNew<Object>();
   constants->Set(NanNew<String>("ARTISTBROWSE_FULL"), NanNew<Number>(SP_ARTISTBROWSE_FULL));
   constants->Set(NanNew<String>("ARTISTBROWSE_NO_TRACKS"), NanNew<Number>(SP_ARTISTBROWSE_NO_TRACKS));
@@ -186,7 +179,6 @@ NAN_GETTER(NodeSpotify::getConstants) {
 
 #ifdef NODE_SPOTIFY_NATIVE_SOUND
 NAN_METHOD(NodeSpotify::useNativeAudio) {
-  NanScope();
   //Since the old audio handler has to be deleted first, do an empty reset.
   application->audioHandler.reset();
   application->audioHandler = std::unique_ptr<AudioHandler>(new NativeAudioHandler());
@@ -195,7 +187,6 @@ NAN_METHOD(NodeSpotify::useNativeAudio) {
 #endif
 
 NAN_METHOD(NodeSpotify::useNodejsAudio) {
-  NanScope();
   if(args.Length() < 1) {
     return NanThrowError("useNodjsAudio needs a function as its first argument.");
   }
@@ -209,7 +200,6 @@ NAN_METHOD(NodeSpotify::useNodejsAudio) {
 }
 
 NAN_METHOD(NodeSpotify::on) {
-  NanScope();
   if(args.Length() < 1 || !args[0]->IsObject()) {
     return NanThrowError("on needs an object as its first argument.");
   }

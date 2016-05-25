@@ -14,25 +14,21 @@ NodeAlbum::~NodeAlbum() {
 }
 
 NAN_GETTER(NodeAlbum::getName) {
-  NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   NanReturnValue(NanNew<String>(nodeAlbum->album->name().c_str()));
 }
 
 NAN_GETTER(NodeAlbum::getLink) {
-  NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   NanReturnValue(NanNew<String>(nodeAlbum->album->link().c_str()));
 }
 
 NAN_METHOD(NodeAlbum::getCoverBase64) {
-  NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   NanReturnValue(NanNew<String>(nodeAlbum->album->coverBase64().c_str()));
 }
 
 NAN_METHOD(NodeAlbum::browse) {
-  NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   if(nodeAlbum->album->albumBrowse == nullptr) {
     nodeAlbum->makePersistent();
@@ -53,7 +49,6 @@ NAN_METHOD(NodeAlbum::browse) {
 }
 
 NAN_GETTER(NodeAlbum::getTracks) {
-  NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   std::vector<std::shared_ptr<Track>> tracks = nodeAlbum->album->tracks();
   Handle<Array> nodeTracks = NanNew<Array>(tracks.size());
@@ -65,13 +60,11 @@ NAN_GETTER(NodeAlbum::getTracks) {
 }
 
 NAN_GETTER(NodeAlbum::getReview) {
-  NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   NanReturnValue(NanNew<String>(nodeAlbum->album->review().c_str()));
 }
 
 NAN_GETTER(NodeAlbum::getCopyrights) {
-  NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   std::vector<std::string> copyrights = nodeAlbum->album->copyrights();
   Handle<Array> nodeCopyrights = NanNew<Array>(copyrights.size());
@@ -82,14 +75,12 @@ NAN_GETTER(NodeAlbum::getCopyrights) {
 }
 
 NAN_GETTER(NodeAlbum::getArtist) {
-  NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   NodeArtist* nodeArtist = new NodeArtist(nodeAlbum->album->artist());
   NanReturnValue(nodeArtist->createInstance());
 }
 
 NAN_GETTER(NodeAlbum::isLoaded) {
-  NanScope();
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   NanReturnValue(NanNew<Boolean>(nodeAlbum->album->isLoaded()));
 }

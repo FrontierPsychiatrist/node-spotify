@@ -15,28 +15,24 @@ NodePlayer::NodePlayer(const NodePlayer& other) {
 }
 
 NAN_METHOD(NodePlayer::pause) {
-  NanScope();
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   nodePlayer->player->pause();
   NanReturnUndefined();
 }
 
 NAN_METHOD(NodePlayer::stop) {
-  NanScope();
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   nodePlayer->player->stop();
   NanReturnUndefined();
 }
 
 NAN_METHOD(NodePlayer::resume) {
-  NanScope();
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   nodePlayer->player->resume();
   NanReturnUndefined();
 }
 
 NAN_METHOD(NodePlayer::play) {
-  NanScope();
   if(args.Length() < 1) {
     return NanThrowError("play needs a track as its first argument.");
   }
@@ -57,7 +53,6 @@ NAN_METHOD(NodePlayer::play) {
 }
 
 NAN_METHOD(NodePlayer::seek) {
-  NanScope();
   if(args.Length() < 1 || !args[0]->IsNumber()) {
     return NanThrowError("seek needs an integer as its first argument.");
   }
@@ -68,13 +63,11 @@ NAN_METHOD(NodePlayer::seek) {
 }
 
 NAN_GETTER(NodePlayer::getCurrentSecond) {
-  NanScope();
   NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
   NanReturnValue(NanNew<Integer>(nodePlayer->player->currentSecond));
 }
 
 NAN_METHOD(NodePlayer::on) {
-  NanScope();
   if(args.Length() < 1 || !args[0]->IsObject()) {
     return NanThrowError("on needs an object as its first argument.");
   }
@@ -85,7 +78,6 @@ NAN_METHOD(NodePlayer::on) {
 }
 
 NAN_METHOD(NodePlayer::off) {
-  NanScope();
   SessionCallbacks::endOfTrackCallback = std::unique_ptr<NanCallback>(new NanCallback());
   NanReturnUndefined();
 }

@@ -11,37 +11,31 @@ NodeTrack::~NodeTrack() {
 }
 
 NAN_GETTER(NodeTrack::getName) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   NanReturnValue(NanNew<String>(nodeTrack->track->name().c_str()));
 }
 
 NAN_GETTER(NodeTrack::getLink) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   NanReturnValue(NanNew<String>(nodeTrack->track->link().c_str()));
 }
 
 NAN_GETTER(NodeTrack::getDuration) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   NanReturnValue(NanNew<Integer>(nodeTrack->track->duration()/1000));
 }
 
 NAN_GETTER(NodeTrack::getAvailability) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   NanReturnValue(NanNew<Integer>(nodeTrack->track->getAvailability()));
 }
 
 NAN_GETTER(NodeTrack::getPopularity) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   NanReturnValue(NanNew<Integer>(nodeTrack->track->popularity()));
 }
 
 NAN_GETTER(NodeTrack::getArtists) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   Local<Array> jsArtists = NanNew<Array>(nodeTrack->track->artists().size());
   for(int i = 0; i < (int)nodeTrack->track->artists().size(); i++) {
@@ -56,7 +50,6 @@ NAN_GETTER(NodeTrack::getArtists) {
 }
 
 NAN_GETTER(NodeTrack::getAlbum) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   if(nodeTrack->track->album()) {
     NodeAlbum* nodeAlbum = new NodeAlbum(nodeTrack->track->album());
@@ -67,19 +60,16 @@ NAN_GETTER(NodeTrack::getAlbum) {
 }
 
 NAN_GETTER(NodeTrack::getStarred) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   NanReturnValue(NanNew<Boolean>(nodeTrack->track->starred()));
 }
 
 NAN_SETTER(NodeTrack::setStarred) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   nodeTrack->track->setStarred(value->ToBoolean()->Value());
 }
 
 NAN_GETTER(NodeTrack::isLoaded) {
-  NanScope();
   NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
   NanReturnValue(NanNew<Boolean>(nodeTrack->track->isLoaded()));
 }

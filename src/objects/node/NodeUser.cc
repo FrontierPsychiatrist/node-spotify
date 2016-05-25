@@ -7,31 +7,26 @@ NodeUser::NodeUser(std::unique_ptr<User> _user) : user(std::move(_user)) {}
 NodeUser::~NodeUser() {}
 
 NAN_GETTER(NodeUser::getLink) {
-  NanScope();
   NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
   NanReturnValue(NanNew<String>(nodeUser->user->link().c_str()));
 }
 
 NAN_GETTER(NodeUser::getCanonicalName) {
-  NanScope();
   NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
   NanReturnValue(NanNew<String>(nodeUser->user->canonicalName().c_str()));
 }
 
 NAN_GETTER(NodeUser::getDisplayName) {
-  NanScope();
   NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
   NanReturnValue(NanNew<String>(nodeUser->user->displayName().c_str()));
 }
 
 NAN_GETTER(NodeUser::isLoaded) {
-  NanScope();
   NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
   NanReturnValue(NanNew<Boolean>(nodeUser->user->isLoaded()));
 }
 
 NAN_GETTER(NodeUser::getPublishedPlaylistsContainer) {
-  NanScope();
   NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
   auto playlistContainer = nodeUser->user->publishedPlaylists();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(playlistContainer);
@@ -39,7 +34,6 @@ NAN_GETTER(NodeUser::getPublishedPlaylistsContainer) {
 }
 
 NAN_GETTER(NodeUser::getStarredPlaylist) {
-  NanScope();
   NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
   auto playlist = nodeUser->user->starredPlaylist();
   NodePlaylist* nodePlaylist = new NodePlaylist(playlist);

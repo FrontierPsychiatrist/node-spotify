@@ -38,8 +38,6 @@ static Handle<Object> getInternal() {
 }
 
 NAN_METHOD(CreateNodespotify) {
-  NanScope();
-
   //initiate the javascript ctors and prototypes
   NodePlaylist::init();
   NodeTrack::init();

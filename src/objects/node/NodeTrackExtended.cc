@@ -24,7 +24,6 @@ Handle<Function> NodeTrackExtended::getConstructor() {
 }
 
 NAN_GETTER(NodeTrackExtended::getCreator) {
-  NanScope();
   NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   Handle<Value> nodeCreator = NanUndefined();
   if(nodeTrackExtended->trackExtended->creator()) {
@@ -35,25 +34,21 @@ NAN_GETTER(NodeTrackExtended::getCreator) {
 }
 
 NAN_GETTER(NodeTrackExtended::getSeen) {
-  NanScope();
   NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   NanReturnValue(NanNew<Boolean>(nodeTrackExtended->trackExtended->seen()));
 }
 
 NAN_SETTER(NodeTrackExtended::setSeen) {
-  NanScope();
   NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   nodeTrackExtended->trackExtended->seen(value->ToBoolean()->Value());
 }
 
 NAN_GETTER(NodeTrackExtended::getCreateTime) {
-  NanScope();
   NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   NanReturnValue(NanNew<Date>(nodeTrackExtended->trackExtended->createTime() * 1000));
 }
 
 NAN_GETTER(NodeTrackExtended::getMessage) {
-  NanScope();
   NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   NanReturnValue(NanNew<String>(nodeTrackExtended->trackExtended->message().c_str()));
 }

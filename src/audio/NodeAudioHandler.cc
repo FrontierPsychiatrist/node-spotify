@@ -85,7 +85,6 @@ void NodeAudioHandler::setStopped(bool _stopped) {
 }
 
 NAN_METHOD(NodeAudioHandler::setNeedMoreData) {
-  NanScope();
   if(args.Length() < 1 || !args[0]->IsBoolean()) {
     return NanThrowError("setNeedMoreData needs a boolean as its first argument.");
   }

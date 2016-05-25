@@ -13,20 +13,17 @@ NodePlaylistContainer::~NodePlaylistContainer() {
 }
 
 NAN_GETTER(NodePlaylistContainer::getOwner) {
-  NanScope();
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.This());
   NodeUser* nodeUser = new NodeUser(nodePlaylistContainer->playlistContainer->owner());
   NanReturnValue(nodeUser->createInstance());
 }
 
 NAN_GETTER(NodePlaylistContainer::getNumPlaylists) {
-  NanScope();
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.This());
   NanReturnValue(NanNew<Integer>(nodePlaylistContainer->playlistContainer->numPlaylists()));
 }
 
 NAN_METHOD(NodePlaylistContainer::getPlaylist) {
-  NanScope();
   if(args.Length() < 1 || !args[0]->IsNumber()) {
     return NanThrowError("getPlaylist needs an interger as its first argument.");
   }
@@ -50,7 +47,6 @@ NAN_METHOD(NodePlaylistContainer::getPlaylist) {
 }
 
 NAN_METHOD(NodePlaylistContainer::addPlaylist) {
-  NanScope();
   if(args.Length() < 1 || !args[0]->IsString()) {
     return NanThrowError("addPlaylist needs a string as its argument");
   }
@@ -65,7 +61,6 @@ NAN_METHOD(NodePlaylistContainer::addPlaylist) {
 }
 
 NAN_METHOD(NodePlaylistContainer::addFolder) {
-  NanScope();
   if(args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsString()) {
     return NanThrowError("addFolder needs a number and a string as arguments.");
   }
@@ -81,7 +76,6 @@ NAN_METHOD(NodePlaylistContainer::addFolder) {
 }
 
 NAN_METHOD(NodePlaylistContainer::deletePlaylist) {
-  NanScope();
   if(args.Length() < 1 || !args[0]->IsNumber()) {
     return NanThrowError("deletePlaylist needs an integer as its first argument.");
   }
@@ -92,7 +86,6 @@ NAN_METHOD(NodePlaylistContainer::deletePlaylist) {
 }
 
 NAN_METHOD(NodePlaylistContainer::movePlaylist) {
-  NanScope();
   if(args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsNumber()) {
     return NanThrowError("Move playlist needs 2 numbers as its first arguments.");
   }
@@ -108,13 +101,11 @@ NAN_METHOD(NodePlaylistContainer::movePlaylist) {
 }
 
 NAN_GETTER(NodePlaylistContainer::isLoaded) {
-  NanScope();
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.This());
   NanReturnValue(NanNew<Boolean>(nodePlaylistContainer->playlistContainer->isLoaded()));
 }
 
 NAN_METHOD(NodePlaylistContainer::on) {
-  NanScope();
   if(args.Length() < 1 || !args[0]->IsObject()) {
     return NanThrowError("on needs an object as its first argument.");
   }
@@ -131,7 +122,6 @@ NAN_METHOD(NodePlaylistContainer::on) {
 }
 
 NAN_METHOD(NodePlaylistContainer::off) {
-  NanScope();
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.This());
   nodePlaylistContainer->playlistContainerCallbacksHolder.unsetCallbacks();
   NanReturnUndefined();
