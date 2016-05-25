@@ -32,11 +32,11 @@ protected:
    * Basic init method for a wrapped node object.
    */
   static v8::Handle<v8::FunctionTemplate> init(const char* className) {
-    NanEscapableScope();
+    Nan::EscapableHandleScope scope;
     v8::Local<v8::FunctionTemplate> constructorTemplate = NanNew<v8::FunctionTemplate>();
     constructorTemplate->SetClassName(NanNew<v8::String>(className));
     constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-    return NanEscapeScope(constructorTemplate);
+    return scope.Escape(constructorTemplate);
   }
 };
 

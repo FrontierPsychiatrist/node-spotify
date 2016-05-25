@@ -85,7 +85,7 @@ NAN_GETTER(NodeTrack::isLoaded) {
 }
 
 Handle<FunctionTemplate> NodeTrack::init() {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("name"), getName);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
@@ -97,5 +97,5 @@ Handle<FunctionTemplate> NodeTrack::init() {
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
   constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("availability"), getAvailability);
   NanAssignPersistent(NodeTrack::constructorTemplate, constructorTemplate);
-  return NanEscapeScope(constructorTemplate);
+  return scope.Escape(constructorTemplate);
 }
