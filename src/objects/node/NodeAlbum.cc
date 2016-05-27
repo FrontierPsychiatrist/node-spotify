@@ -32,7 +32,7 @@ NAN_METHOD(NodeAlbum::browse) {
   NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   if(nodeAlbum->album->albumBrowse == nullptr) {
     nodeAlbum->makePersistent();
-    nodeAlbum->browseCompleteCallback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
+    nodeAlbum->browseCompleteCallback.SetFunction(args[0].As<Function>());
 
     //Mutate the V8 object.
     Handle<Object> nodeAlbumV8 = NanObjectWrapHandle(nodeAlbum);

@@ -27,7 +27,7 @@ NAN_METHOD(NodeArtist::browse) {
   if(nodeArtist->artist->artistBrowse == nullptr) {
     nodeArtist->makePersistent();
     sp_artistbrowse_type artistbrowseType = static_cast<sp_artistbrowse_type>(args[0]->ToNumber()->IntegerValue());
-    nodeArtist->browseCompleteCallback = std::unique_ptr<NanCallback>(new NanCallback(args[1].As<Function>()));
+    nodeArtist->browseCompleteCallback.SetFunction(args[1].As<Function>());
 
     //Mutate the V8 object.
     Handle<Object> nodeArtistV8 = NanObjectWrapHandle(nodeArtist);

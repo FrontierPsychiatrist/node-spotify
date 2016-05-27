@@ -28,7 +28,7 @@ NAN_METHOD(NodeSearch::execute) {
   }
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->makePersistent();
-  nodeSearch->browseCompleteCallback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
+  nodeSearch->browseCompleteCallback.SetFunction(args[0].As<Function>());
   nodeSearch->search = std::unique_ptr<Search>(new Search());
   nodeSearch->search->nodeObject = nodeSearch;
   nodeSearch->search->execute(nodeSearch->searchQuery, nodeSearch->trackOffset, nodeSearch->trackLimit,
