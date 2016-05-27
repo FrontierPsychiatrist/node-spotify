@@ -54,7 +54,7 @@ NAN_GETTER(NodeAlbum::getTracks) {
   Handle<Array> nodeTracks = NanNew<Array>(tracks.size());
   for(int i = 0; i < (int)tracks.size(); i++) {
     NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
-    nodeTracks->Set(NanNew<Number>(i), nodeTrack->createInstance());
+    nodeTracks->Set(Nan::New<Number>(i), nodeTrack->createInstance());
   }
   NanReturnValue(nodeTracks);
 }
@@ -69,7 +69,7 @@ NAN_GETTER(NodeAlbum::getCopyrights) {
   std::vector<std::string> copyrights = nodeAlbum->album->copyrights();
   Handle<Array> nodeCopyrights = NanNew<Array>(copyrights.size());
   for(int i = 0; i < (int)copyrights.size(); i++) {
-    nodeCopyrights->Set(NanNew<Number>(i), Nan::New<String>(copyrights[i].c_str()).ToLocalChecked());
+    nodeCopyrights->Set(Nan::New<Number>(i), Nan::New<String>(copyrights[i].c_str()).ToLocalChecked());
   }
   NanReturnValue(nodeCopyrights);
 }

@@ -41,9 +41,9 @@ NAN_GETTER(NodeTrack::getArtists) {
   for(int i = 0; i < (int)nodeTrack->track->artists().size(); i++) {
     if(nodeTrack->track->artists()[i]) {
       NodeArtist* nodeArtist = new NodeArtist(std::move(nodeTrack->track->artists()[i]));
-      jsArtists->Set(NanNew<Number>(i), nodeArtist->createInstance());
+      jsArtists->Set(Nan::New<Number>(i), nodeArtist->createInstance());
     } else {
-      jsArtists->Set(NanNew<Number>(i), Nan::Undefined());
+      jsArtists->Set(Nan::New<Number>(i), Nan::Undefined());
     }
   }
   NanReturnValue(jsArtists);

@@ -15,7 +15,7 @@ NAN_GETTER(NodePlaylistFolder::getName) {
 
 NAN_GETTER(NodePlaylistFolder::getType) {
   NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.This());
-  NanReturnValue(NanNew<Number>(nodePlaylistFolder->playlistFolder->type()));
+  NanReturnValue(Nan::New<Number>(nodePlaylistFolder->playlistFolder->type()));
 }
 
 void NodePlaylistFolder::init() {

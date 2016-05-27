@@ -159,20 +159,20 @@ NAN_GETTER(NodeSpotify::getSessionUser) {
 
 NAN_GETTER(NodeSpotify::getConstants) {
   Local<Object> constants = Nan::New<Object>();
-  constants->Set(Nan::New<String>("ARTISTBROWSE_FULL").ToLocalChecked(), NanNew<Number>(SP_ARTISTBROWSE_FULL));
-  constants->Set(Nan::New<String>("ARTISTBROWSE_NO_TRACKS").ToLocalChecked(), NanNew<Number>(SP_ARTISTBROWSE_NO_TRACKS));
-  constants->Set(Nan::New<String>("ARTISTBROWSE_NO_ALBUMS").ToLocalChecked(), NanNew<Number>(SP_ARTISTBROWSE_NO_ALBUMS));
+  constants->Set(Nan::New<String>("ARTISTBROWSE_FULL").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_FULL));
+  constants->Set(Nan::New<String>("ARTISTBROWSE_NO_TRACKS").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_NO_TRACKS));
+  constants->Set(Nan::New<String>("ARTISTBROWSE_NO_ALBUMS").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_NO_ALBUMS));
 
-  constants->Set(Nan::New<String>("PLAYLIST_TYPE_PLAYLIST").ToLocalChecked(), NanNew<Number>(SP_PLAYLIST_TYPE_PLAYLIST));
-  constants->Set(Nan::New<String>("PLAYLIST_TYPE_START_FOLDER").ToLocalChecked(), NanNew<Number>(SP_PLAYLIST_TYPE_START_FOLDER));
-  constants->Set(Nan::New<String>("PLAYLIST_TYPE_END_FOLDER").ToLocalChecked(), NanNew<Number>(SP_PLAYLIST_TYPE_END_FOLDER));
-  constants->Set(Nan::New<String>("PLAYLIST_TYPE_PLACEHOLDER").ToLocalChecked(), NanNew<Number>(SP_PLAYLIST_TYPE_PLACEHOLDER));
+  constants->Set(Nan::New<String>("PLAYLIST_TYPE_PLAYLIST").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_PLAYLIST));
+  constants->Set(Nan::New<String>("PLAYLIST_TYPE_START_FOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_START_FOLDER));
+  constants->Set(Nan::New<String>("PLAYLIST_TYPE_END_FOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_END_FOLDER));
+  constants->Set(Nan::New<String>("PLAYLIST_TYPE_PLACEHOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_PLACEHOLDER));
 
 
-  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_UNAVAILABLE").ToLocalChecked(), NanNew<Number>(SP_TRACK_AVAILABILITY_UNAVAILABLE));
-  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_AVAILABLE").ToLocalChecked(), NanNew<Number>(SP_TRACK_AVAILABILITY_AVAILABLE));
-  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_NOT_STREAMABLE").ToLocalChecked(), NanNew<Number>(SP_TRACK_AVAILABILITY_NOT_STREAMABLE));
-  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST").ToLocalChecked(), NanNew<Number>(SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST));
+  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_UNAVAILABLE").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_UNAVAILABLE));
+  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_AVAILABLE").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_AVAILABLE));
+  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_NOT_STREAMABLE").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_NOT_STREAMABLE));
+  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST));
 
   NanReturnValue(constants);
 }
