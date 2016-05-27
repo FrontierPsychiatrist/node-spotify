@@ -3,7 +3,6 @@
 
 #include <node.h>
 
-#include <initializer_list>
 #include <libspotify/api.h>
 #include <nan.h>
 
@@ -12,7 +11,6 @@ private:
   sp_playlistcontainer* playlistContainer;
   sp_playlistcontainer_callbacks* playlistContainerCallbacks;
   node::ObjectWrap* userdata;
-  void call(Nan::Callback callback, std::initializer_list<v8::Handle<v8::Value>> args);
 public:
   PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, node::ObjectWrap* userdata);
   ~PlaylistContainerCallbacksHolder();
