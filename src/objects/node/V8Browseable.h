@@ -15,11 +15,11 @@ public:
   }
 protected:
   void makePersistent() {
-    NanAssignPersistent(persistentHandle, this->handle());
+    persistentHandle.Reset(this->handle());
   }
   Nan::Callback browseCompleteCallback;
 private:
-  v8::Persistent<v8::Object> persistentHandle;
+  Nan::Persistent<v8::Object> persistentHandle;
 };
 
 #endif
