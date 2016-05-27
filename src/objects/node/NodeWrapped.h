@@ -26,7 +26,7 @@ public:
     return Nan::New(constructorTemplate)->GetFunction();
   }
 protected:
-  static v8::Persistent<v8::FunctionTemplate> constructorTemplate;
+  static Nan::Persistent<v8::FunctionTemplate> constructorTemplate;
 
   /**
    * Basic init method for a wrapped node object.
@@ -41,5 +41,5 @@ protected:
 };
 
 //The constructor template must be static per template instance not for all NodeWrapped subclasses.
-template <class T> v8::Persistent<v8::FunctionTemplate> NodeWrapped<T>::constructorTemplate;
+template <class T> Nan::Persistent<v8::FunctionTemplate> NodeWrapped<T>::constructorTemplate;
 #endif
