@@ -158,7 +158,7 @@ NAN_GETTER(NodeSpotify::getSessionUser) {
 }
 
 NAN_GETTER(NodeSpotify::getConstants) {
-  Local<Object> constants = NanNew<Object>();
+  Local<Object> constants = Nan::New<Object>();
   constants->Set(Nan::New<String>("ARTISTBROWSE_FULL").ToLocalChecked(), NanNew<Number>(SP_ARTISTBROWSE_FULL));
   constants->Set(Nan::New<String>("ARTISTBROWSE_NO_TRACKS").ToLocalChecked(), NanNew<Number>(SP_ARTISTBROWSE_NO_TRACKS));
   constants->Set(Nan::New<String>("ARTISTBROWSE_NO_ALBUMS").ToLocalChecked(), NanNew<Number>(SP_ARTISTBROWSE_NO_ALBUMS));

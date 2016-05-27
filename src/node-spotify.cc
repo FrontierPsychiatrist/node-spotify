@@ -22,8 +22,8 @@
 Application* application;
 
 static Handle<Object> getInternal() {
-  Local<Object> internal = NanNew<Object>();
-  Local<Object> protos = NanNew<Object>();
+  Local<Object> internal = Nan::New<Object>();
+  Local<Object> protos = Nan::New<Object>();
   protos->Set(Nan::New<String>("Playlist").ToLocalChecked(), NodePlaylist::getConstructor());
   protos->Set(Nan::New<String>("Track").ToLocalChecked(), NodeTrack::getConstructor());
   protos->Set(Nan::New<String>("TrackExtended").ToLocalChecked(), NodeTrackExtended::getConstructor());
@@ -60,7 +60,7 @@ NAN_METHOD(CreateNodespotify) {
 
   v8::Handle<v8::Object> options;
   if(args.Length() < 1) {
-    options = NanNew<Object>();
+    options = Nan::New<Object>();
   } else {
     if(!args[0]->IsObject()) {
       return NanThrowError("Please provide an object to the node-spotify initializer function");
