@@ -283,7 +283,7 @@ void NodeSearch::init() {
   Local<FunctionTemplate> constructorTemplate = Nan::New<FunctionTemplate>(New);
   constructorTemplate->SetClassName(Nan::New<String>("Search").ToLocalChecked());
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-  Nan::SetMethod(constructorTemplate, "execute", execute);
+  Nan::SetPrototypeMethod(constructorTemplate, "execute", execute);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("trackOffset").ToLocalChecked(), getTrackOffset, setTrackOffset);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("trackLimit").ToLocalChecked(), getTrackLimit, setTrackLimit);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("albumOffset").ToLocalChecked(), getAlbumOffset, setAlbumOffset);

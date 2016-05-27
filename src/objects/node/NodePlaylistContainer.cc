@@ -141,16 +141,16 @@ void NodePlaylistContainer::init() {
   Local<FunctionTemplate> constructorTemplate = Nan::New<FunctionTemplate>();
   constructorTemplate->SetClassName(Nan::New<String>("PlaylistContainer").ToLocalChecked());
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-  Nan::SetMethod(constructorTemplate, "on", on);
-  Nan::SetMethod(constructorTemplate, "off", off);
+  Nan::SetPrototypeMethod(constructorTemplate, "on", on);
+  Nan::SetPrototypeMethod(constructorTemplate, "off", off);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("owner").ToLocalChecked(), getOwner);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("numPlaylists").ToLocalChecked(), getNumPlaylists);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
-  Nan::SetMethod(constructorTemplate, "getPlaylist", getPlaylist);
-  Nan::SetMethod(constructorTemplate, "addPlaylist", addPlaylist);
-  Nan::SetMethod(constructorTemplate, "addFolder", addFolder);
-  Nan::SetMethod(constructorTemplate, "deletePlaylist", deletePlaylist);
-  Nan::SetMethod(constructorTemplate, "movePlaylist", movePlaylist);
+  Nan::SetPrototypeMethod(constructorTemplate, "getPlaylist", getPlaylist);
+  Nan::SetPrototypeMethod(constructorTemplate, "addPlaylist", addPlaylist);
+  Nan::SetPrototypeMethod(constructorTemplate, "addFolder", addFolder);
+  Nan::SetPrototypeMethod(constructorTemplate, "deletePlaylist", deletePlaylist);
+  Nan::SetPrototypeMethod(constructorTemplate, "movePlaylist", movePlaylist);
 
   NodePlaylistContainer::constructorTemplate.Reset(constructorTemplate);
 }

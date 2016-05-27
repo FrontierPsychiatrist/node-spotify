@@ -217,14 +217,14 @@ NAN_METHOD(NodeSpotify::on) {
 
 void NodeSpotify::init() {
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
-  Nan::SetMethod(constructorTemplate, "login", login);
-  Nan::SetMethod(constructorTemplate, "logout", logout);
-  Nan::SetMethod(constructorTemplate, "createFromLink", createFromLink);
-  Nan::SetMethod(constructorTemplate, "on", on);
+  Nan::SetPrototypeMethod(constructorTemplate, "login", login);
+  Nan::SetPrototypeMethod(constructorTemplate, "logout", logout);
+  Nan::SetPrototypeMethod(constructorTemplate, "createFromLink", createFromLink);
+  Nan::SetPrototypeMethod(constructorTemplate, "on", on);
 #ifdef NODE_SPOTIFY_NATIVE_SOUND
-  Nan::SetMethod(constructorTemplate, "useNativeAudio", useNativeAudio);
+  Nan::SetPrototypeMethod(constructorTemplate, "useNativeAudio", useNativeAudio);
 #endif
-  Nan::SetMethod(constructorTemplate, "useNodejsAudio", useNodejsAudio);
+  Nan::SetPrototypeMethod(constructorTemplate, "useNodejsAudio", useNodejsAudio);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("rememberedUser").ToLocalChecked(), getRememberedUser);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("sessionUser").ToLocalChecked(), getSessionUser);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("playlistContainer").ToLocalChecked(), getPlaylistContainer);

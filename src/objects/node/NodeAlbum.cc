@@ -90,7 +90,7 @@ void NodeAlbum::init() {
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
-  Nan::SetMethod(constructorTemplate, "getCoverBase64", getCoverBase64);
-  Nan::SetMethod(constructorTemplate, "browse", browse);
+  Nan::SetPrototypeMethod(constructorTemplate, "getCoverBase64", getCoverBase64);
+  Nan::SetPrototypeMethod(constructorTemplate, "browse", browse);
   NodeAlbum::constructorTemplate.Reset(constructorTemplate);
 }

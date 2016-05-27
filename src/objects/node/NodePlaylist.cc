@@ -186,8 +186,8 @@ void NodePlaylist::init() {
   Local<FunctionTemplate> constructorTemplate = Nan::New<FunctionTemplate>();
   constructorTemplate->SetClassName(Nan::New<String>("Playlist").ToLocalChecked());
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-  Nan::SetMethod(constructorTemplate, "on", on);
-  Nan::SetMethod(constructorTemplate, "off", off);
+  Nan::SetPrototypeMethod(constructorTemplate, "on", on);
+  Nan::SetPrototypeMethod(constructorTemplate, "off", off);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName, setName);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("collaborative").ToLocalChecked(), getCollaborative, setCollaborative);
@@ -195,10 +195,10 @@ void NodePlaylist::init() {
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("owner").ToLocalChecked(), getOwner);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("numTracks").ToLocalChecked(), getNumTracks);
-  Nan::SetMethod(constructorTemplate, "getTrack", getTrack);
-  Nan::SetMethod(constructorTemplate, "addTracks", addTracks);
-  Nan::SetMethod(constructorTemplate, "removeTracks", removeTracks);
-  Nan::SetMethod(constructorTemplate, "reorderTracks", reorderTracks);
+  Nan::SetPrototypeMethod(constructorTemplate, "getTrack", getTrack);
+  Nan::SetPrototypeMethod(constructorTemplate, "addTracks", addTracks);
+  Nan::SetPrototypeMethod(constructorTemplate, "removeTracks", removeTracks);
+  Nan::SetPrototypeMethod(constructorTemplate, "reorderTracks", reorderTracks);
 
   NodePlaylist::constructorTemplate.Reset(constructorTemplate);
 }

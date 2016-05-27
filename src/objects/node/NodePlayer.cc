@@ -91,14 +91,14 @@ void NodePlayer::init() {
   Local<FunctionTemplate> constructorTemplate = Nan::New<FunctionTemplate>();
   constructorTemplate->SetClassName(Nan::New<String>("Player").ToLocalChecked());
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-  Nan::SetMethod(constructorTemplate, "on", on);
-  Nan::SetMethod(constructorTemplate, "off", off);
+  Nan::SetPrototypeMethod(constructorTemplate, "on", on);
+  Nan::SetPrototypeMethod(constructorTemplate, "off", off);
 
-  Nan::SetMethod(constructorTemplate, "play", play);
-  Nan::SetMethod(constructorTemplate, "pause", pause);
-  Nan::SetMethod(constructorTemplate, "resume", resume);
-  Nan::SetMethod(constructorTemplate, "stop", stop);
-  Nan::SetMethod(constructorTemplate, "seek", seek);
+  Nan::SetPrototypeMethod(constructorTemplate, "play", play);
+  Nan::SetPrototypeMethod(constructorTemplate, "pause", pause);
+  Nan::SetPrototypeMethod(constructorTemplate, "resume", resume);
+  Nan::SetPrototypeMethod(constructorTemplate, "stop", stop);
+  Nan::SetPrototypeMethod(constructorTemplate, "seek", seek);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("currentSecond").ToLocalChecked(), &getCurrentSecond);
   NodePlayer::constructorTemplate.Reset(constructorTemplate);
 }

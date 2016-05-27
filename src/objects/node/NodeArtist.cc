@@ -105,6 +105,6 @@ void NodeArtist::init() {
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
-  Nan::SetMethod(constructorTemplate, "browse", browse);
+  Nan::SetPrototypeMethod(constructorTemplate, "browse", browse);
   NodeArtist::constructorTemplate.Reset(constructorTemplate);
 }
