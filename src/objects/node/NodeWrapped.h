@@ -23,7 +23,7 @@ public:
   }
 
   static v8::Handle<v8::Function> getConstructor() {
-    return NanNew(constructorTemplate)->GetFunction();
+    return Nan::New(constructorTemplate)->GetFunction();
   }
 protected:
   static v8::Persistent<v8::FunctionTemplate> constructorTemplate;
@@ -33,7 +33,7 @@ protected:
    */
   static v8::Handle<v8::FunctionTemplate> init(const char* className) {
     Nan::EscapableHandleScope scope;
-    v8::Local<v8::FunctionTemplate> constructorTemplate = NanNew<v8::FunctionTemplate>();
+    v8::Local<v8::FunctionTemplate> constructorTemplate = Nan::New<v8::FunctionTemplate>();
     constructorTemplate->SetClassName(Nan::New<v8::String>(className).ToLocalChecked());
     constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
     return scope.Escape(constructorTemplate);
