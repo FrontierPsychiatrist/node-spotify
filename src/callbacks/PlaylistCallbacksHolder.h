@@ -5,7 +5,6 @@
 
 #include <libspotify/api.h>
 #include <nan.h>
-#include <initializer_list>
 
 using namespace v8;
 
@@ -14,7 +13,6 @@ private:
   node::ObjectWrap* userdata;
   sp_playlist* playlist;
   sp_playlist_callbacks* playlistCallbacks;
-  void call(Nan::Callback callback, std::initializer_list<Handle<Value>> args);
 public:
   PlaylistCallbacksHolder(node::ObjectWrap* userdata, sp_playlist* playlist);
   ~PlaylistCallbacksHolder();
