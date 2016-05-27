@@ -20,11 +20,11 @@ static sp_playlistcontainer_callbacks rootPlaylistContainerCallbacks;
 static std::unique_ptr<uv_timer_t> processEventsTimer;
 static std::unique_ptr<uv_async_t> notifyHandle;
 
-std::unique_ptr<NanCallback> SessionCallbacks::loginCallback;
-std::unique_ptr<NanCallback> SessionCallbacks::logoutCallback;
-std::unique_ptr<NanCallback> SessionCallbacks::metadataUpdatedCallback;
-std::unique_ptr<NanCallback> SessionCallbacks::endOfTrackCallback;
-std::unique_ptr<NanCallback> SessionCallbacks::playTokenLostCallback;
+Nan::Callback SessionCallbacks::loginCallback;
+Nan::Callback SessionCallbacks::logoutCallback;
+Nan::Callback SessionCallbacks::metadataUpdatedCallback;
+Nan::Callback SessionCallbacks::endOfTrackCallback;
+Nan::Callback SessionCallbacks::playTokenLostCallback;
 
 void SessionCallbacks::init() {
   processEventsTimer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
@@ -78,16 +78,16 @@ void SessionCallbacks::metadata_updated(sp_session* session) {
     application->player->retryPlay();
   }
   
-  if(metadataUpdatedCallback && !metadataUpdatedCallback->IsEmpty()) {
-    metadataUpdatedCallback->Call(0, {});
+  if(!metadataUpdatedCallback.IsEmpty()) {
+    metadataUpdatedCallback.Call(0, {});
   }
 }
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   if(SP_ERROR_OK != error) {
     unsigned int argc = 1;
-    v8::Handle<v8::Value> argv[1] = { NanError(sp_error_message(error)) };
-    loginCallback->Call( argc, argv );
+    v8::Handle<v8::Value> argv[1] = { Nan::Error(sp_error_message(error)) };
+    loginCallback.Call(argc, argv);
     return;
   }
 
@@ -102,8 +102,8 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
  * This is the "ready" hook for users. Playlists should be available at this point.
  **/
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata) {
-  if(loginCallback && !loginCallback->IsEmpty()) {
-    loginCallback->Call(0, {});
+  if(!loginCallback.IsEmpty()) {
+    loginCallback.Call(0, {});
   }
   //Issue 35, rootPlaylistContainerLoaded can be called multiple times throughout the lifetime of a session.
   //loginCallback must only be called once.
@@ -113,13 +113,13 @@ void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, voi
 void SessionCallbacks::playTokenLost(sp_session *session) {
   application->audioHandler->setStopped(true);
   application->player->isPaused = true;
-  if(playTokenLostCallback && !playTokenLostCallback->IsEmpty()) {
-    playTokenLostCallback->Call(0, {});
+  if(!playTokenLostCallback.IsEmpty()) {
+    playTokenLostCallback.Call(0, {});
   }
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
-  if(logoutCallback && !logoutCallback->IsEmpty()) {
-    logoutCallback->Call(0, {});
+  if(!logoutCallback.IsEmpty()) {
+    logoutCallback.Call(0, {});
   }
 }
