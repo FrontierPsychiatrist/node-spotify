@@ -6,14 +6,13 @@
 #include <initializer_list>
 #include <libspotify/api.h>
 #include <nan.h>
-#include <memory>
 
 class PlaylistContainerCallbacksHolder {
 private:
   sp_playlistcontainer* playlistContainer;
   sp_playlistcontainer_callbacks* playlistContainerCallbacks;
   node::ObjectWrap* userdata;
-  void call(std::unique_ptr<NanCallback>& callback, std::initializer_list<v8::Handle<v8::Value>> args);
+  void call(Nan::Callback callback, std::initializer_list<v8::Handle<v8::Value>> args);
 public:
   PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, node::ObjectWrap* userdata);
   ~PlaylistContainerCallbacksHolder();
@@ -23,9 +22,9 @@ public:
   static void playlistRemoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, void *userdata);
   static void playlistMoved(sp_playlistcontainer *pc, sp_playlist *playlist, int position, int new_position, void *userdata);
 
-  std::unique_ptr<NanCallback> playlistAddedCallback;
-  std::unique_ptr<NanCallback> playlistRemovedCallback;
-  std::unique_ptr<NanCallback> playlistMovedCallback;
+  Nan::Callback playlistAddedCallback;
+  Nan::Callback playlistRemovedCallback;
+  Nan::Callback playlistMovedCallback;
 
   void setCallbacks();
   void unsetCallbacks();

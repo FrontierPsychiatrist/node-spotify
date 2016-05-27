@@ -16,10 +16,10 @@ PlaylistCallbacksHolder::~PlaylistCallbacksHolder() {
   delete playlistCallbacks;
 }
 
-void PlaylistCallbacksHolder::call(std::unique_ptr<NanCallback>& callback, std::initializer_list<Handle<Value>> args) {
+void PlaylistCallbacksHolder::call(Nan::Callback callback, std::initializer_list<Handle<Value>> args) {
   unsigned int argc = args.size();
   Handle<Value>* argv = const_cast<Handle<Value>*>(args.begin());
-  callback->Call(argc, argv);
+  callback.Call(argc, argv);
 }
 
 void PlaylistCallbacksHolder::playlistRenamed(sp_playlist* spPlaylist, void* userdata) {
