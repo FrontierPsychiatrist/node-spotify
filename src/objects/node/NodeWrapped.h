@@ -34,7 +34,7 @@ protected:
   static v8::Handle<v8::FunctionTemplate> init(const char* className) {
     Nan::EscapableHandleScope scope;
     v8::Local<v8::FunctionTemplate> constructorTemplate = NanNew<v8::FunctionTemplate>();
-    constructorTemplate->SetClassName(NanNew<v8::String>(className));
+    constructorTemplate->SetClassName(Nan::New<v8::String>(className).ToLocalChecked());
     constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
     return scope.Escape(constructorTemplate);
   }

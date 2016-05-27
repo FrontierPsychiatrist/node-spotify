@@ -23,7 +23,7 @@ NAN_SETTER(NodePlaylist::setName) {
 
 NAN_GETTER(NodePlaylist::getName) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
-  NanReturnValue(NanNew<String>(nodePlaylist->playlist->name().c_str()));
+  NanReturnValue(Nan::New<String>(nodePlaylist->playlist->name().c_str()).ToLocalChecked());
 }
 
 NAN_SETTER(NodePlaylist::setCollaborative) {
@@ -38,12 +38,12 @@ NAN_GETTER(NodePlaylist::getCollaborative) {
 
 NAN_GETTER(NodePlaylist::getLink) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
-  NanReturnValue(NanNew<String>(nodePlaylist->playlist->link().c_str()));
+  NanReturnValue(Nan::New<String>(nodePlaylist->playlist->link().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodePlaylist::getDescription) {
   NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
-  NanReturnValue(NanNew<String>(nodePlaylist->playlist->description().c_str()));
+  NanReturnValue(Nan::New<String>(nodePlaylist->playlist->description().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodePlaylist::getNumTracks) {
@@ -149,13 +149,13 @@ NAN_METHOD(NodePlaylist::on) {
     return NanThrowError("on needs an object as its first argument.");
   }
   Handle<Object> callbacks = args[0]->ToObject();
-  Handle<String> playlistRenamedKey = NanNew<String>("playlistRenamed");
-  Handle<String> tracksMovedKey = NanNew<String>("tracksMoved");
-  Handle<String> tracksAddedKey = NanNew<String>("tracksAdded");
-  Handle<String> tracksRemovedKey = NanNew<String>("tracksRemoved");
-  Handle<String> trackCreatedChangedKey = NanNew<String>("trackCreatedChanged");
-  Handle<String> trackSeenChangedKey = NanNew<String>("trackSeenChanged");
-  Handle<String> trackMessageChangedKey = NanNew<String>("trackMessageChanged");
+  Handle<String> playlistRenamedKey = Nan::New<String>("playlistRenamed").ToLocalChecked();
+  Handle<String> tracksMovedKey = Nan::New<String>("tracksMoved").ToLocalChecked();
+  Handle<String> tracksAddedKey = Nan::New<String>("tracksAdded").ToLocalChecked();
+  Handle<String> tracksRemovedKey = Nan::New<String>("tracksRemoved").ToLocalChecked();
+  Handle<String> trackCreatedChangedKey = Nan::New<String>("trackCreatedChanged").ToLocalChecked();
+  Handle<String> trackSeenChangedKey = Nan::New<String>("trackSeenChanged").ToLocalChecked();
+  Handle<String> trackMessageChangedKey = Nan::New<String>("trackMessageChanged").ToLocalChecked();
   nodePlaylist->playlistCallbacksHolder.playlistRenamedCallback = V8Utils::getFunctionFromObject(callbacks, playlistRenamedKey);
   nodePlaylist->playlistCallbacksHolder.tracksAddedCallback = V8Utils::getFunctionFromObject(callbacks, tracksAddedKey);
   nodePlaylist->playlistCallbacksHolder.tracksMovedCallback = V8Utils::getFunctionFromObject(callbacks, tracksMovedKey);
@@ -176,17 +176,17 @@ NAN_METHOD(NodePlaylist::off) {
 void NodePlaylist::init() {
   NanScope();
   Local<FunctionTemplate> constructorTemplate = NanNew<FunctionTemplate>();
-  constructorTemplate->SetClassName(NanNew<String>("Playlist"));
+  constructorTemplate->SetClassName(Nan::New<String>("Playlist").ToLocalChecked());
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("name"), getName, setName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("collaborative"), getCollaborative, setCollaborative);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("description"), getDescription);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("owner"), getOwner);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("numTracks"), getNumTracks);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("name").ToLocalChecked(), getName, setName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("collaborative").ToLocalChecked(), getCollaborative, setCollaborative);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("link").ToLocalChecked(), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("description").ToLocalChecked(), getDescription);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("owner").ToLocalChecked(), getOwner);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("numTracks").ToLocalChecked(), getNumTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTrack", getTrack);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "removeTracks", removeTracks);

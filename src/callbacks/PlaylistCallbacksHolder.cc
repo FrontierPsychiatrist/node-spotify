@@ -69,7 +69,7 @@ void PlaylistCallbacksHolder::trackSeenChanged(sp_playlist* spPlaylist, int posi
 
 void PlaylistCallbacksHolder::trackMessageChanged(sp_playlist* spPlaylist, int position, const char* message, void* userdata) {
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
-  holder->call(holder->trackMessageChangedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata), NanNew<Integer>(position), NanNew<String>(message) });
+  holder->call(holder->trackMessageChangedCallback, { NanUndefined(), NanObjectWrapHandle(holder->userdata), NanNew<Integer>(position), Nan::New<String>(message).ToLocalChecked() });
 }
 
 void PlaylistCallbacksHolder::setCallbacks() {

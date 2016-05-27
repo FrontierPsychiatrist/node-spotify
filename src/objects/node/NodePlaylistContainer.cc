@@ -111,9 +111,9 @@ NAN_METHOD(NodePlaylistContainer::on) {
   }
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.This());
   Handle<Object> callbacks = args[0]->ToObject();
-  Handle<String> playlistAddedKey = NanNew<String>("playlistAdded");
-  Handle<String> playlistMovedKey = NanNew<String>("playlistMoved");
-  Handle<String> playlistRemovedKey = NanNew<String>("playlistRemoved");
+  Handle<String> playlistAddedKey = Nan::New<String>("playlistAdded").ToLocalChecked();
+  Handle<String> playlistMovedKey = Nan::New<String>("playlistMoved").ToLocalChecked();
+  Handle<String> playlistRemovedKey = Nan::New<String>("playlistRemoved").ToLocalChecked();
   nodePlaylistContainer->playlistContainerCallbacksHolder.playlistAddedCallback = V8Utils::getFunctionFromObject(callbacks, playlistAddedKey);
   nodePlaylistContainer->playlistContainerCallbacksHolder.playlistMovedCallback = V8Utils::getFunctionFromObject(callbacks, playlistMovedKey);
   nodePlaylistContainer->playlistContainerCallbacksHolder.playlistRemovedCallback = V8Utils::getFunctionFromObject(callbacks, playlistRemovedKey);
@@ -130,13 +130,13 @@ NAN_METHOD(NodePlaylistContainer::off) {
 void NodePlaylistContainer::init() {
   NanScope();
   Local<FunctionTemplate> constructorTemplate = NanNew<FunctionTemplate>();
-  constructorTemplate->SetClassName(NanNew<String>("PlaylistContainer"));
+  constructorTemplate->SetClassName(Nan::New<String>("PlaylistContainer").ToLocalChecked());
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("owner"), getOwner);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("numPlaylists"), getNumPlaylists);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("owner").ToLocalChecked(), getOwner);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("numPlaylists").ToLocalChecked(), getNumPlaylists);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getPlaylist", getPlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addPlaylist", addPlaylist);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addFolder", addFolder);

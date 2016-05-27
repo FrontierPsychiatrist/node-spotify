@@ -50,7 +50,7 @@ NAN_GETTER(NodeTrackExtended::getCreateTime) {
 
 NAN_GETTER(NodeTrackExtended::getMessage) {
   NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
-  NanReturnValue(NanNew<String>(nodeTrackExtended->trackExtended->message().c_str()));
+  NanReturnValue(Nan::New<String>(nodeTrackExtended->trackExtended->message().c_str()).ToLocalChecked());
 }
 
 void NodeTrackExtended::init() {
@@ -58,9 +58,9 @@ void NodeTrackExtended::init() {
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("TrackExtended");
   Handle<FunctionTemplate> nodeTrackTemplate = NodeTrack::init();
   constructorTemplate->Inherit(nodeTrackTemplate);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("creator"), getCreator);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("seen"), getSeen, setSeen);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("createTime"), getCreateTime);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("message"), getMessage);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("creator").ToLocalChecked(), getCreator);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("seen").ToLocalChecked(), getSeen, setSeen);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("createTime").ToLocalChecked(), getCreateTime);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("message").ToLocalChecked(), getMessage);
   NanAssignPersistent(NodeTrackExtended::constructorTemplate, constructorTemplate);
 }

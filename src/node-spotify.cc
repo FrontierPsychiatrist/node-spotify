@@ -24,15 +24,15 @@ Application* application;
 static Handle<Object> getInternal() {
   Local<Object> internal = NanNew<Object>();
   Local<Object> protos = NanNew<Object>();
-  protos->Set(NanNew<String>("Playlist"), NodePlaylist::getConstructor());
-  protos->Set(NanNew<String>("Track"), NodeTrack::getConstructor());
-  protos->Set(NanNew<String>("TrackExtended"), NodeTrackExtended::getConstructor());
-  protos->Set(NanNew<String>("PlaylistContainer"), NodePlaylistContainer::getConstructor());
-  protos->Set(NanNew<String>("Artist"), NodeArtist::getConstructor());
-  protos->Set(NanNew<String>("Album"), NodeAlbum::getConstructor());
-  protos->Set(NanNew<String>("User"), NodeUser::getConstructor());
-  protos->Set(NanNew<String>("PlaylistFolder"), NodePlaylistFolder::getConstructor());
-  internal->Set(NanNew<String>("protos"), protos);
+  protos->Set(Nan::New<String>("Playlist").ToLocalChecked(), NodePlaylist::getConstructor());
+  protos->Set(Nan::New<String>("Track").ToLocalChecked(), NodeTrack::getConstructor());
+  protos->Set(Nan::New<String>("TrackExtended").ToLocalChecked(), NodeTrackExtended::getConstructor());
+  protos->Set(Nan::New<String>("PlaylistContainer").ToLocalChecked(), NodePlaylistContainer::getConstructor());
+  protos->Set(Nan::New<String>("Artist").ToLocalChecked(), NodeArtist::getConstructor());
+  protos->Set(Nan::New<String>("Album").ToLocalChecked(), NodeAlbum::getConstructor());
+  protos->Set(Nan::New<String>("User").ToLocalChecked(), NodeUser::getConstructor());
+  protos->Set(Nan::New<String>("PlaylistFolder").ToLocalChecked(), NodePlaylistFolder::getConstructor());
+  internal->Set(Nan::New<String>("protos").ToLocalChecked(), protos);
 
   return internal;
 }
@@ -79,16 +79,16 @@ NAN_METHOD(CreateNodespotify) {
   v8::Handle<Object> spotifyObject = nodeSpotify->createInstance();
 
   //Set some fields on the nodeSpotify object
-  spotifyObject->Set(NanNew<String>("Search"), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
-  spotifyObject->Set(NanNew<String>("internal"), getInternal());
+  spotifyObject->Set(Nan::New<String>("Search").ToLocalChecked(), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
+  spotifyObject->Set(Nan::New<String>("internal").ToLocalChecked(), getInternal());
   application->player = std::make_shared<Player>();
   NodePlayer* nodePlayer = new NodePlayer(application->player);
-  spotifyObject->Set(NanNew<String>("player"), nodePlayer->createInstance());
+  spotifyObject->Set(Nan::New<String>("player").ToLocalChecked(), nodePlayer->createInstance());
   NanReturnValue(spotifyObject);
 };
 
 static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Object> module) {
-  module->Set(NanNew<String>("exports"), NanNew<FunctionTemplate>(CreateNodespotify)->GetFunction());
+  module->Set(Nan::New<String>("exports").ToLocalChecked(), NanNew<FunctionTemplate>(CreateNodespotify)->GetFunction());
 }
 
 NODE_MODULE(nodespotify, init)

@@ -72,7 +72,7 @@ NAN_METHOD(NodePlayer::on) {
     return NanThrowError("on needs an object as its first argument.");
   }
   Handle<Object> callbacks = args[0]->ToObject();
-  Handle<String> endOfTrackKey = NanNew<String>("endOfTrack");
+  Handle<String> endOfTrackKey = Nan::New<String>("endOfTrack").ToLocalChecked();
   SessionCallbacks::endOfTrackCallback = V8Utils::getFunctionFromObject(callbacks, endOfTrackKey);
   NanReturnUndefined();
 }
@@ -85,7 +85,7 @@ NAN_METHOD(NodePlayer::off) {
 void NodePlayer::init() {
   NanScope();
   Local<FunctionTemplate> constructorTemplate = NanNew<FunctionTemplate>();
-  constructorTemplate->SetClassName(NanNew<String>("Player"));
+  constructorTemplate->SetClassName(Nan::New<String>("Player").ToLocalChecked());
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
@@ -95,6 +95,6 @@ void NodePlayer::init() {
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "resume", resume);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "stop", stop);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "seek", seek);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("currentSecond"), &getCurrentSecond);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("currentSecond").ToLocalChecked(), &getCurrentSecond);
   NanAssignPersistent(NodePlayer::constructorTemplate, constructorTemplate);
 }

@@ -14,12 +14,12 @@ NodeArtist::~NodeArtist() {
 
 NAN_GETTER(NodeArtist::getName) {
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
-  NanReturnValue(NanNew<String>(nodeArtist->artist->name().c_str()));
+  NanReturnValue(Nan::New<String>(nodeArtist->artist->name().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeArtist::getLink) {
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
-  NanReturnValue(NanNew<String>(nodeArtist->artist->link().c_str()));
+  NanReturnValue(Nan::New<String>(nodeArtist->artist->link().c_str()).ToLocalChecked());
 }
 
 NAN_METHOD(NodeArtist::browse) {
@@ -31,11 +31,11 @@ NAN_METHOD(NodeArtist::browse) {
 
     //Mutate the V8 object.
     Handle<Object> nodeArtistV8 = NanObjectWrapHandle(nodeArtist);
-    nodeArtistV8->SetAccessor(NanNew<String>("tracks"), getTracks);
-    nodeArtistV8->SetAccessor(NanNew<String>("tophitTracks"), getTophitTracks);
-    nodeArtistV8->SetAccessor(NanNew<String>("albums"), getAlbums);
-    nodeArtistV8->SetAccessor(NanNew<String>("similarArtists"), getSimilarArtists);
-    nodeArtistV8->SetAccessor(NanNew<String>("biography"), getBiography);
+    nodeArtistV8->SetAccessor(Nan::New<String>("tracks").ToLocalChecked(), getTracks);
+    nodeArtistV8->SetAccessor(Nan::New<String>("tophitTracks").ToLocalChecked(), getTophitTracks);
+    nodeArtistV8->SetAccessor(Nan::New<String>("albums").ToLocalChecked(), getAlbums);
+    nodeArtistV8->SetAccessor(Nan::New<String>("similarArtists").ToLocalChecked(), getSimilarArtists);
+    nodeArtistV8->SetAccessor(Nan::New<String>("biography").ToLocalChecked(), getBiography);
     //TODO: portraits
 
     nodeArtist->artist->browse(artistbrowseType);
@@ -92,7 +92,7 @@ NAN_GETTER(NodeArtist::getSimilarArtists) {
 NAN_GETTER(NodeArtist::getBiography) {
   NodeArtist* nodeArtist = node::ObjectWrap::Unwrap<NodeArtist>(info.This());
   std::string biography = nodeArtist->artist->biography();
-  NanReturnValue(NanNew<String>(biography.c_str()));
+  NanReturnValue(Nan::New<String>(biography.c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeArtist::isLoaded) {
@@ -102,9 +102,9 @@ NAN_GETTER(NodeArtist::isLoaded) {
 
 void NodeArtist::init() {
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Artist");
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("name"), getName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("name").ToLocalChecked(), getName);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("link").ToLocalChecked(), getLink);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "browse", browse);
   NanAssignPersistent(NodeArtist::constructorTemplate, constructorTemplate);
 }

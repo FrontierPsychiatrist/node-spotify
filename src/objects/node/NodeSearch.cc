@@ -45,20 +45,20 @@ NAN_METHOD(NodeSearch::execute) {
  **/
 void NodeSearch::setupAdditionalMethods() {
   Handle<Object> nodeObject = NanObjectWrapHandle(this);
-  nodeObject->SetAccessor(NanNew<String>("didYouMean"), didYouMean);
-  nodeObject->SetAccessor(NanNew<String>("link"), getLink);
-  nodeObject->Set(NanNew<String>("getTrack"), NanNew<FunctionTemplate>(getTrack)->GetFunction());
-  nodeObject->Set(NanNew<String>("getAlbum"), NanNew<FunctionTemplate>(getAlbum)->GetFunction());
-  nodeObject->Set(NanNew<String>("getArtist"), NanNew<FunctionTemplate>(getArtist)->GetFunction());
-  nodeObject->Set(NanNew<String>("getPlaylist"), NanNew<FunctionTemplate>(getPlaylist)->GetFunction());
-  nodeObject->SetAccessor(NanNew<String>("totalTracks"), getTotalTracks);
-  nodeObject->SetAccessor(NanNew<String>("numTracks"), getNumTracks);
-  nodeObject->SetAccessor(NanNew<String>("totalAlbums"), getTotalAlbums);
-  nodeObject->SetAccessor(NanNew<String>("numAlbums"), getNumAlbums);
-  nodeObject->SetAccessor(NanNew<String>("totalArtists"), getTotalArtists);
-  nodeObject->SetAccessor(NanNew<String>("numArtists"), getNumArtists);
-  nodeObject->SetAccessor(NanNew<String>("totalPlaylists"), getTotalPlaylists);
-  nodeObject->SetAccessor(NanNew<String>("numPlaylists"), getNumPlaylists);
+  nodeObject->SetAccessor(Nan::New<String>("didYouMean").ToLocalChecked(), didYouMean);
+  nodeObject->SetAccessor(Nan::New<String>("link").ToLocalChecked(), getLink);
+  nodeObject->Set(Nan::New<String>("getTrack").ToLocalChecked(), NanNew<FunctionTemplate>(getTrack)->GetFunction());
+  nodeObject->Set(Nan::New<String>("getAlbum").ToLocalChecked(), NanNew<FunctionTemplate>(getAlbum)->GetFunction());
+  nodeObject->Set(Nan::New<String>("getArtist").ToLocalChecked(), NanNew<FunctionTemplate>(getArtist)->GetFunction());
+  nodeObject->Set(Nan::New<String>("getPlaylist").ToLocalChecked(), NanNew<FunctionTemplate>(getPlaylist)->GetFunction());
+  nodeObject->SetAccessor(Nan::New<String>("totalTracks").ToLocalChecked(), getTotalTracks);
+  nodeObject->SetAccessor(Nan::New<String>("numTracks").ToLocalChecked(), getNumTracks);
+  nodeObject->SetAccessor(Nan::New<String>("totalAlbums").ToLocalChecked(), getTotalAlbums);
+  nodeObject->SetAccessor(Nan::New<String>("numAlbums").ToLocalChecked(), getNumAlbums);
+  nodeObject->SetAccessor(Nan::New<String>("totalArtists").ToLocalChecked(), getTotalArtists);
+  nodeObject->SetAccessor(Nan::New<String>("numArtists").ToLocalChecked(), getNumArtists);
+  nodeObject->SetAccessor(Nan::New<String>("totalPlaylists").ToLocalChecked(), getTotalPlaylists);
+  nodeObject->SetAccessor(Nan::New<String>("numPlaylists").ToLocalChecked(), getNumPlaylists);
 }
 
 NAN_GETTER(NodeSearch::getTrackOffset) {
@@ -162,12 +162,12 @@ NAN_METHOD(NodeSearch::New) {
 
 NAN_GETTER(NodeSearch::didYouMean) {
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
-  NanReturnValue(NanNew<String>(nodeSearch->search->didYouMeanText().c_str()));
+  NanReturnValue(Nan::New<String>(nodeSearch->search->didYouMeanText().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeSearch::getLink) {
   NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
-  NanReturnValue(NanNew<String>(nodeSearch->search->link().c_str()));
+  NanReturnValue(Nan::New<String>(nodeSearch->search->link().c_str()).ToLocalChecked());
 }
 
 NAN_METHOD(NodeSearch::getTrack) {
@@ -273,16 +273,16 @@ NAN_GETTER(NodeSearch::getNumPlaylists) {
 void NodeSearch::init() {
   NanScope();
   Local<FunctionTemplate> constructorTemplate = NanNew<FunctionTemplate>(New);
-  constructorTemplate->SetClassName(NanNew<String>("Search"));
+  constructorTemplate->SetClassName(Nan::New<String>("Search").ToLocalChecked());
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "execute", execute);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("trackOffset"), getTrackOffset, setTrackOffset);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("trackLimit"), getTrackLimit, setTrackLimit);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("albumOffset"), getAlbumOffset, setAlbumOffset);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("albumLimit"), getAlbumLimit, setAlbumLimit);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("artistOffset"), getArtistOffset, setArtistOffset);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("artistLimit"), getArtistLimit, setArtistLimit);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistOffset"), getPlaylistOffset, setPlaylistOffset);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistLimit"), getPlaylistLimit, setPlaylistLimit);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("trackOffset").ToLocalChecked(), getTrackOffset, setTrackOffset);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("trackLimit").ToLocalChecked(), getTrackLimit, setTrackLimit);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("albumOffset").ToLocalChecked(), getAlbumOffset, setAlbumOffset);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("albumLimit").ToLocalChecked(), getAlbumLimit, setAlbumLimit);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("artistOffset").ToLocalChecked(), getArtistOffset, setArtistOffset);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("artistLimit").ToLocalChecked(), getArtistLimit, setArtistLimit);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("playlistOffset").ToLocalChecked(), getPlaylistOffset, setPlaylistOffset);
+  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("playlistLimit").ToLocalChecked(), getPlaylistLimit, setPlaylistLimit);
   NanAssignPersistent(NodeSearch::constructorTemplate, constructorTemplate);
 }
