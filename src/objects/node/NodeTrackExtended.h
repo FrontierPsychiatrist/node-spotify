@@ -23,7 +23,7 @@ public:
   static Handle<Function> getConstructor();
   Handle<Object> createInstance();
 protected:
-  static Persistent<FunctionTemplate> constructorTemplate;
+  static Nan::Persistent<FunctionTemplate> constructorTemplate;
 };
 
 #endif
