@@ -8,8 +8,9 @@ using namespace v8;
 
 extern Application* application;
 
-NodeAudioHandler::NodeAudioHandler(std::unique_ptr<NanCallback> _musicDeliveryCallback) :
-  AudioHandler(), musicDeliveryCallback(std::move(_musicDeliveryCallback)), needMoreData(true), stopped(false), musicTimerRepeat(20) {
+NodeAudioHandler::NodeAudioHandler(Handle<Function> _musicDeliveryCallback) :
+  AudioHandler(), needMoreData(true), stopped(false), musicTimerRepeat(20) {
+  musicDeliveryCallback.SetFunction(_musicDeliveryCallback);
   uv_timer_init(uv_default_loop(), &musicTimer);
   musicTimer.data = this;
   uv_timer_start(&musicTimer, &musicTimeout, 0, musicTimerRepeat);
@@ -55,7 +56,7 @@ bool NodeAudioHandler::callMusicDeliveryCallback(audio_fifo_data_t* audioData) {
   static Local<String> channelsKey = Nan::New<String>("channels").ToLocalChecked();
 
   size_t size = audioData->numberOfSamples * sizeof(int16_t) * audioData->channels;
-  Local<Object> actualBuffer = NanNewBufferHandle((char*)audioData->samples, size, free_data, audioData);
+  Local<Object> actualBuffer = Nan::NewBuffer((char*)audioData->samples, size, free_data, audioData).ToLocalChecked();
   //node::Buffer *slowBuffer = node::Buffer::New((char*)audioData->samples, size, free_data, audioData);
 
   //Local<Object> globalObj = Context::GetCurrent()->Global();
@@ -63,13 +64,13 @@ bool NodeAudioHandler::callMusicDeliveryCallback(audio_fifo_data_t* audioData) {
   //Handle<Value> constructorArgs[3] = { slowBuffer->handle_, Integer::New(size), Integer::New(0)};
   //Handle<Object> actualBuffer = ctor->NewInstance(3, constructorArgs);
 
-  actualBuffer->Set(numberOfSamplesKey, NanNew<Integer>(audioData->numberOfSamples));
-  actualBuffer->Set(sampleRateKey, NanNew<Integer>(audioData->sampleRate));
-  actualBuffer->Set(channelsKey, NanNew<Integer>(audioData->channels));
+  actualBuffer->Set(numberOfSamplesKey, Nan::New<Integer>(audioData->numberOfSamples));
+  actualBuffer->Set(sampleRateKey, Nan::New<Integer>(audioData->sampleRate));
+  actualBuffer->Set(channelsKey, Nan::New<Integer>(audioData->channels));
 
   int argc = 2;
-  Handle<Value> argv[] = { NanUndefined(), actualBuffer };
-  Handle<Value> bufferFilled = musicDeliveryCallback->Call(argc, argv);
+  Handle<Value> argv[] = { Nan::Undefined(), actualBuffer }; // TODO set an error here if the Nan::NewBuffer was not created correctly?
+  Handle<Value> bufferFilled = musicDeliveryCallback.Call(argc, argv);
   return bufferFilled->ToBoolean()->BooleanValue();
 }
 
@@ -85,11 +86,12 @@ void NodeAudioHandler::setStopped(bool _stopped) {
 }
 
 NAN_METHOD(NodeAudioHandler::setNeedMoreData) {
-  if(args.Length() < 1 || !args[0]->IsBoolean()) {
-    return NanThrowError("setNeedMoreData needs a boolean as its first argument.");
+  if(info.Length() < 1 || !info[0]->IsBoolean()) {
+    Nan::ThrowError("setNeedMoreData needs a boolean as its first argument.");
+    return;
   }
   NodeAudioHandler* audioHandler = static_cast<NodeAudioHandler*>(application->audioHandler.get());
-  bool needMoreData = args[0]->ToBoolean()->BooleanValue();
+  bool needMoreData = info[0]->ToBoolean()->BooleanValue();
   audioHandler->needMoreData = needMoreData;
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }

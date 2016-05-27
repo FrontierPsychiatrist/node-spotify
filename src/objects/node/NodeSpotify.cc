@@ -192,8 +192,7 @@ NAN_METHOD(NodeSpotify::useNodejsAudio) {
   }
   //Since the old audio handler has to be deleted first, do an empty reset.
   application->audioHandler.reset();
-  auto callback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
-  application->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(std::move(callback)));
+  application->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(args[0].As<Function>()));
 
   Handle<Function> needMoreDataSetter = NanNew<FunctionTemplate>(NodeAudioHandler::setNeedMoreData)->GetFunction();
   NanReturnValue(needMoreDataSetter);
