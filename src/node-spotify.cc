@@ -59,22 +59,25 @@ NAN_METHOD(CreateNodespotify) {
 #endif
 
   v8::Handle<v8::Object> options;
-  if(args.Length() < 1) {
+  if(info.Length() < 1) {
     options = Nan::New<Object>();
   } else {
-    if(!args[0]->IsObject()) {
-      return NanThrowError("Please provide an object to the node-spotify initializer function");
+    if(!info[0]->IsObject()) {
+      Nan::ThrowError("Please provide an object to the node-spotify initializer function");
+      return;
     }
-    options = args[0]->ToObject();
+    options = info[0]->ToObject();
   }
 
   NodeSpotify* nodeSpotify;
   try {
     nodeSpotify = new NodeSpotify(options);
   } catch (const FileException& e) {
-    return NanThrowError("Appkey file not found");
+    Nan::ThrowError("Appkey file not found");
+    return;
   } catch (const SessionCreationException& e) {
-    return NanThrowError(e.message.c_str());
+    Nan::ThrowError(e.message.c_str());
+    return;
   }
   v8::Handle<Object> spotifyObject = nodeSpotify->createInstance();
 
@@ -84,11 +87,11 @@ NAN_METHOD(CreateNodespotify) {
   application->player = std::make_shared<Player>();
   NodePlayer* nodePlayer = new NodePlayer(application->player);
   spotifyObject->Set(Nan::New<String>("player").ToLocalChecked(), nodePlayer->createInstance());
-  NanReturnValue(spotifyObject);
+  info.GetReturnValue().Set(spotifyObject);
 };
 
 static void init(v8::Handle<v8::Object> exports, v8::Handle<v8::Object> module) {
-  module->Set(Nan::New<String>("exports").ToLocalChecked(), NanNew<FunctionTemplate>(CreateNodespotify)->GetFunction());
+  Nan::SetMethod(module, "exports", CreateNodespotify);
 }
 
 NODE_MODULE(nodespotify, init)
