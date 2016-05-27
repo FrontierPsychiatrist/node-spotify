@@ -111,11 +111,11 @@ NAN_METHOD(NodeSpotify::createFromLink) {
         break;
       }
       default:
-        out = NanUndefined();
+        out = Nan::Undefined();
     }
     sp_link_release(parsedLink);
   } else {
-    out = NanUndefined();
+    out = Nan::Undefined();
   }
   NanReturnValue(out);
 }

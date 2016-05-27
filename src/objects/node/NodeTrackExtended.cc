@@ -25,7 +25,7 @@ Handle<Function> NodeTrackExtended::getConstructor() {
 
 NAN_GETTER(NodeTrackExtended::getCreator) {
   NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
-  Handle<Value> nodeCreator = NanUndefined();
+  Handle<Value> nodeCreator = Nan::Undefined();
   if(nodeTrackExtended->trackExtended->creator()) {
     NodeUser* nodeUser = new NodeUser(nodeTrackExtended->trackExtended->creator());
     nodeCreator = nodeUser->createInstance();
