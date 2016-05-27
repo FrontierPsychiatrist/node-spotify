@@ -10,18 +10,17 @@ NodePlaylistFolder::~NodePlaylistFolder() {
 
 NAN_GETTER(NodePlaylistFolder::getName) {
   NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.This());
-  NanReturnValue(Nan::New<String>(nodePlaylistFolder->playlistFolder->name().c_str()).ToLocalChecked());
+  info.GetReturnValue().Set(Nan::New<String>(nodePlaylistFolder->playlistFolder->name().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodePlaylistFolder::getType) {
   NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.This());
-  NanReturnValue(Nan::New<Number>(nodePlaylistFolder->playlistFolder->type()));
+  info.GetReturnValue().Set(Nan::New<Number>(nodePlaylistFolder->playlistFolder->type()));
 }
 
 void NodePlaylistFolder::init() {
-  NanScope();
   Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("PlaylistFolder");
-  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("name").ToLocalChecked(), getName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(Nan::New<String>("type").ToLocalChecked(), getType);
-  NanAssignPersistent(NodePlaylistFolder::constructorTemplate, constructorTemplate);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("type").ToLocalChecked(), getType);
+  NodePlaylistFolder::constructorTemplate.Reset(constructorTemplate);
 }
