@@ -27,7 +27,7 @@ NAN_METHOD(NodeSearch::execute) {
     Nan::ThrowError("execute needs a callback function as its argument.");
     return;
   }
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->makePersistent();
   nodeSearch->browseCompleteCallback.SetFunction(info[0].As<Function>());
   nodeSearch->search = std::unique_ptr<Search>(new Search());
@@ -62,82 +62,82 @@ void NodeSearch::setupAdditionalMethods() {
 }
 
 NAN_GETTER(NodeSearch::getTrackOffset) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->trackOffset));
 }
 
 NAN_SETTER(NodeSearch::setTrackOffset) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->trackOffset = value->ToInteger()->Value();
 }
 
 NAN_GETTER(NodeSearch::getAlbumOffset) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->albumOffset));
 }
 
 NAN_SETTER(NodeSearch::setAlbumOffset) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->albumOffset = value->ToInteger()->Value();
 }
 
 NAN_GETTER(NodeSearch::getArtistOffset) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->artistOffset));
 }
 
 NAN_SETTER(NodeSearch::setArtistOffset) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->artistOffset = value->ToInteger()->Value();
 }
 
 NAN_GETTER(NodeSearch::getPlaylistOffset) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->playlistOffset));
 }
 
 NAN_SETTER(NodeSearch::setPlaylistOffset) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->playlistOffset = value->ToInteger()->Value();
 }
 
 NAN_GETTER(NodeSearch::getTrackLimit) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->trackLimit));
 }
 
 NAN_SETTER(NodeSearch::setTrackLimit) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->trackLimit = value->ToInteger()->Value();
 }
 
 NAN_GETTER(NodeSearch::getAlbumLimit) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->albumLimit));
 }
 
 NAN_SETTER(NodeSearch::setAlbumLimit) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->albumLimit = value->ToInteger()->Value();
 }
 
 NAN_GETTER(NodeSearch::getArtistLimit) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->artistLimit));
 }
 
 NAN_SETTER(NodeSearch::setArtistLimit) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->artistLimit = value->ToInteger()->Value();
 }
 
 NAN_GETTER(NodeSearch::getPlaylistLimit) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->playlistLimit));
 }
 
 NAN_SETTER(NodeSearch::setPlaylistLimit) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   nodeSearch->playlistLimit = value->ToInteger()->Value();
 }
 
@@ -162,17 +162,17 @@ NAN_METHOD(NodeSearch::New) {
 }
 
 NAN_GETTER(NodeSearch::didYouMean) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeSearch->search->didYouMeanText().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeSearch::getLink) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeSearch->search->link().c_str()).ToLocalChecked());
 }
 
 NAN_METHOD(NodeSearch::getTrack) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   if(info.Length() < 1 || !info[0]->IsNumber()) {
     Nan::ThrowError("getTrack needs a number as its first argument.");
     return;
@@ -189,7 +189,7 @@ NAN_METHOD(NodeSearch::getTrack) {
 }
 
 NAN_METHOD(NodeSearch::getAlbum) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   if(info.Length() < 1 || !info[0]->IsNumber()) {
     Nan::ThrowError("getAlbum needs a number as its first argument.");
     return;
@@ -206,7 +206,7 @@ NAN_METHOD(NodeSearch::getAlbum) {
 }
 
 NAN_METHOD(NodeSearch::getArtist) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   if(info.Length() < 1 || !info[0]->IsNumber()) {
     Nan::ThrowError("getArtist needs a number as its first argument.");
     return;
@@ -223,7 +223,7 @@ NAN_METHOD(NodeSearch::getArtist) {
 }
 
 NAN_METHOD(NodeSearch::getPlaylist) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   if(info.Length() < 1 || !info[0]->IsNumber()) {
     Nan::ThrowError("getPlaylist needs a number as its first argument.");
     return;
@@ -240,42 +240,42 @@ NAN_METHOD(NodeSearch::getPlaylist) {
 }
 
 NAN_GETTER(NodeSearch::getTotalTracks) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->search->totalTracks()));
 }
 
 NAN_GETTER(NodeSearch::getNumTracks) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->search->numTracks()));
 }
 
 NAN_GETTER(NodeSearch::getTotalAlbums) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->search->totalAlbums()));
 }
 
 NAN_GETTER(NodeSearch::getNumAlbums) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->search->numAlbums()));
 }
 
 NAN_GETTER(NodeSearch::getTotalArtists) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->search->totalArtists()));
 }
 
 NAN_GETTER(NodeSearch::getNumArtists) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->search->numArtists()));
 }
 
 NAN_GETTER(NodeSearch::getTotalPlaylists) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->search->totalPlaylists()));
 }
 
 NAN_GETTER(NodeSearch::getNumPlaylists) {
-  NodeSearch* nodeSearch = node::ObjectWrap::Unwrap<NodeSearch>(info.This());
+  NodeSearch* nodeSearch = Nan::ObjectWrap::Unwrap<NodeSearch>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeSearch->search->numPlaylists()));
 }
 

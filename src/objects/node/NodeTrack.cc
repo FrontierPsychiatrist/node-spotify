@@ -11,32 +11,32 @@ NodeTrack::~NodeTrack() {
 }
 
 NAN_GETTER(NodeTrack::getName) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeTrack->track->name().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeTrack::getLink) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeTrack->track->link().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeTrack::getDuration) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeTrack->track->duration()/1000));
 }
 
 NAN_GETTER(NodeTrack::getAvailability) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeTrack->track->getAvailability()));
 }
 
 NAN_GETTER(NodeTrack::getPopularity) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodeTrack->track->popularity()));
 }
 
 NAN_GETTER(NodeTrack::getArtists) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   Local<Array> jsArtists = Nan::New<Array>(nodeTrack->track->artists().size());
   for(int i = 0; i < (int)nodeTrack->track->artists().size(); i++) {
     if(nodeTrack->track->artists()[i]) {
@@ -50,7 +50,7 @@ NAN_GETTER(NodeTrack::getArtists) {
 }
 
 NAN_GETTER(NodeTrack::getAlbum) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   if(nodeTrack->track->album()) {
     NodeAlbum* nodeAlbum = new NodeAlbum(nodeTrack->track->album());
     info.GetReturnValue().Set(nodeAlbum->createInstance());
@@ -60,17 +60,17 @@ NAN_GETTER(NodeTrack::getAlbum) {
 }
 
 NAN_GETTER(NodeTrack::getStarred) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   info.GetReturnValue().Set(Nan::New<Boolean>(nodeTrack->track->starred()));
 }
 
 NAN_SETTER(NodeTrack::setStarred) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   nodeTrack->track->setStarred(value->ToBoolean()->Value());
 }
 
 NAN_GETTER(NodeTrack::isLoaded) {
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   info.GetReturnValue().Set(Nan::New<Boolean>(nodeTrack->track->isLoaded()));
 }
 

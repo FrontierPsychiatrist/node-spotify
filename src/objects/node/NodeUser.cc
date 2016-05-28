@@ -7,34 +7,34 @@ NodeUser::NodeUser(std::unique_ptr<User> _user) : user(std::move(_user)) {}
 NodeUser::~NodeUser() {}
 
 NAN_GETTER(NodeUser::getLink) {
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeUser->user->link().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeUser::getCanonicalName) {
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeUser->user->canonicalName().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeUser::getDisplayName) {
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeUser->user->displayName().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeUser::isLoaded) {
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
   info.GetReturnValue().Set(Nan::New<Boolean>(nodeUser->user->isLoaded()));
 }
 
 NAN_GETTER(NodeUser::getPublishedPlaylistsContainer) {
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
   auto playlistContainer = nodeUser->user->publishedPlaylists();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(playlistContainer);
   info.GetReturnValue().Set(nodePlaylistContainer->createInstance());
 }
 
 NAN_GETTER(NodeUser::getStarredPlaylist) {
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(info.This());
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
   auto playlist = nodeUser->user->starredPlaylist();
   NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
   info.GetReturnValue().Set(nodePlaylist->createInstance());

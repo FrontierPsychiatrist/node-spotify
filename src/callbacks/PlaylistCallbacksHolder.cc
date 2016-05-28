@@ -7,7 +7,7 @@
 
 #include <memory>
 
-PlaylistCallbacksHolder::PlaylistCallbacksHolder(node::ObjectWrap* _userdata, sp_playlist* _playlist) : userdata(_userdata), playlist(_playlist) {
+PlaylistCallbacksHolder::PlaylistCallbacksHolder(Nan::ObjectWrap* _userdata, sp_playlist* _playlist) : userdata(_userdata), playlist(_playlist) {
   playlistCallbacks = new sp_playlist_callbacks();
 }
 

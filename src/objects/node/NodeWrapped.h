@@ -12,7 +12,7 @@
  * A class used as a base class for wrapping objects to node objects.
  **/
 template <class T>
-class NodeWrapped : public node::ObjectWrap {
+class NodeWrapped : public Nan::ObjectWrap {
 public:
   ~NodeWrapped() {}
   

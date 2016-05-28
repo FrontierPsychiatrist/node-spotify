@@ -24,7 +24,7 @@ Handle<Function> NodeTrackExtended::getConstructor() {
 }
 
 NAN_GETTER(NodeTrackExtended::getCreator) {
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
+  NodeTrackExtended* nodeTrackExtended = Nan::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   Handle<Value> nodeCreator = Nan::Undefined();
   if(nodeTrackExtended->trackExtended->creator()) {
     NodeUser* nodeUser = new NodeUser(nodeTrackExtended->trackExtended->creator());
@@ -34,22 +34,22 @@ NAN_GETTER(NodeTrackExtended::getCreator) {
 }
 
 NAN_GETTER(NodeTrackExtended::getSeen) {
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
+  NodeTrackExtended* nodeTrackExtended = Nan::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   info.GetReturnValue().Set(Nan::New<Boolean>(nodeTrackExtended->trackExtended->seen()));
 }
 
 NAN_SETTER(NodeTrackExtended::setSeen) {
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
+  NodeTrackExtended* nodeTrackExtended = Nan::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   nodeTrackExtended->trackExtended->seen(value->ToBoolean()->Value());
 }
 
 NAN_GETTER(NodeTrackExtended::getCreateTime) {
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
+  NodeTrackExtended* nodeTrackExtended = Nan::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   info.GetReturnValue().Set(Nan::New<Date>(nodeTrackExtended->trackExtended->createTime() * 1000).ToLocalChecked());
 }
 
 NAN_GETTER(NodeTrackExtended::getMessage) {
-  NodeTrackExtended* nodeTrackExtended = node::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
+  NodeTrackExtended* nodeTrackExtended = Nan::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeTrackExtended->trackExtended->message().c_str()).ToLocalChecked());
 }
 

@@ -9,12 +9,12 @@ NodePlaylistFolder::~NodePlaylistFolder() {
 }
 
 NAN_GETTER(NodePlaylistFolder::getName) {
-  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.This());
+  NodePlaylistFolder* nodePlaylistFolder = Nan::ObjectWrap::Unwrap<NodePlaylistFolder>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodePlaylistFolder->playlistFolder->name().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodePlaylistFolder::getType) {
-  NodePlaylistFolder* nodePlaylistFolder = node::ObjectWrap::Unwrap<NodePlaylistFolder>(info.This());
+  NodePlaylistFolder* nodePlaylistFolder = Nan::ObjectWrap::Unwrap<NodePlaylistFolder>(info.This());
   info.GetReturnValue().Set(Nan::New<Number>(nodePlaylistFolder->playlistFolder->type()));
 }
 

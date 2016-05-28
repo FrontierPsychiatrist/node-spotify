@@ -14,22 +14,22 @@ NodeAlbum::~NodeAlbum() {
 }
 
 NAN_GETTER(NodeAlbum::getName) {
-  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeAlbum->album->name().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeAlbum::getLink) {
-  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeAlbum->album->link().c_str()).ToLocalChecked());
 }
 
 NAN_METHOD(NodeAlbum::getCoverBase64) {
-  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeAlbum->album->coverBase64().c_str()).ToLocalChecked());
 }
 
 NAN_METHOD(NodeAlbum::browse) {
-  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   if(nodeAlbum->album->albumBrowse == nullptr) {
     nodeAlbum->makePersistent();
     nodeAlbum->browseCompleteCallback.SetFunction(info[0].As<Function>());
@@ -49,7 +49,7 @@ NAN_METHOD(NodeAlbum::browse) {
 }
 
 NAN_GETTER(NodeAlbum::getTracks) {
-  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   std::vector<std::shared_ptr<Track>> tracks = nodeAlbum->album->tracks();
   Handle<Array> nodeTracks = Nan::New<Array>(tracks.size());
   for(int i = 0; i < (int)tracks.size(); i++) {
@@ -60,12 +60,12 @@ NAN_GETTER(NodeAlbum::getTracks) {
 }
 
 NAN_GETTER(NodeAlbum::getReview) {
-  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodeAlbum->album->review().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeAlbum::getCopyrights) {
-  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   std::vector<std::string> copyrights = nodeAlbum->album->copyrights();
   Handle<Array> nodeCopyrights = Nan::New<Array>(copyrights.size());
   for(int i = 0; i < (int)copyrights.size(); i++) {
@@ -75,13 +75,13 @@ NAN_GETTER(NodeAlbum::getCopyrights) {
 }
 
 NAN_GETTER(NodeAlbum::getArtist) {
-  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   NodeArtist* nodeArtist = new NodeArtist(nodeAlbum->album->artist());
   info.GetReturnValue().Set(nodeArtist->createInstance());
 }
 
 NAN_GETTER(NodeAlbum::isLoaded) {
-  NodeAlbum* nodeAlbum = node::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   info.GetReturnValue().Set(Nan::New<Boolean>(nodeAlbum->album->isLoaded()));
 }
 

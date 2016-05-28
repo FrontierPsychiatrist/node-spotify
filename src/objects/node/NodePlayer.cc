@@ -14,19 +14,19 @@ NodePlayer::NodePlayer(const NodePlayer& other) {
 }
 
 NAN_METHOD(NodePlayer::pause) {
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
+  NodePlayer* nodePlayer = Nan::ObjectWrap::Unwrap<NodePlayer>(info.This());
   nodePlayer->player->pause();
   info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(NodePlayer::stop) {
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
+  NodePlayer* nodePlayer = Nan::ObjectWrap::Unwrap<NodePlayer>(info.This());
   nodePlayer->player->stop();
   info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(NodePlayer::resume) {
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
+  NodePlayer* nodePlayer = Nan::ObjectWrap::Unwrap<NodePlayer>(info.This());
   nodePlayer->player->resume();
   info.GetReturnValue().SetUndefined();
 }
@@ -36,8 +36,8 @@ NAN_METHOD(NodePlayer::play) {
     Nan::ThrowError("play needs a track as its first argument.");
     return;
   }
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(info[0]->ToObject());
+  NodePlayer* nodePlayer = Nan::ObjectWrap::Unwrap<NodePlayer>(info.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info[0]->ToObject());
   try {
     nodePlayer->player->play(nodeTrack->track);
   } catch (const TrackNotPlayableException& e) {
@@ -59,14 +59,14 @@ NAN_METHOD(NodePlayer::seek) {
     Nan::ThrowError("seek needs an integer as its first argument.");
     return;
   }
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
+  NodePlayer* nodePlayer = Nan::ObjectWrap::Unwrap<NodePlayer>(info.This());
   int second = info[0]->ToInteger()->Value();
   nodePlayer->player->seek(second);
   info.GetReturnValue().SetUndefined();
 }
 
 NAN_GETTER(NodePlayer::getCurrentSecond) {
-  NodePlayer* nodePlayer = node::ObjectWrap::Unwrap<NodePlayer>(info.This());
+  NodePlayer* nodePlayer = Nan::ObjectWrap::Unwrap<NodePlayer>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodePlayer->player->currentSecond));
 }
 

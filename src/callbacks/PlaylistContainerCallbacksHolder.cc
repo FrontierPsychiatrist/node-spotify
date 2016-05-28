@@ -5,7 +5,7 @@
 
 using namespace v8;
 
-PlaylistContainerCallbacksHolder::PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, node::ObjectWrap* _userdata) : 
+PlaylistContainerCallbacksHolder::PlaylistContainerCallbacksHolder(sp_playlistcontainer* pc, Nan::ObjectWrap* _userdata) :
   playlistContainer(pc), userdata(_userdata) {
     playlistContainerCallbacks = new sp_playlistcontainer_callbacks();
   }

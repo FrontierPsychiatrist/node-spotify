@@ -15,43 +15,43 @@ NodePlaylist::~NodePlaylist() {
 }
 
 NAN_SETTER(NodePlaylist::setName) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   Nan::Utf8String newName(value);
   nodePlaylist->playlist->name(*newName);
 }
 
 NAN_GETTER(NodePlaylist::getName) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodePlaylist->playlist->name().c_str()).ToLocalChecked());
 }
 
 NAN_SETTER(NodePlaylist::setCollaborative) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   nodePlaylist->playlist->setCollaborative(value->ToBoolean()->Value());
 }
 
 NAN_GETTER(NodePlaylist::getCollaborative) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   info.GetReturnValue().Set(Nan::New<Boolean>(nodePlaylist->playlist->isCollaborative()));
 }
 
 NAN_GETTER(NodePlaylist::getLink) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodePlaylist->playlist->link().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodePlaylist::getDescription) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   info.GetReturnValue().Set(Nan::New<String>(nodePlaylist->playlist->description().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodePlaylist::getNumTracks) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   info.GetReturnValue().Set(Nan::New<Integer>(nodePlaylist->playlist->numTracks()));
 }
 
 NAN_METHOD(NodePlaylist::getTrack) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   if(info.Length() < 1 || !info[0]->IsNumber()) {
     Nan::ThrowError("getTrack needs a number as its first argument.");
     return;
@@ -71,12 +71,12 @@ NAN_METHOD(NodePlaylist::addTracks) {
     Nan::ThrowError("addTracks needs an array and a number as its arguments.");
     return;
   }
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   Handle<Array> trackArray = Handle<Array>::Cast(info[0]);
   std::vector<std::shared_ptr<Track>> tracks(trackArray->Length());
   for(unsigned int i = 0; i < trackArray->Length(); i++) {
     Handle<Object> trackObject = trackArray->Get(i)->ToObject();
-    NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(trackObject);
+    NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(trackObject);
     tracks[i] = nodeTrack->track;
   }
   int position = info[1]->ToNumber()->IntegerValue();
@@ -95,7 +95,7 @@ NAN_METHOD(NodePlaylist::removeTracks) {
     Nan::ThrowError("removeTracks needs an array as its first argument.");
     return;
   }
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   Handle<Array> trackPositionsArray = Handle<Array>::Cast(info[0]);
   int trackPositions[trackPositionsArray->Length()];
   for(unsigned int i = 0; i < trackPositionsArray->Length(); i++) {
@@ -116,7 +116,7 @@ NAN_METHOD(NodePlaylist::reorderTracks) {
     Nan::ThrowError("reorderTracks needs an array and a numer as its arguments.");
     return;
   }
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   Handle<Array> trackPositionsArray = Handle<Array>::Cast(info[0]);
   int trackPositions[trackPositionsArray->Length()];
   int newPosition = info[1]->ToNumber()->IntegerValue();
@@ -134,12 +134,12 @@ NAN_METHOD(NodePlaylist::reorderTracks) {
 }
 
 NAN_GETTER(NodePlaylist::isLoaded) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   info.GetReturnValue().Set(Nan::New<Boolean>(nodePlaylist->playlist->isLoaded()));
 }
 
 NAN_GETTER(NodePlaylist::getOwner) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   Handle<Value> owner;
   if(nodePlaylist->playlist->owner()) {
     owner = (new NodeUser(nodePlaylist->playlist->owner()))->createInstance();
@@ -151,7 +151,7 @@ NAN_GETTER(NodePlaylist::getOwner) {
   Set all callbacks for this playlist. Replaces all old callbacks.
 **/
 NAN_METHOD(NodePlaylist::on) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   if(info.Length() < 1 || !info[0]->IsObject()) {
     Nan::ThrowError("on needs an object as its first argument.");
     return;
@@ -196,7 +196,7 @@ NAN_METHOD(NodePlaylist::on) {
 }
 
 NAN_METHOD(NodePlaylist::off) {
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   nodePlaylist->playlistCallbacksHolder.unsetCallbacks();
   info.GetReturnValue().SetUndefined();
 }
