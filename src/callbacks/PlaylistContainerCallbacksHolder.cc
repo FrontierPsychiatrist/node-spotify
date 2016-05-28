@@ -16,6 +16,7 @@ PlaylistContainerCallbacksHolder::~PlaylistContainerCallbacksHolder() {
 }
 
 void PlaylistContainerCallbacksHolder::playlistAdded(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void* userdata) {
+  Nan::HandleScope scope;
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
   sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(pc, position);
   std::shared_ptr<PlaylistBase> playlistBase;
@@ -40,6 +41,7 @@ void PlaylistContainerCallbacksHolder::playlistAdded(sp_playlistcontainer* pc, s
 }
 
 void PlaylistContainerCallbacksHolder::playlistRemoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void *userdata) {
+  Nan::HandleScope scope;
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
   node::ObjectWrap* nodePlaylist = nullptr; //FIXME what??
   if(nodePlaylist != nullptr) {
@@ -52,6 +54,7 @@ void PlaylistContainerCallbacksHolder::playlistRemoved(sp_playlistcontainer* pc,
 }
 
 void PlaylistContainerCallbacksHolder::playlistMoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, int new_position, void *userdata) {
+  Nan::HandleScope scope;
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
   node::ObjectWrap* nodePlaylist = nullptr; //FIXME what?
   if(nodePlaylist != nullptr) {

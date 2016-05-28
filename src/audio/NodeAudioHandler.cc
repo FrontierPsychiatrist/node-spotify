@@ -51,6 +51,7 @@ static void free_data(char* data, void* hint) {
  * @return true if the callback needs more data.
  */
 bool NodeAudioHandler::callMusicDeliveryCallback(audio_fifo_data_t* audioData) {
+  Nan::HandleScope scope;
   static Local<String> numberOfSamplesKey = Nan::New<String>("numberOfSamples").ToLocalChecked();
   static Local<String> sampleRateKey = Nan::New<String>("sampleRate").ToLocalChecked();
   static Local<String> channelsKey = Nan::New<String>("channels").ToLocalChecked();

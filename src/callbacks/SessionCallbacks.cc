@@ -79,14 +79,15 @@ void SessionCallbacks::metadata_updated(sp_session* session) {
   }
   
   if(!metadataUpdatedCallback.IsEmpty()) {
+    Nan::HandleScope scope;
     metadataUpdatedCallback.Call(0, {});
   }
 }
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
-  Nan::HandleScope scope; // why here?
   if(SP_ERROR_OK != error) {
     unsigned int argc = 1;
+    Nan::HandleScope scope;
     v8::Handle<v8::Value> argv[1] = { Nan::Error(sp_error_message(error)) };
     loginCallback.Call(argc, argv);
     return;
@@ -104,6 +105,7 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
  **/
 void SessionCallbacks::rootPlaylistContainerLoaded(sp_playlistcontainer* sp, void* userdata) {
   if(!loginCallback.IsEmpty()) {
+    Nan::HandleScope scope;
     loginCallback.Call(0, {});
   }
   //Issue 35, rootPlaylistContainerLoaded can be called multiple times throughout the lifetime of a session.
@@ -115,12 +117,13 @@ void SessionCallbacks::playTokenLost(sp_session *session) {
   application->audioHandler->setStopped(true);
   application->player->isPaused = true;
   if(!playTokenLostCallback.IsEmpty()) {
+    Nan::HandleScope scope;
     playTokenLostCallback.Call(0, {});
   }
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
-  Nan::HandleScope scope; // todo why?? why here?? we don't create a new value....
+  Nan::HandleScope scope;
   if(!logoutCallback.IsEmpty()) {
     logoutCallback.Call(0, {});
   }

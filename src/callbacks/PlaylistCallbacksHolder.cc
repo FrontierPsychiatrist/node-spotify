@@ -22,8 +22,8 @@ void PlaylistCallbacksHolder::playlistRenamed(sp_playlist* spPlaylist, void* use
   holder->playlistRenamedCallback.Call(2, argv);
 }
 
-// TODO do we need Nan::HandleScope as we create new objects here?
 void PlaylistCallbacksHolder::tracksAdded(sp_playlist* spPlaylist, sp_track *const *tracks, int num_tracks, int position, void *userdata) {
+  Nan::HandleScope scope;
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
   Handle<Array> nodeTracks = Nan::New<Array>(num_tracks);
   for(int i = 0; i < num_tracks; i++) {
@@ -35,6 +35,7 @@ void PlaylistCallbacksHolder::tracksAdded(sp_playlist* spPlaylist, sp_track *con
 }
 
 void PlaylistCallbacksHolder::tracksMoved(sp_playlist* spPlaylist, const int* tracks, int num_tracks, int new_position, void *userdata) {
+  Nan::HandleScope scope;
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
   Handle<Array> movedTrackIndices = Nan::New<Array>(num_tracks);
   for(int i = 0; i < num_tracks; i++) {
@@ -45,6 +46,7 @@ void PlaylistCallbacksHolder::tracksMoved(sp_playlist* spPlaylist, const int* tr
 }
 
 void PlaylistCallbacksHolder::tracksRemoved(sp_playlist* spPlaylist, const int *tracks, int num_tracks, void *userdata) {
+  Nan::HandleScope scope;
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
   Handle<Array> removedTrackIndexes = Nan::New<Array>(num_tracks);
   for(int i = 0; i < num_tracks; i++) {
@@ -55,6 +57,7 @@ void PlaylistCallbacksHolder::tracksRemoved(sp_playlist* spPlaylist, const int *
 }
 
 void PlaylistCallbacksHolder::trackCreatedChanged(sp_playlist* spPlaylist, int position, sp_user* spUser, int when, void* userdata) {
+  Nan::HandleScope scope;
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
   double date = (double)when * 1000;
   NodeUser* nodeUser = new NodeUser(std::unique_ptr<User>(new User(spUser)));
@@ -63,12 +66,14 @@ void PlaylistCallbacksHolder::trackCreatedChanged(sp_playlist* spPlaylist, int p
 }
 
 void PlaylistCallbacksHolder::trackSeenChanged(sp_playlist* spPlaylist, int position, bool seen, void* userdata) {
+  Nan::HandleScope scope;
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
   Handle<Value> argv[] = { Nan::Undefined(), holder->userdata->handle(), Nan::New<Integer>(position), Nan::New<Boolean>(seen) };
   holder->trackSeenChangedCallback.Call(4, argv);
 }
 
 void PlaylistCallbacksHolder::trackMessageChanged(sp_playlist* spPlaylist, int position, const char* message, void* userdata) {
+  Nan::HandleScope scope;
   auto holder = static_cast<PlaylistCallbacksHolder*>(userdata);
   Handle<Value> argv[] = { Nan::Undefined(), holder->userdata->handle(), Nan::New<Integer>(position), Nan::New<String>(message).ToLocalChecked() };
   holder->trackMessageChangedCallback.Call(4, argv);
