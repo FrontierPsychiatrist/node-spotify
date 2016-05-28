@@ -84,6 +84,7 @@ void SessionCallbacks::metadata_updated(sp_session* session) {
 }
 
 void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
+  Nan::HandleScope scope; // why here?
   if(SP_ERROR_OK != error) {
     unsigned int argc = 1;
     v8::Handle<v8::Value> argv[1] = { Nan::Error(sp_error_message(error)) };
@@ -119,6 +120,7 @@ void SessionCallbacks::playTokenLost(sp_session *session) {
 }
 
 void SessionCallbacks::loggedOut(sp_session* session) {
+  Nan::HandleScope scope; // todo why?? why here?? we don't create a new value....
   if(!logoutCallback.IsEmpty()) {
     logoutCallback.Call(0, {});
   }

@@ -3,7 +3,6 @@
 #include "NodePlaylistFolder.h"
 #include "NodeUser.h"
 #include "../../exceptions.h"
-#include "../../utils/V8Utils.h"
 
 NodePlaylistContainer::NodePlaylistContainer(std::shared_ptr<PlaylistContainer> _playlistContainer) : playlistContainer(_playlistContainer),
   playlistContainerCallbacksHolder(playlistContainer->playlistContainer, this) {
@@ -122,11 +121,19 @@ NAN_METHOD(NodePlaylistContainer::on) {
   NodePlaylistContainer* nodePlaylistContainer = node::ObjectWrap::Unwrap<NodePlaylistContainer>(info.This());
   Handle<Object> callbacks = info[0]->ToObject();
   Handle<String> playlistAddedKey = Nan::New<String>("playlistAdded").ToLocalChecked();
+  if(callbacks->Has(playlistAddedKey)) {
+    nodePlaylistContainer->playlistContainerCallbacksHolder.playlistAddedCallback.SetFunction(callbacks->Get(playlistAddedKey).As<Function>());
+  }
+
   Handle<String> playlistMovedKey = Nan::New<String>("playlistMoved").ToLocalChecked();
+  if(callbacks->Has(playlistMovedKey)) {
+    nodePlaylistContainer->playlistContainerCallbacksHolder.playlistMovedCallback.SetFunction(callbacks->Get(playlistMovedKey).As<Function>());
+  }
+
   Handle<String> playlistRemovedKey = Nan::New<String>("playlistRemoved").ToLocalChecked();
-  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistAddedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, playlistAddedKey));
-  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistMovedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, playlistMovedKey));
-  nodePlaylistContainer->playlistContainerCallbacksHolder.playlistRemovedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, playlistRemovedKey));
+  if(callbacks->Has(playlistRemovedKey)) {
+    nodePlaylistContainer->playlistContainerCallbacksHolder.playlistRemovedCallback.SetFunction(callbacks->Get(playlistRemovedKey).As<Function>());
+  }
   nodePlaylistContainer->playlistContainerCallbacksHolder.setCallbacks();
   info.GetReturnValue().SetUndefined();
 }

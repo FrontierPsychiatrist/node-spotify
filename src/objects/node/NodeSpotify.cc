@@ -14,7 +14,6 @@
 #include "NodeAlbum.h"
 #include "NodeTrack.h"
 #include "NodeUser.h"
-#include "../../utils/V8Utils.h"
 
 extern Application* application;
 
@@ -205,13 +204,24 @@ NAN_METHOD(NodeSpotify::on) {
   }
   Handle<Object> callbacks = info[0]->ToObject();
   Handle<String> metadataUpdatedKey = Nan::New<String>("metadataUpdated").ToLocalChecked();
+  if(callbacks->Has(metadataUpdatedKey)) {
+    SessionCallbacks::metadataUpdatedCallback.SetFunction(callbacks->Get(metadataUpdatedKey).As<Function>());
+  }
+
   Handle<String> readyKey = Nan::New<String>("ready").ToLocalChecked();
+  if(callbacks->Has(readyKey)) {
+    SessionCallbacks::loginCallback.SetFunction(callbacks->Get(readyKey).As<Function>());
+  }
+
   Handle<String> logoutKey = Nan::New<String>("logout").ToLocalChecked();
+  if(callbacks->Has(logoutKey)) {
+    SessionCallbacks::logoutCallback.SetFunction(callbacks->Get(logoutKey).As<Function>());
+  }
+
   Handle<String> playTokenLostKey = Nan::New<String>("playTokenLost").ToLocalChecked();
-  SessionCallbacks::metadataUpdatedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, metadataUpdatedKey));
-  SessionCallbacks::loginCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, readyKey));
-  SessionCallbacks::logoutCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, logoutKey));
-  SessionCallbacks::playTokenLostCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, playTokenLostKey));
+  if(callbacks->Has(playTokenLostKey)) {
+    SessionCallbacks::playTokenLostCallback.SetFunction(callbacks->Get(playTokenLostKey).As<Function>());
+  }
   info.GetReturnValue().SetUndefined();
 }
 

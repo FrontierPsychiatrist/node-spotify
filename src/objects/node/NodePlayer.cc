@@ -2,7 +2,6 @@
 #include "NodeTrack.h"
 #include "../../callbacks/SessionCallbacks.h"
 #include "../../exceptions.h"
-#include "../../utils/V8Utils.h"
 
 NodePlayer::NodePlayer(std::shared_ptr<Player> _player) : player(_player) {}
 
@@ -78,7 +77,9 @@ NAN_METHOD(NodePlayer::on) {
   }
   Handle<Object> callbacks = info[0]->ToObject();
   Handle<String> endOfTrackKey = Nan::New<String>("endOfTrack").ToLocalChecked();
-  SessionCallbacks::endOfTrackCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, endOfTrackKey));
+  if(callbacks->Has(endOfTrackKey)) {
+    SessionCallbacks::endOfTrackCallback.SetFunction(callbacks->Get(endOfTrackKey).As<Function>());
+  }
   info.GetReturnValue().SetUndefined();
 }
 

@@ -5,7 +5,6 @@
 #include "NodeTrack.h"
 #include "NodeTrackExtended.h"
 #include "NodeUser.h"
-#include "../../utils/V8Utils.h"
 
 NodePlaylist::NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist),
   playlistCallbacksHolder(this, _playlist->playlist) {
@@ -159,19 +158,39 @@ NAN_METHOD(NodePlaylist::on) {
   }
   Handle<Object> callbacks = info[0]->ToObject();
   Handle<String> playlistRenamedKey = Nan::New<String>("playlistRenamed").ToLocalChecked();
+  if(callbacks->Has(playlistRenamedKey)) {
+    nodePlaylist->playlistCallbacksHolder.playlistRenamedCallback.SetFunction(callbacks->Get(playlistRenamedKey).As<Function>());
+  }
+
   Handle<String> tracksMovedKey = Nan::New<String>("tracksMoved").ToLocalChecked();
+  if(callbacks->Has(tracksMovedKey)) {
+    nodePlaylist->playlistCallbacksHolder.tracksAddedCallback.SetFunction(callbacks->Get(tracksMovedKey).As<Function>());
+  }
+
   Handle<String> tracksAddedKey = Nan::New<String>("tracksAdded").ToLocalChecked();
+  if(callbacks->Has(tracksAddedKey)) {
+    nodePlaylist->playlistCallbacksHolder.tracksMovedCallback.SetFunction(callbacks->Get(tracksAddedKey).As<Function>());
+  }
+
   Handle<String> tracksRemovedKey = Nan::New<String>("tracksRemoved").ToLocalChecked();
+  if(callbacks->Has(tracksRemovedKey)) {
+    nodePlaylist->playlistCallbacksHolder.tracksRemovedCallback.SetFunction(callbacks->Get(tracksRemovedKey).As<Function>());
+  }
+
   Handle<String> trackCreatedChangedKey = Nan::New<String>("trackCreatedChanged").ToLocalChecked();
+  if(callbacks->Has(trackCreatedChangedKey)) {
+    nodePlaylist->playlistCallbacksHolder.trackCreatedChangedCallback.SetFunction(callbacks->Get(trackCreatedChangedKey).As<Function>());
+  }
+
   Handle<String> trackSeenChangedKey = Nan::New<String>("trackSeenChanged").ToLocalChecked();
+  if(callbacks->Has(trackSeenChangedKey)) {
+    nodePlaylist->playlistCallbacksHolder.trackSeenChangedCallback.SetFunction(callbacks->Get(trackSeenChangedKey).As<Function>());
+  }
+
   Handle<String> trackMessageChangedKey = Nan::New<String>("trackMessageChanged").ToLocalChecked();
-  nodePlaylist->playlistCallbacksHolder.playlistRenamedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, playlistRenamedKey));
-  nodePlaylist->playlistCallbacksHolder.tracksAddedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, tracksAddedKey));
-  nodePlaylist->playlistCallbacksHolder.tracksMovedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, tracksMovedKey));
-  nodePlaylist->playlistCallbacksHolder.tracksRemovedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, tracksRemovedKey));
-  nodePlaylist->playlistCallbacksHolder.trackCreatedChangedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, trackCreatedChangedKey));
-  nodePlaylist->playlistCallbacksHolder.trackSeenChangedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, trackSeenChangedKey));
-  nodePlaylist->playlistCallbacksHolder.trackMessageChangedCallback.SetFunction(V8Utils::getFunctionFromObject(callbacks, trackMessageChangedKey));
+  if(callbacks->Has(trackMessageChangedKey)) {
+    nodePlaylist->playlistCallbacksHolder.trackMessageChangedCallback.SetFunction(callbacks->Get(trackMessageChangedKey).As<Function>());
+  }
   nodePlaylist->playlistCallbacksHolder.setCallbacks();
   info.GetReturnValue().SetUndefined();
 }
