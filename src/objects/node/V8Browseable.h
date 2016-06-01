@@ -10,7 +10,7 @@ class V8Browseable : public NodeWrapped<T> {
 public:
   void callBrowseComplete() {
     Nan::HandleScope scope;
-    v8::Handle<v8::Value> argv[2] = {Nan::Undefined(), this->handle()};
+    v8::Local<v8::Value> argv[2] = {Nan::Undefined(), this->handle()};
     browseCompleteCallback.Call(2, argv);
   }
 protected:

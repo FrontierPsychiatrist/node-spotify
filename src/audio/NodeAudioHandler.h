@@ -14,7 +14,7 @@
  */
 class NodeAudioHandler : public AudioHandler {
 public:
-  NodeAudioHandler(v8::Handle<v8::Function> musicDeliveryCallback);
+  NodeAudioHandler(v8::Local<v8::Function> musicDeliveryCallback);
   ~NodeAudioHandler();
   void setStopped(bool stopped);
   static NAN_METHOD(setNeedMoreData);

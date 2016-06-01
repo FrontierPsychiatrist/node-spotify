@@ -20,8 +20,8 @@ public:
   static NAN_GETTER(getCreateTime);
   static NAN_GETTER(getMessage);
   static void init();
-  static Handle<Function> getConstructor();
-  Handle<Object> createInstance();
+  static Local<Function> getConstructor();
+  Local<Object> createInstance();
 protected:
   static Nan::Persistent<FunctionTemplate> constructorTemplate;
 };

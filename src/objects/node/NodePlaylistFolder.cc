@@ -19,7 +19,7 @@ NAN_GETTER(NodePlaylistFolder::getType) {
 }
 
 void NodePlaylistFolder::init() {
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("PlaylistFolder");
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("PlaylistFolder");
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("type").ToLocalChecked(), getType);
   NodePlaylistFolder::constructorTemplate.Reset(constructorTemplate);

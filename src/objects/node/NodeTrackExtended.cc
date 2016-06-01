@@ -10,7 +10,7 @@ NodeTrackExtended::NodeTrackExtended(std::shared_ptr<TrackExtended> _trackExtend
 /**
   We need rewrite this method because we need to use our own constructor, not the one from NodeTrack.
 **/
-Handle<Object> NodeTrackExtended::createInstance() {
+Local<Object> NodeTrackExtended::createInstance() {
   Local<Object> object = getConstructor()->NewInstance();
   Nan::SetInternalFieldPointer(object, 0, this);
   return object;
@@ -19,13 +19,13 @@ Handle<Object> NodeTrackExtended::createInstance() {
 /**
   Same for this... we need to rewrite so NodeTrackExtended::constructor is used and not NodeTrack::constructor.
 **/
-Handle<Function> NodeTrackExtended::getConstructor() {
+Local<Function> NodeTrackExtended::getConstructor() {
   return Nan::New(constructorTemplate)->GetFunction();
 }
 
 NAN_GETTER(NodeTrackExtended::getCreator) {
   NodeTrackExtended* nodeTrackExtended = Nan::ObjectWrap::Unwrap<NodeTrackExtended>(info.This());
-  Handle<Value> nodeCreator = Nan::Undefined();
+  Local<Value> nodeCreator = Nan::Undefined();
   if(nodeTrackExtended->trackExtended->creator()) {
     NodeUser* nodeUser = new NodeUser(nodeTrackExtended->trackExtended->creator());
     nodeCreator = nodeUser->createInstance();
@@ -54,7 +54,7 @@ NAN_GETTER(NodeTrackExtended::getMessage) {
 }
 
 void NodeTrackExtended::init() {
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("TrackExtended");
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("TrackExtended");
   Handle<FunctionTemplate> nodeTrackTemplate = NodeTrack::init();
   constructorTemplate->Inherit(nodeTrackTemplate);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("creator").ToLocalChecked(), getCreator);

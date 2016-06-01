@@ -30,7 +30,7 @@ NAN_METHOD(NodeArtist::browse) {
     nodeArtist->browseCompleteCallback.SetFunction(info[1].As<Function>());
 
     //Mutate the V8 object.
-    Handle<Object> nodeArtistV8 = nodeArtist->handle();
+    Local<Object> nodeArtistV8 = nodeArtist->handle();
     Nan::SetAccessor(nodeArtistV8, Nan::New<String>("tracks").ToLocalChecked(), getTracks);
     Nan::SetAccessor(nodeArtistV8, Nan::New<String>("tophitTracks").ToLocalChecked(), getTophitTracks);
     Nan::SetAccessor(nodeArtistV8, Nan::New<String>("albums").ToLocalChecked(), getAlbums);
@@ -101,7 +101,7 @@ NAN_GETTER(NodeArtist::isLoaded) {
 }
 
 void NodeArtist::init() {
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Artist");
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("Artist");
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);

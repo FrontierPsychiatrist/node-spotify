@@ -75,7 +75,7 @@ NAN_METHOD(NodePlaylist::addTracks) {
   Handle<Array> trackArray = Handle<Array>::Cast(info[0]);
   std::vector<std::shared_ptr<Track>> tracks(trackArray->Length());
   for(unsigned int i = 0; i < trackArray->Length(); i++) {
-    Handle<Object> trackObject = trackArray->Get(i)->ToObject();
+    Local<Object> trackObject = trackArray->Get(i)->ToObject();
     NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(trackObject);
     tracks[i] = nodeTrack->track;
   }
@@ -140,7 +140,7 @@ NAN_GETTER(NodePlaylist::isLoaded) {
 
 NAN_GETTER(NodePlaylist::getOwner) {
   NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
-  Handle<Value> owner;
+  Local<Value> owner;
   if(nodePlaylist->playlist->owner()) {
     owner = (new NodeUser(nodePlaylist->playlist->owner()))->createInstance();
   }

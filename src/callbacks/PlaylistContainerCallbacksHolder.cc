@@ -20,7 +20,7 @@ void PlaylistContainerCallbacksHolder::playlistAdded(sp_playlistcontainer* pc, s
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
   sp_playlist_type playlistType = sp_playlistcontainer_playlist_type(pc, position);
   std::shared_ptr<PlaylistBase> playlistBase;
-  Handle<Object> playlistV8;
+  Local<Object> playlistV8;
   if(playlistType == SP_PLAYLIST_TYPE_PLAYLIST) {
     playlistBase = Playlist::fromCache(spPlaylist);
     NodeWrapped<NodePlaylist>* nodePlaylist = new NodePlaylist(Playlist::fromCache(spPlaylist));
@@ -36,19 +36,19 @@ void PlaylistContainerCallbacksHolder::playlistAdded(sp_playlistcontainer* pc, s
   } else {
     return;
   }
-  Handle<Value> argv[] = {Nan::Undefined(), playlistV8, Nan::New<Number>(position)};
+  Local<Value> argv[] = {Nan::Undefined(), playlistV8, Nan::New<Number>(position)};
   holder->playlistAddedCallback.Call(3, argv);
 }
 
 void PlaylistContainerCallbacksHolder::playlistRemoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, void *userdata) {
   Nan::HandleScope scope;
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
-  node::ObjectWrap* nodePlaylist = nullptr; //FIXME what??
+  Nan::ObjectWrap* nodePlaylist = nullptr; //FIXME what??
   if(nodePlaylist != nullptr) {
-    Handle<Value> argv[] = {Nan::Undefined(), Nan::New<Number>(position), nodePlaylist->handle()};
+    Local<Value> argv[] = {Nan::Undefined(), Nan::New<Number>(position), nodePlaylist->handle()};
     holder->playlistRemovedCallback.Call(3, argv);
   } else {
-    Handle<Value> argv[] = {Nan::Undefined(), Nan::New<Number>(position)};
+    Local<Value> argv[] = {Nan::Undefined(), Nan::New<Number>(position)};
     holder->playlistRemovedCallback.Call(2, argv);
   }
 }
@@ -56,12 +56,12 @@ void PlaylistContainerCallbacksHolder::playlistRemoved(sp_playlistcontainer* pc,
 void PlaylistContainerCallbacksHolder::playlistMoved(sp_playlistcontainer* pc, sp_playlist* spPlaylist, int position, int new_position, void *userdata) {
   Nan::HandleScope scope;
   auto holder = static_cast<PlaylistContainerCallbacksHolder*>(userdata);
-  node::ObjectWrap* nodePlaylist = nullptr; //FIXME what?
+  Nan::ObjectWrap* nodePlaylist = nullptr; //FIXME what?
   if(nodePlaylist != nullptr) {
-    Handle<Value> argv[] = {Nan::Undefined(), Nan::New<Number>(position), Nan::New<Number>(new_position), nodePlaylist->handle()};
+    Local<Value> argv[] = {Nan::Undefined(), Nan::New<Number>(position), Nan::New<Number>(new_position), nodePlaylist->handle()};
     holder->playlistMovedCallback.Call(4, argv);
   } else {
-    Handle<Value> argv[] = {Nan::Undefined(), Nan::New<Number>(position), Nan::New<Number>(new_position)};
+    Local<Value> argv[] = {Nan::Undefined(), Nan::New<Number>(position), Nan::New<Number>(new_position)};
     holder->playlistMovedCallback.Call(3, argv);
   }
 }

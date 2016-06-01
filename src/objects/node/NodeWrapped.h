@@ -16,13 +16,13 @@ class NodeWrapped : public Nan::ObjectWrap {
 public:
   ~NodeWrapped() {}
   
-  virtual v8::Handle<v8::Object> createInstance() {
+  virtual v8::Local<v8::Object> createInstance() {
     v8::Local<v8::Object> object = getConstructor()->NewInstance();
     this->Wrap(object);
     return object;
   }
 
-  static v8::Handle<v8::Function> getConstructor() {
+  static v8::Local<v8::Function> getConstructor() {
     return Nan::New(constructorTemplate)->GetFunction();
   }
 protected:
@@ -31,7 +31,7 @@ protected:
   /**
    * Basic init method for a wrapped node object.
    */
-  static v8::Handle<v8::FunctionTemplate> init(const char* className) {
+  static v8::Local<v8::FunctionTemplate> init(const char* className) {
     Nan::EscapableHandleScope scope;
     v8::Local<v8::FunctionTemplate> constructorTemplate = Nan::New<v8::FunctionTemplate>();
     constructorTemplate->SetClassName(Nan::New<v8::String>(className).ToLocalChecked());

@@ -35,7 +35,7 @@ NAN_METHOD(NodePlaylistContainer::getPlaylist) {
   }
   std::shared_ptr<PlaylistBase> playlist = nodePlaylistContainer->playlistContainer->getPlaylist(index);
 
-  Handle<Value> outNodePlaylist;
+  Local<Value> outNodePlaylist;
   if(!playlist->isFolder) {
     NodePlaylist* nodePlaylist = new NodePlaylist(std::static_pointer_cast<Playlist>(playlist));
     outNodePlaylist = nodePlaylist->createInstance();

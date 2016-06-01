@@ -45,7 +45,7 @@ NAN_METHOD(NodeSearch::execute) {
  * These will call libspotify functions and should first be available when the search has been executed.
  **/
 void NodeSearch::setupAdditionalMethods() {
-  Handle<Object> nodeObject = this->handle();
+  Local<Object> nodeObject = this->handle();
   Nan::SetAccessor(nodeObject, Nan::New<String>("didYouMean").ToLocalChecked(), didYouMean);
   Nan::SetAccessor(nodeObject, Nan::New<String>("link").ToLocalChecked(), getLink);
   Nan::SetMethod(nodeObject, "getTrack", getTrack);

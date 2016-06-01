@@ -8,7 +8,7 @@ using namespace v8;
 
 extern Application* application;
 
-NodeAudioHandler::NodeAudioHandler(Handle<Function> _musicDeliveryCallback) :
+NodeAudioHandler::NodeAudioHandler(Local<Function> _musicDeliveryCallback) :
   AudioHandler(), needMoreData(true), stopped(false), musicTimerRepeat(20) {
   musicDeliveryCallback.SetFunction(_musicDeliveryCallback);
   uv_timer_init(uv_default_loop(), &musicTimer);
@@ -70,7 +70,7 @@ bool NodeAudioHandler::callMusicDeliveryCallback(audio_fifo_data_t* audioData) {
   actualBuffer->Set(channelsKey, Nan::New<Integer>(audioData->channels));
 
   int argc = 2;
-  Handle<Value> argv[] = { Nan::Undefined(), actualBuffer }; // TODO set an error here if the Nan::NewBuffer was not created correctly?
+  Local<Value> argv[] = { Nan::Undefined(), actualBuffer }; // TODO set an error here if the Nan::NewBuffer was not created correctly?
   Handle<Value> bufferFilled = musicDeliveryCallback.Call(argc, argv);
   return bufferFilled->ToBoolean()->BooleanValue();
 }

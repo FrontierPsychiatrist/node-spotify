@@ -59,7 +59,7 @@ NodeSpotify::~NodeSpotify() {
 }
 
 NAN_METHOD(NodeSpotify::createFromLink) {
-  Handle<Value> out;
+  Local<Value> out;
   String::Utf8Value linkToParse(info[0]->ToString());
   sp_link* parsedLink = sp_link_create_from_string(*linkToParse);
   if(parsedLink != nullptr) {
@@ -193,7 +193,7 @@ NAN_METHOD(NodeSpotify::useNodejsAudio) {
   application->audioHandler.reset();
   application->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(info[0].As<Function>()));
 
-  Handle<Function> needMoreDataSetter = Nan::New<FunctionTemplate>(NodeAudioHandler::setNeedMoreData)->GetFunction();
+  Local<Function> needMoreDataSetter = Nan::New<FunctionTemplate>(NodeAudioHandler::setNeedMoreData)->GetFunction();
   info.GetReturnValue().Set(needMoreDataSetter);
 }
 
@@ -226,7 +226,7 @@ NAN_METHOD(NodeSpotify::on) {
 }
 
 void NodeSpotify::init() {
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
   Nan::SetPrototypeMethod(constructorTemplate, "login", login);
   Nan::SetPrototypeMethod(constructorTemplate, "logout", logout);
   Nan::SetPrototypeMethod(constructorTemplate, "createFromLink", createFromLink);
@@ -240,5 +240,5 @@ void NodeSpotify::init() {
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("playlistContainer").ToLocalChecked(), getPlaylistContainer);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("constants").ToLocalChecked(), getConstants);
 
- NodeSpotify::constructorTemplate.Reset(constructorTemplate);
+  NodeSpotify::constructorTemplate.Reset(constructorTemplate);
 }

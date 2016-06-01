@@ -35,7 +35,7 @@ NAN_METHOD(NodeAlbum::browse) {
     nodeAlbum->browseCompleteCallback.SetFunction(info[0].As<Function>());
 
     //Mutate the V8 object.
-    Handle<Object> nodeAlbumV8 = nodeAlbum->handle();
+    Local<Object> nodeAlbumV8 = nodeAlbum->handle();
     Nan::SetAccessor(nodeAlbumV8, Nan::New<String>("tracks").ToLocalChecked(), getTracks);
     Nan::SetAccessor(nodeAlbumV8, Nan::New<String>("review").ToLocalChecked(), getReview);
     Nan::SetAccessor(nodeAlbumV8, Nan::New<String>("copyrights").ToLocalChecked(), getCopyrights);
@@ -51,7 +51,7 @@ NAN_METHOD(NodeAlbum::browse) {
 NAN_GETTER(NodeAlbum::getTracks) {
   NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   std::vector<std::shared_ptr<Track>> tracks = nodeAlbum->album->tracks();
-  Handle<Array> nodeTracks = Nan::New<Array>(tracks.size());
+  Local<Array> nodeTracks = Nan::New<Array>(tracks.size());
   for(int i = 0; i < (int)tracks.size(); i++) {
     NodeTrack* nodeTrack = new NodeTrack(tracks[i]);
     nodeTracks->Set(Nan::New<Number>(i), nodeTrack->createInstance());
@@ -67,7 +67,7 @@ NAN_GETTER(NodeAlbum::getReview) {
 NAN_GETTER(NodeAlbum::getCopyrights) {
   NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
   std::vector<std::string> copyrights = nodeAlbum->album->copyrights();
-  Handle<Array> nodeCopyrights = Nan::New<Array>(copyrights.size());
+  Local<Array> nodeCopyrights = Nan::New<Array>(copyrights.size());
   for(int i = 0; i < (int)copyrights.size(); i++) {
     nodeCopyrights->Set(Nan::New<Number>(i), Nan::New<String>(copyrights[i].c_str()).ToLocalChecked());
   }
@@ -86,7 +86,7 @@ NAN_GETTER(NodeAlbum::isLoaded) {
 }
 
 void NodeAlbum::init() {
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Album");
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("Album");
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);

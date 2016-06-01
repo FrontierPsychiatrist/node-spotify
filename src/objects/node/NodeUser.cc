@@ -41,7 +41,7 @@ NAN_GETTER(NodeUser::getStarredPlaylist) {
 }
 
 void NodeUser::init() {
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("User");
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("User");
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("canonicalName").ToLocalChecked(), getCanonicalName);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("displayName").ToLocalChecked(), getDisplayName);

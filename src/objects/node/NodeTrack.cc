@@ -76,7 +76,7 @@ NAN_GETTER(NodeTrack::isLoaded) {
 
 Handle<FunctionTemplate> NodeTrack::init() {
   Nan::EscapableHandleScope scope;
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("duration").ToLocalChecked(), getDuration);

@@ -88,7 +88,7 @@ void SessionCallbacks::loggedIn(sp_session* session, sp_error error) {
   if(SP_ERROR_OK != error) {
     unsigned int argc = 1;
     Nan::HandleScope scope;
-    v8::Handle<v8::Value> argv[1] = { Nan::Error(sp_error_message(error)) };
+    v8::Local<v8::Value> argv[1] = { Nan::Error(sp_error_message(error)) };
     loginCallback.Call(argc, argv);
     return;
   }

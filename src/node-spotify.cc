@@ -79,7 +79,7 @@ NAN_METHOD(CreateNodespotify) {
     Nan::ThrowError(e.message.c_str());
     return;
   }
-  v8::Handle<Object> spotifyObject = nodeSpotify->createInstance();
+  v8::Local<Object> spotifyObject = nodeSpotify->createInstance();
 
   //Set some fields on the nodeSpotify object
   spotifyObject->Set(Nan::New<String>("Search").ToLocalChecked(), NodeSearch::getConstructor());//TODO: this is ugly but didn't work when done in the NodeSpotify ctor
