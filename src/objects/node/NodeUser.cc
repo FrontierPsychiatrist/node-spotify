@@ -7,53 +7,46 @@ NodeUser::NodeUser(std::unique_ptr<User> _user) : user(std::move(_user)) {}
 NodeUser::~NodeUser() {}
 
 NAN_GETTER(NodeUser::getLink) {
-  NanScope();
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
-  NanReturnValue(NanNew<String>(nodeUser->user->link().c_str()));
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodeUser->user->link().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeUser::getCanonicalName) {
-  NanScope();
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
-  NanReturnValue(NanNew<String>(nodeUser->user->canonicalName().c_str()));
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodeUser->user->canonicalName().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeUser::getDisplayName) {
-  NanScope();
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
-  NanReturnValue(NanNew<String>(nodeUser->user->displayName().c_str()));
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodeUser->user->displayName().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeUser::isLoaded) {
-  NanScope();
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
-  NanReturnValue(NanNew<Boolean>(nodeUser->user->isLoaded()));
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
+  info.GetReturnValue().Set(Nan::New<Boolean>(nodeUser->user->isLoaded()));
 }
 
 NAN_GETTER(NodeUser::getPublishedPlaylistsContainer) {
-  NanScope();
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
   auto playlistContainer = nodeUser->user->publishedPlaylists();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(playlistContainer);
-  NanReturnValue(nodePlaylistContainer->createInstance());
+  info.GetReturnValue().Set(nodePlaylistContainer->createInstance());
 }
 
 NAN_GETTER(NodeUser::getStarredPlaylist) {
-  NanScope();
-  NodeUser* nodeUser = node::ObjectWrap::Unwrap<NodeUser>(args.This());
+  NodeUser* nodeUser = Nan::ObjectWrap::Unwrap<NodeUser>(info.This());
   auto playlist = nodeUser->user->starredPlaylist();
   NodePlaylist* nodePlaylist = new NodePlaylist(playlist);
-  NanReturnValue(nodePlaylist->createInstance());
+  info.GetReturnValue().Set(nodePlaylist->createInstance());
 }
 
 void NodeUser::init() {
-  NanScope();
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("User");
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("canonicalName"), getCanonicalName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("displayName"), getDisplayName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistContainer"), getPublishedPlaylistsContainer);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("starredPlaylist"), getStarredPlaylist);
-  NanAssignPersistent(NodeUser::constructorTemplate, constructorTemplate);
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("User");
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("canonicalName").ToLocalChecked(), getCanonicalName);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("displayName").ToLocalChecked(), getDisplayName);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("playlistContainer").ToLocalChecked(), getPublishedPlaylistsContainer);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("starredPlaylist").ToLocalChecked(), getStarredPlaylist);
+  NodeUser::constructorTemplate.Reset(constructorTemplate);
 }

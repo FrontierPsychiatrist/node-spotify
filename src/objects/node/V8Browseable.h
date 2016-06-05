@@ -4,23 +4,22 @@
 #include "NodeWrapped.h"
 
 #include <nan.h>
-#include <memory>
 
 template<class T>
 class V8Browseable : public NodeWrapped<T> {
 public:
   void callBrowseComplete() {
-    NanScope();
-    v8::Handle<v8::Value> argv[2] = {NanUndefined(), NanNew(NanObjectWrapHandle(this))};
-    browseCompleteCallback->Call(2, argv);
+    Nan::HandleScope scope;
+    v8::Local<v8::Value> argv[2] = {Nan::Undefined(), this->handle()};
+    browseCompleteCallback.Call(2, argv);
   }
 protected:
   void makePersistent() {
-    NanAssignPersistent(persistentHandle, NanObjectWrapHandle(this));
+    persistentHandle.Reset(this->handle());
   }
-  std::unique_ptr<NanCallback> browseCompleteCallback;
+  Nan::Callback browseCompleteCallback;
 private:
-  v8::Persistent<v8::Object> persistentHandle;
+  Nan::Persistent<v8::Object> persistentHandle;
 };
 
 #endif

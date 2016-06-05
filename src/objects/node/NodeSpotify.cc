@@ -14,7 +14,6 @@
 #include "NodeAlbum.h"
 #include "NodeTrack.h"
 #include "NodeUser.h"
-#include "../../utils/V8Utils.h"
 
 extern Application* application;
 
@@ -28,11 +27,10 @@ NodeSpotify::NodeSpotify(Handle<Object> options) {
   SessionCallbacks::init();
 
   SpotifyOptions _options;
-  NanScope();
-  Handle<String> settingsFolderKey = NanNew<String>("settingsFolder");
-  Handle<String> cacheFolderKey = NanNew<String>("cacheFolder");
-  Handle<String> traceFileKey = NanNew<String>("traceFile");
-  Handle<String> appkeyFileKey = NanNew<String>("appkeyFile");
+  Handle<String> settingsFolderKey = Nan::New<String>("settingsFolder").ToLocalChecked();
+  Handle<String> cacheFolderKey = Nan::New<String>("cacheFolder").ToLocalChecked();
+  Handle<String> traceFileKey = Nan::New<String>("traceFile").ToLocalChecked();
+  Handle<String> appkeyFileKey = Nan::New<String>("appkeyFile").ToLocalChecked();
   if(options->Has(settingsFolderKey)) {
     String::Utf8Value settingsFolderValue(options->Get(settingsFolderKey)->ToString());
     _options.settingsFolder = *settingsFolderValue;
@@ -61,9 +59,8 @@ NodeSpotify::~NodeSpotify() {
 }
 
 NAN_METHOD(NodeSpotify::createFromLink) {
-  NanScope();
-  Handle<Value> out;
-  String::Utf8Value linkToParse(args[0]->ToString());
+  Local<Value> out;
+  String::Utf8Value linkToParse(info[0]->ToString());
   sp_link* parsedLink = sp_link_create_from_string(*linkToParse);
   if(parsedLink != nullptr) {
     sp_linktype linkType = sp_link_type(parsedLink);
@@ -112,134 +109,136 @@ NAN_METHOD(NodeSpotify::createFromLink) {
         break;
       }
       default:
-        out = NanUndefined();
+        out = Nan::Undefined();
     }
     sp_link_release(parsedLink);
   } else {
-    out = NanUndefined();
+    out = Nan::Undefined();
   }
-  NanReturnValue(out);
+  info.GetReturnValue().Set(out);
 }
 
 NAN_METHOD(NodeSpotify::login) {
-  NanScope();
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
-  String::Utf8Value v8User(args[0]->ToString());
-  String::Utf8Value v8Password(args[1]->ToString());
-  bool rememberMe = args[2]->ToBoolean()->Value();
-  bool withRemembered = args[3]->ToBoolean()->Value();
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
+  String::Utf8Value v8User(info[0]->ToString());
+  String::Utf8Value v8Password(info[1]->ToString());
+  bool rememberMe = info[2]->ToBoolean()->Value();
+  bool withRemembered = info[3]->ToBoolean()->Value();
   std::string user(*v8User);
   std::string password(*v8Password);
   nodeSpotify->spotify->login(user, password, rememberMe, withRemembered);
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(NodeSpotify::logout) {
-  NanScope();
-  if(args.Length() > 0) {
-    SessionCallbacks::logoutCallback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
+  if(info.Length() > 0) {
+    SessionCallbacks::logoutCallback.SetFunction(info[0].As<Function>());
   }
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
   nodeSpotify->spotify->logout();
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_GETTER(NodeSpotify::getPlaylistContainer) {
-  NanScope();
   NodePlaylistContainer* nodePlaylistContainer = new NodePlaylistContainer(application->playlistContainer);
-  NanReturnValue(nodePlaylistContainer->createInstance());
+  info.GetReturnValue().Set(nodePlaylistContainer->createInstance());
 }
 
 NAN_GETTER(NodeSpotify::getRememberedUser) {
-  NanScope();
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
-  NanReturnValue(NanNew<String>(nodeSpotify->spotify->rememberedUser().c_str()));
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodeSpotify->spotify->rememberedUser().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeSpotify::getSessionUser) {
-  NanScope();
-  NodeSpotify* nodeSpotify = node::ObjectWrap::Unwrap<NodeSpotify>(args.This());
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
   NodeUser* nodeUser = new NodeUser(std::move(nodeSpotify->spotify->sessionUser()));
-  NanReturnValue(nodeUser->createInstance());
+  info.GetReturnValue().Set(nodeUser->createInstance());
 }
 
 NAN_GETTER(NodeSpotify::getConstants) {
-  NanScope();
-  Local<Object> constants = NanNew<Object>();
-  constants->Set(NanNew<String>("ARTISTBROWSE_FULL"), NanNew<Number>(SP_ARTISTBROWSE_FULL));
-  constants->Set(NanNew<String>("ARTISTBROWSE_NO_TRACKS"), NanNew<Number>(SP_ARTISTBROWSE_NO_TRACKS));
-  constants->Set(NanNew<String>("ARTISTBROWSE_NO_ALBUMS"), NanNew<Number>(SP_ARTISTBROWSE_NO_ALBUMS));
+  Local<Object> constants = Nan::New<Object>();
+  constants->Set(Nan::New<String>("ARTISTBROWSE_FULL").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_FULL));
+  constants->Set(Nan::New<String>("ARTISTBROWSE_NO_TRACKS").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_NO_TRACKS));
+  constants->Set(Nan::New<String>("ARTISTBROWSE_NO_ALBUMS").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_NO_ALBUMS));
 
-  constants->Set(NanNew<String>("PLAYLIST_TYPE_PLAYLIST"), NanNew<Number>(SP_PLAYLIST_TYPE_PLAYLIST));
-  constants->Set(NanNew<String>("PLAYLIST_TYPE_START_FOLDER"), NanNew<Number>(SP_PLAYLIST_TYPE_START_FOLDER));
-  constants->Set(NanNew<String>("PLAYLIST_TYPE_END_FOLDER"), NanNew<Number>(SP_PLAYLIST_TYPE_END_FOLDER));
-  constants->Set(NanNew<String>("PLAYLIST_TYPE_PLACEHOLDER"), NanNew<Number>(SP_PLAYLIST_TYPE_PLACEHOLDER));
+  constants->Set(Nan::New<String>("PLAYLIST_TYPE_PLAYLIST").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_PLAYLIST));
+  constants->Set(Nan::New<String>("PLAYLIST_TYPE_START_FOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_START_FOLDER));
+  constants->Set(Nan::New<String>("PLAYLIST_TYPE_END_FOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_END_FOLDER));
+  constants->Set(Nan::New<String>("PLAYLIST_TYPE_PLACEHOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_PLACEHOLDER));
 
 
-  constants->Set(NanNew<String>("SP_TRACK_AVAILABILITY_UNAVAILABLE"), NanNew<Number>(SP_TRACK_AVAILABILITY_UNAVAILABLE));
-  constants->Set(NanNew<String>("SP_TRACK_AVAILABILITY_AVAILABLE"), NanNew<Number>(SP_TRACK_AVAILABILITY_AVAILABLE));
-  constants->Set(NanNew<String>("SP_TRACK_AVAILABILITY_NOT_STREAMABLE"), NanNew<Number>(SP_TRACK_AVAILABILITY_NOT_STREAMABLE));
-  constants->Set(NanNew<String>("SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST"), NanNew<Number>(SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST));
+  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_UNAVAILABLE").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_UNAVAILABLE));
+  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_AVAILABLE").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_AVAILABLE));
+  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_NOT_STREAMABLE").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_NOT_STREAMABLE));
+  constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST));
 
-  NanReturnValue(constants);
+  info.GetReturnValue().Set(constants);
 }
 
 #ifdef NODE_SPOTIFY_NATIVE_SOUND
 NAN_METHOD(NodeSpotify::useNativeAudio) {
-  NanScope();
   //Since the old audio handler has to be deleted first, do an empty reset.
   application->audioHandler.reset();
   application->audioHandler = std::unique_ptr<AudioHandler>(new NativeAudioHandler());
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 #endif
 
 NAN_METHOD(NodeSpotify::useNodejsAudio) {
-  NanScope();
-  if(args.Length() < 1) {
-    return NanThrowError("useNodjsAudio needs a function as its first argument.");
+  if(info.Length() < 1) {
+    Nan::ThrowError("useNodjsAudio needs a function as its first argument.");
+    return;
   }
   //Since the old audio handler has to be deleted first, do an empty reset.
   application->audioHandler.reset();
-  auto callback = std::unique_ptr<NanCallback>(new NanCallback(args[0].As<Function>()));
-  application->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(std::move(callback)));
+  application->audioHandler = std::unique_ptr<AudioHandler>(new NodeAudioHandler(info[0].As<Function>()));
 
-  Handle<Function> needMoreDataSetter = NanNew<FunctionTemplate>(NodeAudioHandler::setNeedMoreData)->GetFunction();
-  NanReturnValue(needMoreDataSetter);
+  Local<Function> needMoreDataSetter = Nan::New<FunctionTemplate>(NodeAudioHandler::setNeedMoreData)->GetFunction();
+  info.GetReturnValue().Set(needMoreDataSetter);
 }
 
 NAN_METHOD(NodeSpotify::on) {
-  NanScope();
-  if(args.Length() < 1 || !args[0]->IsObject()) {
-    return NanThrowError("on needs an object as its first argument.");
+  if(info.Length() < 1 || !info[0]->IsObject()) {
+    Nan::ThrowError("on needs an object as its first argument.");
+    return;
   }
-  Handle<Object> callbacks = args[0]->ToObject();
-  Handle<String> metadataUpdatedKey = NanNew<String>("metadataUpdated");
-  Handle<String> readyKey = NanNew<String>("ready");
-  Handle<String> logoutKey = NanNew<String>("logout");
-  Handle<String> playTokenLostKey = NanNew<String>("playTokenLost");
-  SessionCallbacks::metadataUpdatedCallback = V8Utils::getFunctionFromObject(callbacks, metadataUpdatedKey);
-  SessionCallbacks::loginCallback = V8Utils::getFunctionFromObject(callbacks, readyKey);
-  SessionCallbacks::logoutCallback = V8Utils::getFunctionFromObject(callbacks, logoutKey);
-  SessionCallbacks::playTokenLostCallback = V8Utils::getFunctionFromObject(callbacks, playTokenLostKey);
-  NanReturnUndefined();
+  Handle<Object> callbacks = info[0]->ToObject();
+  Handle<String> metadataUpdatedKey = Nan::New<String>("metadataUpdated").ToLocalChecked();
+  if(callbacks->Has(metadataUpdatedKey)) {
+    SessionCallbacks::metadataUpdatedCallback.SetFunction(callbacks->Get(metadataUpdatedKey).As<Function>());
+  }
+
+  Handle<String> readyKey = Nan::New<String>("ready").ToLocalChecked();
+  if(callbacks->Has(readyKey)) {
+    SessionCallbacks::loginCallback.SetFunction(callbacks->Get(readyKey).As<Function>());
+  }
+
+  Handle<String> logoutKey = Nan::New<String>("logout").ToLocalChecked();
+  if(callbacks->Has(logoutKey)) {
+    SessionCallbacks::logoutCallback.SetFunction(callbacks->Get(logoutKey).As<Function>());
+  }
+
+  Handle<String> playTokenLostKey = Nan::New<String>("playTokenLost").ToLocalChecked();
+  if(callbacks->Has(playTokenLostKey)) {
+    SessionCallbacks::playTokenLostCallback.SetFunction(callbacks->Get(playTokenLostKey).As<Function>());
+  }
+  info.GetReturnValue().SetUndefined();
 }
 
 void NodeSpotify::init() {
-  NanScope();
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "login", login);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "logout", logout);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "createFromLink", createFromLink);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
+  Nan::SetPrototypeMethod(constructorTemplate, "login", login);
+  Nan::SetPrototypeMethod(constructorTemplate, "logout", logout);
+  Nan::SetPrototypeMethod(constructorTemplate, "createFromLink", createFromLink);
+  Nan::SetPrototypeMethod(constructorTemplate, "on", on);
 #ifdef NODE_SPOTIFY_NATIVE_SOUND
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "useNativeAudio", useNativeAudio);
+  Nan::SetPrototypeMethod(constructorTemplate, "useNativeAudio", useNativeAudio);
 #endif
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "useNodejsAudio", useNodejsAudio);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("rememberedUser"), getRememberedUser);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("sessionUser"), getSessionUser);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("playlistContainer"), getPlaylistContainer);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("constants"), getConstants);
+  Nan::SetPrototypeMethod(constructorTemplate, "useNodejsAudio", useNodejsAudio);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("rememberedUser").ToLocalChecked(), getRememberedUser);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("sessionUser").ToLocalChecked(), getSessionUser);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("playlistContainer").ToLocalChecked(), getPlaylistContainer);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("constants").ToLocalChecked(), getConstants);
 
-  NanAssignPersistent(NodeSpotify::constructorTemplate, constructorTemplate);
+  NodeSpotify::constructorTemplate.Reset(constructorTemplate);
 }

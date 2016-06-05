@@ -10,7 +10,7 @@
       "src/callbacks/SearchCallbacks.cc", "src/callbacks/AlbumBrowseCallbacks.cc",
       "src/callbacks/ArtistBrowseCallbacks.cc", "src/callbacks/PlaylistContainerCallbacksHolder.cc",
 
-      "src/utils/ImageUtils.cc", "src/utils/V8Utils.cc",
+      "src/utils/ImageUtils.cc",
 
       "src/objects/spotify/Track.cc", "src/objects/spotify/Artist.cc",
       "src/objects/spotify/Playlist.cc", "src/objects/spotify/PlaylistContainer.cc",

@@ -19,6 +19,6 @@
     "url": "https://github.com/FrontierPsychiatrist/node-spotify"
   },
   "dependencies": {
-    "nan": "^1.6.2"
+    "nan": "2.3.5"
   }
 }
