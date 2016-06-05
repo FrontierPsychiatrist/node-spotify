@@ -66,7 +66,7 @@ function addMethodsToPrototypes(sp) {
 var beefedupSpotify = function(options) {
   var spotify = _spotify(options);
   addMethodsToPrototypes(spotify);
-  spotify.version = '0.7.1';
+  spotify.version = '0.7.2';
 
   var _on = spotify.on;
   spotify.on = function(callbacks) {
