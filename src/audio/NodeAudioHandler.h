@@ -5,7 +5,6 @@
 
 #include <nan.h>
 #include <uv.h>
-#include <memory>
 
 #include <node_version.h>
 
@@ -15,7 +14,7 @@
  */
 class NodeAudioHandler : public AudioHandler {
 public:
-  NodeAudioHandler(std::unique_ptr<NanCallback> musicDeliveryCallback);
+  NodeAudioHandler(v8::Local<v8::Function> musicDeliveryCallback);
   ~NodeAudioHandler();
   void setStopped(bool stopped);
   static NAN_METHOD(setNeedMoreData);
@@ -23,7 +22,7 @@ protected:
   void afterMusicDelivery(const sp_audioformat* format);
   bool dataNeeded();
 private:
-  std::unique_ptr<NanCallback> musicDeliveryCallback;
+  Nan::Callback musicDeliveryCallback;
   uv_timer_t musicTimer;
   bool needMoreData;
   bool stopped;

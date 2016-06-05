@@ -1,3 +1,8 @@
+0.7.2
+-----
+* node-spotify now compiles on NodeJS 0.10, 0.12, 4.x, 5.x, 6.x
+* KNOWN BUG: spotify.player.off does not work anymore
+
 0.7.1
 -----
 * FEATURE: Track availability (thanks drsounds!)

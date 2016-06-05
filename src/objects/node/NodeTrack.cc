@@ -11,91 +11,81 @@ NodeTrack::~NodeTrack() {
 }
 
 NAN_GETTER(NodeTrack::getName) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
-  NanReturnValue(NanNew<String>(nodeTrack->track->name().c_str()));
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodeTrack->track->name().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeTrack::getLink) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
-  NanReturnValue(NanNew<String>(nodeTrack->track->link().c_str()));
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodeTrack->track->link().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodeTrack::getDuration) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
-  NanReturnValue(NanNew<Integer>(nodeTrack->track->duration()/1000));
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  info.GetReturnValue().Set(Nan::New<Integer>(nodeTrack->track->duration()/1000));
 }
 
 NAN_GETTER(NodeTrack::getAvailability) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
-  NanReturnValue(NanNew<Integer>(nodeTrack->track->getAvailability()));
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  info.GetReturnValue().Set(Nan::New<Integer>(nodeTrack->track->getAvailability()));
 }
 
 NAN_GETTER(NodeTrack::getPopularity) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
-  NanReturnValue(NanNew<Integer>(nodeTrack->track->popularity()));
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  info.GetReturnValue().Set(Nan::New<Integer>(nodeTrack->track->popularity()));
 }
 
 NAN_GETTER(NodeTrack::getArtists) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
-  Local<Array> jsArtists = NanNew<Array>(nodeTrack->track->artists().size());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  Local<Array> jsArtists = Nan::New<Array>(nodeTrack->track->artists().size());
   for(int i = 0; i < (int)nodeTrack->track->artists().size(); i++) {
     if(nodeTrack->track->artists()[i]) {
       NodeArtist* nodeArtist = new NodeArtist(std::move(nodeTrack->track->artists()[i]));
-      jsArtists->Set(NanNew<Number>(i), nodeArtist->createInstance());
+      jsArtists->Set(Nan::New<Number>(i), nodeArtist->createInstance());
     } else {
-      jsArtists->Set(NanNew<Number>(i), NanUndefined());
+      jsArtists->Set(Nan::New<Number>(i), Nan::Undefined());
     }
   }
-  NanReturnValue(jsArtists);
+  info.GetReturnValue().Set(jsArtists);
 }
 
 NAN_GETTER(NodeTrack::getAlbum) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   if(nodeTrack->track->album()) {
     NodeAlbum* nodeAlbum = new NodeAlbum(nodeTrack->track->album());
-    NanReturnValue(nodeAlbum->createInstance());
+    info.GetReturnValue().Set(nodeAlbum->createInstance());
   } else {
-    NanReturnUndefined();
+    info.GetReturnValue().SetUndefined();
   }
 }
 
 NAN_GETTER(NodeTrack::getStarred) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
-  NanReturnValue(NanNew<Boolean>(nodeTrack->track->starred()));
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  info.GetReturnValue().Set(Nan::New<Boolean>(nodeTrack->track->starred()));
 }
 
 NAN_SETTER(NodeTrack::setStarred) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
   nodeTrack->track->setStarred(value->ToBoolean()->Value());
 }
 
 NAN_GETTER(NodeTrack::isLoaded) {
-  NanScope();
-  NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(args.This());
-  NanReturnValue(NanNew<Boolean>(nodeTrack->track->isLoaded()));
+  NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(info.This());
+  info.GetReturnValue().Set(Nan::New<Boolean>(nodeTrack->track->isLoaded()));
 }
 
 Handle<FunctionTemplate> NodeTrack::init() {
-  NanEscapableScope();
-  Handle<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("name"), getName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("duration"), getDuration);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("artists"), getArtists);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("album"), getAlbum);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("starred"), getStarred, setStarred);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("popularity"), getPopularity);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("availability"), getAvailability);
-  NanAssignPersistent(NodeTrack::constructorTemplate, constructorTemplate);
-  return NanEscapeScope(constructorTemplate);
+  Nan::EscapableHandleScope scope;
+  Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("Track");
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("duration").ToLocalChecked(), getDuration);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("artists").ToLocalChecked(), getArtists);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("album").ToLocalChecked(), getAlbum);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("starred").ToLocalChecked(), getStarred, setStarred);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("popularity").ToLocalChecked(), getPopularity);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("availability").ToLocalChecked(), getAvailability);
+  NodeTrack::constructorTemplate.Reset(constructorTemplate);
+  return scope.Escape(constructorTemplate);
 }

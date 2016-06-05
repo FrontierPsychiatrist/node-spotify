@@ -5,7 +5,6 @@
 #include "NodeTrack.h"
 #include "NodeTrackExtended.h"
 #include "NodeUser.h"
-#include "../../utils/V8Utils.h"
 
 NodePlaylist::NodePlaylist(std::shared_ptr<Playlist> _playlist) : playlist(_playlist),
   playlistCallbacksHolder(this, _playlist->playlist) {
@@ -16,93 +15,88 @@ NodePlaylist::~NodePlaylist() {
 }
 
 NAN_SETTER(NodePlaylist::setName) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  NanUtf8String newName(value);
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  Nan::Utf8String newName(value);
   nodePlaylist->playlist->name(*newName);
 }
 
 NAN_GETTER(NodePlaylist::getName) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  NanReturnValue(NanNew<String>(nodePlaylist->playlist->name().c_str()));
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodePlaylist->playlist->name().c_str()).ToLocalChecked());
 }
 
 NAN_SETTER(NodePlaylist::setCollaborative) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   nodePlaylist->playlist->setCollaborative(value->ToBoolean()->Value());
 }
 
 NAN_GETTER(NodePlaylist::getCollaborative) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  NanReturnValue(NanNew<Boolean>(nodePlaylist->playlist->isCollaborative()));
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  info.GetReturnValue().Set(Nan::New<Boolean>(nodePlaylist->playlist->isCollaborative()));
 }
 
 NAN_GETTER(NodePlaylist::getLink) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  NanReturnValue(NanNew<String>(nodePlaylist->playlist->link().c_str()));
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodePlaylist->playlist->link().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodePlaylist::getDescription) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  NanReturnValue(NanNew<String>(nodePlaylist->playlist->description().c_str()));
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodePlaylist->playlist->description().c_str()).ToLocalChecked());
 }
 
 NAN_GETTER(NodePlaylist::getNumTracks) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  NanReturnValue(NanNew<Integer>(nodePlaylist->playlist->numTracks()));
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  info.GetReturnValue().Set(Nan::New<Integer>(nodePlaylist->playlist->numTracks()));
 }
 
 NAN_METHOD(NodePlaylist::getTrack) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  if(args.Length() < 1 || !args[0]->IsNumber()) {
-    return NanThrowError("getTrack needs a number as its first argument.");
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  if(info.Length() < 1 || !info[0]->IsNumber()) {
+    Nan::ThrowError("getTrack needs a number as its first argument.");
+    return;
   }
-  int position = args[0]->ToNumber()->IntegerValue();
+  int position = info[0]->ToNumber()->IntegerValue();
   if(position >= nodePlaylist->playlist->numTracks() || position < 0) {
-    return NanThrowError("Track index out of bounds");
+    Nan::ThrowError("Track index out of bounds");
+    return;
   }
   std::shared_ptr<TrackExtended> track = nodePlaylist->playlist->getTrack(position);
   NodeTrackExtended* nodeTrack = new NodeTrackExtended(track);
-  NanReturnValue(nodeTrack->createInstance());
+  info.GetReturnValue().Set(nodeTrack->createInstance());
 }
 
 NAN_METHOD(NodePlaylist::addTracks) {
-  NanScope();
-  if(args.Length() < 2 || !args[0]->IsArray() || !args[1]->IsNumber()) {
-    return NanThrowError("addTracks needs an array and a number as its arguments.");
+  if(info.Length() < 2 || !info[0]->IsArray() || !info[1]->IsNumber()) {
+    Nan::ThrowError("addTracks needs an array and a number as its arguments.");
+    return;
   }
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  Handle<Array> trackArray = Handle<Array>::Cast(args[0]);
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  Handle<Array> trackArray = Handle<Array>::Cast(info[0]);
   std::vector<std::shared_ptr<Track>> tracks(trackArray->Length());
   for(unsigned int i = 0; i < trackArray->Length(); i++) {
-    Handle<Object> trackObject = trackArray->Get(i)->ToObject();
-    NodeTrack* nodeTrack = node::ObjectWrap::Unwrap<NodeTrack>(trackObject);
+    Local<Object> trackObject = trackArray->Get(i)->ToObject();
+    NodeTrack* nodeTrack = Nan::ObjectWrap::Unwrap<NodeTrack>(trackObject);
     tracks[i] = nodeTrack->track;
   }
-  int position = args[1]->ToNumber()->IntegerValue();
+  int position = info[1]->ToNumber()->IntegerValue();
   try {
     nodePlaylist->playlist->addTracks(tracks, position);
   } catch(const TracksNotAddedException& e) {
-    return NanThrowError(e.message.c_str());
+    Nan::ThrowError(e.message.c_str());
+    return;
   }
 
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(NodePlaylist::removeTracks) {
-  NanScope();
-  if(args.Length() < 1 || !args[0]->IsArray()) {
-    return NanThrowError("removeTracks needs an array as its first argument.");
+  if(info.Length() < 1 || !info[0]->IsArray()) {
+    Nan::ThrowError("removeTracks needs an array as its first argument.");
+    return;
   }
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  Handle<Array> trackPositionsArray = Handle<Array>::Cast(args[0]);
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  Handle<Array> trackPositionsArray = Handle<Array>::Cast(info[0]);
   int trackPositions[trackPositionsArray->Length()];
   for(unsigned int i = 0; i < trackPositionsArray->Length(); i++) {
     trackPositions[i] = trackPositionsArray->Get(i)->ToNumber()->IntegerValue();
@@ -110,102 +104,120 @@ NAN_METHOD(NodePlaylist::removeTracks) {
   try {
     nodePlaylist->playlist->removeTracks(trackPositions, trackPositionsArray->Length());
   } catch(const TracksNotRemoveableException& e) {
-    return NanThrowError("Tracks not removeable, permission denied.");
+    Nan::ThrowError("Tracks not removeable, permission denied.");
+    return;
   }
 
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(NodePlaylist::reorderTracks) {
-  NanScope();
-  if(args.Length() < 2 || !args[0]->IsArray() || !args[1]->IsNumber()) {
-    return NanThrowError("reorderTracks needs an array and a numer as its arguments.");
+  if(info.Length() < 2 || !info[0]->IsArray() || !info[1]->IsNumber()) {
+    Nan::ThrowError("reorderTracks needs an array and a numer as its arguments.");
+    return;
   }
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  Handle<Array> trackPositionsArray = Handle<Array>::Cast(args[0]);
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  Handle<Array> trackPositionsArray = Handle<Array>::Cast(info[0]);
   int trackPositions[trackPositionsArray->Length()];
-  int newPosition = args[1]->ToNumber()->IntegerValue();
+  int newPosition = info[1]->ToNumber()->IntegerValue();
   for(unsigned int i = 0; i < trackPositionsArray->Length(); i++) {
     trackPositions[i] = trackPositionsArray->Get(i)->ToNumber()->IntegerValue();
   }
   try {
     nodePlaylist->playlist->reorderTracks(trackPositions, trackPositionsArray->Length(), newPosition);
   } catch(const TracksNotReorderableException& e) {
-    return NanThrowError(e.message.c_str());
+    Nan::ThrowError(e.message.c_str());
+    return;
   }
 
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_GETTER(NodePlaylist::isLoaded) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  NanReturnValue(NanNew<Boolean>(nodePlaylist->playlist->isLoaded()));
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  info.GetReturnValue().Set(Nan::New<Boolean>(nodePlaylist->playlist->isLoaded()));
 }
 
 NAN_GETTER(NodePlaylist::getOwner) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  Handle<Value> owner;
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  Local<Value> owner;
   if(nodePlaylist->playlist->owner()) {
     owner = (new NodeUser(nodePlaylist->playlist->owner()))->createInstance();
   }
-  NanReturnValue(owner);
+  info.GetReturnValue().Set(owner);
 }
 
 /**
   Set all callbacks for this playlist. Replaces all old callbacks.
 **/
 NAN_METHOD(NodePlaylist::on) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
-  if(args.Length() < 1 || !args[0]->IsObject()) {
-    return NanThrowError("on needs an object as its first argument.");
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
+  if(info.Length() < 1 || !info[0]->IsObject()) {
+    Nan::ThrowError("on needs an object as its first argument.");
+    return;
   }
-  Handle<Object> callbacks = args[0]->ToObject();
-  Handle<String> playlistRenamedKey = NanNew<String>("playlistRenamed");
-  Handle<String> tracksMovedKey = NanNew<String>("tracksMoved");
-  Handle<String> tracksAddedKey = NanNew<String>("tracksAdded");
-  Handle<String> tracksRemovedKey = NanNew<String>("tracksRemoved");
-  Handle<String> trackCreatedChangedKey = NanNew<String>("trackCreatedChanged");
-  Handle<String> trackSeenChangedKey = NanNew<String>("trackSeenChanged");
-  Handle<String> trackMessageChangedKey = NanNew<String>("trackMessageChanged");
-  nodePlaylist->playlistCallbacksHolder.playlistRenamedCallback = V8Utils::getFunctionFromObject(callbacks, playlistRenamedKey);
-  nodePlaylist->playlistCallbacksHolder.tracksAddedCallback = V8Utils::getFunctionFromObject(callbacks, tracksAddedKey);
-  nodePlaylist->playlistCallbacksHolder.tracksMovedCallback = V8Utils::getFunctionFromObject(callbacks, tracksMovedKey);
-  nodePlaylist->playlistCallbacksHolder.tracksRemovedCallback = V8Utils::getFunctionFromObject(callbacks, tracksRemovedKey);
-  nodePlaylist->playlistCallbacksHolder.trackCreatedChangedCallback = V8Utils::getFunctionFromObject(callbacks, trackCreatedChangedKey);
-  nodePlaylist->playlistCallbacksHolder.trackSeenChangedCallback = V8Utils::getFunctionFromObject(callbacks, trackSeenChangedKey);
-  nodePlaylist->playlistCallbacksHolder.trackMessageChangedCallback = V8Utils::getFunctionFromObject(callbacks, trackMessageChangedKey);
+  Handle<Object> callbacks = info[0]->ToObject();
+  Handle<String> playlistRenamedKey = Nan::New<String>("playlistRenamed").ToLocalChecked();
+  if(callbacks->Has(playlistRenamedKey)) {
+    nodePlaylist->playlistCallbacksHolder.playlistRenamedCallback.SetFunction(callbacks->Get(playlistRenamedKey).As<Function>());
+  }
+
+  Handle<String> tracksMovedKey = Nan::New<String>("tracksMoved").ToLocalChecked();
+  if(callbacks->Has(tracksMovedKey)) {
+    nodePlaylist->playlistCallbacksHolder.tracksAddedCallback.SetFunction(callbacks->Get(tracksMovedKey).As<Function>());
+  }
+
+  Handle<String> tracksAddedKey = Nan::New<String>("tracksAdded").ToLocalChecked();
+  if(callbacks->Has(tracksAddedKey)) {
+    nodePlaylist->playlistCallbacksHolder.tracksMovedCallback.SetFunction(callbacks->Get(tracksAddedKey).As<Function>());
+  }
+
+  Handle<String> tracksRemovedKey = Nan::New<String>("tracksRemoved").ToLocalChecked();
+  if(callbacks->Has(tracksRemovedKey)) {
+    nodePlaylist->playlistCallbacksHolder.tracksRemovedCallback.SetFunction(callbacks->Get(tracksRemovedKey).As<Function>());
+  }
+
+  Handle<String> trackCreatedChangedKey = Nan::New<String>("trackCreatedChanged").ToLocalChecked();
+  if(callbacks->Has(trackCreatedChangedKey)) {
+    nodePlaylist->playlistCallbacksHolder.trackCreatedChangedCallback.SetFunction(callbacks->Get(trackCreatedChangedKey).As<Function>());
+  }
+
+  Handle<String> trackSeenChangedKey = Nan::New<String>("trackSeenChanged").ToLocalChecked();
+  if(callbacks->Has(trackSeenChangedKey)) {
+    nodePlaylist->playlistCallbacksHolder.trackSeenChangedCallback.SetFunction(callbacks->Get(trackSeenChangedKey).As<Function>());
+  }
+
+  Handle<String> trackMessageChangedKey = Nan::New<String>("trackMessageChanged").ToLocalChecked();
+  if(callbacks->Has(trackMessageChangedKey)) {
+    nodePlaylist->playlistCallbacksHolder.trackMessageChangedCallback.SetFunction(callbacks->Get(trackMessageChangedKey).As<Function>());
+  }
   nodePlaylist->playlistCallbacksHolder.setCallbacks();
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(NodePlaylist::off) {
-  NanScope();
-  NodePlaylist* nodePlaylist = node::ObjectWrap::Unwrap<NodePlaylist>(args.This());
+  NodePlaylist* nodePlaylist = Nan::ObjectWrap::Unwrap<NodePlaylist>(info.This());
   nodePlaylist->playlistCallbacksHolder.unsetCallbacks();
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 void NodePlaylist::init() {
-  NanScope();
-  Local<FunctionTemplate> constructorTemplate = NanNew<FunctionTemplate>();
-  constructorTemplate->SetClassName(NanNew<String>("Playlist"));
+  Local<FunctionTemplate> constructorTemplate = Nan::New<FunctionTemplate>();
+  constructorTemplate->SetClassName(Nan::New<String>("Playlist").ToLocalChecked());
   constructorTemplate->InstanceTemplate()->SetInternalFieldCount(1);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "on", on);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "off", off);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("name"), getName, setName);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("collaborative"), getCollaborative, setCollaborative);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("link"), getLink);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("description"), getDescription);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("isLoaded"), isLoaded);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("owner"), getOwner);
-  constructorTemplate->InstanceTemplate()->SetAccessor(NanNew<String>("numTracks"), getNumTracks);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "getTrack", getTrack);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "addTracks", addTracks);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "removeTracks", removeTracks);
-  NODE_SET_PROTOTYPE_METHOD(constructorTemplate, "reorderTracks", reorderTracks);
+  Nan::SetPrototypeMethod(constructorTemplate, "on", on);
+  Nan::SetPrototypeMethod(constructorTemplate, "off", off);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("name").ToLocalChecked(), getName, setName);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("collaborative").ToLocalChecked(), getCollaborative, setCollaborative);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("description").ToLocalChecked(), getDescription);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("owner").ToLocalChecked(), getOwner);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("numTracks").ToLocalChecked(), getNumTracks);
+  Nan::SetPrototypeMethod(constructorTemplate, "getTrack", getTrack);
+  Nan::SetPrototypeMethod(constructorTemplate, "addTracks", addTracks);
+  Nan::SetPrototypeMethod(constructorTemplate, "removeTracks", removeTracks);
+  Nan::SetPrototypeMethod(constructorTemplate, "reorderTracks", reorderTracks);
 
-  NanAssignPersistent(NodePlaylist::constructorTemplate, constructorTemplate);
+  NodePlaylist::constructorTemplate.Reset(constructorTemplate);
 }

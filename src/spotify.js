@@ -56,7 +56,7 @@ function addMethodsToPrototypes(sp) {
 
   sp.internal.protos.Playlist.prototype.getTracks = function() {
     return arrayGetter('Track', this);
-  }
+  };
 
   sp.internal.protos.PlaylistContainer.prototype.getPlaylists = function () {
     return arrayGetter('Playlist', this);
@@ -66,7 +66,7 @@ function addMethodsToPrototypes(sp) {
 var beefedupSpotify = function(options) {
   var spotify = _spotify(options);
   addMethodsToPrototypes(spotify);
-  spotify.version = '0.7.1';
+  spotify.version = '0.7.2';
 
   var _on = spotify.on;
   spotify.on = function(callbacks) {
@@ -80,10 +80,10 @@ var beefedupSpotify = function(options) {
       callbacks.metadataUpdated = metadataUpdater.metadataUpdated;
     }
     _on.call(spotify, callbacks);
-  }
+  };
 
   spotify.waitForLoaded = metadataUpdater.waitForLoaded;
   return spotify;
-}
+};
 
 module.exports = beefedupSpotify;

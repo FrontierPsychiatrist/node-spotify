@@ -9,8 +9,9 @@ extern Application* application;
 void SessionCallbacks::end_of_track(sp_session* session) {
   sp_session_player_unload(application->session);
 
-  if(endOfTrackCallback && !endOfTrackCallback->IsEmpty()) {
-    endOfTrackCallback->Call(0, {});
+  if(!endOfTrackCallback.IsEmpty()) {
+    Nan::HandleScope scope;
+    endOfTrackCallback.Call(0, {});
   }
 }
 
