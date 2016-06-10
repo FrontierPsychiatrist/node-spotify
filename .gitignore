@@ -7,6 +7,7 @@ build/
 settings/
 cache/
 events.js
+lib/binding/
 
 #vim
 *.swp

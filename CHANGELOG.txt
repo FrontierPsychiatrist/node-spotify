@@ -1,3 +1,7 @@
+0.7.3
+-----
+* distribute with node-pre-gyp
+
 0.7.2
 -----
 * node-spotify now compiles on NodeJS 0.10, 0.12, 4.x, 5.x, 6.x
