@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - "6"
+  - "5"
+  - "4"
+  - "0.12"
+  - "0.10"
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+before_script:
+  - wget https://developer.spotify.com/download/libspotify/libspotify-12.1.51-Linux-x86_64-release.tar.gz
+  - tar xzf /tmp/libspotify.tar.gz
+  - pushd libspotify-12.1.51-Linux-x86_64-release && sudo make install && popd
