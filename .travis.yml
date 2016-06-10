@@ -1,3 +1,4 @@
+sudo: false
 language: node_js
 node_js:
   - "6"
@@ -5,9 +6,10 @@ node_js:
   - "4"
   - "0.12"
   - "0.10"
-sudo: false
 env:
   - CXX=g++-4.8
+  - CPATH=$TRAVIS_BUILD_DIR/libspotify-12.1.51-Linux-x86_64-release/include
+  - LIBRARY_PATH=$TRAVIS_BUILD_DIR/libspotify-12.1.51-Linux-x86_64-release/lib
 addons:
   apt:
     sources:
@@ -18,4 +20,3 @@ addons:
 before_install:
   - wget https://developer.spotify.com/download/libspotify/libspotify-12.1.51-Linux-x86_64-release.tar.gz
   - tar xzf libspotify-12.1.51-Linux-x86_64-release.tar.gz
-  - pushd libspotify-12.1.51-Linux-x86_64-release && make install && popd
