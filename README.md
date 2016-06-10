@@ -1,5 +1,6 @@
 node-spotify
 ============
+[![Build Status](https://travis-ci.org/FrontierPsychiatrist/node-spotify.svg?branch=development)](https://travis-ci.org/FrontierPsychiatrist/node-spotify)
 *Important note*
 ----------------
 Spotify has declared [1] libspotify, which this project is based on as "no longer under active development". A newer library will be released "later this year".
