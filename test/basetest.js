@@ -1,4 +1,4 @@
-var spotify = require('../build/Debug/spotify')({appkeyFile: '../spotify_appkey.key'});
+var spotify = require('../')({appkeyFile: '../spotify_appkey.key'});
 var loginData = require('./loginData.js');
 
 /*

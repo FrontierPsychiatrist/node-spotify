@@ -1,6 +1,6 @@
 {
   "name": "node-spotify",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "A wrapper for libspotify",
   "keywords": [
     "spotify",
@@ -13,12 +13,26 @@
   },
   "license": "MIT",
   "author": "Moritz Schulze <moritz.schulze@gmail.com> (http://www.node-spotify.com)",
-  "main": "./build/Release/spotify.js",
+  "main": "lib/spotify.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/FrontierPsychiatrist/node-spotify"
   },
+  "bundledDependencies": ["node-pre-gyp"],
+  "devDependencies": {
+    "aws-sdk": "~2.3"
+  },
   "dependencies": {
+    "node-pre-gyp": "0.6.x",
     "nan": "2.3.5"
+  },
+  "scripts": {
+    "install": "node-pre-gyp install --fallback-to-build"
+  },
+  "binary": {
+    "module_name": "nodespotify",
+    "module_path": "./lib/binding",
+    "host": "https://node-spotify.s3-eu-central-1.amazonaws.com",
+    "remote_path": "./{name}/{version}"
   }
 }

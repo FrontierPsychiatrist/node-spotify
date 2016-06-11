@@ -32,11 +32,6 @@
     "link_settings" : {
       "libraries": ["-lspotify"]
     },
-    "copies": [ {
-      "destination": "<(PRODUCT_DIR)",
-      "files": ["src/spotify.js", "src/metadataUpdater.js"]
-      }
-    ],
     "variables": {
       "native_audio%": 'true'
     },
@@ -67,6 +62,17 @@
         "link_settings" : { "libraries" : ["-lasound"] },
         "defines": ["NODE_SPOTIFY_NATIVE_SOUND"]
       }],
+    ]
+  },
+  {
+    "target_name": "action_after_build",
+    "type": "none",
+    "dependencies": [ "<(module_name)" ],
+    "copies": [
+      {
+        "files": [ "<(PRODUCT_DIR)/<(module_name).node" ],
+        "destination": "<(module_path)"
+      }
     ]
   }
   ]
