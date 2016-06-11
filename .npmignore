@@ -4,6 +4,8 @@ copyright.txt
 TODOS
 spotify_appkey.key
 test
+lib/binding
+build/
 
 #qt creator
 node-spotify.config
