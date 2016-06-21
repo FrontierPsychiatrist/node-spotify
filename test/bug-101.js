@@ -4,9 +4,8 @@ var ss = new stream.PassThrough();
 var baseTest = require('./basetest.js');
 var spotify = baseTest.spotify;
 spotify.useNodejsAudio(function(err, buffer) {
-  console.log('foo', buffer);
   if(err) throw err;
-  //ss.write(buffer);
+  ss.write(buffer);
   return true;
 });
 
@@ -22,5 +21,5 @@ function tests() {
     spotify.logout(function () {
       process.exit();
     });
-  }, 2000);
+  }, 1000);
 }
