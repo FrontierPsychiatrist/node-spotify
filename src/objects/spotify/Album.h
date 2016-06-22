@@ -23,7 +23,8 @@ public:
   Album(const Album& other);
   std::string name();
   std::string link();
-  std::string coverBase64();
+  std::string coverLink(sp_image_size size);
+  std::string coverBase64(sp_image_size size);
   std::vector<std::shared_ptr<Track>> tracks();
   std::string review();
   std::vector<std::string> copyrights();

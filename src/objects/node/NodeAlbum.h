@@ -19,6 +19,7 @@ public:
   static void init();
   static NAN_GETTER(getName);
   static NAN_GETTER(getLink);
+  static NAN_METHOD(getCoverLink);
   static NAN_METHOD(getCoverBase64);
   static NAN_METHOD(browse);
   static NAN_GETTER(getTracks);

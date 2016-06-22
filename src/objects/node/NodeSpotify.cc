@@ -166,6 +166,10 @@ NAN_GETTER(NodeSpotify::getConstants) {
   constants->Set(Nan::New<String>("ARTISTBROWSE_NO_TRACKS").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_NO_TRACKS));
   constants->Set(Nan::New<String>("ARTISTBROWSE_NO_ALBUMS").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_NO_ALBUMS));
 
+  constants->Set(Nan::New<String>("IMAGE_SIZE_NORMAL").ToLocalChecked(), Nan::New<Number>(SP_IMAGE_SIZE_NORMAL));
+  constants->Set(Nan::New<String>("IMAGE_SIZE_SMALL").ToLocalChecked(), Nan::New<Number>(SP_IMAGE_SIZE_SMALL));
+  constants->Set(Nan::New<String>("IMAGE_SIZE_LARGE").ToLocalChecked(), Nan::New<Number>(SP_IMAGE_SIZE_LARGE));
+
   constants->Set(Nan::New<String>("PLAYLIST_TYPE_PLAYLIST").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_PLAYLIST));
   constants->Set(Nan::New<String>("PLAYLIST_TYPE_START_FOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_START_FOLDER));
   constants->Set(Nan::New<String>("PLAYLIST_TYPE_END_FOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_END_FOLDER));
