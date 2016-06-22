@@ -6,6 +6,8 @@ spotify_appkey.key
 test
 lib/binding
 build/
+cache/
+settings/
 
 #qt creator
 node-spotify.config

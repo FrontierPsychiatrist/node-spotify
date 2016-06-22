@@ -18,12 +18,17 @@ public:
   static NAN_GETTER(getPlaylistContainer);
   static NAN_GETTER(getRememberedUser);
   static NAN_GETTER(getSessionUser);
+  static NAN_GETTER(getSessionUserCountry);
   static NAN_METHOD(createFromLink);
   static NAN_GETTER(getConstants);
 #ifdef NODE_SPOTIFY_NATIVE_SOUND
   static NAN_METHOD(useNativeAudio);
 #endif
   static NAN_METHOD(useNodejsAudio);
+  static NAN_METHOD(isScrobbling);
+  static NAN_METHOD(isScrobblingPossible);
+  static NAN_METHOD(setScrobbling);
+  static NAN_METHOD(setSocialCredentials);
   static NAN_METHOD(on);
   static void init();
 private:

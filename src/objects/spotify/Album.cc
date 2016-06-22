@@ -51,6 +51,18 @@ std::string Album::link() {
   return link;
 }
 
+std::string Album::coverLink(sp_image_size size) {
+  std::string link;
+  if(sp_album_is_loaded(album)) {
+    char linkChar[256];
+    sp_link* spLink = sp_link_create_from_album_cover(album, size);
+    sp_link_as_string(spLink, linkChar, 256);
+    link = std::string(linkChar);
+    sp_link_release(spLink);
+  }
+  return link;
+}
+
 std::vector<std::shared_ptr<Track>> Album::tracks() {
   std::vector<std::shared_ptr<Track>> tracks;
   if(sp_albumbrowse_is_loaded(albumBrowse)) {
@@ -91,10 +103,10 @@ std::unique_ptr<Artist> Album::artist() {
   return artist;
 }
 
-std::string Album::coverBase64() {
+std::string Album::coverBase64(sp_image_size size) {
   std::string cover;
   if(sp_album_is_loaded(album)) {
-    const byte* coverId = sp_album_cover(album, SP_IMAGE_SIZE_NORMAL);
+    const byte* coverId = sp_album_cover(album, size);
     if(coverId != nullptr) {
       sp_image* image = sp_image_create(application->session, coverId);
       if(sp_image_is_loaded(image)) {

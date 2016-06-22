@@ -18,6 +18,8 @@ function browseComplete(err, album) {
   console.log(album.artist);
   console.log('Review: ' + album.review);
   console.log(album.copyrights);
+  console.log(album.getCoverLink());
+  console.log(album.getCoverLink(spotify.constants.IMAGE_SIZE_LARGE));
   spotify.logout(function () {
     process.exit();
   });

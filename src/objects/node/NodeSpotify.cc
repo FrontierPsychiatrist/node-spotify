@@ -155,17 +155,35 @@ NAN_GETTER(NodeSpotify::getSessionUser) {
   info.GetReturnValue().Set(nodeUser->createInstance());
 }
 
+NAN_GETTER(NodeSpotify::getSessionUserCountry) {
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodeSpotify->spotify->sessionUserCountry().c_str()).ToLocalChecked());
+}
+
 NAN_GETTER(NodeSpotify::getConstants) {
   Local<Object> constants = Nan::New<Object>();
   constants->Set(Nan::New<String>("ARTISTBROWSE_FULL").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_FULL));
   constants->Set(Nan::New<String>("ARTISTBROWSE_NO_TRACKS").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_NO_TRACKS));
   constants->Set(Nan::New<String>("ARTISTBROWSE_NO_ALBUMS").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_NO_ALBUMS));
 
+  constants->Set(Nan::New<String>("IMAGE_SIZE_NORMAL").ToLocalChecked(), Nan::New<Number>(SP_IMAGE_SIZE_NORMAL));
+  constants->Set(Nan::New<String>("IMAGE_SIZE_SMALL").ToLocalChecked(), Nan::New<Number>(SP_IMAGE_SIZE_SMALL));
+  constants->Set(Nan::New<String>("IMAGE_SIZE_LARGE").ToLocalChecked(), Nan::New<Number>(SP_IMAGE_SIZE_LARGE));
+
   constants->Set(Nan::New<String>("PLAYLIST_TYPE_PLAYLIST").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_PLAYLIST));
   constants->Set(Nan::New<String>("PLAYLIST_TYPE_START_FOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_START_FOLDER));
   constants->Set(Nan::New<String>("PLAYLIST_TYPE_END_FOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_END_FOLDER));
   constants->Set(Nan::New<String>("PLAYLIST_TYPE_PLACEHOLDER").ToLocalChecked(), Nan::New<Number>(SP_PLAYLIST_TYPE_PLACEHOLDER));
 
+  constants->Set(Nan::New<String>("SOCIAL_PROVIDER_SPOTIFY").ToLocalChecked(), Nan::New<Number>(SP_SOCIAL_PROVIDER_SPOTIFY));
+  constants->Set(Nan::New<String>("SOCIAL_PROVIDER_FACEBOOK").ToLocalChecked(), Nan::New<Number>(SP_SOCIAL_PROVIDER_FACEBOOK));
+  constants->Set(Nan::New<String>("SOCIAL_PROVIDER_LASTFM").ToLocalChecked(), Nan::New<Number>(SP_SOCIAL_PROVIDER_LASTFM));
+
+  constants->Set(Nan::New<String>("SCROBBLING_STATE_USE_GLOBAL_SETTING").ToLocalChecked(), Nan::New<Number>(SP_SCROBBLING_STATE_USE_GLOBAL_SETTING));
+  constants->Set(Nan::New<String>("SCROBBLING_STATE_LOCAL_ENABLED").ToLocalChecked(), Nan::New<Number>(SP_SCROBBLING_STATE_LOCAL_ENABLED));
+  constants->Set(Nan::New<String>("SCROBBLING_STATE_LOCAL_DISABLED").ToLocalChecked(), Nan::New<Number>(SP_SCROBBLING_STATE_LOCAL_DISABLED));
+  constants->Set(Nan::New<String>("SCROBBLING_STATE_GLOBAL_ENABLED").ToLocalChecked(), Nan::New<Number>(SP_SCROBBLING_STATE_GLOBAL_ENABLED));
+  constants->Set(Nan::New<String>("SCROBBLING_STATE_GLOBAL_DISABLED").ToLocalChecked(), Nan::New<Number>(SP_SCROBBLING_STATE_GLOBAL_DISABLED));
 
   constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_UNAVAILABLE").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_UNAVAILABLE));
   constants->Set(Nan::New<String>("SP_TRACK_AVAILABILITY_AVAILABLE").ToLocalChecked(), Nan::New<Number>(SP_TRACK_AVAILABILITY_AVAILABLE));
@@ -225,6 +243,67 @@ NAN_METHOD(NodeSpotify::on) {
   info.GetReturnValue().SetUndefined();
 }
 
+NAN_METHOD(NodeSpotify::isScrobbling) {
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
+  if(info.Length() < 1 || !info[0]->IsNumber()) {
+    Nan::ThrowError("Please provide a social provider from spotify.constants.SOCIAL_PROVIDER_*");
+    return;
+  }
+  sp_social_provider provider = static_cast<sp_social_provider>(info[0]->ToNumber()->IntegerValue());
+  try {
+    info.GetReturnValue().Set(Nan::New<Number>(nodeSpotify->spotify->isScrobbling(provider)));
+  } catch(const SocialProviderScrobblingException& e) {
+    Nan::ThrowError(e.message.c_str());
+  }
+}
+
+NAN_METHOD(NodeSpotify::isScrobblingPossible) {
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
+  if(info.Length() < 1 || !info[0]->IsNumber()) {
+    Nan::ThrowError("Please provide a social provider from spotify.constants.SOCIAL_PROVIDER_*");
+    return;
+  }
+  sp_social_provider provider = static_cast<sp_social_provider>(info[0]->ToNumber()->IntegerValue());
+  try {
+    info.GetReturnValue().Set(Nan::New<Number>(nodeSpotify->spotify->isScrobblingPossible(provider)));
+  } catch(const SocialProviderScrobblingException& e) {
+    Nan::ThrowError(e.message.c_str());
+  }
+}
+
+NAN_METHOD(NodeSpotify::setScrobbling) {
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
+  if(info.Length() < 2 || !info[0]->IsNumber() || !info[1]->IsNumber()) {
+    Nan::ThrowError("Please provide a social provider from spotify.constants.SOCIAL_PROVIDER_* as the first argument and a state from spotify.constants.SCROBBLING_STATE* as the second.");
+    return;
+  }
+  sp_social_provider provider = static_cast<sp_social_provider>(info[0]->ToNumber()->IntegerValue());
+  sp_scrobbling_state state = static_cast<sp_scrobbling_state>(info[1]->ToNumber()->IntegerValue());
+  try {
+    nodeSpotify->spotify->setScrobbling(provider, state);
+  } catch(const SocialProviderScrobblingException& e) {
+    Nan::ThrowError(e.message.c_str());
+  }
+}
+
+NAN_METHOD(NodeSpotify::setSocialCredentials) {
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
+  if(info.Length() < 3 || !info[0]->IsNumber() || !info[1]->IsString() || !info[2]->IsString()) {
+    Nan::ThrowError("Please provide a social provider from spotify.constants.SOCIAL_PROVIDER_* and a username and password as parameters.");
+    return;
+  }
+  sp_social_provider provider = static_cast<sp_social_provider>(info[0]->ToNumber()->IntegerValue());
+  String::Utf8Value v8User(info[1]->ToString());
+  String::Utf8Value v8Password(info[2]->ToString());
+  std::string user(*v8User);
+  std::string password(*v8Password);
+  try {
+    nodeSpotify->spotify->setSocialCredentials(provider, user, password);
+  } catch(const SocialProviderScrobblingException& e) {
+    Nan::ThrowError(e.message.c_str());
+  }
+}
+
 void NodeSpotify::init() {
   Local<FunctionTemplate> constructorTemplate = NodeWrapped::init("Spotify");
   Nan::SetPrototypeMethod(constructorTemplate, "login", login);
@@ -235,8 +314,13 @@ void NodeSpotify::init() {
   Nan::SetPrototypeMethod(constructorTemplate, "useNativeAudio", useNativeAudio);
 #endif
   Nan::SetPrototypeMethod(constructorTemplate, "useNodejsAudio", useNodejsAudio);
+  Nan::SetPrototypeMethod(constructorTemplate, "isScrobbling", isScrobbling);
+  Nan::SetPrototypeMethod(constructorTemplate, "isScrobblingPossible", isScrobblingPossible);
+  Nan::SetPrototypeMethod(constructorTemplate, "setScrobbling", setScrobbling);
+  Nan::SetPrototypeMethod(constructorTemplate, "setSocialCredentials", setSocialCredentials);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("rememberedUser").ToLocalChecked(), getRememberedUser);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("sessionUser").ToLocalChecked(), getSessionUser);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("sessionUserCountry").ToLocalChecked(), getSessionUserCountry);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("playlistContainer").ToLocalChecked(), getPlaylistContainer);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("constants").ToLocalChecked(), getConstants);
 

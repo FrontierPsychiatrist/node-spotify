@@ -18,6 +18,11 @@ public:
   void logout();
   std::string rememberedUser();
   std::unique_ptr<User> sessionUser();
+  std::string sessionUserCountry();
+  sp_scrobbling_state isScrobbling(sp_social_provider provider);
+  bool isScrobblingPossible(sp_social_provider provider);
+  void setScrobbling(sp_social_provider provider, sp_scrobbling_state state);
+  void setSocialCredentials(sp_social_provider provider, std::string user, std::string password);
 private:
   sp_session* session;
   sp_session* createSession(SpotifyOptions options);

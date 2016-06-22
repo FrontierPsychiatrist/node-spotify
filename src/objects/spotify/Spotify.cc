@@ -90,3 +90,40 @@ std::unique_ptr<User> Spotify::sessionUser() {
   auto user = std::unique_ptr<User>(new User(sp_session_user(session)));
   return user;
 }
+
+std::string Spotify::sessionUserCountry() {
+  int code = sp_session_user_country(session);
+  return std::string({ static_cast<signed char>(code >> 8), static_cast<signed char>(code & 0xff)});
+}
+
+sp_scrobbling_state Spotify::isScrobbling(sp_social_provider provider) {
+  sp_scrobbling_state state;
+  sp_error error = sp_session_is_scrobbling(session, provider, &state);
+  if(SP_ERROR_OK != error) {
+    throw SocialProviderScrobblingException(sp_error_message(error));
+  }
+  return state;
+}
+
+bool Spotify::isScrobblingPossible(sp_social_provider provider) {
+  bool isPossible;
+  sp_error error = sp_session_is_scrobbling_possible(session, provider, &isPossible);
+  if(SP_ERROR_OK != error) {
+    throw SocialProviderScrobblingException(sp_error_message(error));
+  }
+  return isPossible;
+}
+
+void Spotify::setScrobbling(sp_social_provider provider, sp_scrobbling_state state) {
+  sp_error error = sp_session_set_scrobbling(session, provider, state);
+  if(SP_ERROR_OK != error) {
+    throw SocialProviderScrobblingException(sp_error_message(error));
+  }
+}
+
+void Spotify::setSocialCredentials(sp_social_provider provider, std::string user, std::string password) {
+  sp_error error = sp_session_set_social_credentials(session, provider, user.c_str(), password.c_str());
+  if(SP_ERROR_OK != error) {
+    throw SocialProviderScrobblingException(sp_error_message(error));
+  }
+}
