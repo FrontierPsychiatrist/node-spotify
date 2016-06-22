@@ -155,6 +155,11 @@ NAN_GETTER(NodeSpotify::getSessionUser) {
   info.GetReturnValue().Set(nodeUser->createInstance());
 }
 
+NAN_GETTER(NodeSpotify::getSessionUserCountry) {
+  NodeSpotify* nodeSpotify = Nan::ObjectWrap::Unwrap<NodeSpotify>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodeSpotify->spotify->sessionUserCountry().c_str()).ToLocalChecked());
+}
+
 NAN_GETTER(NodeSpotify::getConstants) {
   Local<Object> constants = Nan::New<Object>();
   constants->Set(Nan::New<String>("ARTISTBROWSE_FULL").ToLocalChecked(), Nan::New<Number>(SP_ARTISTBROWSE_FULL));
@@ -237,6 +242,7 @@ void NodeSpotify::init() {
   Nan::SetPrototypeMethod(constructorTemplate, "useNodejsAudio", useNodejsAudio);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("rememberedUser").ToLocalChecked(), getRememberedUser);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("sessionUser").ToLocalChecked(), getSessionUser);
+  Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("sessionUserCountry").ToLocalChecked(), getSessionUserCountry);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("playlistContainer").ToLocalChecked(), getPlaylistContainer);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("constants").ToLocalChecked(), getConstants);
 
