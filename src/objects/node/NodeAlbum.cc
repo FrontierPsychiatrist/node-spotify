@@ -23,9 +23,22 @@ NAN_GETTER(NodeAlbum::getLink) {
   info.GetReturnValue().Set(Nan::New<String>(nodeAlbum->album->link().c_str()).ToLocalChecked());
 }
 
-NAN_METHOD(NodeAlbum::getCoverBase64) {
+NAN_METHOD(NodeAlbum::getCoverLink) {
+  sp_image_size imageSize = SP_IMAGE_SIZE_NORMAL;
+  if(info.Length() > 0 && info[0]->IsNumber()) {
+    imageSize = static_cast<sp_image_size>(info[0]->ToNumber()->IntegerValue());
+  }
   NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
-  info.GetReturnValue().Set(Nan::New<String>(nodeAlbum->album->coverBase64().c_str()).ToLocalChecked());
+  info.GetReturnValue().Set(Nan::New<String>(nodeAlbum->album->coverLink(imageSize).c_str()).ToLocalChecked());
+}
+
+NAN_METHOD(NodeAlbum::getCoverBase64) {
+  sp_image_size imageSize = SP_IMAGE_SIZE_NORMAL;
+  if(info.Length() > 0 && info[0]->IsNumber()) {
+    imageSize = static_cast<sp_image_size>(info[0]->ToNumber()->IntegerValue());
+  }
+  NodeAlbum* nodeAlbum = Nan::ObjectWrap::Unwrap<NodeAlbum>(info.This());
+  info.GetReturnValue().Set(Nan::New<String>(nodeAlbum->album->coverBase64(imageSize).c_str()).ToLocalChecked());
 }
 
 NAN_METHOD(NodeAlbum::browse) {
@@ -91,6 +104,7 @@ void NodeAlbum::init() {
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("link").ToLocalChecked(), getLink);
   Nan::SetAccessor(constructorTemplate->InstanceTemplate(), Nan::New<String>("isLoaded").ToLocalChecked(), isLoaded);
   Nan::SetPrototypeMethod(constructorTemplate, "getCoverBase64", getCoverBase64);
+  Nan::SetPrototypeMethod(constructorTemplate, "getCoverLink", getCoverLink);
   Nan::SetPrototypeMethod(constructorTemplate, "browse", browse);
   NodeAlbum::constructorTemplate.Reset(constructorTemplate);
 }
