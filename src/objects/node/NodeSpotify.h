@@ -25,6 +25,10 @@ public:
   static NAN_METHOD(useNativeAudio);
 #endif
   static NAN_METHOD(useNodejsAudio);
+  static NAN_METHOD(isScrobbling);
+  static NAN_METHOD(isScrobblingPossible);
+  static NAN_METHOD(setScrobbling);
+  static NAN_METHOD(setSocialCredentials);
   static NAN_METHOD(on);
   static void init();
 private:
