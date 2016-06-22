@@ -1,3 +1,11 @@
+0.8.0
+-----
+* FEATURE: add isScrobbling, isScrobblingPossible, setScrobbling and setSocialCredentials methods
+* FEATURE: add album.getCoverLink()
+* FEATURE: add size parameter to album.getCoverBase64
+* FEATURE: add spotify.sessionUserCountry
+* FIX: NodeJS playback works again
+
 0.7.3
 -----
 * distribute with node-pre-gyp
