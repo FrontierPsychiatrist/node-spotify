@@ -18,6 +18,7 @@ public:
   void logout();
   std::string rememberedUser();
   std::unique_ptr<User> sessionUser();
+  std::string sessionUserCountry();
 private:
   sp_session* session;
   sp_session* createSession(SpotifyOptions options);
