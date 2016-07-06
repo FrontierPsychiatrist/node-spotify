@@ -1,6 +1,6 @@
 {
   "name": "node-spotify",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "A wrapper for libspotify",
   "keywords": [
     "spotify",
@@ -18,7 +18,6 @@
     "type": "git",
     "url": "https://github.com/FrontierPsychiatrist/node-spotify"
   },
-  "bundledDependencies": ["node-pre-gyp"],
   "devDependencies": {
     "aws-sdk": "~2.3"
   },
@@ -27,6 +26,7 @@
     "nan": "2.3.5"
   },
   "scripts": {
+    "preinstall": "npm install node-pre-gyp",
     "install": "node-pre-gyp install --fallback-to-build"
   },
   "binary": {
