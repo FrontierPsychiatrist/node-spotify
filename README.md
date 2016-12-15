@@ -1,6 +1,12 @@
 node-spotify
 ============
 [![Build Status](https://travis-ci.org/FrontierPsychiatrist/node-spotify.svg?branch=development)](https://travis-ci.org/FrontierPsychiatrist/node-spotify)
+
+*Important notice*: Spotify send me an e-mail node-spotify.com is trademark infringement, so I had to remove it.
+Maybe I will move the documentation to my own webpacke. Also, as many might have noticed, I ceased development
+of node-spotify. If you are interested in taking over please contact me. For now I don't have the time and drive
+to continue to work on it.
+
 node-spotify wraps the C library [libspotify](https://developer.spotify.com/technologies/libspotify) for usage with
 NodeJS.
 
